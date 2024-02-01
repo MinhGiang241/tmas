@@ -16,6 +16,11 @@
   }
 }
 
+@font-face {
+  font-family: SF UI Display Regular;
+  src: url("/fonts/Montserrat-Regular.ttf");
+}
+
 /* body { */
 /*   color: rgb(var(--foreground-rgb)); */
 /*   background: linear-gradient( */

@@ -1,0 +1,10 @@
+{
+  "language": "Language",
+  "en": "English",
+  "vi": "Vietnamese",
+  "login": "Login",
+  "email": "Email",
+  "password": "password",
+  "enter_email": "Enter email",
+  "enter_password": "Enter password"
+}
