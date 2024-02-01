@@ -6,5 +6,9 @@
   "email": "Email",
   "password": "Mật khẩu",
   "enter_email": "Nhập email",
-  "enter_password": "Nhập mật khẩu"
+  "enter_password": "Nhập mật khẩu",
+  "or": "hoặc",
+  "signin_google": "Đăng nhập bằng Google",
+  "s1gnin_facebook": "Đăng nhập bằng Facebook",
+  "forgot_pass": "Quên mật khẩu?"
 }

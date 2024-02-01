@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { ReactEventHandler, useState } from "react";
 import { Button, Divider, Input, Popover } from "antd";
 import ReCAPTCHA from "react-google-recaptcha";
 import Image from "next/image";
@@ -9,6 +9,10 @@ import { LOCALES } from "../i18n/locales/locales";
 import i18next from "i18next";
 import { auth, googleProvider, facebookProvider } from "@/firebase/config";
 import { signInWithPopup } from "firebase/auth";
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
+import LockIcon from "../components/icons/lock.svg";
+import SmsIcon from "../components/icons/sms.svg";
+import MButton from "../components/config/MButton";
 
 function LoginPage() {
   const { t, i18n } = useTranslation();
@@ -16,7 +20,7 @@ function LoginPage() {
     i18n.changeLanguage(lng);
   };
 
-  var languages = {};
+  var languages = {} as { [key: string]: any };
   languages[LOCALES.VIETNAM] = t(LOCALES.VIETNAM);
   languages[LOCALES.ENGLISH] = t(LOCALES.ENGLISH);
 
@@ -87,39 +91,65 @@ function LoginPage() {
               onOpenChange={handleOpenChangeLang}
             >
               {
-                <button className="flex justify-center items-center w-36 px-2 border border-m_gray-200 rounded-lg">
+                <button className="flex justify-around items-center w-36 px-1 border border-m_gray-200 rounded-lg">
                   <Image
                     src={`/flags/${i18next.language}.png`}
                     alt={languages[i18next.language]}
                     width={20}
                     height={10}
                   />
-                  <div className="ml-2">{languages[i18next.language]}</div>
+                  <div>{languages[i18next.language]}</div>
+                  {openLang ? <UpOutlined /> : <DownOutlined />}
                 </button>
               }
             </Popover>
           </div>
-          <MInput title={t("email")} placeholder={t("enter_email")} />{" "}
-          <MInput title={t("password")} placeholder={t("enter_password")} />
-          <ReCAPTCHA
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-            onChange={setCaptcha}
-            className="mx-auto"
+          <MInput
+            prefix={<LockIcon />}
+            id="email"
+            name="email"
+            title={t("email")}
+            placeholder={t("enter_email")}
+          />{" "}
+          <MInput
+            prefix={<SmsIcon />}
+            id="password"
+            name="password"
+            title={t("password")}
+            placeholder={t("enter_password")}
+            isPassword
           />
-        </div>
-        <div className="w-1/2">
-          <Divider className="text-m_neutral_200 w-1/2" />
+          <div className="flex w-full justify-end text-m_primary_500 text-sm font-semibold">
+            <button className="pl-auto active:opacity-70">
+              {" "}
+              {t("forgot_pass")}
+            </button>
+          </div>
+          <MButton
+            text={t("login")}
+            className="h-12 my-4"
+            onClick={() => console.log("captcha", captcha)}
+          />
+          <div className="h-5" />
+          <ReCAPTCHA
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
+            onChange={setCaptcha}
+            className="mr-auto"
+          />
+          <div className="w-full relative">
+            <Divider className="text-m_neutral_300 w-1/2" />
+            <div className="absolute z-10 -translate-y-9 w-full">
+              <div className="w-4 mx-auto bg-white z-20">{t("or")}</div>
+            </div>
+          </div>
         </div>
         {value && <div>{value}</div>}
-        <Button className="w-1/2 mb-4" onClick={signInGoogle}>
-          SignIn with google
-        </Button>
-        <Button className="w-1/2 mb-4" onClick={signInFacebook}>
-          SignIn with facebook
-        </Button>
 
-        <Button onClick={() => console.log("captcha", captcha)}>
-          {t("login")}
+        <Button className="w-1/2 mb-4 h-12" onClick={signInGoogle}>
+          {t("signin_google")}
+        </Button>
+        <Button className="w-1/2 mb-4 h-12" onClick={signInFacebook}>
+          {t("s1gnin_facebook")}
         </Button>
       </div>
     </div>

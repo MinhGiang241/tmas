@@ -4,7 +4,7 @@ import React, { ReactNode, useState } from "react";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 
 interface Props {
-  onChange: (e: React.ChangeEvent<any>) => void;
+  onChange?: (e: React.ChangeEvent<any>) => void;
   onBlur?: (e: React.FocusEvent<any, Element>) => void;
   title?: string;
   required?: Boolean;
@@ -17,6 +17,7 @@ interface Props {
   action?: React.ReactNode;
   touch?: Boolean;
   suffix?: ReactNode;
+  prefix?: ReactNode;
   placeholder?: string;
   isPassword?: boolean;
 }
@@ -36,6 +37,7 @@ function MInput({
   onBlur,
   placeholder,
   suffix,
+  prefix,
   isPassword,
 }: Props) {
   const [visible, setVisible] = useState(!isPassword);
@@ -50,12 +52,16 @@ function MInput({
         {action}
       </div>
 
-      <div className="w-full flex flex-col mb-2">
+      <div className="w-full flex flex-col mb-2  ">
         <Input
+          prefix={prefix}
           onBlur={onBlur}
           status={error && touch ? `error` : ""}
           type={type ?? visible ? "text" : "password"}
-          className={className ?? "h-12"}
+          className={
+            `shadow-inner shadow-gray-300 bg-m_neutral_100 h-12 ${className}` ??
+            "h-12"
+          }
           name={name}
           id={id}
           allowClear

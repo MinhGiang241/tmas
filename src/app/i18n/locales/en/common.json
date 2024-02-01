@@ -6,5 +6,9 @@
   "email": "Email",
   "password": "password",
   "enter_email": "Enter email",
-  "enter_password": "Enter password"
+  "enter_password": "Enter password",
+  "or": "or",
+  "signin_google": "Sign in with Google",
+  "s1gnin_facebook": "Sign in with Facebook",
+  "forgot_pass": "Forgot password?"
 }
