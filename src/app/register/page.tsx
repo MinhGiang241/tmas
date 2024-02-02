@@ -136,6 +136,7 @@ function RegisterPage() {
           formik={formik}
         />
         <MInput
+          isPassword
           required
           prefix={<LockIcon />}
           title={t("password")}
@@ -145,6 +146,7 @@ function RegisterPage() {
           formik={formik}
         />
         <MInput
+          isPassword
           required
           prefix={<LockIcon />}
           title={t("confirm_password")}

@@ -74,7 +74,7 @@ function LoginPage() {
       <ReCAPTCHA
         sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
         onChange={setCaptcha}
-        className="mr-auto"
+        className="m-auto"
       />
       <div className="w-full relative">
         <Divider className="text-m_neutral_300 w-1/2" />
