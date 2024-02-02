@@ -13,7 +13,7 @@ function MButton({ loading, text, className, htmlType, onClick }: Props) {
   return (
     <Button
       htmlType={htmlType}
-      className={`bg-m_primary_500 text-white font-semibold text-base ${className}`}
+      className={`bg-m_primary_500 text-white font-semibold text-base rounded-lg ${className}`}
       loading={loading || false}
       onClick={onClick}
     >

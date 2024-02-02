@@ -1,7 +1,7 @@
-"use client";
 import { Input } from "antd";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
+import NoticeIcon from "@/app/components/icons/notice.svg";
 
 interface Props {
   onChange?: (e: React.ChangeEvent<any>) => void;
@@ -20,6 +20,7 @@ interface Props {
   prefix?: ReactNode;
   placeholder?: string;
   isPassword?: boolean;
+  formik?: any;
 }
 
 function MInput({
@@ -39,15 +40,24 @@ function MInput({
   suffix,
   prefix,
   isPassword,
+  formik,
 }: Props) {
   const [visible, setVisible] = useState(!isPassword);
+  if (formik) {
+    onChange = formik.handleChange;
+    error = formik.errors[name];
+    touch = formik.touched[name];
+    onBlur = formik.handleBlur;
+    value = formik.values[name];
+  }
+
   return (
     <div className="w-full">
       <div
         className={`flex ${action ? "justify-between" : "justify-start"} mb-1 `}
       >
         <label className="text-sm font-semibold" htmlFor={id}>
-          {title} {required && <span className="text-m_red">*</span>}
+          {title} {required && <span className="text-m_error_500">*</span>}
         </label>
         {action}
       </div>
@@ -58,10 +68,7 @@ function MInput({
           onBlur={onBlur}
           status={error && touch ? `error` : ""}
           type={type ?? visible ? "text" : "password"}
-          className={
-            `shadow-inner shadow-gray-300 bg-m_neutral_100 h-12 ${className}` ??
-            "h-12"
-          }
+          className={`shadow-inner shadow-gray-300 bg-m_neutral_100 h-12 rounded-lg ${className}`}
           name={name}
           id={id}
           allowClear
@@ -85,7 +92,12 @@ function MInput({
             ) : undefined
           }
         />
-        {error && touch ? <div className="text-m_red">{error}</div> : null}
+        {error && touch ? (
+          <div className="flex items-center">
+            <NoticeIcon />
+            <div className="text-m_error_500 body_regular_14">{error}</div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

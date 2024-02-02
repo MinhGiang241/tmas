@@ -16,9 +16,94 @@
   }
 }
 
+body {
+  color: #003953;
+}
+
 @font-face {
   font-family: SF UI Display Regular;
   src: url("/fonts/Montserrat-Regular.ttf");
+}
+
+.title_bold_40 {
+  @apply font-bold text-5xl;
+}
+
+.title_semibold_40 {
+  @apply font-semibold text-5xl;
+}
+
+.title_regular_40 {
+  @apply font-normal text-5xl;
+}
+.title_bold_32 {
+  @apply font-bold text-4xl;
+}
+
+.title_semibold_32 {
+  @apply font-semibold text-4xl;
+}
+
+.title_regular_32 {
+  @apply font-normal text-4xl;
+}
+
+.title_bold_24 {
+  @apply font-bold text-2xl;
+}
+
+.title_semibold_24 {
+  @apply font-semibold text-2xl;
+}
+
+.title_regular_24 {
+  @apply font-normal text-2xl;
+}
+
+.body_bold_20 {
+  @apply font-bold text-xl;
+}
+
+.body_semibold_20 {
+  @apply font-semibold text-xl;
+}
+
+.body_regular_20 {
+  @apply font-normal text-xl;
+}
+
+.body_bold_16 {
+  @apply font-bold text-base;
+}
+
+.body_semibold_16 {
+  @apply font-semibold text-base;
+}
+
+.body_regular_16 {
+  @apply font-normal text-base;
+}
+
+.body_bold_14 {
+  @apply font-bold text-sm;
+}
+
+.body_semibold_14 {
+  @apply font-semibold text-sm;
+}
+
+.body_regular_14 {
+  @apply font-normal text-sm;
+}
+
+.caption_bold_12 {
+  @apply font-bold text-xs;
+}
+.caption_semibold_12 {
+  @apply font-semibold text-xs;
+}
+.caption_regular_12 {
+  @apply font-normal text-xs;
 }
 
 /* body { */

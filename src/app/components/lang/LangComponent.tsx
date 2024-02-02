@@ -1,0 +1,70 @@
+"use client";
+import { LOCALES } from "@/app/i18n/locales/locales";
+import { Button, Popover } from "antd";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import Image from "next/image";
+import i18next from "i18next";
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
+
+function LangComponent() {
+  const { t, i18n } = useTranslation();
+  const [openLang, setOpenLang] = useState(false);
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
+
+  var languages = {} as { [key: string]: any };
+  languages[LOCALES.VIETNAM] = t(LOCALES.VIETNAM);
+  languages[LOCALES.ENGLISH] = t(LOCALES.ENGLISH);
+
+  const hide = () => {
+    setOpenLang(false);
+  };
+
+  const handleOpenChangeLang = (newOpen: boolean) => {
+    setOpenLang(newOpen);
+  };
+
+  const content = (
+    <div className="flex flex-col">
+      {Object.keys(languages).map((v, _) => (
+        <Button
+          key={v}
+          className="flex items-center border-0"
+          onClick={() => {
+            changeLanguage(v);
+            hide();
+          }}
+        >
+          <Image src={`/flags/${v}.png`} alt={v} width={20} height={10} />
+          <div className="ml-2 body_semibold_14">{languages[v]}</div>
+        </Button>
+      ))}
+    </div>
+  );
+
+  return (
+    <Popover
+      content={content}
+      trigger="click"
+      open={openLang}
+      onOpenChange={handleOpenChangeLang}
+    >
+      {
+        <button className="flex h-8 justify-around items-center w-36 px-1 border border-m_gray-200 rounded-sm border-m_neutral_200">
+          <Image
+            src={`/flags/${i18next.language}.png`}
+            alt={languages[i18next.language]}
+            width={20}
+            height={10}
+          />
+          <div className="body_semibold_14">{languages[i18next.language]}</div>
+          {openLang ? <UpOutlined /> : <DownOutlined />}
+        </button>
+      }
+    </Popover>
+  );
+}
+
+export default LangComponent;
