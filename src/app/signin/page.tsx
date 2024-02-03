@@ -22,8 +22,8 @@ function LoginPage() {
 
   const [value, setValue] = useState("");
   const signInGoogle = () => {
-    signInWithPopup(auth, googleProvider).then((data) => {
-      setValue(data?.user?.email ?? "");
+    signInWithPopup(auth, googleProvider).then((data: any) => {
+      setValue((data?.user as any)["accessToken"] as string);
       console.log("googleauth", data);
     });
   };
@@ -31,7 +31,7 @@ function LoginPage() {
   const signInFacebook = () => {
     signInWithPopup(auth, facebookProvider)
       .then((data) => {
-        setValue(data?.user?.email ?? "");
+        setValue((data?.user as any)["accessToken"] as string);
         console.log("facebook auth", data);
       })
       .catch((e) => {
