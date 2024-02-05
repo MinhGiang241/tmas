@@ -13,6 +13,9 @@ export interface RegisterFormData {
   phone?: string;
   email?: string;
   password?: string;
+  sso_token?: string;
+  reg_type?: string;
+  captcha_token?: string;
 }
 
 export interface LoginFormValue {

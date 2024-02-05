@@ -14,6 +14,8 @@ import { FormikErrors, useFormik } from "formik";
 import { LoginFormData, LoginFormValue } from "@/data/form_interface";
 import { login } from "@/api_service/auth_service";
 import { errorToast, successToast } from "../components/toast/customToast";
+import { signInWithPopup } from "firebase/auth";
+import { auth, facebookProvider, googleProvider } from "@/firebase/config";
 
 function LoginPage() {
   const { t } = useTranslation();
@@ -76,8 +78,34 @@ function LoginPage() {
     }
   };
 
-  const lodinSSO = (sso: string | undefined) => {
+  const signInGoogle = () => {
     setSubmit(true);
+    if (captcha) {
+      signInWithPopup(auth, googleProvider)
+        .then((data: any) => {
+          loginSSO((data?.user as any)["accessToken"]);
+          console.log("googleauth", data);
+        })
+        .catch((e) => {
+          errorToast(e);
+        });
+    }
+  };
+  const signInFacebook = () => {
+    setSubmit(true);
+    if (captcha) {
+      signInWithPopup(auth, facebookProvider)
+        .then((data) => {
+          loginSSO((data?.user as any)["accessToken"]);
+          console.log("facebook auth", data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
+
+  const loginSSO = (sso: string | undefined) => {
     if (captcha) {
       setLoading(true);
       var data: LoginFormData = {
@@ -149,7 +177,11 @@ function LoginPage() {
           {t("not_verified")}
         </p>
       )}
-      <SsoLogin login={lodinSSO} />
+      <SsoLogin
+        signInGoogle={signInGoogle}
+        signInFacebook={signInFacebook}
+        isLogin
+      />
       <div className="w-full flex justify-center mt-5">
         <span className="text-sm mr-1">{t("no_account")}</span>
         <Link href="/register" className="text-sm font-bold">

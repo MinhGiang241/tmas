@@ -7,28 +7,16 @@ import FacebookIcon from "../icons/facebook.svg";
 import GoogleIcon from "../icons/google.svg";
 import { LoginFormData } from "@/data/form_interface";
 
-function SsoLogin({ login }: { login: Function }) {
+function SsoLogin({
+  signInFacebook,
+  signInGoogle,
+  isLogin,
+}: {
+  signInGoogle: Function;
+  isLogin?: boolean;
+  signInFacebook: Function;
+}) {
   const { t } = useTranslation();
-  const [value, setValue] = useState("");
-  const signInGoogle = () => {
-    signInWithPopup(auth, googleProvider).then((data: any) => {
-      setValue((data?.user as any)["accessToken"] as string);
-      login((data?.user as any)["accessToken"]);
-      console.log("googleauth", data);
-    });
-  };
-
-  const signInFacebook = () => {
-    signInWithPopup(auth, facebookProvider)
-      .then((data) => {
-        setValue((data?.user as any)["accessToken"] as string);
-        login((data?.user as any)["accessToken"]);
-        console.log("facebook auth", data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
 
   return (
     <>
@@ -43,8 +31,8 @@ function SsoLogin({ login }: { login: Function }) {
         <div className="h-full absolute px-4 top-[11px] z-10">
           <GoogleIcon />
         </div>
-        <Button className="w-full mb-4 h-12" onClick={signInGoogle}>
-          {t("signin_google")}
+        <Button className="w-full mb-4 h-12" onClick={() => signInGoogle()}>
+          {isLogin ? t("signin_google") : t("register_with_google")}
         </Button>
       </div>
       <div className="w-full relative">
@@ -52,8 +40,8 @@ function SsoLogin({ login }: { login: Function }) {
           <FacebookIcon />
         </div>
 
-        <Button className="w-full mb-4 h-12" onClick={signInFacebook}>
-          {t("signin_facebook")}
+        <Button className="w-full mb-4 h-12" onClick={() => signInFacebook()}>
+          {isLogin ? t("signin_facebook") : t("register_with_facebook")}
         </Button>
       </div>
     </>

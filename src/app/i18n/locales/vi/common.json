@@ -44,5 +44,7 @@
   "enter_required_repass": "Vui lòng nhập lại mật khẩu của bạn.",
   "pass_not_same": "Mật khẩu không khớp. Vui lòng nhập lại mật khẩu.",
   "success_login": "Đăng nhập thành công!",
-  "not_verified": "Bạn chưa xác thực!"
+  "not_verified": "Bạn chưa xác thực!",
+  "register_with_google": "Đăng ký với Google",
+  "register_with_facebook": "Đăng ký với Facebook"
 }

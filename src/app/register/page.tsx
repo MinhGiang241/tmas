@@ -21,6 +21,8 @@ import { login, registerAccount } from "@/api_service/auth_service";
 import { errorToast, successToast } from "../components/toast/customToast";
 import { useRouter } from "next/navigation";
 import SsoLogin from "../components/sso/SsoLogin";
+import { signInWithPopup } from "firebase/auth";
+import { auth, facebookProvider, googleProvider } from "@/firebase/config";
 
 function RegisterPage() {
   const router = useRouter();
@@ -110,18 +112,40 @@ function RegisterPage() {
     });
     formik.handleSubmit();
   };
-  const loginSSO = (sso: string | undefined) => {
-    var data: LoginFormData = {
+  const registerSSO = (ssoToken: string | undefined) => {
+    var data: RegisterFormData = {
       email: undefined,
       password: undefined,
-      sso_token: sso,
+      sso_token: ssoToken,
       captcha_token: undefined,
-      log_type: "sso",
+      reg_type: "sso",
     };
-    login(data)
+    registerAccount(data)
       .then((v) => {
         console.log("sso", v);
-        successToast(t("success_login"));
+        successToast(t("success_create_account"));
+        router.push("/signin");
+      })
+      .catch((e) => {
+        errorToast(e);
+      });
+  };
+
+  const signInGoogle = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((data: any) => {
+        registerSSO((data?.user as any)["accessToken"]);
+        console.log("googleauth", data);
+      })
+      .catch((e) => {
+        errorToast(e);
+      });
+  };
+  const signInFacebook = () => {
+    signInWithPopup(auth, facebookProvider)
+      .then((data) => {
+        registerSSO((data?.user as any)["accessToken"]);
+        console.log("facebook auth", data);
       })
       .catch((e) => {
         errorToast(e);
@@ -201,7 +225,7 @@ function RegisterPage() {
           htmlType="submit"
           text={t("register")}
         />
-        <SsoLogin login={loginSSO} />
+        <SsoLogin signInFacebook={signInFacebook} signInGoogle={signInGoogle} />
         <div className="w-full flex justify-center mt-5">
           <span className="text-sm mr-1">{t("has_account")}</span>
           <Link href="/signin" className="text-sm font-bold">

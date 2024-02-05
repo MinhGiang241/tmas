@@ -44,5 +44,7 @@
   "enter_required_repass": "Please re-enter your password.",
   "pass_not_same": "Password not match. Please re-enter your password.",
   "success_login": "Login successfully!",
-  "not_verified": "You have not verified yet!"
+  "not_verified": "You have not verified yet!",
+  "register_with_google": "Register with Google",
+  "register_with_facebook": "Register with Facebook"
 }
