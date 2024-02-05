@@ -44,51 +44,15 @@ export default function Home() {
     i18n.changeLanguage(lng);
   };
   const [value, setValue] = useState("ss");
-  const signInGoogle = () => {
-    signInWithPopup(auth, googleProvider).then((data) => {
-      setValue(data?.user?.email ?? "");
-      console.log("googleauth", data);
-    });
-  };
-
-  const signInFacebook = () => {
-    signInWithPopup(auth, facebookProvider)
-      .then((data) => {
-        setValue(data?.user?.email ?? "");
-        console.log("facebook auth", data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
 
   // useEffect()
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
-      <Popover
-        content={content}
-        trigger="click"
-        open={open}
-        onOpenChange={handleOpenChange}
-      >
-        <Button>Click me</Button>
-      </Popover>
-
       <Link
-        className="mb-20 w-24 h-12 bg-sky-600 text-white text-center rounded-lg"
-        href={"/blog"}
+        className="mb-20 w-24 h-12 bg-m_primary_700  text-white text-center rounded-lg"
+        href={"/signin"}
       >
-        Blog
-      </Link>
-      {value && <div>{value}</div>}
-      <Button onClick={signInGoogle}>SignIn with google</Button>
-      <Button onClick={signInFacebook}>SignIn with facebook</Button>
-      {t("language")}
-      <Link
-        className="w-24 h-12 bg-sky-600 text-white text-center rounded-lg"
-        href={"/about"}
-      >
-        about
+        Login
       </Link>
     </main>
   );
