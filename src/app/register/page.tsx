@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AuthLayout from "../layouts/AuthLayout";
 import { useTranslation } from "react-i18next";
 import LangComponent from "../components/lang/LangComponent";
@@ -12,11 +12,15 @@ import LockIcon from "../components/icons/lock.svg";
 import SmsIcon from "../components/icons/sms.svg";
 import MButton from "../components/config/MButton";
 import Link from "next/link";
-import { RegisterFormData, RegisterFormValues } from "@/data/form_interface";
-import { registerAccount } from "@/service/api_service";
-import toast from "react-hot-toast";
+import {
+  LoginFormData,
+  RegisterFormData,
+  RegisterFormValues,
+} from "@/data/form_interface";
+import { login, registerAccount } from "@/api_service/auth_service";
 import { errorToast, successToast } from "../components/toast/customToast";
 import { useRouter } from "next/navigation";
+import SsoLogin from "../components/sso/SsoLogin";
 
 function RegisterPage() {
   const router = useRouter();
@@ -34,19 +38,37 @@ function RegisterPage() {
   const validate = (values: RegisterFormValues) => {
     const errors: FormikErrors<RegisterFormValues> = {};
     if (!values.full_name) {
-      errors.full_name = t("not_empty");
+      errors.full_name = "enter_required_name";
+    }
+
+    if (values.company_name && values.company_name.length < 2) {
+      errors.company_name = "company_at_least";
     }
     if (!values.phone) {
-      errors.phone = t("not_empty");
+      errors.phone = t("enter_required_phone");
+    } else if (!/(84|0[3|5|7|8|9])+([0-9]{8})\b/g.test(values.phone)) {
+      errors.phone = "invalid_phone";
     }
     if (!values.register_email) {
-      errors.register_email = t("not_empty");
+      errors.register_email = "enter_required_email";
+    } else if (
+      !/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(
+        values.register_email,
+      )
+    ) {
+      errors.register_email = "invalid_email";
     }
     if (!values.register_password) {
-      errors.register_password = t("not_empty");
+      errors.register_password = "enter_required_pass";
+    } else if (
+      !/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/.test(values.register_password)
+    ) {
+      errors.register_password = "week_pass";
     }
     if (!values.re_password) {
-      errors.re_password = t("not_empty");
+      errors.re_password = "enter_required_repass";
+    } else if (values.re_password.trim() != values?.register_password?.trim()) {
+      errors.re_password = "pass_not_same";
     }
 
     return errors;
@@ -88,6 +110,24 @@ function RegisterPage() {
     });
     formik.handleSubmit();
   };
+  const loginSSO = (sso: string | undefined) => {
+    var data: LoginFormData = {
+      email: undefined,
+      password: undefined,
+      sso_token: sso,
+      captcha_token: undefined,
+      log_type: "sso",
+    };
+    login(data)
+      .then((v) => {
+        console.log("sso", v);
+        successToast(t("success_login"));
+      })
+      .catch((e) => {
+        errorToast(e);
+      });
+  };
+
   return (
     <AuthLayout>
       <div className="mb-4 flex justify-between">
@@ -161,6 +201,7 @@ function RegisterPage() {
           htmlType="submit"
           text={t("register")}
         />
+        <SsoLogin login={loginSSO} />
         <div className="w-full flex justify-center mt-5">
           <span className="text-sm mr-1">{t("has_account")}</span>
           <Link href="/signin" className="text-sm font-bold">

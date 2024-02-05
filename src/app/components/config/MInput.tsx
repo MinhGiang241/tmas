@@ -2,6 +2,7 @@ import { Input } from "antd";
 import React, { ReactNode, useEffect, useState } from "react";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import NoticeIcon from "@/app/components/icons/notice.svg";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   onChange?: (e: React.ChangeEvent<any>) => void;
@@ -21,6 +22,7 @@ interface Props {
   placeholder?: string;
   isPassword?: boolean;
   formik?: any;
+  maxLength?: number;
 }
 
 function MInput({
@@ -41,8 +43,10 @@ function MInput({
   prefix,
   isPassword,
   formik,
+  maxLength,
 }: Props) {
   const [visible, setVisible] = useState(!isPassword);
+  const { t } = useTranslation();
   if (formik) {
     onChange = formik.handleChange;
     error = formik.errors[name];
@@ -50,7 +54,7 @@ function MInput({
     onBlur = formik.handleBlur;
     value = formik.values[name];
   }
-
+  useEffect(() => {}, [formik]);
   return (
     <div className="w-full">
       <div
@@ -64,6 +68,7 @@ function MInput({
 
       <div className="w-full flex flex-col mb-2  ">
         <Input
+          maxLength={maxLength ?? 500}
           prefix={prefix}
           onBlur={onBlur}
           status={error && touch ? `error` : ""}
@@ -95,7 +100,7 @@ function MInput({
         {error && touch ? (
           <div className="flex items-center">
             <NoticeIcon />
-            <div className="text-m_error_500 body_regular_14">{error}</div>
+            <div className="text-m_error_500 body_regular_14">{t(error)}</div>
           </div>
         ) : null}
       </div>

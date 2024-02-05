@@ -14,3 +14,16 @@ export interface RegisterFormData {
   email?: string;
   password?: string;
 }
+
+export interface LoginFormValue {
+  email?: string;
+  password?: string;
+}
+
+export interface LoginFormData {
+  email?: string;
+  password?: string;
+  captcha_token?: string;
+  log_type?: string;
+  sso_token?: string;
+}

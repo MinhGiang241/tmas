@@ -37,11 +37,11 @@ const SuccessToast = ({
             <CloseCircleFilled className="text-[5rem] text-m_error_500" />
           )}
         </div>
-        <div className="flex flex-col text-center">
-          <h4 className="body_semibold_20 mb-2">
+        <div className="flex flex-col text-center text-wrap">
+          <h4 className="body_semibold_20 mb-2 overflow-hidden">
             {type == ToastType.SUCCESS ? t("success") : t("fail")}
           </h4>
-          <p>{content}</p>
+          <p className="overflow-hidden">{content}</p>
         </div>
         <div className="flex justify-center my-6">
           <MButton

@@ -1,42 +1,105 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Divider } from "antd";
+import React, { useEffect, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import MInput from "../components/config/MInput";
 import { useTranslation } from "react-i18next";
-import { auth, googleProvider, facebookProvider } from "@/firebase/config";
-import { signInWithPopup } from "firebase/auth";
 import LockIcon from "../components/icons/lock.svg";
 import SmsIcon from "../components/icons/sms.svg";
-import FacebookIcon from "../components/icons/facebook.svg";
-import GoogleIcon from "../components/icons/google.svg";
 import MButton from "../components/config/MButton";
 import AuthLayout from "../layouts/AuthLayout";
 import Link from "next/link";
 import LangComponent from "../components/lang/LangComponent";
+import SsoLogin from "../components/sso/SsoLogin";
+import { FormikErrors, useFormik } from "formik";
+import { LoginFormData, LoginFormValue } from "@/data/form_interface";
+import { login } from "@/api_service/auth_service";
+import { errorToast, successToast } from "../components/toast/customToast";
 
 function LoginPage() {
   const { t } = useTranslation();
 
-  const [captcha, setCaptcha] = useState<string | null>();
+  const [captcha, setCaptcha] = useState<string | null | undefined>();
+  const [submit, setSubmit] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  // useEffect(() => {}, [captcha]);
+  const initialValues: LoginFormValue = {
+    email: undefined,
+    password: undefined,
+  };
+  const validate = (values: LoginFormValue) => {
+    const errors: FormikErrors<LoginFormValue> = {};
+    if (!values.email) {
+      errors.email = "not_empty";
+    }
+    if (!values.password) {
+      errors.password = "not_empty";
+    }
+    console.log(errors);
 
-  const [value, setValue] = useState("");
-  const signInGoogle = () => {
-    signInWithPopup(auth, googleProvider).then((data: any) => {
-      setValue((data?.user as any)["accessToken"] as string);
-      console.log("googleauth", data);
-    });
+    return errors;
   };
 
-  const signInFacebook = () => {
-    signInWithPopup(auth, facebookProvider)
-      .then((data) => {
-        setValue((data?.user as any)["accessToken"] as string);
-        console.log("facebook auth", data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+  const formik = useFormik({
+    initialValues,
+    validate,
+    onSubmit: async (values: LoginFormValue) => {
+      var data: LoginFormData = {
+        email: values.email?.trim(),
+        password: values.password?.trim(),
+        captcha_token: captcha ?? undefined,
+        log_type: "mail",
+      };
+      setLoading(true);
+
+      await login(data)
+        .then((v) => {
+          console.log("login", v);
+          setLoading(false);
+          successToast(t("success_login"));
+        })
+        .catch((e) => {
+          console.log("error login", e);
+          setLoading(false);
+          errorToast(e);
+        });
+    },
+  });
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmit(true);
+    Object.keys(initialValues).map(async (v) => {
+      await formik.setFieldTouched(v, true);
+    });
+    if (captcha) {
+      formik.handleSubmit();
+    }
+  };
+
+  const lodinSSO = (sso: string | undefined) => {
+    setSubmit(true);
+    if (captcha) {
+      setLoading(true);
+      var data: LoginFormData = {
+        email: undefined,
+        password: undefined,
+        sso_token: sso,
+        captcha_token: captcha,
+        log_type: "sso",
+      };
+      login(data)
+        .then((v) => {
+          console.log("sso", v);
+          setLoading(false);
+          successToast(t("success_login"));
+        })
+        .catch((e) => {
+          console.log("error", e);
+
+          errorToast(e);
+          setLoading(false);
+        });
+    }
   };
   return (
     <AuthLayout>
@@ -44,62 +107,49 @@ function LoginPage() {
         <p className="text-m_primary_500 title_bold_24">{t("login")}</p>
         <LangComponent />
       </div>
-      <MInput
-        prefix={<LockIcon />}
-        id="email"
-        name="email"
-        title={t("email")}
-        placeholder={t("enter_email")}
-      />{" "}
-      <MInput
-        prefix={<SmsIcon />}
-        id="password"
-        name="password"
-        title={t("password")}
-        placeholder={t("enter_password")}
-        isPassword
-      />
-      <div className="flex w-full justify-end text-m_primary_500 text-sm font-semibold">
-        <button className="pl-auto active:opacity-70">
-          {" "}
-          {t("forgot_pass")}
-        </button>
-      </div>
-      <MButton
-        text={t("login")}
-        className="h-12 my-4"
-        onClick={() => console.log("captcha", captcha)}
-      />
+      <form onSubmit={onSubmit}>
+        <MInput
+          prefix={<LockIcon />}
+          id="email"
+          name="email"
+          title={t("email")}
+          placeholder={t("enter_email")}
+          formik={formik}
+        />{" "}
+        <MInput
+          prefix={<SmsIcon />}
+          id="password"
+          name="password"
+          title={t("password")}
+          placeholder={t("enter_password")}
+          isPassword
+          formik={formik}
+        />
+        <div className="flex w-full justify-end text-m_primary_500 text-sm font-semibold">
+          <button className="pl-auto active:opacity-70">
+            {" "}
+            {t("forgot_pass")}
+          </button>
+        </div>
+        <MButton
+          loading={loading}
+          htmlType="submit"
+          text={t("login")}
+          className="h-12 my-4 w-full"
+        />
+      </form>
       <div className="h-5" />
       <ReCAPTCHA
         sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
         onChange={setCaptcha}
         className="m-auto"
       />
-      <div className="w-full relative">
-        <Divider className="text-m_neutral_300 w-1/2" />
-        <div className="absolute z-10 -translate-y-9 w-full">
-          <div className="w-4 mx-auto bg-white z-20">{t("or")}</div>
-        </div>
-      </div>
-      {value && <div>{value}</div>}
-      <div className="w-full relative">
-        <div className="h-full absolute px-4 top-[11px] z-10">
-          <GoogleIcon />
-        </div>
-        <Button className="w-full mb-4 h-12" onClick={signInGoogle}>
-          {t("signin_google")}
-        </Button>
-      </div>
-      <div className="w-full relative">
-        <div className="h-full absolute px-4 top-[11px] z-10">
-          <FacebookIcon />
-        </div>
-
-        <Button className="w-full mb-4 h-12" onClick={signInFacebook}>
-          {t("signin_facebook")}
-        </Button>
-      </div>
+      {!captcha && submit && (
+        <p className="m-auto text-m_error_500 body_regular_14">
+          {t("not_verified")}
+        </p>
+      )}
+      <SsoLogin login={lodinSSO} />
       <div className="w-full flex justify-center mt-5">
         <span className="text-sm mr-1">{t("no_account")}</span>
         <Link href="/register" className="text-sm font-bold">
