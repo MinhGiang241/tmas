@@ -16,14 +16,24 @@
   }
 }
 
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800&display=swap");
+
+@layer base {
+  html {
+    font-family:
+      Montserrat,
+      system-ui sans-serif;
+  }
+}
+
 body {
   color: #003953;
 }
 
-@font-face {
-  font-family: SF UI Display Regular;
-  src: url("/fonts/Montserrat-Regular.ttf");
-}
+/* @font-face { */
+/*   font-family: SF UI Display Regular; */
+/*   src: url("/fonts/Montserrat-Regular.ttf"); */
+/* } */
 
 .title_bold_40 {
   @apply font-bold text-5xl;

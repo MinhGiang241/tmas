@@ -12,10 +12,11 @@ import LangComponent from "../components/lang/LangComponent";
 import SsoLogin from "../components/sso/SsoLogin";
 import { FormikErrors, useFormik } from "formik";
 import { LoginFormData, LoginFormValue } from "@/data/form_interface";
-import { login } from "@/api_service/auth_service";
+import { login } from "@/services/api_services/auth_service";
 import { errorToast, successToast } from "../components/toast/customToast";
 import { signInWithPopup } from "firebase/auth";
 import { auth, facebookProvider, googleProvider } from "@/firebase/config";
+import { useRouter } from "next/navigation";
 
 function LoginPage() {
   const { t } = useTranslation();
@@ -23,6 +24,9 @@ function LoginPage() {
   const [captcha, setCaptcha] = useState<string | null | undefined>();
   const [submit, setSubmit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [gLoading, setGLoading] = useState<boolean>(false);
+  const [fLoading, setFLoading] = useState<boolean>(false);
+  const router = useRouter();
   // useEffect(() => {}, [captcha]);
   const initialValues: LoginFormValue = {
     email: undefined,
@@ -81,6 +85,7 @@ function LoginPage() {
   const signInGoogle = () => {
     setSubmit(true);
     if (captcha) {
+      setGLoading(true);
       signInWithPopup(auth, googleProvider)
         .then((data: any) => {
           loginSSO((data?.user as any)["accessToken"]);
@@ -88,12 +93,14 @@ function LoginPage() {
         })
         .catch((e) => {
           errorToast(e);
+          setGLoading(false);
         });
     }
   };
   const signInFacebook = () => {
     setSubmit(true);
     if (captcha) {
+      setFLoading(true);
       signInWithPopup(auth, facebookProvider)
         .then((data) => {
           loginSSO((data?.user as any)["accessToken"]);
@@ -101,13 +108,13 @@ function LoginPage() {
         })
         .catch((e) => {
           console.log(e);
+          setFLoading(false);
         });
     }
   };
 
   const loginSSO = (sso: string | undefined) => {
     if (captcha) {
-      setLoading(true);
       var data: LoginFormData = {
         email: undefined,
         password: undefined,
@@ -118,14 +125,17 @@ function LoginPage() {
       login(data)
         .then((v) => {
           console.log("sso", v);
-          setLoading(false);
+          setGLoading(false);
+          setFLoading(false);
           successToast(t("success_login"));
+          router.push("/");
         })
         .catch((e) => {
           console.log("error", e);
 
           errorToast(e);
-          setLoading(false);
+          setGLoading(false);
+          setFLoading(false);
         });
     }
   };
@@ -181,10 +191,12 @@ function LoginPage() {
         signInGoogle={signInGoogle}
         signInFacebook={signInFacebook}
         isLogin
+        gLoading={gLoading}
+        fLoading={fLoading}
       />
-      <div className="w-full flex justify-center mt-5">
+      <div className="w-full flex justify-center mt-5 text-m_primary_900">
         <span className="text-sm mr-1">{t("no_account")}</span>
-        <Link href="/register" className="text-sm font-bold">
+        <Link href="/register" className="text-sm font-bold cursor-pointer">
           {t("register_now")}
         </Link>
       </div>

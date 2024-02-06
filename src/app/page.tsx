@@ -48,6 +48,7 @@ export default function Home() {
   // useEffect()
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
+      <h1 className="text-7xl mb-44">Home Page</h1>
       <Link
         className="mb-20 w-24 h-12 bg-m_primary_700  text-white text-center rounded-lg"
         href={"/signin"}

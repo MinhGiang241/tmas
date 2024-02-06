@@ -45,26 +45,39 @@ function LangComponent() {
   );
 
   return (
-    <Popover
-      content={content}
-      trigger="click"
-      open={openLang}
-      onOpenChange={handleOpenChangeLang}
-    >
-      {
-        <button className="flex h-8 justify-around items-center w-36 px-1 border border-m_gray-200 rounded-sm border-m_neutral_200">
-          <Image
-            src={`/flags/${i18next.language}.png`}
-            alt={languages[i18next.language]}
-            width={20}
-            height={10}
-          />
-          <div className="body_semibold_14">{languages[i18next.language]}</div>
-          {openLang ? <UpOutlined /> : <DownOutlined />}
-        </button>
-      }
-    </Popover>
+    <>
+      <button
+        onClick={() => {
+          if (i18next.language == "vi") {
+            changeLanguage("en");
+          } else {
+            changeLanguage("vi");
+          }
+        }}
+        className="flex h-7 justify-around items-center w-20 px-1 border border-m_gray-200 rounded-sm border-m_neutral_200"
+      >
+        <Image
+          src={`/flags/${i18next.language}.png`}
+          alt={languages[i18next.language]}
+          width={20}
+          height={10}
+        />
+        <div className="body_semibold_14">
+          {i18next.language == "vi" ? "VIE" : "ENG"}
+        </div>
+        {/* {openLang ? <UpOutlined /> : <DownOutlined />} */}
+      </button>
+    </>
   );
 }
+
+/**
+<Popover
+  content={content}
+  trigger="click"
+  open={openLang}
+  onOpenChange={handleOpenChangeLang}
+></Popover>;
+**/
 
 export default LangComponent;

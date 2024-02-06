@@ -1,7 +1,8 @@
 import { Input } from "antd";
 import React, { ReactNode, useEffect, useState } from "react";
-import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import NoticeIcon from "@/app/components/icons/notice.svg";
+import CloseEye from "@/app/components/icons/close_eye.svg";
+import OpenEye from "@/app/components/icons/open_eye.svg";
 import { useTranslation } from "react-i18next";
 
 interface Props {
@@ -60,7 +61,10 @@ function MInput({
       <div
         className={`flex ${action ? "justify-between" : "justify-start"} mb-1 `}
       >
-        <label className="text-sm font-semibold" htmlFor={id}>
+        <label
+          className="text-sm font-semibold text-m_primary_900"
+          htmlFor={id}
+        >
           {title} {required && <span className="text-m_error_500">*</span>}
         </label>
         {action}
@@ -88,11 +92,7 @@ function MInput({
                 }}
                 className="active:opacity-70 cursor-pointer"
               >
-                {visible ? (
-                  <EyeOutlined className="text-2xl" />
-                ) : (
-                  <EyeInvisibleOutlined className="text-2xl" />
-                )}
+                {visible ? <OpenEye style={{ color: "red" }} /> : <CloseEye />}
               </div>
             ) : undefined
           }

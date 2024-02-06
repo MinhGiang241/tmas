@@ -17,7 +17,7 @@ import {
   RegisterFormData,
   RegisterFormValues,
 } from "@/data/form_interface";
-import { login, registerAccount } from "@/api_service/auth_service";
+import { login, registerAccount } from "@/services/api_services/auth_service";
 import { errorToast, successToast } from "../components/toast/customToast";
 import { useRouter } from "next/navigation";
 import SsoLogin from "../components/sso/SsoLogin";
@@ -27,6 +27,8 @@ import { auth, facebookProvider, googleProvider } from "@/firebase/config";
 function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
+  const [gLoading, setGLoading] = useState<boolean>(false);
+  const [fLoading, setFLoading] = useState<boolean>(false);
   const { t } = useTranslation();
   const initialValues: RegisterFormValues = {
     full_name: undefined,
@@ -123,15 +125,20 @@ function RegisterPage() {
     registerAccount(data)
       .then((v) => {
         console.log("sso", v);
+        setFLoading(false);
+        setGLoading(false);
         successToast(t("success_create_account"));
         router.push("/signin");
       })
       .catch((e) => {
         errorToast(e);
+        setFLoading(false);
+        setGLoading(false);
       });
   };
 
   const signInGoogle = () => {
+    setGLoading(true);
     signInWithPopup(auth, googleProvider)
       .then((data: any) => {
         registerSSO((data?.user as any)["accessToken"]);
@@ -139,9 +146,11 @@ function RegisterPage() {
       })
       .catch((e) => {
         errorToast(e);
+        setGLoading(false);
       });
   };
   const signInFacebook = () => {
+    setFLoading(true);
     signInWithPopup(auth, facebookProvider)
       .then((data) => {
         registerSSO((data?.user as any)["accessToken"]);
@@ -149,6 +158,7 @@ function RegisterPage() {
       })
       .catch((e) => {
         errorToast(e);
+        setFLoading(false);
       });
   };
 
@@ -225,10 +235,15 @@ function RegisterPage() {
           htmlType="submit"
           text={t("register")}
         />
-        <SsoLogin signInFacebook={signInFacebook} signInGoogle={signInGoogle} />
-        <div className="w-full flex justify-center mt-5">
+        <SsoLogin
+          gLoading={gLoading}
+          fLoading={fLoading}
+          signInFacebook={signInFacebook}
+          signInGoogle={signInGoogle}
+        />
+        <div className="w-full flex justify-center mt-5 text-m_primary_900">
           <span className="text-sm mr-1">{t("has_account")}</span>
-          <Link href="/signin" className="text-sm font-bold">
+          <Link href="/signin" className="text-sm font-bold cursor-pointer">
             {t("login")}
           </Link>
         </div>
