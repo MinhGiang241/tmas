@@ -13,6 +13,7 @@ const montserrat = Montserrat({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Tmas",
   description: "Nền tảng đánh giá năng lực miễn phí",
+  viewport: "width=device-width, initial-scale=1.0",
 };
 export type LayoutProps = {
   children: ReactNode;

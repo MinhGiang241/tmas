@@ -92,7 +92,7 @@ function OtpModal({
         </p>
         <p className="body_semibold_14 my-2">{t("enter_otp")}</p>
         <MuiOtpInput
-          className="w-[436px]"
+          className="lg:w-[436px] h-full"
           TextFieldsProps={{ placeholder: "-" }}
           // style={{}}
           value={otp}
