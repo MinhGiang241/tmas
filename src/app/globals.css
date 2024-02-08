@@ -30,6 +30,13 @@ body {
   color: #003953;
 }
 
+.modalStyle .ant-modal-content .ant-modal-body {
+  background-color: #01579b;
+  font-family:
+    Montserrat,
+    system-ui sans-serif;
+}
+
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */

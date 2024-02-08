@@ -23,6 +23,11 @@ import { useRouter } from "next/navigation";
 import SsoLogin from "../components/sso/SsoLogin";
 import { signInWithPopup } from "firebase/auth";
 import { auth, facebookProvider, googleProvider } from "@/firebase/config";
+import {
+  emailRegex,
+  passLoginRegex,
+  phoneRegex,
+} from "@/services/validation/regex";
 
 function RegisterPage() {
   const router = useRouter();
@@ -49,24 +54,18 @@ function RegisterPage() {
       errors.company_name = "company_at_least";
     }
     if (!values.phone) {
-      errors.phone = t("enter_required_phone");
-    } else if (!/(84|0[3|5|7|8|9])+([0-9]{8})\b/g.test(values.phone)) {
+      errors.phone = "enter_required_phone";
+    } else if (!values.phone.match(phoneRegex)) {
       errors.phone = "invalid_phone";
     }
     if (!values.register_email) {
       errors.register_email = "enter_required_email";
-    } else if (
-      !/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(
-        values.register_email,
-      )
-    ) {
+    } else if (!emailRegex.test(values.register_email)) {
       errors.register_email = "invalid_email";
     }
     if (!values.register_password) {
       errors.register_password = "enter_required_pass";
-    } else if (
-      !/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/.test(values.register_password)
-    ) {
+    } else if (!passLoginRegex.test(values.register_password)) {
       errors.register_password = "week_pass";
     }
     if (!values.re_password) {

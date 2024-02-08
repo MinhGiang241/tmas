@@ -46,5 +46,21 @@
   "success_login": "Login successfully!",
   "not_verified": "You have not verified yet!",
   "register_with_google": "Register with Google",
-  "register_with_facebook": "Register with Facebook"
+  "register_with_facebook": "Register with Facebook",
+  "remember_pass": "Remember your password?",
+  "enter_otp_inform": "Enter the email address you registered. You will receive an OTP to regenerate your password.",
+  "confirm": "Confirm",
+  "otp_verify": "OTP verification",
+  "send_otp_email": "We have just sent an OTP to your email ",
+  "please_verify": "Please verify the OTP.",
+  "enter_otp": "Enter OTP",
+  "not_otp": "Haven't receipted your OTP yet?",
+  "resent": "Resend",
+  "create_new_pass": "Create a new password",
+  "new_pass": "New password",
+  "continue": "Continue",
+  "enter_new_pass": "Enter new password",
+  "confirm_new_pass": "Confirm new password",
+  "re_enter_new_pass": "Re-enter new password",
+  "success_create_pass": "Create new password successfully. Please login again!"
 }

@@ -5,6 +5,9 @@ import { createCache, extractStyle, StyleProvider } from "@ant-design/cssinjs";
 import type Entity from "@ant-design/cssinjs/es/Cache";
 import { useServerInsertedHTML } from "next/navigation";
 import { ConfigProvider } from "antd";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 const StyledComponentsRegistry: React.FC<{ children: ReactNode }> = ({
   children,
@@ -23,7 +26,7 @@ const StyledComponentsRegistry: React.FC<{ children: ReactNode }> = ({
           // Seed Token
           colorPrimary: "#6DB3C2",
           borderRadius: 2,
-
+          ...montserrat.style,
           // Alias Token
           colorBgContainer: "#FFF",
         },

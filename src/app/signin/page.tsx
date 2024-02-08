@@ -62,6 +62,7 @@ function LoginPage() {
           console.log("login", v);
           setLoading(false);
           successToast(t("success_login"));
+          router.push("/");
         })
         .catch((e) => {
           console.log("error login", e);
@@ -164,10 +165,10 @@ function LoginPage() {
           formik={formik}
         />
         <div className="flex w-full justify-end text-m_primary_500 text-sm font-semibold">
-          <button className="pl-auto active:opacity-70">
+          <Link href={"/reset-password"} className="pl-auto active:opacity-70">
             {" "}
             {t("forgot_pass")}
-          </button>
+          </Link>
         </div>
         <MButton
           loading={loading}

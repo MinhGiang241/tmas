@@ -46,5 +46,21 @@
   "success_login": "Đăng nhập thành công!",
   "not_verified": "Bạn chưa xác thực!",
   "register_with_google": "Đăng ký với Google",
-  "register_with_facebook": "Đăng ký với Facebook"
+  "register_with_facebook": "Đăng ký với Facebook",
+  "remember_pass": "Bạn đã nhớ mật khẩu?",
+  "enter_otp_inform": "Nhập địa chỉ email đã đăng ký của bạn. Bạn sẽ nhận mã otp để tạo mật khẩu mới.",
+  "confirm": "Xác nhận",
+  "otp_verify": "Xác nhận OTP",
+  "send_otp_email": "Chúng tôi vừa gửi mã OTP vào email ",
+  "please_verify": "Hãy xác nhận OTP.",
+  "enter_otp": "Nhập OTP",
+  "not_otp": "Bạn vẫn chưa nhận được OTP?",
+  "resent": "Gửi lại",
+  "create_new_pass": "Tạo mật khẩu mới",
+  "new_pass": "Mật khẩu mới",
+  "continue": "Tiếp tục",
+  "enter_new_pass": "Nhập mật khẩu mới",
+  "confirm_new_pass": "Xác nhận mật khẩu mới",
+  "re_enter_new_pass": "Nhập lại mật khẩu mới",
+  "success_create_pass": "Tạo mật khẩu mới thành công hãy đăng nhập lại"
 }
