@@ -14,17 +14,18 @@ export const login = async (data: LoginFormData) => {
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.login`,
     data,
   );
+  localStorage.setItem("access_token", results["access_token"]);
 
   return results;
 };
 
 export const sendOtpResetPassword = async ({ email }: { email?: string }) => {
-  var result = await callApi.post(
+  var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/authorization.generate_otp`,
     { mailTo: email },
   );
 
-  return result;
+  return results;
 };
 
 export const verifyOtp = async ({
@@ -34,12 +35,12 @@ export const verifyOtp = async ({
   mailTo?: string;
   otp?: string;
 }) => {
-  var result = await callApi.post(
+  var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/authorization.verify_otp`,
     { mailTo, otp },
   );
 
-  return result;
+  return results;
 };
 
 export const createNewPass = async ({
@@ -49,10 +50,18 @@ export const createNewPass = async ({
   email?: string;
   new_pass?: string;
 }) => {
-  var result = await callApi.post(
+  var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/authorization.create_new_pass`,
     { email, new_pass },
   );
 
-  return result;
+  return results;
+};
+
+export const getUserMe = async () => {
+  // https://api.tmas.demego.vn/apimodel/authorization.get_user_me
+  var results = await callApi.get(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/authorization.get_user_me`,
+  );
+  return results;
 };

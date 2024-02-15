@@ -1,13 +1,19 @@
+import React from "react";
 import { APIResults } from "@/data/api_results";
 import axios, { AxiosRequestConfig } from "axios";
+import i18next from "i18next";
 
 export class callApi {
-  static post = async (
+  static post = async function (
     url: string,
     data: any,
     config?: AxiosRequestConfig<any> | undefined,
-  ): Promise<any> => {
-    var results = await axios.post(url, data, config);
+  ): Promise<any> {
+    var headers = {
+      lang: i18next.language == "en" ? "en_US" : "vi_VN",
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    };
+    var results = await axios.post(url, data, { headers, ...config });
     var resultData = results["data"] as APIResults | undefined;
     if (!resultData) {
       throw "Lỗi kết nối";
@@ -17,11 +23,16 @@ export class callApi {
 
     return resultData?.data;
   };
-  static get = async (
+  static get = async function (
     url: string,
     config?: AxiosRequestConfig<any> | undefined,
-  ): Promise<any> => {
-    var results = await axios.get(url, config);
+  ): Promise<any> {
+    var headers = {
+      lang: i18next.language == "en" ? "en_US" : "vi_VN",
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    };
+
+    var results = await axios.get(url, { headers, ...config });
     var resultData = results["data"] as APIResults | undefined;
     if (!resultData) {
       throw "Lỗi kết nối";

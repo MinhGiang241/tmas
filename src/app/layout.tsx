@@ -4,7 +4,9 @@ import "./globals.css";
 import LangProvider from "./provider/intl";
 import StyledComponentsRegistry from "./provider/antdRegistry";
 import { Toaster } from "react-hot-toast";
-import React, { ReactNode } from "react";
+import React, { ReactNode, Suspense } from "react";
+import LoadingPage from "./loading";
+import AuthProvider from "./provider/authProvider";
 
 // const inter = Inter({ subsets: ["latin"] });
 const montserrat = Montserrat({ subsets: ["latin"] });
@@ -13,7 +15,7 @@ const montserrat = Montserrat({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Tmas",
   description: "Nền tảng đánh giá năng lực miễn phí",
-  viewport: "width=device-width, initial-scale=1.0",
+  // viewport: "width=device-width, initial-scale=1.0",
 };
 export type LayoutProps = {
   children: ReactNode;
@@ -25,9 +27,13 @@ export default function RootLayout({ children }: LayoutProps) {
   return (
     <html>
       <body className={`text-black ${montserrat.className}`}>
-        <StyledComponentsRegistry>
-          <LangProvider>{children}</LangProvider>
-        </StyledComponentsRegistry>
+        <AuthProvider>
+          <StyledComponentsRegistry>
+            <LangProvider>
+              <Suspense fallback={<LoadingPage />}>{children}</Suspense>
+            </LangProvider>
+          </StyledComponentsRegistry>
+        </AuthProvider>
         <Toaster toastOptions={{ custom: { duration: 3000 } }} />
       </body>
     </html>

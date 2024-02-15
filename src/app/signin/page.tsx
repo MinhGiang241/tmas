@@ -12,7 +12,7 @@ import LangComponent from "../components/lang/LangComponent";
 import SsoLogin from "../components/sso/SsoLogin";
 import { FormikErrors, useFormik } from "formik";
 import { LoginFormData, LoginFormValue } from "@/data/form_interface";
-import { login } from "@/services/api_services/auth_service";
+import { getUserMe, login } from "@/services/api_services/auth_service";
 import { errorToast, successToast } from "../components/toast/customToast";
 import { signInWithPopup } from "firebase/auth";
 import { auth, facebookProvider, googleProvider } from "@/firebase/config";
@@ -146,6 +146,21 @@ function LoginPage() {
         <p className="text-m_primary_500 title_bold_24">{t("login")}</p>
         <LangComponent />
       </div>
+      {/* <button */}
+      {/*   onClick={() => { */}
+      {/*     getUserMe() */}
+      {/*       .then((v) => { */}
+      {/*         console.log("user", v); */}
+      {/**/}
+      {/*         successToast(JSON.stringify(v)); */}
+      {/*       }) */}
+      {/*       .catch((e) => { */}
+      {/*         errorToast(e); */}
+      {/*       }); */}
+      {/*   }} */}
+      {/* > */}
+      {/*   Get user me */}
+      {/* </button> */}
       <form onSubmit={onSubmit}>
         <MInput
           prefix={<LockIcon />}
