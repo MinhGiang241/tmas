@@ -4,6 +4,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import { useTranslation } from "react-i18next";
 import LangComponent from "../components/lang/LangComponent";
 import MInput from "../components/config/MInput";
+import SmsIcon from "../components/icons/sms.svg";
 import LockIcon from "../components/icons/lock.svg";
 import { FormikErrors, useFormik } from "formik";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -17,6 +18,7 @@ import {
 } from "@/services/api_services/auth_service";
 import { errorToast, successToast } from "../components/toast/customToast";
 import { useRouter } from "next/navigation";
+import i18next from "i18next";
 
 interface EmailFormValue {
   email?: string;
@@ -47,7 +49,7 @@ function ResetPasswordPage() {
 
   const validate = (values: EmailFormValue) => {
     const errors: FormikErrors<EmailFormValue> = {};
-    if (!values.email) {
+    if (!values.email?.trim()) {
       errors.email = "not_empty";
     } else if (!emailRegex.test(values.email)) {
       errors.email = "invalid_email";
@@ -65,9 +67,9 @@ function ResetPasswordPage() {
     initialValues,
     validate,
     onSubmit: async (values: EmailFormValue) => {
-      setEmail(values.email);
+      setEmail(values.email?.trim());
       setSendLoading(true);
-      sendOtpResetPassword({ email: values.email ?? "" })
+      sendOtpResetPassword({ email: values.email?.trim() ?? "" })
         .then((v) => {
           setSendLoading(false);
           setModalKey(Date.now());
@@ -84,17 +86,17 @@ function ResetPasswordPage() {
 
   const validateChangePass = (values: ChangePassValue) => {
     const errors: FormikErrors<ChangePassValue> = {};
-    if (!values.new_password) {
+    if (!values.new_password?.trim()) {
       errors.new_password = "not_empty";
+    } else if (values.new_password?.trim().length < 6) {
+      errors.new_password = "pass_at_least";
     } else if (!passLoginRegex.test(values.new_password)) {
       errors.new_password = "week_pass";
     }
 
-    if (!values.confirm_new_password) {
+    if (!values.confirm_new_password?.trim()) {
       errors.confirm_new_password = "not_empty";
-    } else if (
-      values.new_password?.trim() != values.confirm_new_password?.trim()
-    ) {
+    } else if (values.new_password != values.confirm_new_password) {
       errors.confirm_new_password = "pass_not_same";
     }
     console.log(errors);
@@ -160,18 +162,19 @@ function ResetPasswordPage() {
           <div className="mb-4 text-m_primary_900">{t("enter_otp_inform")}</div>
           <MInput
             required
-            className="mb-4"
-            prefix={<LockIcon />}
+            prefix={<SmsIcon />}
             id="email"
             name="email"
             title={t("email")}
             placeholder={t("enter_email")}
             formik={formik}
           />
+          <div className="mb-4" />
           <ReCAPTCHA
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
             onChange={setCaptcha}
             className="m-auto"
+            hl={i18next.language ?? "vi"}
           />
           {!captcha && submit && (
             <p className="m-auto text-m_error_500 body_regular_14">
@@ -187,7 +190,10 @@ function ResetPasswordPage() {
           />
           <div className="mb-60 w-full flex justify-center mt-5 text-m_primary_900">
             <span className="text-sm mr-1">{t("remember_pass")}</span>
-            <Link href="/signin" className="text-sm font-bold cursor-pointer">
+            <Link
+              href="/signin"
+              className="text-sm font-bold cursor-pointer  underline underline-offset-4"
+            >
               {t("login")}
             </Link>
           </div>
@@ -204,6 +210,11 @@ function ResetPasswordPage() {
             placeholder={t("enter_new_pass")}
             formik={formikChangePass}
             prefix={<LockIcon />}
+            onKeyDown={(e) => {
+              if (e.which == 32) {
+                e.preventDefault();
+              }
+            }}
           />
           <MInput
             required
@@ -214,6 +225,11 @@ function ResetPasswordPage() {
             placeholder={t("re_enter_new_pass")}
             formik={formikChangePass}
             prefix={<LockIcon />}
+            onKeyDown={(e) => {
+              if (e.which == 32) {
+                e.preventDefault();
+              }
+            }}
           />
           <MButton
             className="mb-60 mt-4 w-full h-12"

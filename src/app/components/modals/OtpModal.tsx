@@ -10,6 +10,7 @@ import {
   verifyOtp,
 } from "@/services/api_services/auth_service";
 import { errorToast } from "../toast/customToast";
+import moment from "moment";
 
 interface Props {
   open: boolean;
@@ -30,7 +31,7 @@ function OtpModal({
   setOtp,
   email,
 }: Props) {
-  const [time, setTime] = useState<number>(360);
+  const [time, setTime] = useState<number>(300);
   const [resendLoading, setResendLoading] = useState<boolean>(false);
   const [sendLoading, setSendLoading] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -52,7 +53,7 @@ function OtpModal({
     setResendLoading(true);
     sendOtpResetPassword({ email })
       .then((v) => {
-        setTime(360);
+        setTime(300);
         setResendLoading(false);
       })
       .catch((e) => {
@@ -97,16 +98,19 @@ function OtpModal({
           // style={{}}
           value={otp}
           onChange={(v) => {
-            if (/^\d+$/.test(v)) {
+            if (/^\d+$/.test(v) || undefined) {
               setOtp(v);
             }
           }}
           onComplete={() => {}}
           length={6}
           autoFocus
-          validateChar={(character: string, index: number) =>
-            /^\d+$/.test(character)
-          }
+          validateChar={(character: string, index: number) => {
+            if (index == 0 && character === "") {
+              return true;
+            }
+            return /^\d+$/.test(character);
+          }}
         />
         <p className="text-wrap mt-4">
           {t("not_otp")}
@@ -119,7 +123,7 @@ function OtpModal({
           >
             {t("resent")}
           </button>
-          {resendLoading ? <Spin /> : `${time} s`}
+          {resendLoading ? <Spin /> : moment.utc(time * 1000).format("mm:ss")}
         </p>
 
         <MButton

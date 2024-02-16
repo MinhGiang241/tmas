@@ -24,6 +24,7 @@ interface Props {
   isPassword?: boolean;
   formik?: any;
   maxLength?: number;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
 function MInput({
@@ -45,6 +46,7 @@ function MInput({
   isPassword,
   formik,
   maxLength,
+  onKeyDown,
 }: Props) {
   const [visible, setVisible] = useState(!isPassword);
   const { t } = useTranslation();
@@ -81,6 +83,7 @@ function MInput({
           name={name}
           id={id}
           allowClear
+          onKeyDown={onKeyDown}
           onChange={onChange}
           value={value}
           placeholder={placeholder}
@@ -99,8 +102,10 @@ function MInput({
         />
         {error && touch ? (
           <div className="flex items-center">
-            <NoticeIcon />
-            <div className="text-m_error_500 body_regular_14">{t(error)}</div>
+            <div className="min-w-4">
+              <NoticeIcon />
+            </div>
+            <div className=" text-m_error_500 body_regular_14">{t(error)}</div>
           </div>
         ) : null}
       </div>

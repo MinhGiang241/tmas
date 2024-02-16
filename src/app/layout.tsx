@@ -7,12 +7,16 @@ import { Toaster } from "react-hot-toast";
 import React, { ReactNode, Suspense } from "react";
 import LoadingPage from "./loading";
 import AuthProvider from "./provider/authProvider";
+import useWindowSize from "@/services/ui/useWindowSize";
 
 // const inter = Inter({ subsets: ["latin"] });
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 // const font = localFont({ src: "../fonts/Montserrat-Regular.ttf" });
 export const metadata: Metadata = {
+  icons: {
+    icon: "/images/icon.png",
+  },
   title: "Tmas",
   description: "Nền tảng đánh giá năng lực miễn phí",
   // viewport: "width=device-width, initial-scale=1.0",
@@ -34,7 +38,6 @@ export default function RootLayout({ children }: LayoutProps) {
             </LangProvider>
           </StyledComponentsRegistry>
         </AuthProvider>
-        <Toaster toastOptions={{ custom: { duration: 3000 } }} />
       </body>
     </html>
   );

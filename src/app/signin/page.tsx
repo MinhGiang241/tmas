@@ -17,10 +17,11 @@ import { errorToast, successToast } from "../components/toast/customToast";
 import { signInWithPopup } from "firebase/auth";
 import { auth, facebookProvider, googleProvider } from "@/firebase/config";
 import { useRouter } from "next/navigation";
+import { emailRegex } from "@/services/validation/regex";
+import i18next from "i18next";
 
 function LoginPage() {
-  const { t } = useTranslation();
-
+  const { t, i18n } = useTranslation();
   const [captcha, setCaptcha] = useState<string | null | undefined>();
   const [submit, setSubmit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -34,10 +35,13 @@ function LoginPage() {
   };
   const validate = (values: LoginFormValue) => {
     const errors: FormikErrors<LoginFormValue> = {};
-    if (!values.email) {
+    if (!values.email?.trim()) {
       errors.email = "not_empty";
+    } else if (!emailRegex.test(values.email)) {
+      errors.email = "invalid_email";
     }
-    if (!values.password) {
+
+    if (!values.password?.trim()) {
       errors.password = "not_empty";
     }
     console.log(errors);
@@ -90,7 +94,6 @@ function LoginPage() {
       signInWithPopup(auth, googleProvider)
         .then((data: any) => {
           loginSSO((data?.user as any)["accessToken"]);
-          console.log("googleauth", data);
         })
         .catch((e) => {
           errorToast(e);
@@ -105,7 +108,6 @@ function LoginPage() {
       signInWithPopup(auth, facebookProvider)
         .then((data) => {
           loginSSO((data?.user as any)["accessToken"]);
-          console.log("facebook auth", data);
         })
         .catch((e) => {
           console.log(e);
@@ -163,7 +165,7 @@ function LoginPage() {
       {/* </button> */}
       <form onSubmit={onSubmit}>
         <MInput
-          prefix={<LockIcon />}
+          prefix={<SmsIcon />}
           id="email"
           name="email"
           title={t("email")}
@@ -171,7 +173,7 @@ function LoginPage() {
           formik={formik}
         />{" "}
         <MInput
-          prefix={<SmsIcon />}
+          prefix={<LockIcon />}
           id="password"
           name="password"
           title={t("password")}
@@ -185,6 +187,20 @@ function LoginPage() {
             {t("forgot_pass")}
           </Link>
         </div>
+        <div className="h-5" />
+        <div className="w-full flex flex-col justify-center items-center">
+          <ReCAPTCHA
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
+            onChange={setCaptcha}
+            className="m-auto"
+            hl={i18next.language ?? "vi"}
+          />
+          {!captcha && submit && (
+            <p className="m-auto text-m_error_500 body_regular_14">
+              {t("not_verified")}
+            </p>
+          )}
+        </div>
         <MButton
           loading={loading}
           htmlType="submit"
@@ -192,17 +208,6 @@ function LoginPage() {
           className="h-12 my-4 w-full"
         />
       </form>
-      <div className="h-5" />
-      <ReCAPTCHA
-        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
-        onChange={setCaptcha}
-        className="m-auto"
-      />
-      {!captcha && submit && (
-        <p className="m-auto text-m_error_500 body_regular_14">
-          {t("not_verified")}
-        </p>
-      )}
       <SsoLogin
         signInGoogle={signInGoogle}
         signInFacebook={signInFacebook}
@@ -212,7 +217,10 @@ function LoginPage() {
       />
       <div className="w-full flex justify-center mt-5 text-m_primary_900">
         <span className="text-sm mr-1">{t("no_account")}</span>
-        <Link href="/register" className="text-sm font-bold cursor-pointer">
+        <Link
+          href="/register"
+          className="text-sm font-bold cursor-pointer underline underline-offset-4"
+        >
           {t("register_now")}
         </Link>
       </div>

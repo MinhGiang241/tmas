@@ -23,7 +23,7 @@ function SsoLogin({
       <div className="w-full relative">
         <Divider className="text-m_neutral_300 w-1/2" />
         <div className="absolute z-10 -translate-y-9 w-full">
-          <div className="w-4 text-sm mx-auto bg-white text-m_neutral_300 z-20">
+          <div className="w-12 text-center text-sm mx-auto bg-white text-m_neutral_300 z-20">
             {t("or")}
           </div>
         </div>

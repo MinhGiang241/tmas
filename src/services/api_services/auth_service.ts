@@ -21,7 +21,7 @@ export const login = async (data: LoginFormData) => {
 
 export const sendOtpResetPassword = async ({ email }: { email?: string }) => {
   var results = await callApi.post(
-    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/authorization.generate_otp`,
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.generate_otp`,
     { mailTo: email },
   );
 
@@ -36,7 +36,7 @@ export const verifyOtp = async ({
   otp?: string;
 }) => {
   var results = await callApi.post(
-    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/authorization.verify_otp`,
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.verify_otp`,
     { mailTo, otp },
   );
 
@@ -51,7 +51,7 @@ export const createNewPass = async ({
   new_pass?: string;
 }) => {
   var results = await callApi.post(
-    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/authorization.create_new_pass`,
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.create_new_pass`,
     { email, new_pass },
   );
 

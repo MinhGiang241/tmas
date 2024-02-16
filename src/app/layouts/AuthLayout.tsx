@@ -22,7 +22,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
       ) : (
         <div className=" w-full lg:h-screen max-h-screen flex max-lg:justify-center">
           <div className="lg:flex hidden lg:w-1/2 h-full bg-[url('/images/background.png')] bg-cover"></div>
-          <div className="overflow-auto lg:w-1/2  w-full  h-full min-h-screen flex flex-col items-center 2xl:justify-center ">
+          <div className="overflow-auto lg:w-1/2  w-full  h-full min-h-screen flex flex-col items-center ">
             <div className="flex  flex-col xl:w-3/5 w-4/5 my-6">
               <div className="w-full flex justify-center ">
                 <Image

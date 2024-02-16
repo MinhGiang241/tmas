@@ -46,31 +46,38 @@ function RegisterPage() {
 
   const validate = (values: RegisterFormValues) => {
     const errors: FormikErrors<RegisterFormValues> = {};
-    if (!values.full_name) {
+    if (!values.full_name?.trim()) {
       errors.full_name = "enter_required_name";
+    } else if (values.full_name?.trim().length < 2) {
+      errors.full_name = "name_at_least";
     }
 
-    if (values.company_name && values.company_name.length < 2) {
+    if (
+      values.company_name?.trim() &&
+      values.company_name?.trim()?.length < 2
+    ) {
       errors.company_name = "company_at_least";
     }
-    if (!values.phone) {
+    if (!values.phone?.trim()) {
       errors.phone = "enter_required_phone";
     } else if (!values.phone.match(phoneRegex)) {
       errors.phone = "invalid_phone";
     }
-    if (!values.register_email) {
+    if (!values.register_email?.trim()) {
       errors.register_email = "enter_required_email";
     } else if (!emailRegex.test(values.register_email)) {
       errors.register_email = "invalid_email";
     }
-    if (!values.register_password) {
+    if (!values.register_password?.trim()) {
       errors.register_password = "enter_required_pass";
+    } else if (values.register_password?.trim().length < 6) {
+      errors.register_password = "pass_at_least";
     } else if (!passLoginRegex.test(values.register_password)) {
       errors.register_password = "week_pass";
     }
-    if (!values.re_password) {
+    if (!values.re_password?.trim()) {
       errors.re_password = "enter_required_repass";
-    } else if (values.re_password.trim() != values?.register_password?.trim()) {
+    } else if (values.re_password != values?.register_password) {
       errors.re_password = "pass_not_same";
     }
 
@@ -84,11 +91,11 @@ function RegisterPage() {
       setLoading(true);
       // alert(JSON.stringify(value));
       var data: RegisterFormData = {
-        full_name: values.full_name,
-        company: values.company_name,
-        email: values.register_email,
-        password: values.register_password,
-        phone: values.phone,
+        full_name: values.full_name?.trim(),
+        company: values.company_name?.trim(),
+        email: values.register_email?.trim(),
+        password: values.register_password?.trim(),
+        phone: values.phone?.trim(),
       };
       registerAccount(data)
         .then((v) => {
@@ -170,6 +177,7 @@ function RegisterPage() {
       <form onSubmit={onSubmit}>
         <MInput
           required
+          maxLength={50}
           prefix={<ProfileIcon />}
           title={t("full_name")}
           id="full_name"
@@ -217,6 +225,11 @@ function RegisterPage() {
           name="register_password"
           placeholder={t("re_enter_password")}
           formik={formik}
+          onKeyDown={(e) => {
+            if (e.which == 32) {
+              e.preventDefault();
+            }
+          }}
         />
         <MInput
           isPassword
@@ -227,6 +240,11 @@ function RegisterPage() {
           name="re_password"
           placeholder={t("re_enter_password")}
           formik={formik}
+          onKeyDown={(e) => {
+            if (e.which == 32) {
+              e.preventDefault();
+            }
+          }}
         />
         <MButton
           loading={loading}
@@ -242,7 +260,10 @@ function RegisterPage() {
         />
         <div className="w-full flex justify-center mt-5 text-m_primary_900">
           <span className="text-sm mr-1">{t("has_account")}</span>
-          <Link href="/signin" className="text-sm font-bold cursor-pointer">
+          <Link
+            href="/signin"
+            className="text-sm font-bold cursor-pointer underline underline-offset-4"
+          >
             {t("login")}
           </Link>
         </div>

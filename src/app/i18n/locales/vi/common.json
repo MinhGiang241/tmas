@@ -24,7 +24,7 @@
   "re_enter_password": "Nhập lại mật khẩu",
   "has_account": "Bạn đã có tài khoản rồi?",
   "not_empty": "Không được để trống!",
-  "success_create_account": "Tạo tài khoản thành công, hệ thống đã gửi email xác thực cho bạn!",
+  "success_create_account": "Tạo tài khoản thành công. Vui lòng kiểm tra email của bạn và thực hiện xác nhận để hoàn tất quá trình đăng ký.",
   "error": "Lỗi",
   "fail": "Thất bại",
   "success": "Thành công",
