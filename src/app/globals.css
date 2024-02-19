@@ -123,6 +123,66 @@ body {
   @apply font-normal text-xs;
 }
 
+.caption_bold_14 {
+  @apply font-bold text-sm;
+}
+.caption_semibold_14 {
+  @apply font-semibold text-sm;
+}
+.caption_regular_14 {
+  @apply font-normal text-sm;
+}
+
+.caption_bold_16 {
+  @apply font-bold text-base;
+}
+.caption_semibold_16 {
+  @apply font-semibold text-base;
+}
+.caption_regular_16 {
+  @apply font-normal text-base;
+}
+
+.caption_bold_20 {
+  @apply font-bold text-xl;
+}
+.caption_semibold_20 {
+  @apply font-semibold text-xl;
+}
+.caption_regular_20 {
+  @apply font-normal text-xl;
+}
+
+.caption_bold_24 {
+  @apply font-bold text-2xl;
+}
+.caption_semibold_24 {
+  @apply font-semibold text-2xl;
+}
+.caption_regular_24 {
+  @apply font-normal text-2xl;
+}
+
+.caption_bold_32 {
+  @apply font-bold text-4xl;
+}
+.caption_semibold_32 {
+  @apply font-semibold text-4xl;
+}
+.caption_regular_32 {
+  @apply font-normal text-4xl;
+}
+
+.caption_bold_40 {
+  @apply font-bold text-5xl;
+}
+.caption_semibold_40 {
+  @apply font-semibold text-5xl;
+}
+.caption_regular_40 {
+  @apply font-normal text-5xl;
+}
+
 /* body { */
 /*   color: rgb(var(--foreground-rgb)); */
 /*   background: linear-gradient( */

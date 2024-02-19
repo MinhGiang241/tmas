@@ -1,0 +1,21 @@
+{
+  "overview": "Tổng quan",
+  "exam_group": "Nhóm đề thi",
+  "exams": "Đề thi",
+  "recruitment_exam_session": "Đợt thi tuyển",
+  "exam_bank": "Ngân hàng đề thi",
+  "statistics": "Thống kê",
+  "account_management": "Quản lý tài khoản",
+  "personal_information": "Thông tin cá nhân",
+  "business_information": "Thông tin studio",
+  "max_account": "Số tài khoản tối đa",
+  "full_name": "Họ và tên",
+  "email": "Email",
+  "phone_number": "Số điện thoại",
+  "role": "Vai trò",
+  "language": "Ngôn ngữ",
+  "action": "Tác vụ",
+  "add_account": "Thêm tài khoản ",
+  "save": "Cập nhật",
+  "resend_invite_email": "Gửi email invite"
+}

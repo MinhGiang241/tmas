@@ -150,7 +150,9 @@ function ResetPasswordPage() {
     <AuthLayout>
       <div className="mb-4 flex justify-between">
         <p className="text-m_primary_500 title_bold_24 ">
-          {t("create_new_pass")}
+          {formState == StateForm.ENTER_EMAIL
+            ? t("forgot_pass")
+            : t("create_new_pass")}
         </p>
         <LangComponent />
       </div>

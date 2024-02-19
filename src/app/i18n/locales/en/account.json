@@ -1,0 +1,21 @@
+{
+  "overview": "Overview",
+  "exam_group": "Exam groups",
+  "exams": "Exam",
+  "recruitment_exam_session": "Examinations",
+  "exam_bank": "Exam bank",
+  "statistics": "Statistics",
+  "account_management": "Account Management",
+  "personal_information": "Personal Information",
+  "business_information": "Business Information",
+  "max_account": "Maximum number of accounts",
+  "full_name": "Full name",
+  "email": "Email",
+  "phone_number": "Phone Number",
+  "role": "Role",
+  "language": "Language",
+  "action": "Action",
+  "add_account": "Add account",
+  "save": "Save",
+  "resend_invite_email": "Resend email invite"
+}

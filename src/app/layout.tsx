@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   },
   title: "Tmas",
   description: "Nền tảng đánh giá năng lực miễn phí",
+  // viewport: "width=device-width, initial-scale=1, maximum-scale=1",
   // viewport: "width=device-width, initial-scale=1.0",
 };
 export type LayoutProps = {

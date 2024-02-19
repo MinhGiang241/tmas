@@ -88,7 +88,7 @@ function OtpModal({
         <p className="title_bold_24 mb-3">{t("otp_verify")}</p>
         <p className=" mb-3 text-wrap text-center">
           {t("send_otp_email")}
-          <span className="mx-1 body_semibold_14">{email}</span>
+          <span className="mx-1 body_semibold_14">{email}.</span>
           {t("please_verify")}
         </p>
         <p className="body_semibold_14 my-2">{t("enter_otp")}</p>
@@ -118,18 +118,25 @@ function OtpModal({
             onClick={() => {
               resendOtp();
             }}
-            disabled={resendLoading}
+            disabled={resendLoading || time > 0}
             className="mx-1  body_semibold_14 text-m_primary_500 disabled:text-m_primary_200"
           >
             {t("resent")}
           </button>
-          {resendLoading ? <Spin /> : moment.utc(time * 1000).format("mm:ss")}
+
+          {resendLoading ? (
+            <Spin />
+          ) : (
+            <span className="body_semibold_14 text-m_primary_500">
+              ({moment.utc(time * 1000).format("mm:ss")})
+            </span>
+          )}
         </p>
 
         <MButton
           onClick={() => sendOtp()}
           loading={sendLoading}
-          disabled={(otp?.length ?? 0) < 6 || resendLoading || time === 0}
+          disabled={(otp?.length ?? 0) < 6 || resendLoading}
           className="h-12 mt-3"
           text={t("continue")}
         />
