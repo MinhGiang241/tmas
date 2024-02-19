@@ -37,16 +37,16 @@ const SuccessToast = ({
             <CloseCircleFilled className="text-[5rem] text-m_error_500" />
           )}
         </div>
-        <div className="flex flex-col text-center text-wrap">
-          <h4 className="body_semibold_20 mb-2 overflow-hidden">
+        <div className="flex flex-col text-center">
+          <h4 className="body_semibold_20 mb-2">
             {type == ToastType.SUCCESS ? t("success") : t("fail")}
           </h4>
-          <p className="overflow-hidden">{content}</p>
+          <p>{content}</p>
         </div>
         <div className="flex justify-center my-6">
           <MButton
-            className="h-12"
-            text={t("close")}
+            className="w-36"
+            text={t("finished")}
             onClick={() => {
               toast.dismiss(c.id);
             }}

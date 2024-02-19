@@ -2,6 +2,7 @@ import { Button, Modal } from "antd";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { CloseOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+import MButton from "../config/MButton";
 
 interface Props {
   open: boolean;
@@ -9,13 +10,29 @@ interface Props {
   onCancel: () => void;
   data?: any;
   text?: string;
+  action?: string;
+  loading?: boolean;
 }
 
-function ConfirmModal({ text, open, onOk, onCancel, data }: Props) {
+function ConfirmModal({
+  loading = false,
+  text,
+  open,
+  onOk,
+  onCancel,
+  data,
+  action,
+}: Props) {
   const { t } = useTranslation();
   return (
-    <Modal onCancel={onCancel} footer={<div />} open={open} width={400}>
-      <div className="w-full relative">
+    <Modal
+      className="rounded-lg overflow-hidden pb-0"
+      onCancel={onCancel}
+      footer={<div />}
+      open={open}
+      width={400}
+    >
+      <div className="w-full relative rounded-lg ">
         <div className="flex justify-center mt-6 mb-4">
           <ExclamationCircleFilled className="text-[5rem] text-m_warning_500" />
         </div>
@@ -26,12 +43,24 @@ function ConfirmModal({ text, open, onOk, onCancel, data }: Props) {
           <p className="overflow-hidden">content</p>
         </div>
         <div className="flex justify-center my-6">
-          <Button className="h-12" onClick={() => {}}>
-            {t("close")}
-          </Button>
-          <Button className="h-12" onClick={() => {}}>
-            {text || t("close")}
-          </Button>
+          <MButton
+            type="secondary"
+            text={t("cancel")}
+            className="h-12 w-36 "
+            onClick={() => {
+              onCancel();
+            }}
+          />
+          <div className="w-5" />
+          <MButton
+            loading={loading}
+            text={action}
+            className="h-12 w-36 bg-m_primary_500 text-white"
+            onClick={async () => {
+              onOk();
+              onCancel();
+            }}
+          />
         </div>
       </div>
     </Modal>

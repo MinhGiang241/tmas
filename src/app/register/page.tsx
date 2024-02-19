@@ -70,7 +70,7 @@ function RegisterPage() {
     }
     if (!values.register_password?.trim()) {
       errors.register_password = "enter_required_pass";
-    } else if (values.register_password?.trim().length < 6) {
+    } else if (values.register_password?.trim().length < 4) {
       errors.register_password = "pass_at_least";
     } else if (!passLoginRegex.test(values.register_password)) {
       errors.register_password = "week_pass";
@@ -217,13 +217,14 @@ function RegisterPage() {
           formik={formik}
         />
         <MInput
+          maxLength={16}
           isPassword
           required
           prefix={<LockIcon />}
           title={t("password")}
           id="register_password"
           name="register_password"
-          placeholder={t("re_enter_password")}
+          placeholder={t("enter_password")}
           formik={formik}
           onKeyDown={(e) => {
             if (e.which == 32) {
@@ -232,6 +233,7 @@ function RegisterPage() {
           }}
         />
         <MInput
+          maxLength={16}
           isPassword
           required
           prefix={<LockIcon />}

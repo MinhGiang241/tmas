@@ -15,7 +15,7 @@ interface DataType {
   email?: string;
   phone_number?: string;
   role?: string;
-  action?: string;
+  action?: boolean;
 }
 
 function AccountInfo() {
@@ -156,6 +156,7 @@ function AccountInfo() {
           setOpenDelete(false);
         }}
         onOk={() => {}}
+        action={t("delete")}
       />
 
       <div className="w-full p-5 flex justify-between">

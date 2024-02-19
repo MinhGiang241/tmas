@@ -148,21 +148,7 @@ function LoginPage() {
         <p className="text-m_primary_500 title_bold_24">{t("login")}</p>
         <LangComponent />
       </div>
-      {/* <button */}
-      {/*   onClick={() => { */}
-      {/*     getUserMe() */}
-      {/*       .then((v) => { */}
-      {/*         console.log("user", v); */}
-      {/**/}
-      {/*         successToast(JSON.stringify(v)); */}
-      {/*       }) */}
-      {/*       .catch((e) => { */}
-      {/*         errorToast(e); */}
-      {/*       }); */}
-      {/*   }} */}
-      {/* > */}
-      {/*   Get user me */}
-      {/* </button> */}
+
       <form onSubmit={onSubmit}>
         <MInput
           prefix={<SmsIcon />}
@@ -181,7 +167,7 @@ function LoginPage() {
           isPassword
           formik={formik}
         />
-        <div className="flex w-full justify-end text-m_primary_500 text-sm font-semibold">
+        <div className="flex w-full justify-end text-m_primary_500 caption_semibold_14">
           <Link href={"/reset-password"} className="pl-auto active:opacity-70">
             {" "}
             {t("forgot_pass")}

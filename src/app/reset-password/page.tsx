@@ -88,7 +88,7 @@ function ResetPasswordPage() {
     const errors: FormikErrors<ChangePassValue> = {};
     if (!values.new_password?.trim()) {
       errors.new_password = "not_empty";
-    } else if (values.new_password?.trim().length < 6) {
+    } else if (values.new_password?.trim().length < 4) {
       errors.new_password = "pass_at_least";
     } else if (!passLoginRegex.test(values.new_password)) {
       errors.new_password = "week_pass";
@@ -204,6 +204,7 @@ function ResetPasswordPage() {
       {formState == StateForm.ENTER_PASSWORD && (
         <form className="w-full" onSubmit={onSubmitChagePass}>
           <MInput
+            maxLength={16}
             required
             isPassword
             name={t("new_password")}
@@ -219,6 +220,7 @@ function ResetPasswordPage() {
             }}
           />
           <MInput
+            maxLength={16}
             required
             isPassword
             name={t("confirm_new_password")}

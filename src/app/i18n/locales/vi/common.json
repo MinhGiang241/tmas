@@ -39,7 +39,7 @@
   "invalid_phone": "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại hợp lệ.",
   "company_at_least": "Tên công ty phải chứa ít nhất 2 ký tự.",
   "enter_required_pass": "Vui lòng nhập mật khẩu của bạn.",
-  "pass_at_least": "Mật khẩu phải chứa ít nhất 6 ký tự.",
+  "pass_at_least": "Mật khẩu phải chứa ít nhất 4 ký tự.",
   "week_pass": "Mật khẩu quá yếu. Vui lòng sử dụng ít nhất một ký tự hoa, một ký tự thường và một số",
   "enter_required_repass": "Vui lòng nhập lại mật khẩu của bạn.",
   "pass_not_same": "Mật khẩu không khớp. Vui lòng nhập lại mật khẩu.",
@@ -48,7 +48,7 @@
   "register_with_google": "Đăng ký với Google",
   "register_with_facebook": "Đăng ký với Facebook",
   "remember_pass": "Bạn đã nhớ mật khẩu?",
-  "enter_otp_inform": "Nhập địa chỉ email đã đăng ký của bạn. Bạn sẽ nhận mã otp để tạo mật khẩu mới.",
+  "enter_otp_inform": "Nhập địa chỉ email bạn đã đăng ký. Bạn sẽ nhận được mã OTP để tạo lại mật khẩu mới.",
   "confirm": "Xác nhận",
   "otp_verify": "Xác thực OTP",
   "send_otp_email": "Chúng tôi vừa gửi một mã OTP đến email của bạn",
@@ -64,5 +64,7 @@
   "re_enter_new_pass": "Nhập mật khẩu",
   "success_create_pass": "Tạo mật khẩu mới thành công hãy đăng nhập lại",
   "sign_out": "Đăng xuất",
-  "notify": "Thông báo"
+  "notify": "Thông báo",
+  "cancel": "Cancel",
+  "finished": "Xong"
 }

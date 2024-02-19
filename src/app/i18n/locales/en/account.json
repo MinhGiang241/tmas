@@ -17,5 +17,7 @@
   "action": "Action",
   "add_account": "Add account",
   "save": "Save",
-  "resend_invite_email": "Resend email invite"
+  "resend_invite_email": "Resend email invite",
+  "delete": "Delete",
+  "delete_success": "Successfullt deleted"
 }

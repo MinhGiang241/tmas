@@ -39,7 +39,7 @@
   "invalid_phone": "Phone number is invalid. Please enter valid phone number.",
   "company_at_least": "Company name lenth is at least 2 letter",
   "enter_required_pass": "please enter your required password.",
-  "pass_at_least": "Password lengthis  at leat 6 letter.",
+  "pass_at_least": "Password lengthis  at leat 4 letter.",
   "week_pass": "Passwor is too week. Please use at least 1 uppercase letter, 1 lowercase letter and one number.",
   "enter_required_repass": "Please re-enter your password.",
   "pass_not_same": "Password not match. Please re-enter your password.",
@@ -64,5 +64,7 @@
   "re_enter_new_pass": "Enter password",
   "success_create_pass": "Create new password successfully. Please login again!",
   "sign_out": "Sign out",
-  "notify": "Notification"
+  "notify": "Notification",
+  "cancel": "Cancel",
+  "finished": "Finished"
 }
