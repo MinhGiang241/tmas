@@ -10,6 +10,8 @@ import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { LOCALES } from "../i18n/locales/locales";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 function Header() {
   const { t, i18n } = useTranslation("account");
@@ -19,10 +21,12 @@ function Header() {
     t("overview"),
     t("exam_group"),
     t("exams"),
-    t("recruitment_exam_session"),
+    t("examination"),
     t("exam_bank"),
     t("statistics"),
   ];
+
+  const user = useSelector((state: RootState) => state.user);
 
   var languages = {} as { [key: string]: any };
   languages[LOCALES.VIETNAM] = t(LOCALES.VIETNAM);
@@ -45,16 +49,15 @@ function Header() {
     },
   ];
 
-  const itemsStudio: MenuProps["items"] = [
-    {
+  const itemsStudio: MenuProps["items"] =
+    user?.studios?.map((v) => ({
       key: "1",
       label: (
         <button className="body_regular_14" onClick={async () => {}}>
-          My Studio
+          {v.studio_name}
         </button>
       ),
-    },
-  ];
+    })) ?? [];
 
   return (
     <div className="w-screen fixed h-[68px] bg-m_primary_500 flex justify-center z-50">
@@ -71,12 +74,13 @@ function Header() {
             </Link>
           ))}
         </div>
+
         <div className="flex h-full items-center">
           <HeadPhoneIcon />
 
           <Dropdown menu={{ items: itemsStudio }}>
             <button className="mx-3  flex items-center body_semibold_14 text-white">
-              {"My studio"}
+              {user?.studio?.full_name}
               <div className="w-2" />
               <DropdownIcon />
             </button>
@@ -107,10 +111,22 @@ function Header() {
           </button>
         </div>
         <Dropdown menu={{ items }} trigger={["click"]} placement="bottom">
-          <button className="ml-6">
-            <AvatarIcon className="scale-[3]" />
-          </button>
+          <div className="ml-6 cursor-pointer">
+            {user?.avatar ? (
+              <Image
+                className="rounded-full"
+                loading="lazy"
+                src={user.avatar}
+                alt="avatar"
+                width={34}
+                height={34}
+              />
+            ) : (
+              <AvatarIcon className="scale-[3]" />
+            )}
+          </div>
         </Dropdown>
+        <div className="w-4" />
       </div>
     </div>
   );

@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import HomeLayout from "../layouts/HomeLayout";
 import SecurityAvatar from "../components/icons/security-user.svg";
 import Avatar from "../components/icons/green-profile.svg";
-import Building from "../components/icons/green-buliding.svg";
+import BuildingIcon from "../components/icons/green-buliding.svg";
 import { useTranslation } from "react-i18next";
-import StudioInfo from "./components/studio";
-import AccountInfo from "./components/account";
-import UserProfile from "./components/profile";
+import StudioInfo from "./studio-info/StudioInfo";
+import AccountInfo from "./account-info/AccountInfo";
+import UserProfile from "./profile/UserProfile";
 import ConfirmModal from "../components/modals/ConfirmModal";
 
 function AccountPage() {
@@ -25,7 +25,7 @@ function AccountPage() {
                 : "body_regular_14"
             } flex items-center justify-start rounded-lg w-full pl-1`}
           >
-            <SecurityAvatar />
+            <SecurityAvatar className="min-w-5" />
             <p className="ml-1">{t("account_management")}</p>
           </button>
 
@@ -37,7 +37,7 @@ function AccountPage() {
                 : "body_regular_14"
             } flex items-center justify-start rounded-lg w-full pl-1`}
           >
-            <Avatar />
+            <Avatar className="min-w-5" />
             <p className="ml-1">{t("personal_information")}</p>
           </button>
 
@@ -49,7 +49,7 @@ function AccountPage() {
                 : "body_regular_14"
             } flex items-center justify-start rounded-lg w-full pl-1`}
           >
-            <Building />
+            <BuildingIcon className="min-w-5" />
             <p className="ml-1">{t("business_information")}</p>
           </button>
         </div>

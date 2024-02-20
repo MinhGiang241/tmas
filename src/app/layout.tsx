@@ -8,6 +8,7 @@ import React, { ReactNode, Suspense } from "react";
 import LoadingPage from "./loading";
 import AuthProvider from "./provider/authProvider";
 import useWindowSize from "@/services/ui/useWindowSize";
+import { StoreProviders } from "@/redux/provider";
 
 // const inter = Inter({ subsets: ["latin"] });
 const montserrat = Montserrat({ subsets: ["latin"] });
@@ -32,13 +33,15 @@ export default function RootLayout({ children }: LayoutProps) {
   return (
     <html>
       <body className={`text-black ${montserrat.className}`}>
-        <AuthProvider>
-          <StyledComponentsRegistry>
-            <LangProvider>
-              <Suspense fallback={<LoadingPage />}>{children}</Suspense>
-            </LangProvider>
-          </StyledComponentsRegistry>
-        </AuthProvider>
+        <StoreProviders>
+          <AuthProvider>
+            <StyledComponentsRegistry>
+              <LangProvider>
+                <Suspense fallback={<LoadingPage />}>{children}</Suspense>
+              </LangProvider>
+            </StyledComponentsRegistry>
+          </AuthProvider>
+        </StoreProviders>
       </body>
     </html>
   );

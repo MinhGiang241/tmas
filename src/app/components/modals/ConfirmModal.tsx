@@ -40,7 +40,7 @@ function ConfirmModal({
           <h4 className="body_semibold_20 mb-2 overflow-hidden">
             {t("notify")}
           </h4>
-          <p className="overflow-hidden">content</p>
+          <p className="overflow-hidden">{text}</p>
         </div>
         <div className="flex justify-center my-6">
           <MButton

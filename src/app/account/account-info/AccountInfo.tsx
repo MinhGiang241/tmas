@@ -1,5 +1,5 @@
 import { Button, Divider, Table } from "antd";
-import React, { useState, HTMLAttributes } from "react";
+import React, { useState, HTMLAttributes, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import AddIcon from "../../components/icons/add.svg";
 import { ColumnsType } from "antd/es/table";
@@ -8,6 +8,11 @@ import EditIcon from "../../components/icons/edit.svg";
 import RotateIcon from "../../components/icons/rotate.svg";
 import { Tooltip } from "antd";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
+import AddAccount from "./components/AddAccount";
+import EditAcountInfo from "./components/EditAcountInfo";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { getMemberListInStudio } from "@/services/api_services/account_services";
 
 interface DataType {
   id?: string;
@@ -16,11 +21,15 @@ interface DataType {
   phone_number?: string;
   role?: string;
   action?: boolean;
+  language?: string;
 }
 
 function AccountInfo() {
   const { t } = useTranslation("account");
+  const common = useTranslation();
   const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [openAdd, setOpenAdd] = useState<boolean>(false);
   var rowStartStyle = {
     style: {
       fontSize: "0.875rem",
@@ -56,6 +65,7 @@ function AccountInfo() {
       phone_number: "0989893999",
       role: "admin",
       action: true,
+      language: "vi",
     },
     {
       full_name: "Egan",
@@ -63,6 +73,7 @@ function AccountInfo() {
       phone_number: "0989893999",
       role: "admin",
       action: true,
+      language: "vi",
     },
     {
       full_name: "Egan",
@@ -70,6 +81,7 @@ function AccountInfo() {
       phone_number: "0989893999",
       role: "admin",
       action: false,
+      language: "vi",
     },
   ];
 
@@ -119,6 +131,17 @@ function AccountInfo() {
       ),
     },
     {
+      onHeaderCell: (_) => rowStyle,
+      title: t("language"),
+      dataIndex: "language",
+      key: "language",
+      render: (text) => (
+        <p key={text} className="caption_regular_14">
+          {common.t(text)}
+        </p>
+      ),
+    },
+    {
       onHeaderCell: (_) => rowEndStyle,
       title: t("action"),
       dataIndex: "action",
@@ -126,7 +149,7 @@ function AccountInfo() {
       render: (action) => (
         <div>
           {action ? (
-            <button>
+            <button onClick={() => setOpenEdit(true)}>
               <EditIcon />
             </button>
           ) : (
@@ -148,6 +171,17 @@ function AccountInfo() {
       ),
     },
   ];
+
+  const user = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    getMemberListInStudio().then((v) => {
+      console.log("member", v);
+    });
+  }, []);
+
+  const [addKey, setAddKey] = useState<number>(Date.now());
+  const [updateKey, setUpdateKey] = useState<number>(Date.now());
   return (
     <>
       <ConfirmModal
@@ -157,19 +191,39 @@ function AccountInfo() {
         }}
         onOk={() => {}}
         action={t("delete")}
+        text={t("confirm_delete")}
       />
 
+      <EditAcountInfo
+        key={updateKey}
+        open={openEdit}
+        onCancel={() => {
+          setUpdateKey(Date.now());
+          setOpenEdit(false);
+        }}
+      />
+      <AddAccount
+        key={addKey}
+        open={openAdd}
+        onCancel={() => {
+          setAddKey(Date.now());
+          setOpenAdd(false);
+        }}
+      />
       <div className="w-full p-5 flex justify-between">
         <div>
           <div className="caption_semibold_20">{t("account_management")}</div>
           <div className="caption_regular_14">
             <span>{t("max_account")}</span>
             {": "}
-            <span className="caption_semibold_14">{100}</span>
+            <span className="caption_semibold_14">
+              {user?.licence?.package?.max_user ?? 1}
+            </span>
           </div>
         </div>
         <div>
           <Button
+            onClick={() => setOpenAdd(true)}
             className="border-m_primary_500 border-1 h-11 px-4 rounded-lg text-m_primary_500 caption_semibold_14 flex items-center"
             type="default"
             icon={<AddIcon />}

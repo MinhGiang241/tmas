@@ -2,7 +2,7 @@
   "overview": "Tổng quan",
   "exam_group": "Nhóm đề thi",
   "exams": "Đề thi",
-  "recruitment_exam_session": "Đợt thi tuyển",
+  "examination": "Đợt thi tuyển",
   "exam_bank": "Ngân hàng đề thi",
   "statistics": "Thống kê",
   "account_management": "Quản lý tài khoản",
@@ -11,6 +11,7 @@
   "max_account": "Số tài khoản tối đa",
   "full_name": "Họ và tên",
   "email": "Email",
+  "enter_email": "Nhập email",
   "phone_number": "Số điện thoại",
   "role": "Vai trò",
   "language": "Ngôn ngữ",
@@ -19,5 +20,10 @@
   "save": "Cập nhật",
   "resend_invite_email": "Gửi email invite",
   "delete": "Xóa",
-  "delete_success": "Xóa thành công"
+  "delete_success": "Xóa thành công",
+  "update_account": "Cập nhật tài khoản",
+  "confirm_delete": "Bạn có chắc chắn muốn xoá tài khoản này không?",
+  "member_role": "Thành viên: Kết quả thi cá nhân, đợt thi/đề thi public, đợt thi/đề thi private",
+  "admin_role": "Quản trị viên: Quản trị dữ liệu, kết quả thi cá nhân, đợt thi/đề thi public, đợt thi/đề thi private",
+  "add_account_success": "Đã gửi thư mời cho thành viên thành công!"
 }

@@ -65,6 +65,13 @@
   "success_create_pass": "Tạo mật khẩu mới thành công hãy đăng nhập lại",
   "sign_out": "Đăng xuất",
   "notify": "Thông báo",
-  "cancel": "Cancel",
-  "finished": "Xong"
+  "cancel": "Hủy",
+  "finished": "Xong",
+  "update": "Cập nhật",
+  "complete": "Hoàn thành",
+  "warning": "Cảnh báo",
+  "danger": "Nguy hiểm",
+  "account_existed": "Tài khoản đã tồn tại trong studio !",
+  "allow_add_account": "Tài khoản được phép thêm vào",
+  "tmas_acc_not_found": "Không tìm thấy tài khoản TMAS !"
 }

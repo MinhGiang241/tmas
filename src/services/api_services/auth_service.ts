@@ -59,9 +59,8 @@ export const createNewPass = async ({
 };
 
 export const getUserMe = async () => {
-  // https://api.tmas.demego.vn/apimodel/authorization.get_user_me
   var results = await callApi.get(
-    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/authorization.get_user_me`,
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.me`,
   );
   return results;
 };

@@ -2,7 +2,7 @@
   "overview": "Overview",
   "exam_group": "Exam groups",
   "exams": "Exam",
-  "recruitment_exam_session": "Examinations",
+  "examination": "Examinations",
   "exam_bank": "Exam bank",
   "statistics": "Statistics",
   "account_management": "Account Management",
@@ -11,6 +11,7 @@
   "max_account": "Maximum number of accounts",
   "full_name": "Full name",
   "email": "Email",
+  "enter_email": "Enter email",
   "phone_number": "Phone Number",
   "role": "Role",
   "language": "Language",
@@ -19,5 +20,6 @@
   "save": "Save",
   "resend_invite_email": "Resend email invite",
   "delete": "Delete",
-  "delete_success": "Successfullt deleted"
+  "delete_success": "Successfullt deleted",
+  "confirm_delete": "Are you sure you want to delete this account?"
 }
