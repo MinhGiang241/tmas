@@ -47,7 +47,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
       console.log("check", check);
       if (check["type"] == "danger") {
         errors.email = check["message"];
-      } else if (check["type"] == "wanning") {
+      } else if (check["type"] == "warning") {
         setDanger(check["message"]);
       } else {
         setSuccess(t("allow_add_account"));
@@ -64,6 +64,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
       await sendInviteEmailToMember({ email: values.email!, role })
         .then((v) => {
           setLoading(false);
+          onOk!();
           onCancel();
           successToast(t("add_account_success"));
         })
@@ -130,7 +131,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
             htmlType="submit"
             loading={loading}
             className="w-36"
-            text={common.t("complete")}
+            text={danger ? t("invite") : common.t("complete")}
           />
         </div>
       </form>

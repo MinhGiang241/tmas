@@ -136,7 +136,7 @@ function MInput({
           </div>
         ) : null}
         {dangerText && touch ? (
-          <div className="flex items-center text-m_danger_500">
+          <div className="flex items-center text-m_warning_500">
             <div className="min-w-4">
               <ExclamationCircleFilled />
             </div>

@@ -37,6 +37,25 @@ body {
     system-ui sans-serif;
 }
 
+.ant-radio-checked .ant-radio-inner {
+  border-color: #0b8199 !important ;
+}
+
+.ant-radio-checked .ant-radio-inner:after {
+  background-color: #0b8199;
+}
+
+.ant-radio-inner {
+  background-color: white !important;
+}
+
+.ant-radio:hover .ant-radio-inner {
+  border-color: #0b8199;
+}
+.ant-radio-input {
+  background-color: white !important;
+}
+
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */

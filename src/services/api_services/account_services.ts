@@ -28,3 +28,11 @@ export const checkEmailToWorkSpace = async ({ email }: { email: string }) => {
   );
   return results;
 };
+
+export const deleteFromWorkSpace = async ({ userId }: { userId: string }) => {
+  var results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/userstudio.remove_member`,
+    { userId },
+  );
+  return results;
+};

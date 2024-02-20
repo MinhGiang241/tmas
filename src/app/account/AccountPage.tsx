@@ -16,7 +16,7 @@ function AccountPage() {
   return (
     <HomeLayout>
       <div className="min-h-screen w-full flex text-m_primary_900">
-        <div className="h-[400px] bg-white w-1/5 mt-10 rounded-lg p-4">
+        <div className="max-h-[400px] bg-white w-1/5 mt-10 rounded-lg p-4">
           <button
             onClick={() => setIndex(0)}
             className={`h-[52px] ${
@@ -54,7 +54,7 @@ function AccountPage() {
           </button>
         </div>
         <div className="w-7" />
-        <div className="h-[400px] bg-white w-4/5 mt-10 rounded-lg">
+        <div className="h-fit bg-white w-4/5 mt-10 rounded-lg">
           {index === 0 && <AccountInfo />}
           {index === 1 && <UserProfile />}
           {index === 2 && <StudioInfo />}

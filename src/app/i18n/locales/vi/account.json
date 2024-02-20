@@ -25,5 +25,8 @@
   "confirm_delete": "Bạn có chắc chắn muốn xoá tài khoản này không?",
   "member_role": "Thành viên: Kết quả thi cá nhân, đợt thi/đề thi public, đợt thi/đề thi private",
   "admin_role": "Quản trị viên: Quản trị dữ liệu, kết quả thi cá nhân, đợt thi/đề thi public, đợt thi/đề thi private",
-  "add_account_success": "Đã gửi thư mời cho thành viên thành công!"
+  "member": "Thành viên",
+  "admin": "Quản lý",
+  "invite": "Mời",
+  "add_account_success": "Thêm tài khoản thành công!"
 }

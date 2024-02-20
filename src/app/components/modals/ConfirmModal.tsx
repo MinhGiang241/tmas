@@ -58,7 +58,6 @@ function ConfirmModal({
             className="h-12 w-36 bg-m_primary_500 text-white"
             onClick={async () => {
               onOk();
-              onCancel();
             }}
           />
         </div>

@@ -13,6 +13,9 @@ import EditAcountInfo from "./components/EditAcountInfo";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { getMemberListInStudio } from "@/services/api_services/account_services";
+import { errorToast } from "@/app/components/toast/customToast";
+import { Spin } from "antd";
+import { UserData } from "@/data/user";
 
 interface DataType {
   id?: string;
@@ -58,34 +61,7 @@ function AccountInfo() {
     },
   };
 
-  var data: DataType[] = [
-    {
-      full_name: "Egan",
-      email: "Eganabc.com",
-      phone_number: "0989893999",
-      role: "admin",
-      action: true,
-      language: "vi",
-    },
-    {
-      full_name: "Egan",
-      email: "Eganabc.com",
-      phone_number: "0989893999",
-      role: "admin",
-      action: true,
-      language: "vi",
-    },
-    {
-      full_name: "Egan",
-      email: "Eganabc.com",
-      phone_number: "0989893999",
-      role: "admin",
-      action: false,
-      language: "vi",
-    },
-  ];
-
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<UserData> = [
     {
       onHeaderCell: (_) => rowStartStyle,
       title: t("full_name"),
@@ -126,26 +102,16 @@ function AccountInfo() {
       key: "role",
       render: (text) => (
         <p key={text} className="caption_regular_14">
-          {text}
+          {t(text?.toLowerCase())}
         </p>
       ),
     },
-    {
-      onHeaderCell: (_) => rowStyle,
-      title: t("language"),
-      dataIndex: "language",
-      key: "language",
-      render: (text) => (
-        <p key={text} className="caption_regular_14">
-          {common.t(text)}
-        </p>
-      ),
-    },
+
     {
       onHeaderCell: (_) => rowEndStyle,
       title: t("action"),
-      dataIndex: "action",
-      key: "action",
+      dataIndex: "verified",
+      key: "verified",
       render: (action) => (
         <div>
           {action ? (
@@ -173,13 +139,28 @@ function AccountInfo() {
   ];
 
   const user = useSelector((state: RootState) => state.user);
+  const [members, setMembers] = useState<UserData[]>([]);
+  const [loadingMem, setLoadingMem] = useState<boolean>(true);
 
   useEffect(() => {
-    getMemberListInStudio().then((v) => {
-      console.log("member", v);
-    });
+    loadMembers();
   }, []);
 
+  const loadMembers = () => {
+    setLoadingMem(true);
+    getMemberListInStudio()
+      .then((v) => {
+        setMembers(v);
+        setLoadingMem(false);
+
+        console.log("member", v);
+      })
+      .catch((e) => {
+        setLoadingMem(false);
+        errorToast(e);
+        setMembers([]);
+      });
+  };
   const [addKey, setAddKey] = useState<number>(Date.now());
   const [updateKey, setUpdateKey] = useState<number>(Date.now());
   return (
@@ -189,7 +170,11 @@ function AccountInfo() {
         onCancel={() => {
           setOpenDelete(false);
         }}
-        onOk={() => {}}
+        loading={loadingMem}
+        onOk={() => {
+          setOpenDelete(false);
+          loadMembers();
+        }}
         action={t("delete")}
         text={t("confirm_delete")}
       />
@@ -205,6 +190,9 @@ function AccountInfo() {
       <AddAccount
         key={addKey}
         open={openAdd}
+        onOk={() => {
+          loadMembers();
+        }}
         onCancel={() => {
           setAddKey(Date.now());
           setOpenAdd(false);
@@ -236,9 +224,10 @@ function AccountInfo() {
       <div className="mx-5">
         <Divider className="mt-0" />
         <Table
+          loading={loadingMem}
           bordered={false}
           columns={columns}
-          dataSource={data.map<DataType>((v) => ({
+          dataSource={members.map<UserData>((v) => ({
             ...v,
           }))}
           pagination={false}
@@ -246,11 +235,14 @@ function AccountInfo() {
           onRow={(data, index: any) =>
             ({
               style: {
-                background: data.action ? "#FFFFFF" : "#FFF9E6",
+                background: data.verified ? "#FFFFFF" : "#FFF9E6",
+                borderRadius: "20px",
               },
             }) as HTMLAttributes<any>
           }
         />
+
+        <div className="h-12" />
       </div>
     </>
   );
