@@ -96,6 +96,7 @@ function MInput({
 
       <div className="w-full flex flex-col mb-2  ">
         <Input
+          autoComplete="off"
           disabled={disable}
           // defaultValue={formik.initialValues[name]}
           maxLength={maxLength ?? 500}

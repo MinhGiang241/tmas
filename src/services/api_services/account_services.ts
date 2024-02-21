@@ -1,3 +1,4 @@
+import { UserData } from "@/data/user";
 import { callApi } from "./base_api";
 
 export const changeStudio = async (ownerId?: string) => {
@@ -77,6 +78,14 @@ export const updateRoleMember = async ({
   var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/userstudio.update_role`,
     { userId, role },
+  );
+  return results;
+};
+
+export const updatePersonalInfo = async (data: Object) => {
+  var results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.update_info`,
+    { data },
   );
   return results;
 };

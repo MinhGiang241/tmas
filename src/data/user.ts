@@ -18,6 +18,7 @@ export interface UserData {
   licence?: Licence;
   userId?: string;
   phone_number?: string;
+  phone?: string;
   account?: string;
 }
 
