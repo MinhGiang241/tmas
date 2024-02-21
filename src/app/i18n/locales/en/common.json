@@ -73,5 +73,6 @@
   "danger": "Danger",
   "account_existed": "The account already exists in the studio !",
   "allow_add_account": "Accounts allowed to be added",
-  "tmas_acc_not_found": "Account not found TMAS !"
+  "tmas_acc_not_found": "Account not found TMAS !",
+  "my_studio": "My studio"
 }

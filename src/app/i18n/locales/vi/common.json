@@ -73,5 +73,6 @@
   "danger": "Nguy hiểm",
   "account_existed": "Tài khoản đã tồn tại trong studio !",
   "allow_add_account": "Tài khoản được phép thêm vào",
-  "tmas_acc_not_found": "Không tìm thấy tài khoản TMAS !"
+  "tmas_acc_not_found": "Không tìm thấy tài khoản TMAS !",
+  "my_studio": "Studio của tôi"
 }

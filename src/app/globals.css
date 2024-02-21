@@ -100,6 +100,18 @@ body {
   @apply font-normal text-2xl;
 }
 
+.title_bold_20 {
+  @apply font-bold text-xl;
+}
+
+.title_semibold_20 {
+  @apply font-semibold text-xl;
+}
+
+.title_regular_20 {
+  @apply font-normal text-xl;
+}
+
 .body_bold_20 {
   @apply font-bold text-xl;
 }

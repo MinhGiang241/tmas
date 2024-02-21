@@ -10,8 +10,16 @@ import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { LOCALES } from "../i18n/locales/locales";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { setLoadingMember, setMemberData } from "@/redux/members/MemberSlice";
+import {
+  changeStudio,
+  getInvitaionEmailMember,
+  getMemberListInStudio,
+} from "@/services/api_services/account_services";
+import { errorToast } from "./toast/customToast";
+import { setUserData } from "@/redux/user/userSlice";
 
 function Header() {
   const { t, i18n } = useTranslation("account");
@@ -27,6 +35,9 @@ function Header() {
   ];
 
   const user = useSelector((state: RootState) => state.user);
+  console.log("userrrrrrrrrrrrr", user.studios);
+
+  const dispatch = useDispatch();
 
   var languages = {} as { [key: string]: any };
   languages[LOCALES.VIETNAM] = t(LOCALES.VIETNAM);
@@ -49,15 +60,62 @@ function Header() {
     },
   ];
 
-  const itemsStudio: MenuProps["items"] =
-    user?.studios?.map((v) => ({
-      key: "1",
+  var itemsStudio: MenuProps["items"] =
+    (typeof user?.studios == "string"
+      ? JSON.parse(user?.studios)
+      : user?.studios
+    )?.map((v: any, i: number) => ({
+      key: i,
       label: (
-        <button className="body_regular_14" onClick={async () => {}}>
-          {v.studio_name}
+        <button
+          className="body_regular_14"
+          onClick={async () => {
+            await onChangeStudio(v.ownerId);
+          }}
+        >
+          {v.ownerId == user._id ? common.t("my_studio") : v.studio_name}
         </button>
       ),
     })) ?? [];
+
+  const onChangeStudio = async (ownerId?: string) => {
+    try {
+      var data = await changeStudio(ownerId);
+      await localStorage.removeItem("access_token");
+      await localStorage.setItem("access_token", data["token"]);
+      await dispatch(setUserData(data["user"]));
+      console.log("1------", data["user"]);
+      await loadMembersWhenChangeStudio();
+      // await dispatch(setUserData(data["user"]));
+      // await dispatch(setLoadingMember(true));
+      // await dispatch(setMemberData([]));
+      // var mem = await getMemberListInStudio();
+      // var invitedMem = await getInvitaionEmailMember();
+      // console.log("mem", mem);
+      // console.log("invitedMem", invitedMem);
+      //
+      // await dispatch(setMemberData([...invitedMem, ...mem]));
+
+      console.log("uuu", user);
+    } catch (e: any) {
+      errorToast(e);
+      dispatch(setMemberData([]));
+    }
+  };
+
+  const loadMembersWhenChangeStudio = async () => {
+    try {
+      dispatch(setLoadingMember(true));
+      dispatch(setMemberData([]));
+      var mem = await getMemberListInStudio();
+      var invitedMem = await getInvitaionEmailMember();
+
+      dispatch(setMemberData([...invitedMem, ...mem]));
+    } catch (e: any) {
+      dispatch(setLoadingMember(false));
+      errorToast(e);
+    }
+  };
 
   return (
     <div className="w-screen fixed h-[68px] bg-m_primary_500 flex justify-center z-50">
@@ -80,7 +138,9 @@ function Header() {
 
           <Dropdown menu={{ items: itemsStudio }}>
             <button className="mx-3  flex items-center body_semibold_14 text-white">
-              {user?.studio?.full_name}
+              {user?.studio?._id === user._id
+                ? common.t("my_studio")
+                : user?.studio?.full_name}
               <div className="w-2" />
               <DropdownIcon />
             </button>

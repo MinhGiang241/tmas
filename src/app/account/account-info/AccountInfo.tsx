@@ -10,7 +10,7 @@ import { Tooltip } from "antd";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import AddAccount from "./components/AddAccount";
 import EditAcountInfo from "./components/EditAcountInfo";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import {
   deleteInvitedMemberFromWorkSpace,
@@ -22,6 +22,7 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { Spin } from "antd";
 import { UserData } from "@/data/user";
+import { setLoadingMember, setMemberData } from "@/redux/members/MemberSlice";
 
 interface DataType {
   id?: string;
@@ -39,6 +40,12 @@ function AccountInfo() {
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [openAdd, setOpenAdd] = useState<boolean>(false);
+  const memberList = useSelector((state: RootState) => state.members?.members);
+  const loadingMember = useSelector(
+    (state: RootState) => state.members?.loading,
+  );
+  const dispatch = useDispatch();
+
   var rowStartStyle = {
     style: {
       fontSize: "0.875rem",
@@ -154,8 +161,6 @@ function AccountInfo() {
   ];
 
   const user = useSelector((state: RootState) => state.user);
-  const [members, setMembers] = useState<UserData[]>([]);
-  const [loadingMem, setLoadingMem] = useState<boolean>(true);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [activeMem, setActiveMem] = useState<UserData | undefined>();
 
@@ -167,12 +172,12 @@ function AccountInfo() {
 
   const resendEmail = async (mem: UserData) => {
     try {
-      setLoadingMem(true);
+      dispatch(setLoadingMember(true));
       await sendInviteEmailToMember({ email: mem.email!, role: mem.role! });
       successToast(t("success_send_invite"));
-      setLoadingMem(false);
+      dispatch(setLoadingMember(false));
     } catch (e: any) {
-      setLoadingMem(false);
+      dispatch(setLoadingMember(false));
       errorToast(e);
     }
   };
@@ -196,24 +201,22 @@ function AccountInfo() {
   };
 
   const loadMembers = async () => {
-    console.log("load");
-
     try {
-      setLoadingMem(true);
-      setMembers([]);
+      dispatch(setLoadingMember(true));
+      dispatch(setMemberData([]));
       var mem = await getMemberListInStudio();
       var invitedMem = await getInvitaionEmailMember();
       console.log("mem", mem);
       console.log("invitedMem", invitedMem);
 
-      setMembers([...invitedMem, ...mem]);
-      setLoadingMem(false);
+      dispatch(setMemberData([...invitedMem, ...mem]));
+      dispatch(setLoadingMember(false));
     } catch (e: any) {
-      setLoadingMem(false);
+      dispatch(setLoadingMember(false));
       // errorToast(e);
-      setMembers([]);
     }
   };
+
   const [addKey, setAddKey] = useState<number>(Date.now());
   const [updateKey, setUpdateKey] = useState<number>(Date.now());
   return (
@@ -286,10 +289,10 @@ function AccountInfo() {
       <div className="mx-5">
         <Divider className="mt-0" />
         <Table
-          loading={loadingMem}
+          loading={loadingMember}
           bordered={false}
           columns={columns}
-          dataSource={members.map<UserData>((v) => ({
+          dataSource={memberList.map<UserData>((v) => ({
             ...v,
           }))}
           pagination={false}

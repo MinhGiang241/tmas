@@ -105,7 +105,7 @@ function MDropdown({
           allowClear={allowClear ?? true}
           options={options}
           disabled={disable}
-          defaultValue={formik.initialValues[name]}
+          defaultValue={formik?.initialValues[name]}
           maxLength={maxLength ?? 500}
           onBlur={onBlur}
           status={error && touch ? `error` : ""}

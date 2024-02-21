@@ -39,7 +39,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
         })
         .catch((e) => {
           console.log(e);
-          redirect("/signin");
+          router.push("/signin");
         });
     }
   }, []);

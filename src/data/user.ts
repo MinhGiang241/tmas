@@ -18,6 +18,7 @@ export interface UserData {
   licence?: Licence;
   userId?: string;
   phone_number?: string;
+  account?: string;
 }
 
 export interface Licence {
@@ -52,6 +53,8 @@ export interface Package {
 }
 
 export interface Studio {
+  _id?: string;
+  studio_name?: string;
   accountType?: string;
   avatar?: string;
   createdTime?: string;
