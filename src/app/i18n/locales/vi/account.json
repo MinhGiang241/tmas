@@ -28,5 +28,7 @@
   "member": "Thành viên",
   "admin": "Quản lý",
   "invite": "Mời",
-  "add_account_success": "Thêm tài khoản thành công!"
+  "add_account_success": "Thêm tài khoản thành công!",
+  "success_send_invite": "Gửi thư mời thành công",
+  "success_update_member": "Cập nhật thông tin thành công!"
 }

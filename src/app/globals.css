@@ -56,6 +56,10 @@ body {
   background-color: white !important;
 }
 
+.ant-select-selector {
+  border-radius: 0.5rem !important;
+}
+
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */

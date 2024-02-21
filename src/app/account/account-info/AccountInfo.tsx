@@ -12,8 +12,14 @@ import AddAccount from "./components/AddAccount";
 import EditAcountInfo from "./components/EditAcountInfo";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { getMemberListInStudio } from "@/services/api_services/account_services";
-import { errorToast } from "@/app/components/toast/customToast";
+import {
+  deleteInvitedMemberFromWorkSpace,
+  deleteMemberFromWorkSpace,
+  getInvitaionEmailMember,
+  getMemberListInStudio,
+  sendInviteEmailToMember,
+} from "@/services/api_services/account_services";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { Spin } from "antd";
 import { UserData } from "@/data/user";
 
@@ -112,15 +118,23 @@ function AccountInfo() {
       title: t("action"),
       dataIndex: "verified",
       key: "verified",
-      render: (action) => (
+      render: (action, data) => (
         <div>
           {action ? (
-            <button onClick={() => setOpenEdit(true)}>
+            <button
+              onClick={async () => {
+                setUpdateKey(Date.now());
+                await setActiveMem(data);
+                console.log("act", activeMem);
+
+                setOpenEdit(true);
+              }}
+            >
               <EditIcon />
             </button>
           ) : (
             <Tooltip placement="bottom" title={t("resend_invite_email")}>
-              <button>
+              <button onClick={() => resendEmail(data)}>
                 <RotateIcon />
               </button>
             </Tooltip>
@@ -128,6 +142,7 @@ function AccountInfo() {
           <button
             className="ml-2"
             onClick={() => {
+              setActiveMem(data);
               setOpenDelete(true);
             }}
           >
@@ -141,25 +156,63 @@ function AccountInfo() {
   const user = useSelector((state: RootState) => state.user);
   const [members, setMembers] = useState<UserData[]>([]);
   const [loadingMem, setLoadingMem] = useState<boolean>(true);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [activeMem, setActiveMem] = useState<UserData | undefined>();
 
   useEffect(() => {
+    console.log("use effect");
+
     loadMembers();
   }, []);
 
-  const loadMembers = () => {
-    setLoadingMem(true);
-    getMemberListInStudio()
-      .then((v) => {
-        setMembers(v);
-        setLoadingMem(false);
+  const resendEmail = async (mem: UserData) => {
+    try {
+      setLoadingMem(true);
+      await sendInviteEmailToMember({ email: mem.email!, role: mem.role! });
+      successToast(t("success_send_invite"));
+      setLoadingMem(false);
+    } catch (e: any) {
+      setLoadingMem(false);
+      errorToast(e);
+    }
+  };
 
-        console.log("member", v);
-      })
-      .catch((e) => {
-        setLoadingMem(false);
-        errorToast(e);
-        setMembers([]);
-      });
+  const deleteMember = async (mem?: UserData) => {
+    try {
+      setLoadingDelete(true);
+      console.log("mem", mem);
+      if (mem?.verified) {
+        await deleteMemberFromWorkSpace({ userId: mem?._id });
+      } else {
+        await deleteInvitedMemberFromWorkSpace({ email: mem?.email });
+      }
+      successToast(t("delete_success"));
+      setLoadingDelete(false);
+      loadMembers();
+    } catch (e: any) {
+      setLoadingDelete(false);
+      errorToast(e);
+    }
+  };
+
+  const loadMembers = async () => {
+    console.log("load");
+
+    try {
+      setLoadingMem(true);
+      setMembers([]);
+      var mem = await getMemberListInStudio();
+      var invitedMem = await getInvitaionEmailMember();
+      console.log("mem", mem);
+      console.log("invitedMem", invitedMem);
+
+      setMembers([...invitedMem, ...mem]);
+      setLoadingMem(false);
+    } catch (e: any) {
+      setLoadingMem(false);
+      // errorToast(e);
+      setMembers([]);
+    }
   };
   const [addKey, setAddKey] = useState<number>(Date.now());
   const [updateKey, setUpdateKey] = useState<number>(Date.now());
@@ -168,23 +221,30 @@ function AccountInfo() {
       <ConfirmModal
         open={openDelete}
         onCancel={() => {
+          setActiveMem(undefined);
           setOpenDelete(false);
         }}
-        loading={loadingMem}
+        loading={loadingDelete}
         onOk={() => {
           setOpenDelete(false);
-          loadMembers();
+          deleteMember(activeMem);
         }}
         action={t("delete")}
         text={t("confirm_delete")}
       />
 
       <EditAcountInfo
+        data={activeMem}
         key={updateKey}
         open={openEdit}
         onCancel={() => {
-          setUpdateKey(Date.now());
+          setActiveMem(undefined);
           setOpenEdit(false);
+        }}
+        onOk={() => {
+          setOpenEdit(false);
+          setActiveMem(undefined);
+          loadMembers();
         }}
       />
       <AddAccount
@@ -194,7 +254,6 @@ function AccountInfo() {
           loadMembers();
         }}
         onCancel={() => {
-          setAddKey(Date.now());
           setOpenAdd(false);
         }}
       />
@@ -211,7 +270,10 @@ function AccountInfo() {
         </div>
         <div>
           <Button
-            onClick={() => setOpenAdd(true)}
+            onClick={() => {
+              setAddKey(Date.now());
+              setOpenAdd(true);
+            }}
             className="border-m_primary_500 border-1 h-11 px-4 rounded-lg text-m_primary_500 caption_semibold_14 flex items-center"
             type="default"
             icon={<AddIcon />}

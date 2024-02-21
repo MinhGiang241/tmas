@@ -1,14 +1,20 @@
-import { Input } from "antd";
+import { Input, Select } from "antd";
 import React, { ReactNode, useEffect, useState } from "react";
 import NoticeIcon from "@/app/components/icons/notice.svg";
 import CloseEye from "@/app/components/icons/close_eye.svg";
 import OpenEye from "@/app/components/icons/open_eye.svg";
 import { useTranslation } from "react-i18next";
 import { CheckCircleFilled, ExclamationCircleFilled } from "@ant-design/icons";
+import { FormikErrors } from "formik";
 
 interface Props {
   onChange?: (e: React.ChangeEvent<any>) => void;
   onBlur?: (e: React.FocusEvent<any, Element>) => void;
+  setValue?: (
+    field: string,
+    value: any,
+    shouldValidate?: boolean | undefined,
+  ) => Promise<FormikErrors<any>> | Promise<void>;
   title?: string;
   required?: Boolean;
   id: string;
@@ -31,9 +37,10 @@ interface Props {
   successText?: string;
   disable?: boolean;
   allowClear?: boolean;
+  options?: { value: any; label: string; disabled?: boolean }[];
 }
 
-function MInput({
+function MDropdown({
   disable,
   onChange,
   required = false,
@@ -44,20 +51,19 @@ function MInput({
   value,
   className,
   action,
-  type,
+  allowClear,
   touch = false,
   onBlur,
   placeholder,
-  suffix,
-  prefix,
+  setValue,
   isPassword,
+  options,
   formik,
   maxLength,
   onKeyDown,
   namespace,
   dangerText,
   successText,
-  allowClear,
 }: Props) {
   var np;
   var er;
@@ -67,6 +73,7 @@ function MInput({
     touch = formik.touched[name];
     onBlur = formik.handleBlur;
     value = formik.values[name];
+    setValue = formik.setFieldValue;
   }
   if (error?.startsWith("common")) {
     er = error.replace("common_", "");
@@ -76,7 +83,6 @@ function MInput({
     np = namespace;
   }
 
-  const [visible, setVisible] = useState(!isPassword);
   const { t } = useTranslation(np);
   const common = useTranslation();
   useEffect(() => {}, [formik]);
@@ -95,36 +101,25 @@ function MInput({
       </div>
 
       <div className="w-full flex flex-col mb-2  ">
-        <Input
+        <Select
+          allowClear={allowClear ?? true}
+          options={options}
           disabled={disable}
-          // defaultValue={formik.initialValues[name]}
+          defaultValue={formik.initialValues[name]}
           maxLength={maxLength ?? 500}
-          prefix={prefix}
           onBlur={onBlur}
           status={error && touch ? `error` : ""}
-          type={type ?? visible ? "text" : "password"}
           className={`${successText && touch ? "border-m_success_500" : ""} ${
             dangerText && touch ? "border-m_warning_500" : ""
           }  h-12 rounded-lg ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
-          name={name}
           id={id}
-          allowClear={allowClear ?? true}
           onKeyDown={onKeyDown}
-          onChange={onChange}
-          value={value}
+          onChange={(e) => {
+            if (setValue) {
+              setValue!(name, e);
+            }
+          }}
           placeholder={placeholder}
-          suffix={
-            suffix ?? isPassword ? (
-              <div
-                onClick={() => {
-                  setVisible(!visible);
-                }}
-                className="active:opacity-70 cursor-pointer"
-              >
-                {visible ? <OpenEye style={{ color: "red" }} /> : <CloseEye />}
-              </div>
-            ) : undefined
-          }
         />
         {successText && touch ? (
           <div className="flex items-center text-m_success_500">
@@ -157,4 +152,4 @@ function MInput({
   );
 }
 
-export default MInput;
+export default MDropdown;

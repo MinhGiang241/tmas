@@ -29,10 +29,46 @@ export const checkEmailToWorkSpace = async ({ email }: { email: string }) => {
   return results;
 };
 
-export const deleteFromWorkSpace = async ({ userId }: { userId: string }) => {
+export const deleteMemberFromWorkSpace = async ({
+  userId,
+}: {
+  userId?: string;
+}) => {
   var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/userstudio.remove_member`,
     { userId },
+  );
+  return results;
+};
+export const deleteInvitedMemberFromWorkSpace = async ({
+  email,
+}: {
+  email?: string;
+}) => {
+  var results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/studioinvitation.remove`,
+    { email },
+  );
+  return results;
+};
+
+export const getInvitaionEmailMember = async () => {
+  var results = await callApi.get(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/studioinvitation.load`,
+  );
+  return results;
+};
+
+export const updateRoleMember = async ({
+  userId,
+  role,
+}: {
+  userId: string;
+  role: string;
+}) => {
+  var results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/userstudio.update_role`,
+    { userId, role },
   );
   return results;
 };

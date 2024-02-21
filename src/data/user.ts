@@ -16,11 +16,13 @@ export interface UserData {
   verified?: boolean;
   lang?: string;
   licence?: Licence;
+  userId?: string;
+  phone_number?: string;
 }
 
 export interface Licence {
   _id?: string;
-  package?: Pakage;
+
   key?: string;
   userId?: string;
   price?: number;

@@ -6,15 +6,15 @@ import { redirect } from "next/navigation";
 
 function AuthLayout({ children }: { children: ReactNode }) {
   const size = useWindowSize();
-  const [loading, setLoading] = useState<boolean>(true);
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      redirect("/");
-    } else {
-      setLoading(false);
-    }
-  }, []);
+  const [loading, setLoading] = useState<boolean>(false);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("access_token");
+  //   if (token) {
+  //     redirect("/");
+  //   } else {
+  //     setLoading(false);
+  //   }
+  // }, []);
   return (
     <>
       {loading ? (
