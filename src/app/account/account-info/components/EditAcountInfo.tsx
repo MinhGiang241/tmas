@@ -26,7 +26,7 @@ function EditAcountInfo({ open, onCancel, onOk, data }: Props) {
   var initialValues: UserData = {
     email: data?.email,
     full_name: data?.full_name,
-    phone_number: data?.phone_number,
+    phone_number: data?.phone,
     role: data?.role,
   };
 
