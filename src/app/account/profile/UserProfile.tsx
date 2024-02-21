@@ -118,6 +118,7 @@ function UserProfile() {
 
         <div className="my-3 w-full flex justify-between">
           <MInput
+            disable
             required
             name="account"
             title={t("account")}
