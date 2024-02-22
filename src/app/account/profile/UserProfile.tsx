@@ -97,7 +97,7 @@ function UserProfile() {
       </div>
       <Divider className="my-5" />
       <form className="w-full" onSubmit={onSubmit}>
-        <div className="w-full flex justify-between">
+        <div className="w-full lg:flex justify-between">
           <MInput
             required
             name="full_name"
@@ -116,7 +116,7 @@ function UserProfile() {
           />
         </div>
 
-        <div className="my-3 w-full flex justify-between">
+        <div className="my-3 w-full lg:flex justify-between">
           <MInput
             disable
             required
@@ -135,7 +135,7 @@ function UserProfile() {
           />
         </div>
 
-        <div className="w-full flex justify-between">
+        <div className="w-full lg:flex justify-between">
           <MDropdown
             allowClear={false}
             options={["en", "vi"].map((v: any, i: number) => ({
@@ -153,7 +153,7 @@ function UserProfile() {
 
           <div />
         </div>
-        <div>
+        <div className="max-lg:flex justify-center">
           <MButton
             loading={loading}
             htmlType="submit"

@@ -63,7 +63,7 @@
   "confirm_new_pass": "Confirm password",
   "re_enter_new_pass": "Enter password",
   "success_create_pass": "Create new password successfully. Please login again!",
-  "sign_out": "Sign out",
+  "sign_out": "Log out",
   "notify": "Notification",
   "cancel": "Cancel",
   "finished": "Finished",
@@ -74,5 +74,7 @@
   "account_existed": "The account already exists in the studio !",
   "allow_add_account": "Accounts allowed to be added",
   "tmas_acc_not_found": "Account not found TMAS !",
-  "my_studio": "My studio"
+  "my_studio": "My studio",
+  "change_pass": "Change password",
+  "support": "Support"
 }

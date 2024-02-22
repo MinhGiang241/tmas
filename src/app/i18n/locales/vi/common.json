@@ -74,5 +74,7 @@
   "account_existed": "Tài khoản đã tồn tại trong studio !",
   "allow_add_account": "Tài khoản được phép thêm vào",
   "tmas_acc_not_found": "Không tìm thấy tài khoản TMAS !",
-  "my_studio": "Studio của tôi"
+  "my_studio": "Studio của tôi",
+  "change_pass": "Đổi mật khẩu",
+  "support": "Hỗ trợ"
 }

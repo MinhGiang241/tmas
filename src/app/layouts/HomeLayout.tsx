@@ -51,7 +51,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       ) : (
         <main className="bg-neutral-100 text-m_primary_900">
           <Header />
-          <div className="h-[68px]" />
+          <div className="lg:h-[68px] h-14 " />
           <div className="max-w-[1140px] mx-auto">{children}</div>
         </main>
       )}

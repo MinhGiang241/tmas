@@ -31,5 +31,13 @@
   "add_account_success": "Thêm tài khoản thành công!",
   "success_send_invite": "Gửi thư mời thành công",
   "success_update_member": "Cập nhật thông tin thành công!",
-  "account": "Tài khoản"
+  "account": "Tài khoản",
+  "logo": "Logo",
+  "studio_name": "Tên Studio",
+  "cap_studio_name": "*Thông tin hiển thị trên trang làm bài của ứng viên",
+  "banner_studio": "Banner studio",
+  "color_button": "Màu button",
+  "color_text": "Màu chữ",
+  "preview": "Xem trước",
+  "sample": "Mẫu"
 }

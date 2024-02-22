@@ -8,17 +8,21 @@ import StudioInfo from "./studio-info/StudioInfo";
 import AccountInfo from "./account-info/AccountInfo";
 import UserProfile from "./profile/UserProfile";
 import ConfirmModal from "../components/modals/ConfirmModal";
+import { useParams, useSearchParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { setHomeIndex } from "@/redux/home/homeSlice";
 
 function AccountPage() {
-  const [index, setIndex] = useState<number>(0);
-
+  const index = useSelector((state: RootState) => state.home.index);
+  const dispatch = useDispatch();
   const { t } = useTranslation("account");
   return (
     <HomeLayout>
       <div className="min-h-screen w-full flex text-m_primary_900">
-        <div className="max-h-[400px] bg-white w-1/5 mt-10 rounded-lg p-4">
+        <div className="lg:block hidden max-h-[400px] bg-white w-1/5 mt-10 rounded-lg p-4">
           <button
-            onClick={() => setIndex(0)}
+            onClick={() => dispatch(setHomeIndex(0))}
             className={`h-[52px] ${
               index === 0
                 ? "bg-m_primary_100 body_semibold_14"
@@ -30,7 +34,7 @@ function AccountPage() {
           </button>
 
           <button
-            onClick={() => setIndex(1)}
+            onClick={() => dispatch(setHomeIndex(1))}
             className={`h-[52px] ${
               index === 1
                 ? "bg-m_primary_100 body_semibold_14"
@@ -42,7 +46,7 @@ function AccountPage() {
           </button>
 
           <button
-            onClick={() => setIndex(2)}
+            onClick={() => dispatch(setHomeIndex(2))}
             className={`h-[52px] ${
               index === 2
                 ? "bg-m_primary_100 body_semibold_14"
@@ -53,8 +57,8 @@ function AccountPage() {
             <p className="ml-1">{t("business_information")}</p>
           </button>
         </div>
-        <div className="w-7" />
-        <div className="h-fit bg-white w-4/5 mt-10 rounded-lg">
+        <div className="hidden lg:block w-7" />
+        <div className="h-screen lg:h-fit bg-white lg:w-4/5 w-full lg:mt-10 rounded-lg">
           {index === 0 && <AccountInfo />}
           {index === 1 && <UserProfile />}
           {index === 2 && <StudioInfo />}

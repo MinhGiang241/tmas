@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface Props {
   open: boolean;
@@ -20,9 +20,11 @@ function BaseModal({
   title,
   width,
 }: Props) {
+  const [keyModal, setKeyModal] = useState<number>(Date.now());
+
   return (
     <Modal
-      key={key}
+      key={keyModal}
       destroyOnClose
       className="rounded-lg overflow-hidden pb-0"
       onCancel={onCancel}

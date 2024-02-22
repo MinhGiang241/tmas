@@ -60,6 +60,14 @@ body {
   border-radius: 0.5rem !important;
 }
 
+.ant-popover-arrow {
+  display: none !important;
+}
+
+.ant-popover-inner {
+  border-radius: 4px !important;
+}
+
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */

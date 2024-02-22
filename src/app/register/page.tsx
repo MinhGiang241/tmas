@@ -144,26 +144,26 @@ function RegisterPage() {
   };
 
   const signInGoogle = () => {
-    setGLoading(true);
     signInWithPopup(auth, googleProvider)
       .then((data: any) => {
+        setGLoading(true);
         registerSSO((data?.user as any)["accessToken"]);
         console.log("googleauth", data);
       })
       .catch((e) => {
-        errorToast(e);
+        // errorToast(e);
         setGLoading(false);
       });
   };
   const signInFacebook = () => {
-    setFLoading(true);
     signInWithPopup(auth, facebookProvider)
       .then((data) => {
+        setFLoading(true);
         registerSSO((data?.user as any)["accessToken"]);
         console.log("facebook auth", data);
       })
       .catch((e) => {
-        errorToast(e);
+        // errorToast(e);
         setFLoading(false);
       });
   };

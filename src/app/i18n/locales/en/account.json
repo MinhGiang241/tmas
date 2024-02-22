@@ -7,7 +7,7 @@
   "statistics": "Statistics",
   "account_management": "Account Management",
   "personal_information": "Personal Information",
-  "business_information": "Business Information",
+  "business_information": "Studio Information",
   "max_account": "Maximum number of accounts",
   "full_name": "Full name",
   "email": "Email",
@@ -30,5 +30,13 @@
   "add_account_success": "Add Member successfully",
   "success_send_invite": "Send invite email successfully",
   "success_update_member": "Update information successfully!",
-  "account": "Account"
+  "account": "Account",
+  "logo": "Logo",
+  "studio_name": "Studio name",
+  "cap_studio_name": "*The information displayed on the candidate's work page",
+  "banner_studio": "Banner studio",
+  "color_button": "Button color",
+  "color_text": "Text color",
+  "preview": "Preview",
+  "sample": "Sample"
 }

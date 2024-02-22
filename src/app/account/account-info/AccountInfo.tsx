@@ -81,7 +81,7 @@ function AccountInfo() {
       dataIndex: "full_name",
       key: "full_name",
       render: (text) => (
-        <p key={text} className="caption_regular_14">
+        <p key={text} className="min-w-24 caption_regular_14">
           {text}
         </p>
       ),
@@ -100,8 +100,8 @@ function AccountInfo() {
     {
       onHeaderCell: (_) => rowStyle,
       title: t("phone_number"),
-      dataIndex: "phone_number",
-      key: "phone_number",
+      dataIndex: "phone",
+      key: "phone",
       render: (text) => (
         <p key={text} className="caption_regular_14">
           {text}
@@ -126,12 +126,12 @@ function AccountInfo() {
       dataIndex: "verified",
       key: "verified",
       render: (action, data) => (
-        <div>
+        <div className="min-w-16">
           {action ? (
             <button
               onClick={async () => {
                 setUpdateKey(Date.now());
-                await setActiveMem(data);
+                setActiveMem(data);
                 console.log("act", activeMem);
 
                 setOpenEdit(true);
@@ -286,7 +286,7 @@ function AccountInfo() {
         </div>
       </div>
       {/* <Divider className="p-0 my-0 mx-5" /> */}
-      <div className="mx-5">
+      <div className="mx-5 max-lg:overflow-scroll">
         <Divider className="mt-0" />
         <Table
           loading={loadingMember}

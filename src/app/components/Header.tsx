@@ -4,15 +4,20 @@ import Link from "next/link";
 import HeadPhoneIcon from "../components/icons/headphone.svg";
 import DropdownIcon from "../components/icons/dropdown.svg";
 import AvatarIcon from "../components/icons/avatar-default.svg";
-import { Popover, Dropdown, Space } from "antd";
+import { Popover, Dropdown, Space, Drawer, Button, Divider } from "antd";
 import type { MenuProps } from "antd";
 import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { LOCALES } from "../i18n/locales/locales";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setLoadingMember, setMemberData } from "@/redux/members/MemberSlice";
+import {
+  MenuOutlined,
+  CloseOutlined,
+  CaretDownOutlined,
+} from "@ant-design/icons";
 import {
   changeStudio,
   getInvitaionEmailMember,
@@ -20,6 +25,8 @@ import {
 } from "@/services/api_services/account_services";
 import { errorToast } from "./toast/customToast";
 import { setUserData } from "@/redux/user/userSlice";
+import useWindowSize from "@/services/ui/useWindowSize";
+import { setHomeIndex } from "@/redux/home/homeSlice";
 
 function Header() {
   const { t, i18n } = useTranslation("account");
@@ -35,8 +42,7 @@ function Header() {
   ];
 
   const user = useSelector((state: RootState) => state.user);
-  console.log("userrrrrrrrrrrrr", user.studios);
-
+  const pathname = usePathname();
   const dispatch = useDispatch();
 
   var languages = {} as { [key: string]: any };
@@ -70,6 +76,7 @@ function Header() {
         <button
           className="body_regular_14"
           onClick={async () => {
+            setOpenDrawer(false);
             await onChangeStudio(v.ownerId);
           }}
         >
@@ -81,20 +88,11 @@ function Header() {
   const onChangeStudio = async (ownerId?: string) => {
     try {
       var data = await changeStudio(ownerId);
-      await localStorage.removeItem("access_token");
-      await localStorage.setItem("access_token", data["token"]);
-      await dispatch(setUserData(data["user"]));
+      localStorage.removeItem("access_token");
+      localStorage.setItem("access_token", data["token"]);
+      dispatch(setUserData(data["user"]));
       console.log("1------", data["user"]);
       await loadMembersWhenChangeStudio();
-      // await dispatch(setUserData(data["user"]));
-      // await dispatch(setLoadingMember(true));
-      // await dispatch(setMemberData([]));
-      // var mem = await getMemberListInStudio();
-      // var invitedMem = await getInvitaionEmailMember();
-      // console.log("mem", mem);
-      // console.log("invitedMem", invitedMem);
-      //
-      // await dispatch(setMemberData([...invitedMem, ...mem]));
 
       console.log("uuu", user);
     } catch (e: any) {
@@ -117,11 +115,83 @@ function Header() {
     }
   };
 
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+  const [openPop, setOpenPop] = useState<boolean>(false);
+
+  const size = useWindowSize();
+
   return (
-    <div className="w-screen fixed h-[68px] bg-m_primary_500 flex justify-center z-50">
+    <div className="w-screen fixed lg:h-[68px] h-14 bg-m_primary_500 flex justify-center z-50">
+      <Drawer
+        headerStyle={{ display: "none" }}
+        className="lg:hidden"
+        title="Drawer with extra actions"
+        placement={"left"}
+        width={400}
+        onClose={() => setOpenDrawer(false)}
+        open={openDrawer}
+      >
+        <div>
+          <div className="w-full flex justify-between">
+            <Dropdown
+              menu={{ items: itemsStudio }}
+              trigger={["click"]}
+              placement={"bottom"}
+            >
+              <button className="flex  items-center body_semibold_14 ">
+                {user?.studio?._id === user._id
+                  ? common.t("my_studio")
+                  : user?.studio?.full_name}
+                <div className="w-2" />
+                <CaretDownOutlined />
+              </button>
+            </Dropdown>
+            <button onClick={() => setOpenDrawer(false)}>
+              <CloseOutlined />
+            </button>
+          </div>
+          <div className="h-4" />
+          {links.map((v, i) => (
+            <button
+              onClick={() => setOpenDrawer(false)}
+              className="block mb-2 body_regular_14"
+              key={i}
+            >
+              {v}
+            </button>
+          ))}
+          <Divider />
+          <div className="h-full flex items-center">
+            <button
+              className="flex items-center"
+              onClick={() => {
+                if (i18next.language == "vi") {
+                  i18n.changeLanguage("en");
+                } else {
+                  i18n.changeLanguage("vi");
+                }
+              }}
+            >
+              <Image
+                className=""
+                src={`/flags/${i18next.language}.png`}
+                alt="language"
+                width={24}
+                height={24}
+              />
+              <div className="ml-2 body_semibold_14 ">
+                {i18next.language == "vi" ? "VIE" : "ENG"}
+              </div>
+            </button>
+          </div>
+        </div>
+      </Drawer>
+      <button className="lg:hidden mx-3" onClick={() => setOpenDrawer(true)}>
+        <MenuOutlined className="text-white text-base" />
+      </button>
       <div className="w-[1140px] h-full flex items-center justify-between">
         <Image src="/images/white-logo.png" alt="tmas" width={97} height={40} />
-        <div className="h-full flex items-center justify-center">
+        <div className="hidden h-full lg:flex items-center justify-center">
           {links.map((e, i) => (
             <Link
               key={i}
@@ -133,11 +203,11 @@ function Header() {
           ))}
         </div>
 
-        <div className="flex h-full items-center">
-          <HeadPhoneIcon />
+        <div className="lg:flex hidden h-full items-center">
+          <HeadPhoneIcon className="lg:flex hidden" />
 
           <Dropdown menu={{ items: itemsStudio }}>
-            <button className="mx-3  flex items-center body_semibold_14 text-white">
+            <button className="mx-3 lg:flex hidden items-center body_semibold_14 text-white">
               {user?.studio?._id === user._id
                 ? common.t("my_studio")
                 : user?.studio?.full_name}
@@ -147,7 +217,7 @@ function Header() {
           </Dropdown>
         </div>
 
-        <div className="h-full flex items-center">
+        <div className="h-full lg:flex hidden items-center">
           <button
             className="flex items-center"
             onClick={() => {
@@ -170,8 +240,73 @@ function Header() {
             </div>
           </button>
         </div>
-        <Dropdown menu={{ items }} trigger={["click"]} placement="bottom">
-          <div className="ml-6 cursor-pointer">
+        <Popover
+          onOpenChange={(v) => {
+            setOpenPop(v);
+          }}
+          open={openPop}
+          placement="leftBottom"
+          trigger={["click"]}
+          content={
+            <div className="w-full flex flex-col body_regular_14 p-2 items-start">
+              <button
+                onClick={() => {
+                  setOpenPop(false);
+                  dispatch(setHomeIndex(0));
+                  if (pathname != "/") {
+                    router.push("/");
+                  }
+                }}
+                className="my-1"
+              >
+                {t("account_management")}
+              </button>
+              <button
+                onClick={() => {
+                  setOpenPop(false);
+                  dispatch(setHomeIndex(1));
+                  if (pathname != "/") {
+                    router.push("/");
+                  }
+                }}
+                className="my-1"
+              >
+                {t("personal_information")}
+              </button>
+              <button
+                onClick={() => {
+                  setOpenPop(false);
+                  dispatch(setHomeIndex(2));
+                  if (pathname != "/") {
+                    router.push("/");
+                  }
+                }}
+                className="my-1"
+              >
+                {t("business_information")}
+              </button>
+              <button className="my-1">{common.t("support")}</button>
+              <button className="my-1">{common.t("change_pass")}</button>
+
+              <Divider className="my-3" />
+              <button
+                onClick={() => {
+                  dispatch(setHomeIndex(0));
+                  setOpenPop(false);
+                  localStorage.removeItem("access_token");
+                  router.push("/signin");
+                }}
+                className="my-1 text-m_error_500"
+              >
+                {common.t("sign_out")}
+              </button>
+            </div>
+          }
+        >
+          <button
+            onClick={() => setOpenPop(true)}
+            className="lg:ml-6  cursor-pointer"
+          >
             {user?.avatar ? (
               <Image
                 className="rounded-full"
@@ -182,11 +317,13 @@ function Header() {
                 height={34}
               />
             ) : (
-              <AvatarIcon className="scale-[3]" />
+              <div className="h-fit">
+                <AvatarIcon className=" scale-[3] max-lg:-translate-x-8" />
+              </div>
             )}
-          </div>
-        </Dropdown>
-        <div className="w-4" />
+          </button>
+        </Popover>
+        <div className="hidden lg:block lg:w-4 " />
       </div>
     </div>
   );

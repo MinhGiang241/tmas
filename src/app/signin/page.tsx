@@ -14,11 +14,15 @@ import { FormikErrors, useFormik } from "formik";
 import { LoginFormData, LoginFormValue } from "@/data/form_interface";
 import { getUserMe, login } from "@/services/api_services/auth_service";
 import { errorToast, successToast } from "../components/toast/customToast";
-import { signInWithPopup } from "firebase/auth";
+import { signInWithPopup, signInWithRedirect } from "firebase/auth";
 import { auth, facebookProvider, googleProvider } from "@/firebase/config";
 import { useRouter } from "next/navigation";
 import { emailRegex } from "@/services/validation/regex";
 import i18next from "i18next";
+import { Button, Divider } from "antd";
+
+import FacebookIcon from "../components/icons/facebook.svg";
+import GoogleIcon from "../components/icons/google.svg";
 
 function LoginPage() {
   const { t, i18n } = useTranslation();
@@ -87,26 +91,32 @@ function LoginPage() {
     }
   };
 
-  const signInGoogle = () => {
+  const signInGoogle = async () => {
     setSubmit(true);
     if (captcha) {
-      setGLoading(true);
-      signInWithPopup(auth, googleProvider)
-        .then((data: any) => {
+      try {
+        var data = await signInWithPopup(auth, googleProvider);
+        if (data) {
+          // setGLoading(true);
           loginSSO((data?.user as any)["accessToken"]);
-        })
-        .catch((e) => {
-          errorToast(e);
-          setGLoading(false);
-        });
+        }
+      } catch (e: any) {
+        // errorToast(e);
+        setGLoading(false);
+      }
+      // signInWithPopup(auth, googleProvider)
+      //   .then((data: any) => {
+      //   })
+      //   .catch((e) => {});
     }
   };
   const signInFacebook = () => {
     setSubmit(true);
     if (captcha) {
-      setFLoading(true);
+      // signInWithRedirect(auth, facebookProvider)
       signInWithPopup(auth, facebookProvider)
         .then((data) => {
+          setFLoading(true);
           loginSSO((data?.user as any)["accessToken"]);
         })
         .catch((e) => {
@@ -194,6 +204,7 @@ function LoginPage() {
           className="h-12 my-4 w-full"
         />
       </form>
+
       <SsoLogin
         signInGoogle={signInGoogle}
         signInFacebook={signInFacebook}
@@ -201,6 +212,7 @@ function LoginPage() {
         gLoading={gLoading}
         fLoading={fLoading}
       />
+
       <div className="w-full flex justify-center mt-5 text-m_primary_900">
         <span className="text-sm mr-1">{t("no_account")}</span>
         <Link
