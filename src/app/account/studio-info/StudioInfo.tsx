@@ -9,45 +9,73 @@ import { RootState } from "@/redux/store";
 import MButton from "@/app/components/config/MButton";
 
 function StudioInfo() {
-  const [showCam, setShowCam] = useState<boolean>(false);
+  const [showCamLogo, setShowCamLogo] = useState<boolean>(false);
+  const [showCamBanner, setShowCamBanner] = useState<boolean>(false);
   const { t } = useTranslation("account");
   const common = useTranslation();
   const user = useSelector((state: RootState) => state.user);
 
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [preview, setPreview] = useState<any>("");
-  const fileInputRef = useRef(null);
+  const [selectedLogo, setSelectedLogo] = useState(null);
+  const [selectedBanner, setSelectedBanner] = useState(null);
 
-  const [buttonColor, setButtonColor] = useState<string>("fff");
-  const [textColor, setTextColor] = useState<string>("fff");
+  const [previewLogo, setPreviewLogo] = useState<any>("");
+  const [previewBanner, setPreviewBanner] = useState<any>("");
 
-  const handleFileChange = (e: any) => {
+  const logoInputRef = useRef(null);
+  const bannerInputRef = useRef(null);
+
+  const [buttonColor, setButtonColor] = useState<string>("7572FF");
+  const [textColor, setTextColor] = useState<string>("ffffff");
+
+  const handleLogoChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setSelectedFile(file);
-        setPreview(reader.result);
+        setSelectedLogo(file);
+        setPreviewLogo(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleButtonClick = () => {
-    if (fileInputRef) {
-      (fileInputRef!.current! as any).click();
+  const handleBannerChange = (e: any) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedBanner(file);
+        setPreviewBanner(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleButtonLogoClick = () => {
+    if (logoInputRef) {
+      (logoInputRef!.current! as any).click();
     }
   };
 
-  useEffect(() => {}, [buttonColor, textColor]);
-
+  const handleButtonBannerClick = () => {
+    if (bannerInputRef) {
+      (bannerInputRef!.current! as any).click();
+    }
+  };
   return (
     <div className="w-full p-5 flex flex-col">
       <input
+        accept=".svg,.jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
         type="file"
-        ref={fileInputRef}
+        ref={logoInputRef}
         style={{ display: "none" }}
-        onChange={handleFileChange}
+        onChange={handleLogoChange}
+      />
+      <input
+        accept=".svg,.jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+        type="file"
+        ref={bannerInputRef}
+        style={{ display: "none" }}
+        onChange={handleBannerChange}
       />
       <div className="w-full mt-2 title_semibold_20">
         {t("business_information")}
@@ -56,52 +84,36 @@ function StudioInfo() {
       <div className="body_semibold_14 mb-4">{t("logo")}</div>
 
       <button
-        onClick={handleButtonClick}
+        onClick={handleButtonLogoClick}
         onMouseOver={() => {
-          setShowCam(true);
+          setShowCamLogo(true);
         }}
         onMouseLeave={() => {
-          setShowCam(false);
+          setShowCamLogo(false);
         }}
         className="hover:bg-neutral-400 mb-4 w-[76px] h-[76px] rounded-full border border-m_primary_900 flex justify-center items-center relative "
       >
-        {showCam && (
+        {showCamLogo && (
           <div className="z-20">
             <CameraFilled className=" scale-[2] text-white z-20" />
           </div>
         )}
-        {preview ? (
+        {previewLogo ? (
           <Image
             className="absolute top-0 bottom-0 right-0 left-0 rounded-[50%]"
             objectFit="cover"
             fill
-            // objectFit="fill"
-            // width={76}
-            // height={76}
-            src={preview}
+            src={previewLogo}
             alt="Preview"
           />
         ) : (
           <div
             className={` ${
-              !preview
+              !previewLogo
                 ? "bg-[url('/images/logo-default.png')] bg-no-repeat bg-cover"
                 : ""
             }  absolute top-2 bottom-2 left-2 right-2`}
-          >
-            {preview && (
-              <Image
-                className="absolute top-0 bottom-0 right-0 left-0 rounded-[50%]"
-                objectFit="cover"
-                fill
-                // objectFit="fill"
-                // width={76}
-                // height={76}
-                src={preview}
-                alt="Preview"
-              />
-            )}
-          </div>
+          ></div>
         )}
       </button>
 
@@ -114,7 +126,36 @@ function StudioInfo() {
       />
       <div className="italic text-sm">{t("cap_studio_name")}</div>
       <div className="body_semibold_14 mt-2 mb-4">{t("banner_studio")}</div>
-      <div className="body_semibold_14">{t("color_button")}</div>
+
+      <button
+        onClick={handleButtonBannerClick}
+        onMouseOver={() => {
+          setShowCamBanner(true);
+        }}
+        onMouseLeave={() => {
+          setShowCamBanner(false);
+        }}
+        className="0 mb-4 w-full min-h-80 sm:min-h-[500px] flex justify-center items-center relative "
+      >
+        {showCamBanner && (
+          <div className="z-20">
+            <CameraFilled className=" scale-[2] text-white z-20" />
+          </div>
+        )}
+        {previewBanner ? (
+          <Image
+            className="absolute top-0 bottom-0 right-0 left-0 "
+            objectFit="cover"
+            fill
+            src={previewBanner}
+            alt="Preview"
+          />
+        ) : (
+          <div className="hover:bg-neutral-400 absolute top-0 bottom-0 right-0 left-0 bg-[url('/images/banner-default.jpeg')] bg-no-repeat bg-cover w-full max-h-lg" />
+        )}
+      </button>
+
+      <div className="body_semibold_14 mb-1">{t("color_button")}</div>
       <ColorPicker
         value={buttonColor}
         onChange={(v) => setButtonColor(v.toHex())}
@@ -124,7 +165,7 @@ function StudioInfo() {
           className={`h-12 w-full rounded-lg border border-m_primary_900`}
         />
       </ColorPicker>
-      <div className="body_semibold_14">{t("color_text")}</div>
+      <div className="body_semibold_14 mt-4 mb-1">{t("color_text")}</div>
       <ColorPicker value={textColor} onChange={(v) => setTextColor(v.toHex())}>
         <button
           style={{ background: `#${textColor}` }}
@@ -132,14 +173,20 @@ function StudioInfo() {
         />
       </ColorPicker>
 
-      <div className="body_semibold_14">{"Preview"}</div>
-      <Button
-        style={{ background: `#${buttonColor}`, color: `#${textColor}` }}
-        className={`w-[107px] h-[40px] mb-4 rounded-lg`}
-      >
-        {t("sample")}
-      </Button>
-      <MButton className="w-36" text={t("preview")} />
+      <div className="body_semibold_14 mt-4">{"Preview"}</div>
+      <div className="w-full flex justify-center mb-2">
+        <Button
+          style={{ background: `#${buttonColor}`, color: `#${textColor}` }}
+          className={`w-[107px] h-[40px] mb-4 rounded-lg body_semibold_16`}
+        >
+          {t("sample")}
+        </Button>
+      </div>
+      <div className="w-full flex justify-center">
+        <MButton type="secondary" className="w-36" text={t("preview")} />
+        <div className="w-4" />
+        <MButton className="w-36" text={common.t("update")} />
+      </div>
     </div>
   );
 }
