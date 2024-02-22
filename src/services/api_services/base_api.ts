@@ -10,7 +10,7 @@ export class callApi {
     config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     var headers = {
-      lang: i18next.language == "en" ? "en_US" : "vi_VN",
+      Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: `Bearer ${localStorage.getItem("access_token")}`,
     };
     var results = await axios.post(url, data, { headers, ...config });
@@ -28,7 +28,7 @@ export class callApi {
     config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     var headers = {
-      lang: i18next.language == "en" ? "en_US" : "vi_VN",
+      Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: `Bearer ${localStorage.getItem("access_token")}`,
     };
 
