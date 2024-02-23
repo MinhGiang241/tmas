@@ -41,5 +41,6 @@
   "sample": "Sample",
   "studio_qr": "Scan the QR code to take the test!",
   "test": "Aptitude assessment tests",
-  "join_now": "Join now"
+  "join_now": "Join now",
+  "owner": "Owner"
 }

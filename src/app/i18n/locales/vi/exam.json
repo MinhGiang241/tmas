@@ -1,0 +1,13 @@
+{
+  "exam_group": "Nhóm đề thi",
+  "question_group": "Nhóm câu hỏi",
+  "search_exam_group": "Tìm kiếm nhóm câu hỏi",
+  "create_exam_group": "Tạo nhóm câu hỏi",
+  "create_new_group": "Tạo nhóm mới",
+  "enter_group_name": "Nhập tên nhóm",
+  "enter_content": "Nhập nội dung",
+  "cancel": "Hủy",
+  "save": "Lưu",
+  "edit_group": "Sửa nhóm",
+  "confirm_delete": "Bạn có chắc chắn xóa nhóm này không?"
+}

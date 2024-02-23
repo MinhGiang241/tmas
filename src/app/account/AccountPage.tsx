@@ -7,8 +7,6 @@ import { useTranslation } from "react-i18next";
 import StudioInfo from "./studio-info/StudioInfo";
 import AccountInfo from "./account-info/AccountInfo";
 import UserProfile from "./profile/UserProfile";
-import ConfirmModal from "../components/modals/ConfirmModal";
-import { useParams, useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setHomeIndex } from "@/redux/home/homeSlice";
@@ -19,7 +17,7 @@ function AccountPage() {
   const { t } = useTranslation("account");
   return (
     <HomeLayout>
-      <div className="min-h-screen w-full flex text-m_neutral_900">
+      <div className="w-full flex">
         <div className="lg:block hidden max-h-[400px] bg-white w-1/5 mt-10 rounded-lg p-4">
           <button
             onClick={() => dispatch(setHomeIndex(0))}

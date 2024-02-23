@@ -10,6 +10,8 @@ export interface BaseModalProps {
   width?: number;
   key?: any;
   className?: string;
+  centered?: boolean;
+  offPadding?: boolean;
 }
 
 function BaseModal({
@@ -21,21 +23,29 @@ function BaseModal({
   title,
   width,
   className,
+  centered,
+  offPadding,
 }: BaseModalProps) {
   const [keyModal, setKeyModal] = useState<number>(Date.now());
 
   return (
     <Modal
+      style={{ padding: 0 }}
+      centered={centered}
       key={keyModal}
       destroyOnClose
-      className={`rounded-lg overflow-hidden pb-0 ${className}`}
+      className={` rounded-lg  ${className}`}
       onCancel={onCancel}
       footer={<div />}
       open={open}
       onOk={onOk}
       width={width}
     >
-      <div className="w-full relative rounded-lg ">
+      <div
+        className={` ${
+          offPadding ? "" : "px-6 py-5"
+        } w-full relative rounded-lg `}
+      >
         <div className={`w-full px-2 rounded-lg flex flex-col items-center`}>
           {title && <p className="caption_bold_24 my-4">{title}</p>}
           {children}

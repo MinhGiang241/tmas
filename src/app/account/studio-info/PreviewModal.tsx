@@ -1,3 +1,4 @@
+"use client";
 import BaseModal, { BaseModalProps } from "@/app/components/config/BaseModal";
 import useWindowSize from "@/services/ui/useWindowSize";
 import React from "react";
@@ -6,6 +7,7 @@ import { Button, Divider } from "antd";
 import { useTranslation } from "react-i18next";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+// import "./full-modal.css";
 
 interface Props extends BaseModalProps {
   buttonColor?: string;
@@ -19,13 +21,17 @@ function PreviewModal(props: Props) {
   const user = useSelector((state: RootState) => state.user);
   const size = useWindowSize();
   const { t } = useTranslation("account");
+
   return (
     <BaseModal
-      width={size.width <= 1024 ? size.width - 20 : size.width * 0.85}
+      offPadding
+      centered={size.width <= 1024 ? false : true}
+      // width={size.width <= 1024 ? size.width - 20 : size.width * 0.85}
+      width={size.width}
       {...props}
     >
       <div className=" flex max-lg:flex-col w-full">
-        <div className={`relative w-full lg:w-1/2  lg:min-h-[700px] h-[402px]`}>
+        <div className={`relative w-full lg:w-1/2  lg:min-h-[700px] h-screen`}>
           {props.banner ? (
             <Image
               loading="lazy"
@@ -112,6 +118,7 @@ function PreviewModal(props: Props) {
           >
             {t("join_now")}
           </Button>
+          <div className="max-lg:h-10" />
         </div>
       </div>
       {/* <div className="h-8" /> */}

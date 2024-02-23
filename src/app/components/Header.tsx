@@ -28,17 +28,17 @@ import { setUserData } from "@/redux/user/userSlice";
 import useWindowSize from "@/services/ui/useWindowSize";
 import { setHomeIndex } from "@/redux/home/homeSlice";
 
-function Header() {
+function Header({ path }: { path?: string }) {
   const { t, i18n } = useTranslation("account");
   const common = useTranslation();
   const router = useRouter();
   const links = [
-    t("overview"),
-    t("exam_group"),
-    t("exams"),
-    t("examination"),
-    t("exam_bank"),
-    t("statistics"),
+    "overview",
+    "exam_group",
+    "exams",
+    "examination",
+    "exam_bank",
+    "statistics",
   ];
 
   const user = useSelector((state: RootState) => state.user);
@@ -202,10 +202,14 @@ function Header() {
           {links.map((e, i) => (
             <Link
               key={i}
-              href={"/"}
-              className=" text-center body_semibold_14 text-white px-4"
+              href={e == "exam_group" ? `/${e}` : "/"}
+              className={`flex items-center text-center body_semibold_14 text-white px-4 h-full ${
+                pathname.includes(e)
+                  ? "bg-m_primary_400 after:content-[''] border-b-white border-b-4"
+                  : ""
+              }`}
             >
-              {e}
+              <p>{t(e)}</p>
             </Link>
           ))}
         </div>

@@ -68,6 +68,11 @@ body {
   border-radius: 4px !important;
 }
 
+.ant-modal-content {
+  border-radius: 10px !important;
+  padding: 0 !important;
+}
+
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */

@@ -4,6 +4,8 @@ import LOGIN_VI from "./locales/vi/common.json";
 import LOGIN_EN from "./locales/en/common.json";
 import ACCOUNT_VI from "./locales/vi/account.json";
 import ACCOUNT_EN from "./locales/en/account.json";
+import EXAM_EN from "./locales/en/exam.json";
+import EXAM_VI from "./locales/vi/exam.json";
 
 import { LOCALES } from "./locales/locales";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -12,10 +14,12 @@ export const resources = {
   en: {
     common: LOGIN_EN,
     account: ACCOUNT_EN,
+    exam: EXAM_EN,
   },
   vi: {
     common: LOGIN_VI,
     account: ACCOUNT_VI,
+    exam: EXAM_VI,
   },
 } as const;
 
@@ -27,7 +31,7 @@ i18n
   .init({
     resources,
     lng: LOCALES.VIETNAM,
-    ns: ["common", "account"],
+    ns: ["common", "account", "exam"],
     fallbackLng: "vi",
     defaultNS,
     interpolation: {

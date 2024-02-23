@@ -52,7 +52,11 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
         <main className="bg-neutral-100 text-m_neutral_900">
           <Header />
           <div className="lg:h-[68px] h-14 " />
-          <div className="max-w-[1140px] mx-auto">{children}</div>
+          <div className="max-w-[1140px] mx-auto">
+            <div className="min-h-screen w-full text-m_neutral_900">
+              {children}
+            </div>
+          </div>
         </main>
       )}
     </>
