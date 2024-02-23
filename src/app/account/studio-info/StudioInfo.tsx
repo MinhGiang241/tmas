@@ -110,6 +110,7 @@ function StudioInfo() {
 
   const onSubmit = async () => {
     try {
+      validate();
       if (error) return;
       setLoadingUpdate(true);
       if (selectedLogo) {
