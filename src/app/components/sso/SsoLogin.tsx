@@ -37,7 +37,7 @@ function SsoLogin({
         )}
         <Button
           loading={gLoading}
-          className="w-full mb-4 h-12 text-m_primary_900"
+          className="w-full mb-4 h-12 "
           onClick={() => signInGoogle()}
         >
           {isLogin ? t("signin_google") : t("register_with_google")}
@@ -52,7 +52,7 @@ function SsoLogin({
 
         <Button
           loading={fLoading}
-          className="w-full mb-4 h-12 text-m_primary_900"
+          className="w-full mb-4 h-12 "
           onClick={() => signInFacebook()}
         >
           {isLogin ? t("signin_facebook") : t("register_with_facebook")}

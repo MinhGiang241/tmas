@@ -19,7 +19,7 @@ import {
 } from "@/data/form_interface";
 import { login, registerAccount } from "@/services/api_services/auth_service";
 import { errorToast, successToast } from "../components/toast/customToast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import SsoLogin from "../components/sso/SsoLogin";
 import { signInWithPopup } from "firebase/auth";
 import { auth, facebookProvider, googleProvider } from "@/firebase/config";
@@ -28,6 +28,9 @@ import {
   passLoginRegex,
   phoneRegex,
 } from "@/services/validation/regex";
+import { Spin } from "antd";
+import LoadingPage from "../loading";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 
 function RegisterPage() {
   const router = useRouter();
@@ -35,11 +38,17 @@ function RegisterPage() {
   const [gLoading, setGLoading] = useState<boolean>(false);
   const [fLoading, setFLoading] = useState<boolean>(false);
   const { t } = useTranslation();
+
+  var search = useSearchParams();
+  const invitationId = search.get("invitationId");
+  const emailParams = search.get("email");
+
   const initialValues: RegisterFormValues = {
+    invitationId: invitationId ?? undefined,
     full_name: undefined,
     phone: undefined,
     company_name: undefined,
-    register_email: undefined,
+    register_email: emailParams ?? undefined,
     register_password: undefined,
     re_password: undefined,
   };
@@ -91,6 +100,7 @@ function RegisterPage() {
       setLoading(true);
       // alert(JSON.stringify(value));
       var data: RegisterFormData = {
+        invitationId: values.invitationId ?? invitationId ?? undefined,
         full_name: values.full_name?.trim(),
         company: values.company_name?.trim(),
         email: values.register_email?.trim(),
@@ -122,6 +132,7 @@ function RegisterPage() {
   };
   const registerSSO = (ssoToken: string | undefined) => {
     var data: RegisterFormData = {
+      invitationId: undefined,
       email: undefined,
       password: undefined,
       sso_token: ssoToken,
@@ -167,110 +178,121 @@ function RegisterPage() {
         setFLoading(false);
       });
   };
+  const [initLoading, setInitLoading] = useState<boolean>(true);
+  useOnMountUnsafe(() => {
+    if (!invitationId) {
+      setInitLoading(!initLoading);
+    }
+  });
 
   return (
-    <AuthLayout>
-      <div className="mb-4 flex justify-between">
-        <p className="text-m_primary_500 title_bold_24">{t("register")}</p>
-        <LangComponent />
-      </div>
-      <form onSubmit={onSubmit}>
-        <MInput
-          required
-          maxLength={50}
-          prefix={<ProfileIcon />}
-          title={t("full_name")}
-          id="full_name"
-          name="full_name"
-          placeholder={t("enter_full_name")}
-          onChange={formik.handleChange}
-          error={formik.errors.full_name}
-          touch={formik.touched.full_name}
-          onBlur={formik.handleBlur}
-          value={formik.values.full_name}
-          // formik={formik}
-        />
-        <MInput
-          prefix={<BuildingIcon />}
-          title={t("company_name")}
-          id="company_name"
-          name="company_name"
-          placeholder={t("enter_company_name")}
-          formik={formik}
-        />
-        <MInput
-          required
-          prefix={<PhoneIcon />}
-          title={t("phone")}
-          id="phone"
-          name="phone"
-          placeholder={t("enter_phone")}
-          formik={formik}
-        />
-        <MInput
-          required
-          prefix={<SmsIcon />}
-          title={t("email")}
-          id="register_email"
-          name="register_email"
-          placeholder={t("enter_email")}
-          formik={formik}
-        />
-        <MInput
-          maxLength={16}
-          isPassword
-          required
-          prefix={<LockIcon />}
-          title={t("password")}
-          id="register_password"
-          name="register_password"
-          placeholder={t("enter_password")}
-          formik={formik}
-          onKeyDown={(e) => {
-            if (e.which == 32) {
-              e.preventDefault();
-            }
-          }}
-        />
-        <MInput
-          maxLength={16}
-          isPassword
-          required
-          prefix={<LockIcon />}
-          title={t("confirm_password")}
-          id="re_password"
-          name="re_password"
-          placeholder={t("re_enter_password")}
-          formik={formik}
-          onKeyDown={(e) => {
-            if (e.which == 32) {
-              e.preventDefault();
-            }
-          }}
-        />
-        <MButton
-          loading={loading}
-          className="w-full h-12 mt-2"
-          htmlType="submit"
-          text={t("register")}
-        />
-        <SsoLogin
-          gLoading={gLoading}
-          fLoading={fLoading}
-          signInFacebook={signInFacebook}
-          signInGoogle={signInGoogle}
-        />
-        <div className="w-full flex justify-center mt-5 text-m_primary_900">
-          <span className="text-sm mr-1">{t("has_account")}</span>
-          <Link
-            href="/signin"
-            className="text-sm font-bold cursor-pointer underline underline-offset-4"
-          >
-            {t("login")}
-          </Link>
-        </div>
-      </form>
-    </AuthLayout>
+    <>
+      {
+        <AuthLayout>
+          <div className="mb-4 flex justify-between">
+            <p className="text-m_primary_500 title_bold_24">{t("register")}</p>
+            <LangComponent />
+          </div>
+          <form onSubmit={onSubmit}>
+            <MInput
+              required
+              maxLength={50}
+              prefix={<ProfileIcon />}
+              title={t("full_name")}
+              id="full_name"
+              name="full_name"
+              placeholder={t("enter_full_name")}
+              onChange={formik.handleChange}
+              error={formik.errors.full_name}
+              touch={formik.touched.full_name}
+              onBlur={formik.handleBlur}
+              value={formik.values.full_name}
+              // formik={formik}
+            />
+            <MInput
+              prefix={<BuildingIcon />}
+              title={t("company_name")}
+              id="company_name"
+              name="company_name"
+              placeholder={t("enter_company_name")}
+              formik={formik}
+            />
+            <MInput
+              required
+              prefix={<PhoneIcon />}
+              title={t("phone")}
+              id="phone"
+              name="phone"
+              placeholder={t("enter_phone")}
+              formik={formik}
+            />
+            <MInput
+              disable={!!invitationId && !!emailParams}
+              required
+              prefix={<SmsIcon />}
+              title={t("email")}
+              id="register_email"
+              name="register_email"
+              placeholder={t("enter_email")}
+              formik={formik}
+            />
+            <MInput
+              maxLength={16}
+              isPassword
+              required
+              prefix={<LockIcon />}
+              title={t("password")}
+              id="register_password"
+              name="register_password"
+              placeholder={t("enter_password")}
+              formik={formik}
+              onKeyDown={(e) => {
+                if (e.which == 32) {
+                  e.preventDefault();
+                }
+              }}
+            />
+            <MInput
+              maxLength={16}
+              isPassword
+              required
+              prefix={<LockIcon />}
+              title={t("confirm_password")}
+              id="re_password"
+              name="re_password"
+              placeholder={t("re_enter_password")}
+              formik={formik}
+              onKeyDown={(e) => {
+                if (e.which == 32) {
+                  e.preventDefault();
+                }
+              }}
+            />
+            <MButton
+              loading={loading}
+              className="w-full h-12 mt-2"
+              htmlType="submit"
+              text={t("register")}
+            />
+            <SsoLogin
+              gLoading={gLoading}
+              fLoading={fLoading}
+              signInFacebook={signInFacebook}
+              signInGoogle={signInGoogle}
+            />
+            <div className="w-full flex justify-center mt-5 ">
+              <span className="text-sm mr-1">{t("has_account")}</span>
+              <Link
+                href="/signin"
+                className="text-sm font-bold cursor-pointer underline underline-offset-4"
+              >
+                {t("login")}
+              </Link>
+            </div>
+          </form>
+        </AuthLayout>
+      }
+    </>
   );
 }
 

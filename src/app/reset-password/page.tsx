@@ -161,7 +161,7 @@ function ResetPasswordPage() {
           onSubmit={onSubmitSendOtp}
           className="w-full flex-col flex justify-between"
         >
-          <div className="mb-4 text-m_primary_900">{t("enter_otp_inform")}</div>
+          <div className="mb-4 ">{t("enter_otp_inform")}</div>
           <MInput
             required
             prefix={<SmsIcon />}
@@ -190,7 +190,7 @@ function ResetPasswordPage() {
             text={t("confirm")}
             htmlType="submit"
           />
-          <div className="mb-60 w-full flex justify-center mt-5 text-m_primary_900">
+          <div className="mb-60 w-full flex justify-center mt-5 ">
             <span className="text-sm mr-1">{t("remember_pass")}</span>
             <Link
               href="/signin"

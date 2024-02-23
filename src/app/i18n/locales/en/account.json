@@ -38,5 +38,8 @@
   "color_button": "Button color",
   "color_text": "Text color",
   "preview": "Preview",
-  "sample": "Sample"
+  "sample": "Sample",
+  "studio_qr": "Scan the QR code to take the test!",
+  "test": "Aptitude assessment tests",
+  "join_now": "Join now"
 }

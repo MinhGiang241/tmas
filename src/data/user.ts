@@ -16,15 +16,23 @@ export interface UserData {
   verified?: boolean;
   lang?: string;
   licence?: Licence;
+  licences?: {
+    individual?: Package;
+    enterprise?: Package;
+  };
   userId?: string;
   phone_number?: string;
   phone?: string;
   account?: string;
+  stu_btn_color?: string;
+  stu_text_color?: string;
+  studio_name?: string;
+  stu_logo?: string;
+  stu_banner?: string;
 }
 
 export interface Licence {
   _id?: string;
-
   key?: string;
   userId?: string;
   price?: number;
@@ -41,6 +49,9 @@ export interface Licence {
 
 export interface Package {
   _id?: string;
+  key?: string;
+  packageId?: string;
+  userId?: string;
   createdTime?: string;
   schema?: string;
   type?: string;

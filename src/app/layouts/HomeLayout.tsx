@@ -49,7 +49,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       {loading ? (
         <LoadingPage />
       ) : (
-        <main className="bg-neutral-100 text-m_primary_900">
+        <main className="bg-neutral-100 text-m_neutral_900">
           <Header />
           <div className="lg:h-[68px] h-14 " />
           <div className="max-w-[1140px] mx-auto">{children}</div>

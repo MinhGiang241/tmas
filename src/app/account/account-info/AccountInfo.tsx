@@ -80,7 +80,7 @@ function AccountInfo() {
       title: t("full_name"),
       dataIndex: "full_name",
       key: "full_name",
-      render: (text) => (
+      render: (text, data) => (
         <p key={text} className="min-w-24 caption_regular_14">
           {text}
         </p>
@@ -205,11 +205,12 @@ function AccountInfo() {
       dispatch(setLoadingMember(true));
       dispatch(setMemberData([]));
       var mem = await getMemberListInStudio();
-      var invitedMem = await getInvitaionEmailMember();
+      var invited = await getInvitaionEmailMember();
+      // var invitedMem = invited?.map((v: any) => v.user);
       console.log("mem", mem);
-      console.log("invitedMem", invitedMem);
+      console.log("invitedMem", invited);
 
-      dispatch(setMemberData([...invitedMem, ...mem]));
+      dispatch(setMemberData([...invited, ...mem]));
       dispatch(setLoadingMember(false));
     } catch (e: any) {
       dispatch(setLoadingMember(false));
@@ -267,7 +268,7 @@ function AccountInfo() {
             <span>{t("max_account")}</span>
             {": "}
             <span className="caption_semibold_14">
-              {user?.licence?.package?.max_user ?? 1}
+              {user?.licences?.enterprise?.max_user ?? 1}
             </span>
           </div>
         </div>

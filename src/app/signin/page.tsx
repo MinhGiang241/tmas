@@ -213,7 +213,7 @@ function LoginPage() {
         fLoading={fLoading}
       />
 
-      <div className="w-full flex justify-center mt-5 text-m_primary_900">
+      <div className="w-full flex justify-center mt-5 ">
         <span className="text-sm mr-1">{t("no_account")}</span>
         <Link
           href="/register"

@@ -141,7 +141,7 @@ function Header() {
               <button className="flex  items-center body_semibold_14 ">
                 {user?.studio?._id === user._id
                   ? common.t("my_studio")
-                  : user?.studio?.full_name}
+                  : user?.studio?.studio_name ?? user?.studio?.full_name}
                 <div className="w-2" />
                 <CaretDownOutlined />
               </button>
@@ -210,7 +210,7 @@ function Header() {
             <button className="mx-3 lg:flex hidden items-center body_semibold_14 text-white">
               {user?.studio?._id === user._id
                 ? common.t("my_studio")
-                : user?.studio?.full_name}
+                : user?.studio?.studio_name ?? user?.studio?.full_name}
               <div className="w-2" />
               <DropdownIcon />
             </button>
@@ -257,7 +257,7 @@ function Header() {
                     router.push("/");
                   }
                 }}
-                className="my-1"
+                className="py-1 hover:bg-m_neutral_100 w-full flex justify-start"
               >
                 {t("account_management")}
               </button>
@@ -269,7 +269,7 @@ function Header() {
                     router.push("/");
                   }
                 }}
-                className="my-1"
+                className="py-1 hover:bg-m_neutral_100 w-full flex justify-start"
               >
                 {t("personal_information")}
               </button>
@@ -281,12 +281,16 @@ function Header() {
                     router.push("/");
                   }
                 }}
-                className="my-1"
+                className="py-1 hover:bg-m_neutral_100 w-full flex justify-start"
               >
                 {t("business_information")}
               </button>
-              <button className="my-1">{common.t("support")}</button>
-              <button className="my-1">{common.t("change_pass")}</button>
+              <button className="py-1 hover:bg-m_neutral_100 w-full flex justify-start">
+                {common.t("support")}
+              </button>
+              <button className="py-1 hover:bg-m_neutral_100 w-full flex justify-start">
+                {common.t("change_pass")}
+              </button>
 
               <Divider className="my-3" />
               <button
@@ -296,7 +300,7 @@ function Header() {
                   localStorage.removeItem("access_token");
                   router.push("/signin");
                 }}
-                className="my-1 text-m_error_500"
+                className="py-1 w-full hover:bg-m_error_100 text-m_error_500 flex justify-start"
               >
                 {common.t("sign_out")}
               </button>

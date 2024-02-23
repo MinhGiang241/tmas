@@ -1,5 +1,6 @@
 import { UserData } from "@/data/user";
 import { callApi } from "./base_api";
+import { StudioFormData } from "@/data/form_interface";
 
 export const changeStudio = async (ownerId?: string) => {
   var results = await callApi.post(
@@ -86,6 +87,25 @@ export const updatePersonalInfo = async (data: Object) => {
   var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.update_info`,
     { data },
+  );
+  return results;
+};
+
+export const uploadFile = async (data: any) => {
+  var results = await callApi.upload(
+    `${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload`,
+    data,
+  );
+  if (results.status === 200) {
+    return results.data;
+  }
+};
+
+// https://api.tmas.demego.vn/apimodel/user.update_studio
+export const updateStudioInfo = async (data: StudioFormData) => {
+  var results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.update_studio`,
+    data,
   );
   return results;
 };

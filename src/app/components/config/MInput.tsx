@@ -85,10 +85,7 @@ function MInput({
       <div
         className={`flex ${action ? "justify-between" : "justify-start"} mb-1 `}
       >
-        <label
-          className="text-sm font-semibold text-m_primary_900"
-          htmlFor={id}
-        >
+        <label className="text-sm font-semibold " htmlFor={id}>
           {title} {required && <span className="text-m_error_500">*</span>}
         </label>
         {action}
