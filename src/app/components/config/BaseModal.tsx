@@ -37,7 +37,7 @@ function BaseModal({
     >
       <div className="w-full relative rounded-lg ">
         <div className={`w-full px-2 rounded-lg flex flex-col items-center`}>
-          <p className="caption_bold_24 my-4">{title}</p>
+          {title && <p className="caption_bold_24 my-4">{title}</p>}
           {children}
         </div>
       </div>
