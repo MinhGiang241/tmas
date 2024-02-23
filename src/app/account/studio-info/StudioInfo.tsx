@@ -189,6 +189,7 @@ function StudioInfo() {
         )}
         {previewLogo ? (
           <Image
+            loading="lazy"
             className="absolute top-0 bottom-0 right-0 left-0 rounded-[50%]"
             objectFit="cover"
             fill
@@ -197,6 +198,7 @@ function StudioInfo() {
           />
         ) : user?.stu_logo ? (
           <Image
+            loading="lazy"
             className="absolute top-0 bottom-0 right-0 left-0 rounded-[50%]"
             objectFit="cover"
             fill
@@ -239,6 +241,7 @@ function StudioInfo() {
           )}
           {previewBanner ? (
             <Image
+              loading="lazy"
               className="absolute top-0 bottom-0 right-0 left-0 "
               objectFit="cover"
               fill
@@ -247,6 +250,7 @@ function StudioInfo() {
             />
           ) : user?.stu_banner ? (
             <Image
+              loading="lazy"
               className="absolute top-0 bottom-0 right-0 left-0 "
               objectFit="cover"
               fill

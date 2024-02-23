@@ -26,6 +26,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
             <div className="flex  flex-col xl:w-3/5 w-4/5 my-6">
               <div className="w-full flex justify-center ">
                 <Image
+                  loading="lazy"
                   src="/images/logo.png"
                   alt="logo"
                   width={size.width <= 1024 ? 250 : 325}

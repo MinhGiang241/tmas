@@ -173,6 +173,7 @@ function Header() {
               }}
             >
               <Image
+                loading="lazy"
                 className=""
                 src={`/flags/${i18next.language}.png`}
                 alt="language"
@@ -190,7 +191,13 @@ function Header() {
         <MenuOutlined className="text-white text-base" />
       </button>
       <div className="w-[1140px] h-full flex items-center justify-between">
-        <Image src="/images/white-logo.png" alt="tmas" width={97} height={40} />
+        <Image
+          loading="lazy"
+          src="/images/white-logo.png"
+          alt="tmas"
+          width={97}
+          height={40}
+        />
         <div className="hidden h-full lg:flex items-center justify-center">
           {links.map((e, i) => (
             <Link
@@ -229,6 +236,7 @@ function Header() {
             }}
           >
             <Image
+              loading="lazy"
               className=""
               src={`/flags/${i18next.language}.png`}
               alt="language"

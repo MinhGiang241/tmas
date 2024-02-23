@@ -21,13 +21,14 @@ function PreviewModal(props: Props) {
   const { t } = useTranslation("account");
   return (
     <BaseModal
-      width={size.width <= 1024 ? size.width - 20 : size.width * 0.75}
+      width={size.width <= 1024 ? size.width - 20 : size.width * 0.85}
       {...props}
     >
       <div className=" flex max-lg:flex-col w-full">
         <div className={`relative w-full lg:w-1/2  lg:min-h-[700px] h-[402px]`}>
           {props.banner ? (
             <Image
+              loading="lazy"
               className=""
               objectFit="cover"
               layout="fill"
@@ -36,6 +37,7 @@ function PreviewModal(props: Props) {
             />
           ) : user?.stu_banner ? (
             <Image
+              loading="lazy"
               className=""
               objectFit="cover"
               layout="fill"
@@ -44,6 +46,7 @@ function PreviewModal(props: Props) {
             />
           ) : (
             <Image
+              loading="lazy"
               className=""
               objectFit="cover"
               layout="fill"
@@ -56,6 +59,7 @@ function PreviewModal(props: Props) {
           <div className="relative w-16 h-16 rounded-[50%] mt-7 ">
             {props.logo ? (
               <Image
+                loading="lazy"
                 className=" rounded-[50%]"
                 objectFit="cover"
                 layout="fill"
@@ -64,6 +68,7 @@ function PreviewModal(props: Props) {
               />
             ) : user?.stu_logo ? (
               <Image
+                loading="lazy"
                 className="rounded-[50%]"
                 objectFit="cover"
                 layout="fill"
@@ -72,6 +77,7 @@ function PreviewModal(props: Props) {
               />
             ) : (
               <Image
+                loading="lazy"
                 className="rounded-[50%]"
                 objectFit="cover"
                 layout="fill"
@@ -87,6 +93,7 @@ function PreviewModal(props: Props) {
           <div className="title_bold_24">{t("test")}</div>
           <div className="relative h-48 w-48 mt-7 mb-3">
             <Image
+              loading="lazy"
               className=""
               objectFit="cover"
               layout="fill"

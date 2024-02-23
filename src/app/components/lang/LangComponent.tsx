@@ -37,7 +37,13 @@ function LangComponent() {
             hide();
           }}
         >
-          <Image src={`/flags/${v}.png`} alt={v} width={20} height={10} />
+          <Image
+            loading="lazy"
+            src={`/flags/${v}.png`}
+            alt={v}
+            width={20}
+            height={10}
+          />
           <div className="ml-2 body_semibold_14">{languages[v]}</div>
         </Button>
       ))}
@@ -57,6 +63,7 @@ function LangComponent() {
         className="flex h-7 justify-around items-center w-20 px-1 border border-m_gray-200 rounded-sm border-m_neutral_200"
       >
         <Image
+          loading="lazy"
           src={`/flags/${i18next.language}.png`}
           alt={languages[i18next.language]}
           width={20}
