@@ -107,6 +107,7 @@ function EditAcountInfo({ open, onCancel, onOk, data }: Props) {
           allowClear={false}
           options={["Admin", "Member", "Owner"].map((e: any, i) => ({
             value: e,
+            disabled: e == "Owner",
             label: t(e.toLowerCase()),
           }))}
           formik={formik}
