@@ -111,8 +111,8 @@ function PreviewModal(props: Props) {
           <div className="lg:h-20 h-10" />
           <Button
             style={{
-              background: `#${props.buttonColor}`,
-              color: `#${props.textColor}`,
+              background: `${props.buttonColor}`,
+              color: `${props.textColor}`,
             }}
             className="rounded-lg h-12 w-52 caption_semibold_14"
           >

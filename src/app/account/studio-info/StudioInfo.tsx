@@ -36,10 +36,10 @@ function StudioInfo() {
   const bannerInputRef = useRef(null);
 
   const [buttonColor, setButtonColor] = useState<string>(
-    user.stu_btn_color ?? "7572FF",
+    user.stu_btn_color ?? "#7572FF",
   );
   const [textColor, setTextColor] = useState<string>(
-    user.stu_text_color ?? "ffffff",
+    user.stu_text_color ?? "#ffffff",
   );
 
   const handleLogoChange = (e: any) => {
@@ -267,27 +267,27 @@ function StudioInfo() {
           <div className="body_semibold_14 mb-1">{t("color_button")}</div>
           <ColorPicker
             value={buttonColor}
-            onChange={(v) => setButtonColor(v.toHex())}
+            onChange={(v) => setButtonColor(`#${v.toHex()}`)}
           >
             <button
-              style={{ background: `#${buttonColor}` }}
+              style={{ background: `${buttonColor}` }}
               className={`h-12 w-full rounded-lg border border-m_primary_900`}
             />
           </ColorPicker>
           <div className="body_semibold_14 mt-4 mb-1">{t("color_text")}</div>
           <ColorPicker
             value={textColor}
-            onChange={(v) => setTextColor(v.toHex())}
+            onChange={(v) => setTextColor(`#${v.toHex()}`)}
           >
             <button
-              style={{ background: `#${textColor}` }}
+              style={{ background: `${textColor}` }}
               className={`h-12 w-full rounded-lg border border-m_primary_900`}
             />
           </ColorPicker>
           <div className="body_semibold_14 mt-4">{"Preview"}</div>
           <div className="w-full flex justify-center mb-2">
             <Button
-              style={{ background: `#${buttonColor}`, color: `#${textColor}` }}
+              style={{ background: `${buttonColor}`, color: `${textColor}` }}
               className={`w-[107px] h-[40px] mb-4 rounded-lg body_semibold_16`}
             >
               {t("sample")}
