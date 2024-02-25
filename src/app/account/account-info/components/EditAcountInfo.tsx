@@ -105,7 +105,7 @@ function EditAcountInfo({ open, onCancel, onOk, data }: Props) {
         {/* <MInput formik={formik} id="role" name="role" title={t("role")} /> */}
         <MDropdown
           allowClear={false}
-          options={["Admin", "Member"].map((e: any, i) => ({
+          options={["Admin", "Member", "Owner"].map((e: any, i) => ({
             value: e,
             label: t(e.toLowerCase()),
           }))}
