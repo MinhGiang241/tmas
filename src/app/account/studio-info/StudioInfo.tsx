@@ -82,8 +82,10 @@ function StudioInfo() {
   const validate = () => {
     if (!value) {
       setError("common_not_empty");
+      return false;
     } else {
       setError(undefined);
+      return true;
     }
   };
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,8 +112,9 @@ function StudioInfo() {
 
   const onSubmit = async () => {
     try {
-      validate();
-      if (error) return;
+      if (!validate()) {
+        // return;
+      }
       setLoadingUpdate(true);
       if (selectedLogo) {
         var logoId = await uploadImage(selectedLogo);
