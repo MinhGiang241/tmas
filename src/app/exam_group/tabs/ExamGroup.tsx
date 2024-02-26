@@ -10,11 +10,17 @@ import EditBlackIcon from "../../components/icons/edit-black.svg";
 import DeleteRedIcon from "../../components/icons/trash-red.svg";
 import useSWR from "swr";
 import { callApi } from "@/services/api_services/base_api";
-import { getExamTest } from "@/services/api_services/exam_api";
+import { getExamGroupTest } from "@/services/api_services/exam_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import PageLoader from "next/dist/client/page-loader";
 import LoadingPage from "@/app/loading";
 import AddExamTest from "./modals/AddExamTest";
+import ConfirmModal from "@/app/components/modals/ConfirmModal";
+import EditFormModal from "./modals/EditFormModal";
+import { PlusOutlined } from "@ant-design/icons";
+import MoveGroupModal from "./modals/MoveGroupModal";
+import CreateChildGroupModal from "./modals/CreateChildGroupModal";
+import { ExamGroupData } from "@/data/exam";
 
 function ExamGroupTab() {
   const { data, error, isLoading } = useSWR("/api/user", (_: any) =>
@@ -24,7 +30,7 @@ function ExamGroupTab() {
   console.log(data);
   const loadExamTestList = async () => {
     try {
-      await getExamTest({ text: "" });
+      await getExamGroupTest({ text: "" });
     } catch (e: any) {
       // errorToast(e);
       console.log(e);
@@ -59,15 +65,71 @@ function ExamGroupTab() {
   const { t } = useTranslation("exam");
   const common = useTranslation();
 
+  const [active, setActive] = useState<ExamGroupData | undefined>(undefined);
+  const [parent, setParent] = useState<ExamGroupData | undefined>(undefined);
+
   const [openAdd, setOpenAdd] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [openMove, setOpenMove] = useState<boolean>(false);
+  const [openCreateChild, setOpenCreateChild] = useState<boolean>(false);
+
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+
+  const onCancelAdd = () => {
+    setOpenAdd(false);
+    setActive(undefined);
+  };
+
+  const onCancelEdit = () => {
+    setOpenEdit(false);
+    setActive(undefined);
+  };
+
+  const onCancelMove = () => {
+    setOpenMove(false);
+    setActive(undefined);
+    setParent(undefined);
+  };
+
+  const onCancelCreateChild = () => {
+    setOpenCreateChild(false);
+    setActive(undefined);
+  };
+
+  const onCancelDelete = () => {
+    setOpenDelete(false);
+    setActive(undefined);
+  };
 
   return (
-    <div className="w-full ">
-      <AddExamTest open={openAdd} onCancel={() => setOpenAdd(false)} />
-      <div className="lg:w-full lg:flex">
+    <div className="w-full max-lg:px-4 ">
+      <CreateChildGroupModal
+        parent={active}
+        open={openCreateChild}
+        onCancel={onCancelCreateChild}
+      />
+      <MoveGroupModal
+        now={active}
+        parent={parent}
+        open={openMove}
+        onCancel={onCancelMove}
+      />
+      <EditFormModal data={active} open={openEdit} onCancel={onCancelEdit} />
+      <AddExamTest open={openAdd} onCancel={onCancelAdd} />
+
+      <ConfirmModal
+        loading={loadingDelete}
+        text={t("confirm_delete")}
+        action={t("delete")}
+        open={openDelete}
+        onCancel={onCancelDelete}
+        onOk={() => {}}
+      />
+      <div className="lg:mt-2 lg:w-full lg:flex lg:justify-center">
         <form className="lg:w-2/3">
           <MInput
-            className="mt-3"
+            className="max-lg:mt-3"
             placeholder={t("search_test_group")}
             h="h-11"
             id="search"
@@ -82,10 +144,10 @@ function ExamGroupTab() {
             }
           />
         </form>
-        <div className="mt-5 w-full flex justify-end">
+        <div className="max-lg:mt-5 w-full flex justify-end">
           <MButton
             onClick={() => setOpenAdd(true)}
-            className="flex items-center"
+            className="flex items-center bg-m_neutral_100"
             type="secondary"
             icon={<AddIcon />}
             text={t("create_test_group")}
@@ -101,6 +163,8 @@ function ExamGroupTab() {
         >
           <Spin size="large" />
         </div>
+      ) : data ? (
+        <div />
       ) : (
         items.map((v: any, i: any) => (
           <Collapse
@@ -125,6 +189,8 @@ function ExamGroupTab() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        setActive(v);
+                        setOpenEdit(true);
                       }}
                     >
                       <EditBlackIcon />
@@ -133,6 +199,8 @@ function ExamGroupTab() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        setActive(v);
+                        setOpenDelete(true);
                       }}
                     >
                       <DeleteRedIcon />
@@ -141,22 +209,63 @@ function ExamGroupTab() {
                 </div>
               }
             >
-              <div className="w-full p-3">
-                {...Array.from({ length: 3 }, (v, i) => (
+              <div className="w-full ">
+                {...Array.from({ length: 3 }, (c: any, i: number) => (
                   <div
-                    className="px-4 text-wrap flex lg:min-h-[60px] min-h-[52px] items-center w-full bg-m_neutral_100 flex-wrap  mb-4 justify-between"
+                    className="px-4 text-wrap flex lg:min-h-[60px] min-h-[52px] items-center w-full bg-m_neutral_100 flex-wrap  mt-4 justify-between"
                     key={i}
                   >
                     <p>{"sdasdas"}</p>
                     <div className="flex body_regular_14">
-                      <button className="h-full ">{t("edit")}</button>
-                      <button className="h-full mx-2">{t("move")}</button>
-                      <button className="h-full text-m_error_500">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActive(c);
+                          setOpenEdit(true);
+                        }}
+                        className="h-full "
+                      >
+                        {t("edit")}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActive(c);
+                          setParent(v);
+                          setOpenMove(true);
+                        }}
+                        className="h-full mx-2"
+                      >
+                        {t("move")}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActive(c);
+                          setOpenDelete(true);
+                        }}
+                        className="h-full text-m_error_500"
+                      >
                         {t("delete")}
                       </button>
                     </div>
                   </div>
                 ))}
+              </div>
+              <div className="w-full px-4 my-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActive(v);
+                    setOpenCreateChild(true);
+                  }}
+                  className="flex items-center"
+                >
+                  <PlusOutlined />
+                  <p className="ml-2  underline underline-offset-4 body_regular_14">
+                    {t("create_child_group")}
+                  </p>
+                </button>
               </div>
             </Collapse.Panel>
           </Collapse>

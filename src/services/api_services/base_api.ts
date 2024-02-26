@@ -72,9 +72,6 @@ export class callStudioAPI {
   ): Promise<any> {
     const token = localStorage.getItem("access_token");
     var headers: any = {
-      // Host: process.env.NEXT_PUBLIC_API_STU,
-      // Accept: "*/*",
-      // "Content-Type": "application/json",
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
     };
@@ -84,14 +81,13 @@ export class callStudioAPI {
     }
     return results.data;
   };
+
   static get = async function (
     url: string,
     config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token = localStorage.getItem("access_token");
     var headers = {
-      // Accept: "*/*",
-      // "Content-Type": "application/json",
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
     };
@@ -106,5 +102,38 @@ export class callStudioAPI {
     } catch (e: any) {
       throw e.message;
     }
+  };
+
+  static put = async function (
+    url: string,
+    data: any,
+    config?: AxiosRequestConfig<any> | undefined,
+  ): Promise<any> {
+    const token = localStorage.getItem("access_token");
+    var headers: any = {
+      Lang: i18next.language == "en" ? "en_US" : "vi_VN",
+      Authorization: token ? `Bearer ${token}` : null,
+    };
+    var results = await axios.post(url, data, { headers, ...config });
+    if (results.status != 200) {
+      throw results.statusText;
+    }
+    return results.data;
+  };
+
+  static delete = async function (
+    url: string,
+    config?: AxiosRequestConfig<any> | undefined,
+  ): Promise<any> {
+    const token = localStorage.getItem("access_token");
+    var headers: any = {
+      Lang: i18next.language == "en" ? "en_US" : "vi_VN",
+      Authorization: token ? `Bearer ${token}` : null,
+    };
+    var results = await axios.delete(url, { headers, ...config });
+    if (results.status != 200) {
+      throw results.statusText;
+    }
+    return results.data;
   };
 }

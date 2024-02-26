@@ -32,8 +32,8 @@ function MButton({
           ? `${disabled ? "bg-m_neutral_400" : "bg-m_primary_500 text-white"}`
           : `${
               disabled
-                ? "bg-white text-m_neutral_400 border-1 border-m_neutral_400"
-                : "bg-white text-m_primary_500 border border-m_primary_500"
+                ? " text-m_neutral_400 border-1 border-m_neutral_400"
+                : " text-m_primary_500 border border-m_primary_500"
             }`
       } h-11  lg:h-12 caption_semibold_14 lg:caption_semibold_16 rounded-lg ${className}`}
       loading={loading || false}

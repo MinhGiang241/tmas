@@ -331,7 +331,7 @@ function Header({ path }: { path?: string }) {
           >
             {user?.avatar ? (
               <Image
-                className="rounded-full"
+                className="rounded-full mr-6"
                 loading="lazy"
                 src={user.avatar}
                 alt="avatar"
