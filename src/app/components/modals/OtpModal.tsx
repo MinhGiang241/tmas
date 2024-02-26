@@ -84,7 +84,7 @@ function OtpModal({
       onOk={(_) => onOk()}
       onCancel={(_) => onCancel()}
     >
-      <div className="w-full flex flex-col items-center justify-center">
+      <div className="px-6 py-5 w-full flex flex-col items-center justify-center">
         <p className="title_bold_24 mb-3">{t("otp_verify")}</p>
         <p className=" mb-3 text-wrap text-center">
           {t("send_otp_email")}

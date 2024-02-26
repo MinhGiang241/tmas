@@ -32,7 +32,7 @@ function ConfirmModal({
       open={open}
       width={400}
     >
-      <div className="w-full relative rounded-lg ">
+      <div className="px-6 py-5 w-full relative rounded-lg ">
         <div className="flex justify-center mt-6 mb-4">
           <ExclamationCircleFilled className="text-[5rem] text-m_warning_500" />
         </div>

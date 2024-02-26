@@ -9,6 +9,7 @@ interface Props {
   htmlType?: "button" | "submit" | "reset";
   loading?: boolean;
   onClick?: React.MouseEventHandler<HTMLElement>;
+  icon?: React.ReactNode;
 }
 
 function MButton({
@@ -19,9 +20,11 @@ function MButton({
   htmlType,
   type = "primary",
   onClick,
+  icon,
 }: Props) {
   return (
     <Button
+      icon={icon}
       htmlType={htmlType}
       type="default"
       className={`${

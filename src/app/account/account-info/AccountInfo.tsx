@@ -33,6 +33,26 @@ interface DataType {
   action?: boolean;
   language?: string;
 }
+export function compareMembers(a: UserData, b: UserData) {
+  // Sắp xếp theo loại, với Owner lên đầu, sau đó là Admin, và cuối cùng là Member
+  if (a.role === "Owner" && b.role !== "Owner") {
+    return -1; // a lên đầu
+  } else if (a.role === "Admin" && b.role === "Member") {
+    return -1; // a lên đầu
+  } else if (a.role === "Member" && b.role !== "Member") {
+    return 1; // b lên đầu
+  } else {
+    // Nếu cả hai đều cùng loại, sắp xếp theo tên
+    return a.full_name?.localeCompare(b?.full_name ?? "");
+  }
+}
+
+export const sortedMemList = (a: UserData[]) => {
+  var owner = a.filter((v: any) => v.role == "Owner");
+  var admin = a.filter((v: any) => v.role == "Admin");
+  var member = a.filter((v: any) => v.role == "Member");
+  return [...owner, ...admin, ...member];
+};
 
 function AccountInfo() {
   const { t } = useTranslation("account");
@@ -123,40 +143,43 @@ function AccountInfo() {
     {
       onHeaderCell: (_) => rowEndStyle,
       title: t("action"),
-      dataIndex: "verified",
-      key: "verified",
-      render: (action, data) => (
-        <div className="min-w-16">
-          {action ? (
-            <button
-              onClick={async () => {
-                setUpdateKey(Date.now());
-                setActiveMem(data);
-                console.log("act", activeMem);
+      dataIndex: "schema",
+      key: "schema",
+      render: (action, data) =>
+        data.role == "Owner" ? (
+          <div />
+        ) : (
+          <div className="min-w-16">
+            {action == "User" ? (
+              <button
+                onClick={async () => {
+                  setUpdateKey(Date.now());
+                  setActiveMem(data);
+                  console.log("act", activeMem);
 
-                setOpenEdit(true);
+                  setOpenEdit(true);
+                }}
+              >
+                <EditIcon />
+              </button>
+            ) : (
+              <Tooltip placement="bottom" title={t("resend_invite_email")}>
+                <button onClick={() => resendEmail(data)}>
+                  <RotateIcon />
+                </button>
+              </Tooltip>
+            )}
+            <button
+              className="ml-2"
+              onClick={() => {
+                setActiveMem(data);
+                setOpenDelete(true);
               }}
             >
-              <EditIcon />
+              <TrashIcon />
             </button>
-          ) : (
-            <Tooltip placement="bottom" title={t("resend_invite_email")}>
-              <button onClick={() => resendEmail(data)}>
-                <RotateIcon />
-              </button>
-            </Tooltip>
-          )}
-          <button
-            className="ml-2"
-            onClick={() => {
-              setActiveMem(data);
-              setOpenDelete(true);
-            }}
-          >
-            <TrashIcon />
-          </button>
-        </div>
-      ),
+          </div>
+        ),
     },
   ];
 
@@ -186,7 +209,7 @@ function AccountInfo() {
     try {
       setLoadingDelete(true);
       console.log("mem", mem);
-      if (mem?.verified) {
+      if (mem?.schema === "User") {
         await deleteMemberFromWorkSpace({ userId: mem?._id });
       } else {
         await deleteInvitedMemberFromWorkSpace({ email: mem?.email });
@@ -210,7 +233,9 @@ function AccountInfo() {
       console.log("mem", mem);
       console.log("invitedMem", invited);
 
-      dispatch(setMemberData([...invited, ...mem]));
+      dispatch(
+        setMemberData([...sortedMemList(invited), ...sortedMemList(mem)]),
+      );
       dispatch(setLoadingMember(false));
     } catch (e: any) {
       dispatch(setLoadingMember(false));
@@ -301,7 +326,7 @@ function AccountInfo() {
           onRow={(data, index: any) =>
             ({
               style: {
-                background: data.verified ? "#FFFFFF" : "#FFF9E6",
+                background: data.schema == "User" ? "#FFFFFF" : "#FFF9E6",
                 borderRadius: "20px",
               },
             }) as HTMLAttributes<any>

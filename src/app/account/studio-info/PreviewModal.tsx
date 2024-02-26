@@ -7,7 +7,6 @@ import { Button, Divider } from "antd";
 import { useTranslation } from "react-i18next";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
-// import "./full-modal.css";
 
 interface Props extends BaseModalProps {
   buttonColor?: string;
@@ -31,11 +30,13 @@ function PreviewModal(props: Props) {
       {...props}
     >
       <div className=" flex max-lg:flex-col w-full">
-        <div className={`relative w-full lg:w-1/2  lg:min-h-[700px] h-screen`}>
+        <div
+          className={`relative w-full lg:w-1/2  lg:min-h-[700px] h-screen text-m_neutral_900`}
+        >
           {props.banner ? (
             <Image
+              className=" rounded-l-lg"
               loading="lazy"
-              className=""
               objectFit="cover"
               layout="fill"
               src={props.banner}
@@ -44,7 +45,7 @@ function PreviewModal(props: Props) {
           ) : user?.stu_banner ? (
             <Image
               loading="lazy"
-              className=""
+              className="rounded-l-lg"
               objectFit="cover"
               layout="fill"
               src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user.stu_banner}`}
@@ -53,7 +54,7 @@ function PreviewModal(props: Props) {
           ) : (
             <Image
               loading="lazy"
-              className=""
+              className="rounded-l-lg"
               objectFit="cover"
               layout="fill"
               src={`images/empty.png`}
@@ -61,7 +62,7 @@ function PreviewModal(props: Props) {
             />
           )}
         </div>
-        <div className="relative items-center w-full lg:w-1/2 flex flex-col lg:min-h-[700px] ">
+        <div className="relative lg:mt-10 items-center w-full lg:w-1/2 flex flex-col lg:min-h-[700px] ">
           <div className="relative w-16 h-16 rounded-[50%] mt-7 ">
             {props.logo ? (
               <Image
@@ -92,7 +93,7 @@ function PreviewModal(props: Props) {
               />
             )}
           </div>
-          <div className="body_semibold_16">{props.company} </div>
+          <div className="body_semibold_16 mt-2">{props.company} </div>
           <div className="w-2/3">
             <Divider className="mt-2 mb-6" />
           </div>

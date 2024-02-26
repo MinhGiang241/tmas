@@ -26,7 +26,7 @@
   "member_role": "Thành viên: Kết quả thi cá nhân, đợt thi/đề thi public, đợt thi/đề thi private",
   "admin_role": "Quản trị viên: Quản trị dữ liệu, kết quả thi cá nhân, đợt thi/đề thi public, đợt thi/đề thi private",
   "member": "Thành viên",
-  "admin": "Quản lý",
+  "admin": "Quản trị viên",
   "invite": "Mời",
   "add_account_success": "Thêm tài khoản thành công!",
   "success_send_invite": "Gửi thư mời thành công",

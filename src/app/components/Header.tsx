@@ -27,6 +27,10 @@ import { errorToast } from "./toast/customToast";
 import { setUserData } from "@/redux/user/userSlice";
 import useWindowSize from "@/services/ui/useWindowSize";
 import { setHomeIndex } from "@/redux/home/homeSlice";
+import {
+  compareMembers,
+  sortedMemList,
+} from "../account/account-info/AccountInfo";
 
 function Header({ path }: { path?: string }) {
   const { t, i18n } = useTranslation("account");
@@ -108,7 +112,9 @@ function Header({ path }: { path?: string }) {
       var mem = await getMemberListInStudio();
       var invitedMem = await getInvitaionEmailMember();
 
-      dispatch(setMemberData([...invitedMem, ...mem]));
+      dispatch(
+        setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)]),
+      );
     } catch (e: any) {
       dispatch(setLoadingMember(false));
       errorToast(e);
@@ -157,7 +163,7 @@ function Header({ path }: { path?: string }) {
               className="block mb-2 body_regular_14"
               key={i}
             >
-              {v}
+              {t(v)}
             </button>
           ))}
           <Divider />

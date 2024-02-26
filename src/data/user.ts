@@ -5,6 +5,7 @@ export interface UserData {
   createdTime?: string;
   updatedTime?: string;
   email?: string;
+  schema?: string;
   full_name?: string;
   isActive?: boolean;
   isRoot?: boolean;

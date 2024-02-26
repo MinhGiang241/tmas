@@ -24,7 +24,9 @@ const StyledComponentsRegistry: React.FC<{ children: ReactNode }> = ({
       theme={{
         token: {
           // Seed Token
-          colorPrimary: "#6DB3C2",
+          colorPrimary: "#0B8199", //"#6DB3C2",
+          colorText: "#0D1939",
+          colorPrimaryActive: "#6DB3C2",
           borderRadius: 2,
           ...montserrat.style,
           // Alias Token

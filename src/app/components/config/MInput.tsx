@@ -31,6 +31,7 @@ interface Props {
   successText?: string;
   disable?: boolean;
   allowClear?: boolean;
+  h?: string;
 }
 
 function MInput({
@@ -58,6 +59,7 @@ function MInput({
   dangerText,
   successText,
   allowClear,
+  h,
 }: Props) {
   var np;
   var er;
@@ -103,7 +105,7 @@ function MInput({
           type={type ?? visible ? "text" : "password"}
           className={`${successText && touch ? "border-m_success_500" : ""} ${
             dangerText && touch ? "border-m_warning_500" : ""
-          }  h-12 rounded-lg ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
+          }  ${h ? h : `h-12`} rounded-lg ${suffix ? "pr-0" : ""} ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
           name={name}
           id={id}
           allowClear={allowClear ?? true}
@@ -112,7 +114,9 @@ function MInput({
           value={value}
           placeholder={placeholder}
           suffix={
-            suffix ?? isPassword ? (
+            suffix ? (
+              suffix
+            ) : isPassword ? (
               <div
                 onClick={() => {
                   setVisible(!visible);
