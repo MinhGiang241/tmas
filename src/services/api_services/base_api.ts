@@ -111,7 +111,7 @@ export class callStudioAPI {
       if (response?.data?.isSuccess === false) {
         return {
           code: 1,
-          data: response.data?.data,
+          data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
         };
       } else if (response.status === 200) {
@@ -149,7 +149,7 @@ export class callStudioAPI {
       if (response?.data?.isSuccess === false) {
         return {
           code: 1,
-          data: response.data?.data,
+          data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
         };
       } else if (response.status === 200) {
@@ -188,7 +188,7 @@ export class callStudioAPI {
       if (response?.data?.isSuccess === false) {
         return {
           code: 1,
-          data: response.data?.data,
+          data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
         };
       } else if (response.status === 200) {
@@ -227,7 +227,7 @@ export class callStudioAPI {
       if (response?.data?.isSuccess === false) {
         return {
           code: 1,
-          data: response.data?.data,
+          data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
         };
       } else if (response.status === 200) {
