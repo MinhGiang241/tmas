@@ -12,16 +12,21 @@ enum ToastType {
   ERROR,
 }
 
-const SuccessToast = ({
+const CustomToast = ({
   type,
   content,
   c,
+  namespace,
+  text,
 }: {
   type: ToastType;
   content: string;
   c: any;
+  namespace?: string;
+  text?: string;
 }) => {
   const { t } = useTranslation();
+
   return (
     <div
       className={`${
@@ -65,12 +70,12 @@ const SuccessToast = ({
 
 export const successToast = (content: string) => {
   toast.custom((e) => (
-    <SuccessToast type={ToastType.SUCCESS} content={content} c={e} />
+    <CustomToast type={ToastType.SUCCESS} content={content} c={e} />
   ));
 };
 
 export const errorToast = (content: string) => {
   toast.custom((e) => (
-    <SuccessToast type={ToastType.ERROR} content={content} c={e} />
+    <CustomToast type={ToastType.ERROR} content={content} c={e} />
   ));
 };

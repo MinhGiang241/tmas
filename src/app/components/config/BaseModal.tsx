@@ -28,6 +28,12 @@ function BaseModal({
 }: BaseModalProps) {
   const [keyModal, setKeyModal] = useState<number>(Date.now());
 
+  useEffect(() => {
+    if (open) {
+      setKeyModal(Date.now());
+    }
+  }, [open]);
+
   return (
     <Modal
       style={{ padding: 0 }}

@@ -2,8 +2,12 @@ import BaseModal, { BaseModalProps } from "@/app/components/config/BaseModal";
 import MButton from "@/app/components/config/MButton";
 import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { ExamGroupData } from "@/data/exam";
-import React from "react";
+import { updateExamGroupTest } from "@/services/api_services/exam_api";
+import { FormikErrors, useFormik } from "formik";
+import i18next from "i18next";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface MoveGroupProps extends BaseModalProps {
@@ -16,6 +20,63 @@ interface MoveGroupProps extends BaseModalProps {
 function MoveGroupModal(props: MoveGroupProps) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
+
+  interface FormValue {
+    group_now?: string;
+    new_group?: string;
+  }
+
+  const initialValues: FormValue = {
+    group_now: props.parent?.name,
+    new_group: undefined,
+  };
+
+  const validate = (values: FormValue) => {
+    const errors: FormikErrors<FormValue> = {};
+    if (!values.new_group?.trim()) {
+      errors.new_group = "common_not_empty";
+    }
+
+    return errors;
+  };
+
+  const formik = useFormik({
+    initialValues,
+    validate,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      try {
+        var dataSubmit = {
+          id: props.now?.id,
+          name: props.now?.name,
+          level: props.now?.level,
+          idParent: values.new_group,
+        };
+        await updateExamGroupTest(dataSubmit);
+        successToast(common.t("success_move"));
+        setLoading(true);
+        setLoading(false);
+
+        formik.resetForm();
+        props?.onOk!();
+        props?.onCancel();
+      } catch (e: any) {
+        setLoading(false);
+        errorToast(e);
+      }
+    },
+  });
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    Object.keys(initialValues).map(async (v) => {
+      await formik.setFieldTouched(v, true);
+    });
+    formik.handleSubmit();
+  };
+
+  const [loading, setLoading] = useState<boolean>(false);
+
   return (
     <BaseModal title={t("move_child_group")} {...props}>
       <div className="text-sm text-m_neutral_500">
@@ -23,21 +84,31 @@ function MoveGroupModal(props: MoveGroupProps) {
         <span className="ml-1 body_semibold_14 text-m_neutral_900">
           {props.now?.name}
         </span>
+        {i18next.language == "en" && (
+          <span className="text-sm text-m_neutral_500">{" subcategory"}</span>
+        )}
       </div>
 
       <div className="h-4" />
 
-      <form className="w-full">
+      <form className="w-full" onSubmit={onSubmit}>
         <MInput
           required
           disable
           id="group_now"
           name="group_now"
           title={t("group_now")}
+          formik={formik}
         />
 
         <div className="h-4" />
         <MDropdown
+          options={(props.list ?? []).map((v: ExamGroupData) => ({
+            label: v?.name ?? "",
+            value: v?.id,
+            disabled: v?.id === props.parent?.id,
+          }))}
+          formik={formik}
           name="new_group"
           id="new_group"
           title={t("new_group")}
@@ -53,7 +124,8 @@ function MoveGroupModal(props: MoveGroupProps) {
           />
           <div className="w-4" />
           <MButton
-            loading={props.loading}
+            loading={loading}
+            htmlType="submit"
             className="w-36"
             text={common.t("save")}
           />

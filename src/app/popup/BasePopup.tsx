@@ -30,7 +30,7 @@ function BasePopup({ msg, type, open, onCancel, onOk, loading }: Props) {
       open={open}
       width={400}
     >
-      <div className="w-full relative rounded-lg ">
+      <div className="w-full relative rounded-lg px-6 py-5">
         <div className="flex justify-center mt-6 mb-4">
           {type == "info" && (
             <QuestionCircleFilled className="text-[5rem] text-blue-400" />

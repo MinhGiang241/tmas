@@ -9,4 +9,5 @@ export interface ExamGroupData {
   updateBy?: string;
   ownerId?: string;
   studioId?: string;
+  childs?: ExamGroupData[];
 }

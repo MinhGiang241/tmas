@@ -1,9 +1,11 @@
 import BaseModal, { BaseModalProps } from "@/app/components/config/BaseModal";
 import MButton from "@/app/components/config/MButton";
 import MInput from "@/app/components/config/MInput";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { ExamGroupData } from "@/data/exam";
+import { updateExamGroupTest } from "@/services/api_services/exam_api";
 import { FormikErrors, useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface EditModalProps extends BaseModalProps {
@@ -18,10 +20,17 @@ function EditFormModal(props: EditModalProps) {
     group_name?: string;
   }
 
-  const initialValues: FormValue = {};
+  var initialValues: FormValue = {
+    group_name: props.data?.name,
+  };
+  console.log("initt", props.data);
+  // alert(JSON.stringify(props.data));
 
   const validate = (values: FormValue) => {
     const errors: FormikErrors<FormValue> = {};
+    if (!values?.group_name?.trim()) {
+      errors.group_name = "common_not_empty";
+    }
 
     return errors;
   };
@@ -29,7 +38,27 @@ function EditFormModal(props: EditModalProps) {
   const formik = useFormik({
     initialValues,
     validate,
-    onSubmit: async () => {},
+    enableReinitialize: true,
+    onSubmit: async (values: FormValue) => {
+      try {
+        setLoading(true);
+        var submitData = {
+          id: props.data?.id,
+          name: values.group_name,
+          level: props.data?.level,
+          idParent: props.data?.idParent,
+        };
+        await updateExamGroupTest(submitData);
+        props?.onOk!();
+        successToast(common.t("success_update"));
+        setLoading(false);
+        formik.resetForm();
+        props?.onCancel();
+      } catch (e: any) {
+        errorToast(e);
+        setLoading(false);
+      }
+    },
   });
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,7 +76,10 @@ function EditFormModal(props: EditModalProps) {
       width={564}
       title={t("edit_group")}
       open={props.open}
-      onCancel={props.onCancel}
+      onCancel={() => {
+        formik.resetForm();
+        props?.onCancel();
+      }}
     >
       <form onSubmit={onSubmit} className="w-full">
         <MInput
@@ -55,13 +87,18 @@ function EditFormModal(props: EditModalProps) {
           id="group_name"
           name="group_name"
           title={t("enter_group_name")}
+          placeholder={t("enter_content")}
+          formik={formik}
         />
         <div className="flex justify-center mt-7 mb-3">
           <MButton
             className="w-36"
             text={common.t("cancel")}
             type="secondary"
-            onClick={props.onCancel}
+            onClick={() => {
+              formik.resetForm();
+              props?.onCancel();
+            }}
           />
           <div className="w-4" />
           <MButton

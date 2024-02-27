@@ -18,12 +18,12 @@ export const examGroupSlice = createSlice({
     setExamGroupList: (_, action) => {
       return { lopading: false, list: action.payload };
     },
-    setExamGroupLoaidng: (_, action) => {
-      return { loading: action.payload, list: [] };
+    setExamGroupLoading: (_, action) => {
+      return { loading: true, list: [] };
     },
   },
 });
 
-export const { setExamGroupList, setExamGroupLoaidng } = examGroupSlice.actions;
+export const { setExamGroupList, setExamGroupLoading } = examGroupSlice.actions;
 
 export default examGroupSlice.reducer;

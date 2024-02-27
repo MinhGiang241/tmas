@@ -158,13 +158,14 @@ function Header({ path }: { path?: string }) {
           </div>
           <div className="h-4" />
           {links.map((v, i) => (
-            <button
+            <Link
+              href={v == "exam_group" ? `/${v}` : "/"}
               onClick={() => setOpenDrawer(false)}
-              className="block mb-2 body_regular_14"
+              className="block mb-2 body_regular_14 text-m_neutral_900"
               key={i}
             >
               {t(v)}
-            </button>
+            </Link>
           ))}
           <Divider />
           <div className="h-full flex items-center">

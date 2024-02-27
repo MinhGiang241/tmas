@@ -22,5 +22,7 @@
   "choose_child_group": "Chọn nhóm di chuyển danh mục con",
   "group_now": "Nhóm hiện tại",
   "new_group": "Nhóm mới",
-  "select_exam_group": "Chọn nhóm đề thi"
+  "select_exam_group": "Chọn nhóm đề thi",
+  "success_delete_group": "Xóa nhóm thành công",
+  "success_move": "Di chuyển thành công!"
 }
