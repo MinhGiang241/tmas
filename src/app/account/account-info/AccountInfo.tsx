@@ -150,7 +150,7 @@ function AccountInfo() {
           <div />
         ) : (
           <div className="min-w-16">
-            {action == "User" ? (
+            {!data.isInvite ? (
               <button
                 onClick={async () => {
                   setUpdateKey(Date.now());
@@ -208,8 +208,7 @@ function AccountInfo() {
   const deleteMember = async (mem?: UserData) => {
     try {
       setLoadingDelete(true);
-      console.log("mem", mem);
-      if (mem?.schema === "User") {
+      if (mem?.isInvite) {
         await deleteMemberFromWorkSpace({ userId: mem?._id });
       } else {
         await deleteInvitedMemberFromWorkSpace({ email: mem?.email });
@@ -230,11 +229,16 @@ function AccountInfo() {
       var mem = await getMemberListInStudio();
       var invited = await getInvitaionEmailMember();
       // var invitedMem = invited?.map((v: any) => v.user);
+
+      const invitedMem = invited.map((v: UserData) => ({
+        ...v,
+        isInvite: true,
+      }));
       console.log("mem", mem);
-      console.log("invitedMem", invited);
+      console.log("invitedMem", invitedMem);
 
       dispatch(
-        setMemberData([...sortedMemList(invited), ...sortedMemList(mem)]),
+        setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)]),
       );
       dispatch(setLoadingMember(false));
     } catch (e: any) {
@@ -326,7 +330,7 @@ function AccountInfo() {
           onRow={(data, index: any) =>
             ({
               style: {
-                background: data.schema == "User" ? "#FFFFFF" : "#FFF9E6",
+                background: data.isInvite ? "#FFF9E6" : "#FFFFFF",
                 borderRadius: "20px",
               },
             }) as HTMLAttributes<any>

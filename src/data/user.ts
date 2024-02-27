@@ -30,6 +30,7 @@ export interface UserData {
   studio_name?: string;
   stu_logo?: string;
   stu_banner?: string;
+  isInvite?: boolean;
 }
 
 export interface Licence {

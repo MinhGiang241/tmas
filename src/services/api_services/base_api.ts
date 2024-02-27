@@ -66,7 +66,7 @@ export class callApi {
 }
 
 export class callStudioAPI {
-  static post = async function (
+  static oldpost = async function (
     url: string,
     data: any,
     config?: AxiosRequestConfig<any> | undefined,
@@ -94,7 +94,7 @@ export class callStudioAPI {
     }
   };
 
-  static newPost = async function (
+  static post = async function (
     url: string,
     data: any,
     config?: AxiosRequestConfig<any> | undefined,
@@ -106,17 +106,31 @@ export class callStudioAPI {
     };
     try {
       var response = await axios.post(url, data, { headers, ...config });
-      return {
-        code: 0,
-        status: response.status,
-        data: response.data,
-      };
-    } catch (error: any) {
-      errorToast(error.message);
+      console.log("res", response);
+
+      if (response?.data?.isSuccess === false) {
+        return {
+          code: 1,
+          data: response.data?.data,
+          message: response.data.errors?.map((c: any) => c.message)?.join(". "),
+        };
+      } else if (response.status === 200) {
+        return {
+          code: 0,
+          data: response?.data?.data ?? response.data,
+        };
+      }
+
       return {
         code: 1,
-        status: error.status,
-        data: error.response,
+        data: response.statusText,
+        message: response.statusText,
+      };
+    } catch (error: any) {
+      return {
+        code: 1,
+        message: error.message,
+        data: error.message,
       };
     }
   };
@@ -130,16 +144,33 @@ export class callStudioAPI {
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
     };
-    var results = await axios.get(url, { headers, ...config });
-    console.log("sdada", results);
+    try {
+      var response = await axios.get(url, { headers, ...config });
+      if (response?.data?.isSuccess === false) {
+        return {
+          code: 1,
+          data: response.data?.data,
+          message: response.data.errors?.map((c: any) => c.message)?.join(". "),
+        };
+      } else if (response.status === 200) {
+        return {
+          code: 0,
+          data: response?.data?.data ?? response.data,
+        };
+      }
 
-    if (results.status != 200) {
-      throw results.statusText;
+      return {
+        code: 1,
+        data: response.statusText,
+        message: response.statusText,
+      };
+    } catch (error: any) {
+      return {
+        code: 1,
+        message: error.message,
+        data: error.message,
+      };
     }
-    if (results?.data?.isSuccess == false) {
-      throw results?.data.errors?.map((c: any) => c.message)?.join(". ");
-    }
-    return results.data;
   };
 
   static put = async function (
@@ -152,15 +183,33 @@ export class callStudioAPI {
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
     };
-    var results = await axios.put(url, data, { headers, ...config });
-    if (results.status != 200) {
-      throw results.statusText;
-    }
-    if (results?.data?.isSuccess == false) {
-      throw results?.data.errors?.map((c: any) => c.message)?.join(". ");
-    }
+    try {
+      var response = await axios.put(url, data, { headers, ...config });
+      if (response?.data?.isSuccess === false) {
+        return {
+          code: 1,
+          data: response.data?.data,
+          message: response.data.errors?.map((c: any) => c.message)?.join(". "),
+        };
+      } else if (response.status === 200) {
+        return {
+          code: 0,
+          data: response?.data?.data ?? response.data,
+        };
+      }
 
-    return results.data;
+      return {
+        code: 1,
+        data: response.statusText,
+        message: response.statusText,
+      };
+    } catch (error: any) {
+      return {
+        code: 1,
+        message: error.message,
+        data: error.message,
+      };
+    }
   };
 
   static delete = async function (
@@ -172,14 +221,33 @@ export class callStudioAPI {
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
     };
-    var results = await axios.delete(url, { headers, ...config });
-    if (results.status != 200) {
-      throw results.statusText;
-    }
-    if (results?.data?.isSuccess == false) {
-      throw results?.data.errors?.map((c: any) => c.message)?.join(". ");
-    }
 
-    return results.data;
+    try {
+      var response = await axios.delete(url, { headers, ...config });
+      if (response?.data?.isSuccess === false) {
+        return {
+          code: 1,
+          data: response.data?.data,
+          message: response.data.errors?.map((c: any) => c.message)?.join(". "),
+        };
+      } else if (response.status === 200) {
+        return {
+          code: 0,
+          data: response?.data?.data ?? response.data,
+        };
+      }
+
+      return {
+        code: 1,
+        data: response.statusText,
+        message: response.statusText,
+      };
+    } catch (error: any) {
+      return {
+        code: 1,
+        message: error.message,
+        data: error.message,
+      };
+    }
   };
 }

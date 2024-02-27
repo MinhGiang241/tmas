@@ -45,24 +45,23 @@ function MoveGroupModal(props: MoveGroupProps) {
     validate,
     enableReinitialize: true,
     onSubmit: async (values) => {
-      try {
-        var dataSubmit = {
-          id: props.now?.id,
-          name: props.now?.name,
-          level: props.now?.level,
-          idParent: values.new_group,
-        };
-        await updateExamGroupTest(dataSubmit);
-        successToast(common.t("success_move"));
-        setLoading(true);
-        setLoading(false);
+      setLoading(true);
+      var dataSubmit = {
+        id: props.now?.id,
+        name: props.now?.name,
+        level: props.now?.level,
+        idParent: values.new_group,
+      };
+      var res = await updateExamGroupTest(dataSubmit);
 
+      setLoading(false);
+      if (res.code === 0) {
+        successToast(common.t("success_move"));
         formik.resetForm();
         props?.onOk!();
         props?.onCancel();
-      } catch (e: any) {
-        setLoading(false);
-        errorToast(e);
+      } else {
+        errorToast(res?.message ?? "");
       }
     },
   });

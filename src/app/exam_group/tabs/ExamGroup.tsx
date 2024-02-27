@@ -31,6 +31,7 @@ import {
   setExamGroupList,
   setExamGroupLoading,
 } from "@/redux/exxam_group/examGroupSlice";
+import { APIResults } from "@/data/api_results";
 
 function ExamGroupTab() {
   const { data, error, isLoading } = useSWR("/api/user", (_: any) =>
@@ -48,12 +49,16 @@ function ExamGroupTab() {
   const [search, setSearch] = useState<string>("");
 
   const loadExamTestList = async (init?: boolean) => {
-    try {
-      if (init) {
-        dispatch(setExamGroupLoading(true));
-      }
-      var data = ((await getExamGroupTest({ text: search.trim() })) ??
-        []) as ExamGroupData[];
+    if (init) {
+      dispatch(setExamGroupLoading(true));
+    }
+    var dataResults: APIResults = await getExamGroupTest({
+      text: search.trim(),
+    });
+    if (dataResults.code != 0) {
+      dispatch(setExamGroupList([]));
+    } else {
+      var data = dataResults?.data as ExamGroupData[];
       var levelOne = data?.filter((v: ExamGroupData) => v.level === 0);
       var levelTwo = data?.filter((v: ExamGroupData) => v.level === 1);
 
@@ -67,11 +72,7 @@ function ExamGroupTab() {
       dispatch(setExamGroupList(list));
 
       console.log("levelOne", list);
-      console.log("data", data);
-    } catch (e: any) {
-      dispatch(setExamGroupList([]));
-      // errorToast(e);
-      console.log(e);
+      console.log("data", dataResults);
     }
   };
 
@@ -143,8 +144,13 @@ function ExamGroupTab() {
   const onOkDelete = async () => {
     try {
       setLoadingDelete(true);
-      await deleteExamGroupTest(active);
+      var res = await deleteExamGroupTest(active);
+      if (res.code != 0) {
+        throw res?.message;
+      }
+
       await loadExamTestList(false);
+
       successToast(t("success_delete_group"));
       setLoadingDelete(false);
       onCancelDelete();

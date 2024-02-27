@@ -40,23 +40,22 @@ function EditFormModal(props: EditModalProps) {
     validate,
     enableReinitialize: true,
     onSubmit: async (values: FormValue) => {
-      try {
-        setLoading(true);
-        var submitData = {
-          id: props.data?.id,
-          name: values.group_name,
-          level: props.data?.level,
-          idParent: props.data?.idParent,
-        };
-        await updateExamGroupTest(submitData);
+      setLoading(true);
+      var submitData = {
+        id: props.data?.id,
+        name: values.group_name,
+        level: props.data?.level,
+        idParent: props.data?.idParent,
+      };
+      var res = await updateExamGroupTest(submitData);
+      setLoading(false);
+      if (res?.code === 0) {
         props?.onOk!();
         successToast(common.t("success_update"));
-        setLoading(false);
         formik.resetForm();
         props?.onCancel();
-      } catch (e: any) {
-        errorToast(e);
-        setLoading(false);
+      } else {
+        errorToast(res?.message ?? "");
       }
     },
   });

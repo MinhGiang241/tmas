@@ -5,11 +5,12 @@ import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
 import MButton from "@/app/components/config/MButton";
 import { FormikErrors, useFormik } from "formik";
-import { baseOnSubmitFormik } from "@/services/ui/form_services";
 import { ExamGroupData } from "@/data/exam";
-import toast from "react-hot-toast";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
-import { createExamGroupTest } from "@/services/api_services/exam_api";
+import {
+  createChildsGroup,
+  createExamGroupTest,
+} from "@/services/api_services/exam_api";
 
 interface AddExamProps extends BaseModalProps {
   data?: ExamGroupData;
@@ -53,14 +54,39 @@ function AddExamTest(props: AddExamProps) {
       };
       var dataCall = await createExamGroupTest(submitData);
 
-      console.log("dataCall", dataCall);
-      setLoading(false);
-      if (dataCall.code == 0) {
-        successToast(common.t("success_create_new"));
-        props?.onOk!();
-        formik.resetForm();
-        props?.onCancel();
+      if (dataCall.code != 0) {
+        errorToast(dataCall?.message ?? "");
+        setLoading(false);
+        return;
       }
+
+      var dataChild = childs
+        .filter((i: any) => i)
+        .map((e: any) => ({
+          name: e?.trim(),
+        }));
+
+      var dataSubmit = {
+        items: dataChild,
+        action: "Add",
+        level: 1,
+        idParent: dataCall.data,
+      };
+
+      var submit = await createChildsGroup(dataSubmit);
+
+      if (submit.code != 0) {
+        errorToast(submit?.message ?? "");
+        setLoading(false);
+        return;
+      }
+
+      setLoading(false);
+      setChilds([""]);
+      successToast(common.t("success_create_new"));
+      props?.onOk!();
+      formik.resetForm();
+      props?.onCancel();
     },
   });
 

@@ -38,23 +38,23 @@ function CreateChildGroupModal(props: CreateChildProps) {
     initialValues,
     validate,
     onSubmit: async (values: FormValue) => {
-      try {
-        var submitData = {
-          name: values.group_name,
-          level: 1,
-          idParent: props.parent?.id,
-        };
+      var submitData = {
+        name: values.group_name,
+        level: 1,
+        idParent: props.parent?.id,
+      };
 
-        setLoading(true);
-        await createExamGroupTest(submitData);
-        setLoading(false);
+      setLoading(true);
+      var res = await createExamGroupTest(submitData);
+
+      setLoading(false);
+      if (res.code === 0) {
         formik.resetForm();
         props?.onCancel();
         props?.onOk!();
         successToast(common.t("success_create_new"));
-      } catch (e: any) {
-        errorToast(e);
-        setLoading(false);
+      } else {
+        errorToast(res?.message ?? "");
       }
     },
   });
