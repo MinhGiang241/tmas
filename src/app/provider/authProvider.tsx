@@ -12,7 +12,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       {children}
       <Toaster
         containerStyle={{ top: 0, bottom: 0, left: 0, right: 0 }}
-        toastOptions={{ custom: { duration: 3000 } }}
+        toastOptions={{ custom: { duration: 300000 } }}
       />
     </SWRConfig>
   );

@@ -41,6 +41,9 @@ const CustomToast = ({
         } relative w-full h-screen  flex justify-center bg-black/40`}
       >
         <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
           className={`${
             c.visible ? "animate-enter" : "animate-leave"
           } h-fit mt-40 relative max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 justify-center`}

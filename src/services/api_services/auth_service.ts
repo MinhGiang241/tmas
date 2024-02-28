@@ -6,7 +6,10 @@ export const registerAccount = async (data: RegisterFormData) => {
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.register`,
     data,
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const login = async (data: LoginFormData) => {
@@ -14,9 +17,13 @@ export const login = async (data: LoginFormData) => {
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.login`,
     data,
   );
-  localStorage.setItem("access_token", results["access_token"]);
 
-  return results;
+  localStorage.setItem("access_token", results?.data["access_token"]);
+
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const sendOtpResetPassword = async ({ email }: { email?: string }) => {
@@ -25,7 +32,10 @@ export const sendOtpResetPassword = async ({ email }: { email?: string }) => {
     { mailTo: email },
   );
 
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const verifyOtp = async ({
@@ -40,7 +50,10 @@ export const verifyOtp = async ({
     { mailTo, otp },
   );
 
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const createNewPass = async ({
@@ -55,12 +68,18 @@ export const createNewPass = async ({
     { email, new_pass },
   );
 
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const getUserMe = async () => {
   var results = await callApi.get(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.me`,
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };

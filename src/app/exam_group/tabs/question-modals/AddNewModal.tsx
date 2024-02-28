@@ -68,7 +68,11 @@ function AddNewModal(props: AddQuestModal) {
           errorToast(res?.message ?? "");
           return;
         }
-        successToast(common.t("success_create_new"));
+        if (props.isEdit) {
+          successToast(common.t("success_update"));
+        } else {
+          successToast(common.t("success_create_new"));
+        }
         formik.resetForm();
         props?.onCancel();
         props?.onOk!();

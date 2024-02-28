@@ -15,15 +15,27 @@ export class callApi {
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
     };
-    var results = await axios.post(url, data, { headers, ...config });
-    var resultData = results["data"] as APIResults | undefined;
-    if (!resultData) {
-      throw i18next.language == "vi" ? "Lỗi kết nối" : "Connection Error";
-    } else if (resultData?.code != 0) {
-      throw resultData?.message ?? "";
+    try {
+      var response = await axios.post(url, data, { headers, ...config });
+      if (response?.data?.code != 0) {
+        return {
+          code: response?.data?.code,
+          data: response.data?.data ?? response.data,
+          message: response.data?.message,
+        };
+      }
+      return {
+        code: 0,
+        data: response?.data?.data ?? response.data,
+        message: response?.data?.message,
+      };
+    } catch (error: any) {
+      return {
+        code: 1,
+        message: error.message,
+        data: error.message,
+      };
     }
-
-    return resultData?.data;
   };
   static get = async function (
     url: string,
@@ -35,15 +47,27 @@ export class callApi {
       Authorization: token ? `Bearer ${token}` : null,
     };
 
-    var results = await axios.get(url, { headers, ...config });
-    var resultData = results["data"] as APIResults | undefined;
-    if (!resultData) {
-      throw i18next.language == "vi" ? "Lỗi kết nối" : "Connection Error";
-    } else if (resultData?.code != 0) {
-      throw resultData?.message ?? "";
+    try {
+      var response = await axios.get(url, { headers, ...config });
+      if (response?.data?.code != 0) {
+        return {
+          code: response?.data?.code,
+          data: response.data?.data ?? response.data,
+          message: response.data?.message,
+        };
+      }
+      return {
+        code: 0,
+        data: response?.data?.data ?? response.data,
+        message: response?.data?.message,
+      };
+    } catch (error: any) {
+      return {
+        code: 1,
+        message: error.message,
+        data: error.message,
+      };
     }
-
-    return resultData?.data;
   };
 
   static upload = async function (
@@ -57,43 +81,23 @@ export class callApi {
       Authorization: token ? `Bearer ${token}` : null,
     };
     try {
-      var results = await axios.post(url, data, { headers, ...config });
-      return results;
-    } catch (e) {
-      throw e;
+      var response = await axios.post(url, data, { headers, ...config });
+      return {
+        code: 0,
+        data: response?.data,
+        message: response?.status,
+      };
+    } catch (e: any) {
+      return {
+        code: 1,
+        data: e.message,
+        message: e.message,
+      };
     }
   };
 }
 
 export class callStudioAPI {
-  static oldpost = async function (
-    url: string,
-    data: any,
-    config?: AxiosRequestConfig<any> | undefined,
-  ): Promise<any> {
-    const token = localStorage.getItem("access_token");
-    var headers: any = {
-      Lang: i18next.language == "en" ? "en_US" : "vi_VN",
-      Authorization: token ? `Bearer ${token}` : null,
-    };
-    try {
-      var results = await axios.post(url, data, { headers, ...config });
-      console.log("postError", results);
-
-      if (results.status != 200) {
-        throw new Error(results.statusText);
-      } else if (results?.data?.isSuccess == false) {
-        throw new Error(
-          results?.data.errors?.map((c: any) => c.message)?.join(". "),
-        );
-      }
-
-      return results.data;
-    } catch (e: any) {
-      throw e.message;
-    }
-  };
-
   static post = async function (
     url: string,
     data: any,

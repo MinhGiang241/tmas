@@ -7,14 +7,20 @@ export const changeStudio = async (ownerId?: string) => {
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.me`,
     { ownerId },
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const getMemberListInStudio = async () => {
   var results = await callApi.get(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/userstudio.list_member`,
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const sendInviteEmailToMember = async ({
@@ -28,7 +34,10 @@ export const sendInviteEmailToMember = async ({
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.send_invite`,
     { email, role },
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const checkEmailToWorkSpace = async ({ email }: { email: string }) => {
@@ -36,7 +45,10 @@ export const checkEmailToWorkSpace = async ({ email }: { email: string }) => {
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.check_invite_member`,
     { email },
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const deleteMemberFromWorkSpace = async ({
@@ -48,7 +60,10 @@ export const deleteMemberFromWorkSpace = async ({
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/userstudio.remove_member`,
     { userId },
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 export const deleteInvitedMemberFromWorkSpace = async ({
   email,
@@ -59,14 +74,20 @@ export const deleteInvitedMemberFromWorkSpace = async ({
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/studioinvitation.remove`,
     { email },
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const getInvitaionEmailMember = async () => {
   var results = await callApi.get(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/studioinvitation.load`,
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const updateRoleMember = async ({
@@ -80,7 +101,10 @@ export const updateRoleMember = async ({
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/userstudio.update_role`,
     { userId, role },
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const updatePersonalInfo = async (data: Object) => {
@@ -88,7 +112,10 @@ export const updatePersonalInfo = async (data: Object) => {
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.update_info`,
     { data },
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
 
 export const uploadFile = async (data: any) => {
@@ -96,7 +123,7 @@ export const uploadFile = async (data: any) => {
     `${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload`,
     data,
   );
-  if (results.status === 200) {
+  if (results.code === 0) {
     return results.data;
   }
 };
@@ -107,5 +134,8 @@ export const updateStudioInfo = async (data: StudioFormData) => {
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.update_studio`,
     data,
   );
-  return results;
+  if (results?.code != 0) {
+    throw results?.message ?? "";
+  }
+  return results.data;
 };
