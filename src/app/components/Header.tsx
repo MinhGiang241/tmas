@@ -197,7 +197,7 @@ function Header({ path }: { path?: string }) {
       <button className="lg:hidden mx-3" onClick={() => setOpenDrawer(true)}>
         <MenuOutlined className="text-white text-base" />
       </button>
-      <div className="w-[1140px] h-full flex items-center justify-between">
+      <div className="relative w-[1140px] h-full flex items-center justify-between">
         <Image
           loading="lazy"
           src="/images/white-logo.png"
@@ -328,11 +328,11 @@ function Header({ path }: { path?: string }) {
         >
           <button
             onClick={() => setOpenPop(true)}
-            className="lg:ml-6  cursor-pointer"
+            className="absolute right-2 lg:ml-6  cursor-pointer"
           >
             {user?.avatar ? (
               <Image
-                className="rounded-full mr-6"
+                className="rounded-full max-lg:mr-6"
                 loading="lazy"
                 src={user.avatar}
                 alt="avatar"
@@ -346,7 +346,7 @@ function Header({ path }: { path?: string }) {
             )}
           </button>
         </Popover>
-        <div className="hidden lg:block lg:w-4 " />
+        <div className=" lg:block lg:w-8 " />
       </div>
     </div>
   );

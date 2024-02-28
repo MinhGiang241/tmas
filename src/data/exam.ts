@@ -11,3 +11,13 @@ export interface ExamGroupData {
   studioId?: string;
   childs?: ExamGroupData[];
 }
+
+export interface QuestionGroupData {
+  id?: string;
+  name?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  updateBy?: string;
+  ownerId?: string;
+  studioId?: string;
+}

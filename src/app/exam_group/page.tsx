@@ -5,10 +5,14 @@ import { Tabs, TabsProps } from "antd";
 import { useTranslation } from "react-i18next";
 import TabPane from "antd/es/tabs/TabPane";
 import ExamGroupTab from "./tabs/ExamGroup";
+import QuestionGroup from "./tabs/QuestionGroup";
+import { useRouter, useSearchParams } from "next/navigation";
 
 function ExamGroup() {
   const { t } = useTranslation("exam");
   const common = useTranslation();
+  var search = useSearchParams();
+  var index = search.get("tab");
   const items: TabsProps["items"] = [
     {
       key: "1",
@@ -18,13 +22,17 @@ function ExamGroup() {
     {
       key: "2",
       label: t("question_group"),
-      children: <div />,
+      children: <QuestionGroup />,
     },
   ];
 
-  const onChangeTab = () => {};
+  const router = useRouter();
 
-  const [index, setIndex] = useState<number>(0);
+  const onChangeTab = (i: any) => {
+    router.push(`/exam_group?tab=${i}`);
+  };
+
+  // const [index, setIndex] = useState<number>(0);
 
   return (
     <HomeLayout>
@@ -62,7 +70,7 @@ function ExamGroup() {
       <Tabs
         destroyInactiveTabPane
         size="large"
-        defaultActiveKey="1"
+        defaultActiveKey={index ?? "1"}
         items={items}
         onChange={onChangeTab}
       />

@@ -30,13 +30,17 @@ import { RootState } from "@/redux/store";
 import {
   setExamGroupList,
   setExamGroupLoading,
-} from "@/redux/exxam_group/examGroupSlice";
+} from "@/redux/exam_group/examGroupSlice";
 import { APIResults } from "@/data/api_results";
 
 function ExamGroupTab() {
-  const { data, error, isLoading } = useSWR("/api/user", (_: any) =>
-    loadExamTestList(true),
-  );
+  // const { data, error, isLoading } = useSWR("/api/user", (_: any) =>
+  //   loadExamTestList(true),
+  // );
+
+  useEffect(() => {
+    loadExamTestList(true);
+  }, []);
 
   const examGroupList = useSelector(
     (state: RootState) => state.examGroup?.list,
@@ -76,33 +80,7 @@ function ExamGroupTab() {
     }
   };
 
-  const items: CollapseProps["items"] = [
-    {
-      key: "1",
-      label: "This is panel header 1",
-      children: (
-        <div className="w-full p-3">
-          {...Array.from({ length: 3 }, (v, i) => (
-            <div className="w-full bg-m_neutral_500" key={i}>
-              {i}
-            </div>
-          ))}
-        </div>
-      ),
-    },
-    {
-      key: "2",
-      label: "This is panel header 1",
-      children: <p>sadaasdas</p>,
-    },
-    {
-      key: "3",
-      label: "This is panel header 1",
-      children: <p>sadaasdas</p>,
-    },
-  ];
   const { t } = useTranslation("exam");
-  const common = useTranslation();
 
   const [active, setActive] = useState<ExamGroupData | undefined>(undefined);
   const [parent, setParent] = useState<ExamGroupData | undefined>(undefined);
@@ -245,7 +223,7 @@ function ExamGroupTab() {
           <Spin size="large" />
         </div>
       ) : !examGroupList || examGroupList?.length === 0 ? (
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center mt-28">
           <div className=" lg:w-1/3 w-1/2 min-h-56  bg-[url('/images/empty.png')] bg-no-repeat bg-contain "></div>
         </div>
       ) : (

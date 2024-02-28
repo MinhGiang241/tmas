@@ -65,20 +65,21 @@ function AddExamTest(props: AddExamProps) {
         .map((e: any) => ({
           name: e?.trim(),
         }));
+      if (dataChild.length != 0) {
+        var dataSubmit = {
+          items: dataChild,
+          action: "Add",
+          level: 1,
+          idParent: dataCall.data,
+        };
 
-      var dataSubmit = {
-        items: dataChild,
-        action: "Add",
-        level: 1,
-        idParent: dataCall.data,
-      };
+        var submit = await createChildsGroup(dataSubmit);
 
-      var submit = await createChildsGroup(dataSubmit);
-
-      if (submit.code != 0) {
-        errorToast(submit?.message ?? "");
-        setLoading(false);
-        return;
+        if (submit.code != 0) {
+          errorToast(submit?.message ?? "");
+          setLoading(false);
+          return;
+        }
       }
 
       setLoading(false);

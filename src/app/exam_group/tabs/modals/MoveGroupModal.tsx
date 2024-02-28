@@ -56,7 +56,7 @@ function MoveGroupModal(props: MoveGroupProps) {
 
       setLoading(false);
       if (res.code === 0) {
-        successToast(common.t("success_move"));
+        successToast(t("success_move"));
         formik.resetForm();
         props?.onOk!();
         props?.onCancel();

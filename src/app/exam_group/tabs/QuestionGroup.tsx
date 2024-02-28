@@ -1,0 +1,177 @@
+import MInput from "@/app/components/config/MInput";
+import React, { useEffect, useState } from "react";
+import { SearchOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
+import MButton from "@/app/components/config/MButton";
+import AddIcon from "../../components/icons/add.svg";
+import EditBlackIcon from "../../components/icons/edit-black.svg";
+import DeleteRedIcon from "../../components/icons/trash-red.svg";
+import { Collapse, Spin } from "antd";
+import AddNewModal from "./question-modals/AddNewModal";
+import ConfirmModal from "@/app/components/modals/ConfirmModal";
+import { QuestionGroupData } from "@/data/exam";
+import {
+  deleteQuestionGroup,
+  getQuestionGroups,
+} from "@/services/api_services/exam_api";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
+
+function QuestionGroup() {
+  useEffect(() => {
+    loadingQuestions(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loadingQuestions = async (init: boolean) => {
+    if (init) {
+      setLoading(true);
+    }
+
+    var res = await getQuestionGroups(search);
+    setLoading(false);
+    if (res.code != 0) {
+      setData([]);
+      errorToast(res.message ?? "");
+      return;
+    }
+    setData(res.data ?? []);
+    console.log("res=", res);
+  };
+
+  const [data, setData] = useState<QuestionGroupData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+
+  const { t } = useTranslation("exam");
+  const common = useTranslation();
+  const [search, setSearch] = useState<string>("");
+  const [openAdd, setOpenAdd] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [active, setActive] = useState<QuestionGroupData | undefined>();
+
+  const onDeleteQuestion = async () => {
+    setDeleteLoading(true);
+    const res = await deleteQuestionGroup(active);
+    setDeleteLoading(false);
+    if (res.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    successToast(t("success_delete_group"));
+    setActive(undefined);
+    setOpenDelete(false);
+    loadingQuestions(false);
+  };
+
+  return (
+    <div className="w-full max-lg:px-4 ">
+      <ConfirmModal
+        text={t("confirm_delete")}
+        action={t("delete")}
+        open={openDelete}
+        onCancel={() => setOpenDelete(false)}
+        onOk={() => onDeleteQuestion()}
+      />
+      <AddNewModal
+        data={active}
+        isEdit={isEdit}
+        open={openAdd}
+        onCancel={() => setOpenAdd(false)}
+        onOk={() => {
+          loadingQuestions(false);
+          setOpenAdd(false);
+        }}
+      />
+      <div className="lg:mt-2 lg:w-full lg:flex lg:justify-center">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            loadingQuestions(true);
+          }}
+          className="lg:w-2/3"
+        >
+          <MInput
+            onChange={(e: React.ChangeEvent<any>) => {
+              setSearch(e.target.value);
+            }}
+            className="max-lg:mt-3"
+            placeholder={t("search_exam_group")}
+            h="h-11"
+            id="search"
+            name="search"
+            suffix={
+              <button
+                type="submit"
+                className="bg-m_primary_500 w-11 lg:h-11 h-11 rounded-r-lg text-white"
+              >
+                <SearchOutlined className="scale-150" />
+              </button>
+            }
+          />
+        </form>
+        <div className="max-lg:mt-5 w-full flex justify-end">
+          <MButton
+            onClick={() => {
+              setIsEdit(false);
+              setOpenAdd(true);
+            }}
+            className="flex items-center bg-m_neutral_100"
+            type="secondary"
+            icon={<AddIcon />}
+            text={t("create_exam_group")}
+          />
+        </div>
+      </div>
+      <div className="h-5" />
+      {loading ? (
+        <div
+          className={
+            "bg-m_neutral_100 w-full flex justify-center min-h-40 items-center"
+          }
+        >
+          <Spin size="large" />
+        </div>
+      ) : !data || data.length == 0 ? (
+        <div className="w-full flex justify-center mt-28">
+          <div className=" lg:w-1/3 w-1/2 min-h-56  bg-[url('/images/empty.png')] bg-no-repeat bg-contain "></div>
+        </div>
+      ) : (
+        data.map((v: QuestionGroupData) => (
+          <div
+            key={v.id}
+            className="mb-4 px-6 rounded-lg bg-white h-16 w-full flex flex-grow justify-between items-center"
+          >
+            <div>
+              <div className="body_semibold_16 text-m_neutral_900">
+                {v.name}
+              </div>
+            </div>
+            <div className="flex">
+              <button
+                onClick={(_) => {
+                  setIsEdit(true);
+                  setActive(v);
+                  setOpenAdd(true);
+                }}
+              >
+                <EditBlackIcon />
+              </button>
+              <div className="w-3" />
+              <button
+                onClick={(_) => {
+                  setActive(v);
+                  setOpenDelete(true);
+                }}
+              >
+                <DeleteRedIcon />
+              </button>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+export default QuestionGroup;
