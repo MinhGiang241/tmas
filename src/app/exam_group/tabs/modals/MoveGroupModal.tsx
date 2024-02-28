@@ -102,11 +102,13 @@ function MoveGroupModal(props: MoveGroupProps) {
 
         <div className="h-4" />
         <MDropdown
-          options={(props.list ?? []).map((v: ExamGroupData) => ({
-            label: v?.name ?? "",
-            value: v?.id,
-            disabled: v?.id === props.parent?.id,
-          }))}
+          options={(props.list ?? [])
+            .filter((e: ExamGroupData) => e?.id != props.parent?.id)
+            .map((v: ExamGroupData) => ({
+              label: v?.name ?? "",
+              value: v?.id,
+              disabled: v?.id === props.parent?.id,
+            }))}
           formik={formik}
           name="new_group"
           id="new_group"

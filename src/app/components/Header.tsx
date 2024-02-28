@@ -222,10 +222,10 @@ function Header({ path }: { path?: string }) {
         </div>
 
         <div className="lg:flex hidden h-full items-center">
-          <HeadPhoneIcon className="lg:flex hidden" />
+          <HeadPhoneIcon className=" hidden" />
 
           <Dropdown menu={{ items: itemsStudio }}>
-            <button className="mx-3 lg:flex hidden items-center body_semibold_14 text-white">
+            <button className="ml-3 lg:flex hidden items-center body_semibold_14 text-white">
               {user?.studio?._id === user._id
                 ? common.t("my_studio")
                 : user?.studio?.studio_name ?? user?.studio?.full_name}

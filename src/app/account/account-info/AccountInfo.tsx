@@ -208,7 +208,7 @@ function AccountInfo() {
   const deleteMember = async (mem?: UserData) => {
     try {
       setLoadingDelete(true);
-      if (mem?.isInvite) {
+      if (!mem?.isInvite) {
         await deleteMemberFromWorkSpace({ userId: mem?._id });
       } else {
         await deleteInvitedMemberFromWorkSpace({ email: mem?.email });

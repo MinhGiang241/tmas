@@ -29,7 +29,8 @@ function AddAccount({ open, onCancel, onOk }: Props) {
   const [success, setSuccess] = useState<string | undefined>();
   const [role, setRole] = useState<string>("Member");
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [loadingValidateMail, setLoadingValidateMail] =
+    useState<boolean>(false);
   const initialValues: SendInviteMailFormValue = {
     email: undefined,
   };
@@ -43,7 +44,9 @@ function AddAccount({ open, onCancel, onOk }: Props) {
     } else if (!emailRegex.test(values.email)) {
       errors.email = "common_invalid_email";
     } else {
+      setLoadingValidateMail(true);
       var check = await checkEmailToWorkSpace({ email: values.email });
+      setLoadingValidateMail(false);
       console.log("check", check);
       if (check["type"] == "danger") {
         errors.email = check["message"];
@@ -56,6 +59,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
 
     return errors;
   };
+
   const formik = useFormik({
     initialValues,
     validate,
@@ -97,6 +101,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
     >
       <form onSubmit={onSubmit} className="w-full ">
         <MInput
+          loadingValidate={loadingValidateMail}
           dangerText={danger}
           successText={success}
           required

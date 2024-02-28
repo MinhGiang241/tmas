@@ -5,12 +5,14 @@ import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
 import MButton from "@/app/components/config/MButton";
 import { FormikErrors, useFormik } from "formik";
-import { ExamGroupData } from "@/data/exam";
+import { ExamGroupData, Hashtag } from "@/data/exam";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import {
   createChildsGroup,
   createExamGroupTest,
+  getSuggestValueHastag,
 } from "@/services/api_services/exam_api";
+import MSearchInput from "@/app/components/config/MSearchInput";
 
 interface AddExamProps extends BaseModalProps {
   data?: ExamGroupData;
@@ -98,6 +100,17 @@ function AddExamTest(props: AddExamProps) {
     });
     formik.handleSubmit();
   };
+  const [itemSearch, setItemSearch] = useState<string[]>([]);
+  const onSearchText = async (v: string) => {
+    try {
+      var data = await getSuggestValueHastag(v);
+      if (data) {
+        setItemSearch([...data.map((e: Hashtag) => e.name)]);
+      }
+    } catch (e: any) {
+      console.log(e);
+    }
+  };
 
   return (
     <BaseModal
@@ -111,7 +124,7 @@ function AddExamTest(props: AddExamProps) {
       }}
     >
       <form onSubmit={onSubmit} className="w-full">
-        <MInput
+        {/* <MInput
           required
           title={t("enter_group_name")}
           name="group_name"
@@ -120,6 +133,20 @@ function AddExamTest(props: AddExamProps) {
           className="h-12"
           formik={formik}
         />
+        */}
+
+        <MSearchInput
+          itemsSearch={itemSearch}
+          onSearch={(v) => onSearchText(v)}
+          required
+          title={t("enter_group_name")}
+          name="group_name"
+          id="group_name"
+          placeholder={t("enter_content")}
+          className="h-12"
+          formik={formik}
+        />
+
         {childs.map((v: string, i: number) => (
           <>
             <div className="h-2" />

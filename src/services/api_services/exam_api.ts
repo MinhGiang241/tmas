@@ -1,5 +1,5 @@
 import { ExamGroupData, QuestionGroupData } from "@/data/exam";
-import { callStudioAPI } from "./base_api";
+import { callApi, callStudioAPI } from "./base_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import QuestionGroup from "@/app/exam_group/tabs/QuestionGroup";
@@ -77,6 +77,20 @@ export const updateQuestionGroups = async (data?: QuestionGroupData) => {
 export const deleteQuestionGroup = async (data?: QuestionGroupData) => {
   var results: APIResults = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/GroupQuestion?Id=${data?.id}`,
+  );
+
+  return results;
+};
+
+export const getSuggestValueHastag = async (text?: string) => {
+  var results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/hashtag.search`,
+    {
+      text,
+      types: "job",
+      skip: 0,
+      limit: 100,
+    },
   );
 
   return results;

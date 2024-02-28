@@ -21,3 +21,13 @@ export interface QuestionGroupData {
   ownerId?: string;
   studioId?: string;
 }
+
+export interface Hashtag {
+  _id?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  creator?: string;
+  type?: string;
+  name?: string;
+  code?: string;
+}

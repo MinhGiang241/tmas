@@ -70,14 +70,20 @@ function QuestionGroup() {
         text={t("confirm_delete")}
         action={t("delete")}
         open={openDelete}
-        onCancel={() => setOpenDelete(false)}
+        onCancel={() => {
+          setActive(undefined);
+          setOpenDelete(false);
+        }}
         onOk={() => onDeleteQuestion()}
       />
       <AddNewModal
         data={active}
         isEdit={isEdit}
         open={openAdd}
-        onCancel={() => setOpenAdd(false)}
+        onCancel={() => {
+          setActive(undefined);
+          setOpenAdd(false);
+        }}
         onOk={() => {
           loadingQuestions(false);
           setOpenAdd(false);
@@ -89,7 +95,7 @@ function QuestionGroup() {
             e.preventDefault();
             loadingQuestions(true);
           }}
-          className="lg:w-2/3"
+          className="lg:w-3/5"
         >
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
@@ -116,7 +122,7 @@ function QuestionGroup() {
               setIsEdit(false);
               setOpenAdd(true);
             }}
-            className="flex items-center bg-m_neutral_100"
+            className="flex items-center px-5 bg-m_neutral_100"
             type="secondary"
             icon={<AddIcon />}
             text={t("create_exam_group")}
@@ -143,7 +149,7 @@ function QuestionGroup() {
             className="mb-4 px-6 rounded-lg bg-white h-16 w-full flex flex-grow justify-between items-center"
           >
             <div>
-              <div className="body_semibold_16 text-m_neutral_900">
+              <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-xs text-ellipsis">
                 {v.name}
               </div>
             </div>

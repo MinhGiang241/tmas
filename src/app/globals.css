@@ -47,6 +47,9 @@ body {
 .ant-tabs-tab-btn {
   font-weight: 600;
   line-height: 1.5rem;
+  width: 141px;
+  display: flex;
+  justify-content: center;
 }
 
 @media only screen and (max-width: 1023px) {

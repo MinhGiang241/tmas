@@ -182,7 +182,7 @@ function ExamGroupTab() {
             e.preventDefault();
             loadExamTestList(true);
           }}
-          className="lg:w-2/3"
+          className="lg:w-3/5"
         >
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
@@ -203,10 +203,10 @@ function ExamGroupTab() {
             }
           />
         </form>
-        <div className="max-lg:mt-5 w-full flex justify-end">
+        <div className="max-lg:mt-5  w-full flex justify-end">
           <MButton
             onClick={() => setOpenAdd(true)}
-            className="flex items-center bg-m_neutral_100"
+            className="flex items-center px-5  bg-m_neutral_100"
             type="secondary"
             icon={<AddIcon />}
             text={t("create_test_group")}
@@ -239,10 +239,10 @@ function ExamGroupTab() {
               header={
                 <div className=" h-14 w-full flex flex-grow justify-between items-center">
                   <div>
-                    <div className="body_semibold_16 text-m_neutral_900">
+                    <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-xs text-ellipsis">
                       {v.name ?? ""}
                     </div>
-                    <div className="body_regular_14 text-m_neutral_600">
+                    <div className="body_regular_14 text-m_neutral_600 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-xs text-ellipsis ">
                       {v.childs && v.childs.length == 0
                         ? ""
                         : `(${v.childs?.map((i) => i.name)?.join(", ") ?? ""})`}

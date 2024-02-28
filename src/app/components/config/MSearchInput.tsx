@@ -1,4 +1,4 @@
-import { Input } from "antd";
+import { Dropdown, Input } from "antd";
 import React, { ReactNode, useEffect, useState } from "react";
 import NoticeIcon from "@/app/components/icons/notice.svg";
 import CloseEye from "@/app/components/icons/close_eye.svg";
@@ -32,10 +32,11 @@ interface Props {
   disable?: boolean;
   allowClear?: boolean;
   h?: string;
-  loadingValidate?: boolean;
+  itemsSearch: any;
+  onSearch: (arg: string) => void;
 }
 
-function MInput({
+function MSearchInput({
   disable,
   onChange,
   required = false,
@@ -61,7 +62,8 @@ function MInput({
   successText,
   allowClear,
   h,
-  loadingValidate,
+  itemsSearch,
+  onSearch,
 }: Props) {
   var np;
   var er;
@@ -79,6 +81,23 @@ function MInput({
     er = error;
     np = namespace;
   }
+  const items =
+    itemsSearch?.map((v: any, i: number) => ({
+      key: i,
+      label: (
+        <button
+          className="w-full flex justify-start"
+          type="button"
+          onClick={async () => {
+            await formik.setFieldValue(name, v);
+            setOpenPop(false);
+          }}
+        >
+          {v}
+        </button>
+      ),
+    })) ?? [];
+  const [openPop, setOpenPop] = useState<boolean>(false);
 
   const [visible, setVisible] = useState(!isPassword);
   const { t } = useTranslation(np);
@@ -96,42 +115,71 @@ function MInput({
       </div>
 
       <div className="w-full flex flex-col mb-2  ">
-        <Input
-          autoComplete="off"
-          disabled={disable}
-          // defaultValue={formik.initialValues[name]}
-          maxLength={maxLength ?? 500}
-          prefix={prefix}
-          onBlur={onBlur}
-          status={error && touch ? `error` : ""}
-          type={type ?? visible ? "text" : "password"}
-          className={`${disable ? "text-m_neutral_900" : ""} ${
-            successText && touch ? "border-m_success_500" : ""
-          } ${dangerText && touch ? "border-m_warning_500" : ""}  ${
-            h ? h : `h-12`
-          } rounded-lg ${suffix ? "pr-0" : ""} ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
-          name={name}
-          id={id}
-          allowClear={allowClear ?? true}
-          onKeyDown={onKeyDown}
-          onChange={onChange}
-          value={value}
-          placeholder={placeholder}
-          suffix={
-            suffix ? (
-              suffix
-            ) : isPassword ? (
-              <div
-                onClick={() => {
-                  setVisible(!visible);
-                }}
-                className="active:opacity-70 cursor-pointer"
-              >
-                {visible ? <OpenEye style={{ color: "red" }} /> : <CloseEye />}
-              </div>
-            ) : undefined
-          }
-        />
+        <Dropdown
+          onOpenChange={(v) => {
+            // formik.setFieldValue(name, "11st ");
+            console.log(v, formik.values[name]);
+          }}
+          open={openPop && items.length > 0}
+          menu={{ items }}
+          placement="bottom"
+          arrow={{ pointAtCenter: true }}
+        >
+          <Input
+            onFocus={(e) => {
+              console.log("e", e);
+              onSearch("");
+              setOpenPop(true);
+            }}
+            autoComplete="off"
+            disabled={disable}
+            // defaultValue={formik.initialValues[name]}
+            maxLength={maxLength ?? 500}
+            prefix={prefix}
+            onBlur={(e) => {
+              setTimeout(function () {
+                setOpenPop(false);
+              }, 200);
+
+              onBlur!(e);
+            }}
+            status={error && touch ? `error` : ""}
+            type={type ?? visible ? "text" : "password"}
+            className={`${successText && touch ? "border-m_success_500" : ""} ${
+              dangerText && touch ? "border-m_warning_500" : ""
+            }  ${h ? h : `h-12`} rounded-lg ${
+              suffix ? "pr-0" : ""
+            } ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
+            name={name}
+            id={id}
+            allowClear={allowClear ?? true}
+            onKeyDown={onKeyDown}
+            onChange={(e) => {
+              onSearch(e.target.value);
+              onChange!(e);
+            }}
+            value={value}
+            placeholder={placeholder}
+            suffix={
+              suffix ? (
+                suffix
+              ) : isPassword ? (
+                <div
+                  onClick={() => {
+                    setVisible(!visible);
+                  }}
+                  className="active:opacity-70 cursor-pointer"
+                >
+                  {visible ? (
+                    <OpenEye style={{ color: "red" }} />
+                  ) : (
+                    <CloseEye />
+                  )}
+                </div>
+              ) : undefined
+            }
+          />
+        </Dropdown>
         {successText && touch ? (
           <div className="flex items-center text-m_success_500">
             <div className="min-w-4">
@@ -143,20 +191,13 @@ function MInput({
           </div>
         ) : null}
         {dangerText && touch ? (
-          <div className="flex items-center  text-m_warning_500">
+          <div className="flex items-center text-m_warning_500">
             <div className="min-w-4">
               <ExclamationCircleFilled />
             </div>
-            <div className=" body_regular_14 text-nowrap lg:max-w-xl overflow-hidden text-ellipsis">
-              {common.t(dangerText ?? "")}
-            </div>
+            <div className=" body_regular_14">{common.t(dangerText ?? "")}</div>
           </div>
         ) : null}
-        {loadingValidate && !(dangerText || successText || error) ? (
-          <div className="h-[22px]" />
-        ) : (
-          <div />
-        )}
         {er && touch ? (
           <div className="flex items-center">
             <div className="min-w-4">
@@ -170,4 +211,4 @@ function MInput({
   );
 }
 
-export default MInput;
+export default MSearchInput;
