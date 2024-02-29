@@ -33,14 +33,17 @@ import {
 } from "@/redux/exam_group/examGroupSlice";
 import { APIResults } from "@/data/api_results";
 
-function ExamGroupTab() {
+function ExamGroupTab({ hidden }: { hidden: boolean }) {
   // const { data, error, isLoading } = useSWR("/api/user", (_: any) =>
   //   loadExamTestList(true),
   // );
 
   useEffect(() => {
     loadExamTestList(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const common = useTranslation();
 
   const examGroupList = useSelector(
     (state: RootState) => state.examGroup?.list,
@@ -141,7 +144,7 @@ function ExamGroupTab() {
   };
 
   return (
-    <div className="w-full max-lg:px-4 ">
+    <div className={`${hidden ? "hidden" : ""} w-full max-lg:px-4 `}>
       <CreateChildGroupModal
         onOk={async () => loadExamTestList(false)}
         parent={active}
@@ -223,8 +226,9 @@ function ExamGroupTab() {
           <Spin size="large" />
         </div>
       ) : !examGroupList || examGroupList?.length === 0 ? (
-        <div className="w-full flex justify-center mt-28">
-          <div className=" lg:w-1/3 w-1/2 min-h-56  bg-[url('/images/empty.png')] bg-no-repeat bg-contain "></div>
+        <div className="w-full flex flex-col items-center justify-center mt-28">
+          <div className="  w-[350px] h-[213px]  bg-[url('/images/empty.png')] bg-no-repeat bg-contain " />
+          <div className="body_regular_14">{common.t("empty_list")}</div>
         </div>
       ) : (
         examGroupList!.map((v: ExamGroupData, i: any) => (
@@ -277,7 +281,7 @@ function ExamGroupTab() {
                   v.childs ?? [],
                   (c: ExamGroupData, i: number) => (
                     <div
-                      className="px-4 text-wrap flex lg:min-h-[60px] min-h-[52px] items-center w-full bg-m_neutral_100 flex-wrap  mt-4 justify-between"
+                      className="rounded-md px-4 text-wrap flex lg:min-h-[60px] min-h-[52px] items-center w-full bg-m_neutral_100 flex-wrap  mt-4 justify-between"
                       key={c.id}
                     >
                       <p>{c?.name}</p>

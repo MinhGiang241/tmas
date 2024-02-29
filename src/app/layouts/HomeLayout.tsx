@@ -30,11 +30,6 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
           console.log(user);
 
           dispatch(setUserData(user));
-          if (user.lang === "vi_VN") {
-            i18n.changeLanguage("vi");
-          } else {
-            i18n.changeLanguage("en");
-          }
           setLoading(false);
         })
         .catch((e) => {

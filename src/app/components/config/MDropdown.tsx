@@ -99,6 +99,7 @@ function MDropdown({
 
       <div className="w-full flex flex-col mb-2  ">
         <Select
+          value={value}
           allowClear={allowClear ?? true}
           options={options}
           disabled={disable}
@@ -108,7 +109,9 @@ function MDropdown({
           status={error && touch ? `error` : ""}
           className={`${successText && touch ? "border-m_success_500" : ""} ${
             dangerText && touch ? "border-m_warning_500" : ""
-          }  h-12 rounded-lg ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
+          } ${
+            disable ? "text-m_neutral_900" : ""
+          } h-12 rounded-lg ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
           id={id}
           onKeyDown={onKeyDown}
           onChange={(e) => {

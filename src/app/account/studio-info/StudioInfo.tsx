@@ -113,7 +113,7 @@ function StudioInfo() {
   const onSubmit = async () => {
     try {
       if (!validate()) {
-        // return;
+        return;
       }
       setLoadingUpdate(true);
       if (selectedLogo) {
@@ -187,7 +187,7 @@ function StudioInfo() {
         className="hover:bg-neutral-400 mb-4 w-[76px] h-[76px] rounded-full border border-m_primary_900 flex justify-center items-center relative "
       >
         {showCamLogo && (
-          <div className="z-20">
+          <div className="z-20 bg-neutral-900/40 flex justify-center items-center absolute top-0 bottom-0 right-0 left-0 rounded-[50%]">
             <CameraFilled className=" scale-[2] text-white z-20" />
           </div>
         )}
@@ -210,7 +210,7 @@ function StudioInfo() {
             alt="Preview"
           />
         ) : (
-          <div className="bg-[url('/images/logo-default.png')] bg-no-repeat bg-cover absolute top-2 bottom-2 left-2 right-2 " />
+          <div className="bg-[url('/images/avatar-default.png')] rounded-lg bg-no-repeat bg-cover absolute top-0 bottom-0 left-0 right-0 " />
         )}
       </button>
       <div className="h-2" />
@@ -239,7 +239,7 @@ function StudioInfo() {
           className="flex-1 mb-4 w-full min-h-96 flex justify-center items-center relative "
         >
           {showCamBanner && (
-            <div className="z-20">
+            <div className="z-20 bg-neutral-900/40 flex justify-center items-center absolute top-0 bottom-0 right-0 left-0">
               <CameraFilled className=" scale-[2] text-white z-20" />
             </div>
           )}
@@ -262,7 +262,7 @@ function StudioInfo() {
               alt="Preview"
             />
           ) : (
-            <div className="hover:bg-neutral-400 absolute top-0 bottom-0 right-0 left-0 bg-[url('/images/logo-default.png')] bg-no-repeat bg-contain w-full max-h-lg" />
+            <div className="hover:bg-neutral-400 absolute top-0 bottom-0 right-0 left-0 bg-[url('/images/banner-default.png')] bg-no-repeat bg-cover w-full max-h-lg" />
           )}
         </button>
         <div className="hidden lg:block w-8" />

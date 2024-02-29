@@ -55,8 +55,10 @@ function LangComponent() {
       <button
         onClick={() => {
           if (i18next.language == "vi") {
+            localStorage.setItem("lang", "en");
             changeLanguage("en");
           } else {
+            localStorage.setItem("lang", "vi");
             changeLanguage("vi");
           }
         }}

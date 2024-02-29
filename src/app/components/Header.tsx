@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import HeadPhoneIcon from "../components/icons/headphone.svg";
@@ -127,7 +127,12 @@ function Header({ path }: { path?: string }) {
   const size = useWindowSize();
 
   return (
-    <div className="w-screen fixed lg:h-[68px] h-14 bg-m_primary_500 flex justify-center z-50">
+    <div className="w-full fixed  lg:h-[68px] h-14 bg-m_primary_500 flex justify-center z-50">
+      <div className="max-lg:hidden absolute h-full w-[233px] left-0 bg-[url('/images/left-header.png')] bg-no-repeat bg-contain" />
+      <div className="max-lg:hidden absolute h-full w-[748px] right-0 bg-[url('/images/right-header.png')] bg-no-repeat bg-contain" />
+      <div className="max-lg:hidden absolute h-full w-[372px] left-0 bg-[url('/images/left-header-2.png')] bg-no-repeat bg-contain" />
+      <div className="max-lg:hidden absolute h-full w-[812px] right-0 bg-[url('/images/right-header-2.png')] bg-no-repeat bg-contain" />
+
       <Drawer
         headerStyle={{ display: "none" }}
         className="lg:hidden"
@@ -174,8 +179,10 @@ function Header({ path }: { path?: string }) {
               onClick={() => {
                 if (i18next.language == "vi") {
                   i18n.changeLanguage("en");
+                  localStorage.setItem("lang", "en");
                 } else {
                   i18n.changeLanguage("vi");
+                  localStorage.setItem("lang", "vi");
                 }
               }}
             >
@@ -241,8 +248,10 @@ function Header({ path }: { path?: string }) {
             onClick={() => {
               if (i18next.language == "vi") {
                 i18n.changeLanguage("en");
+                localStorage.setItem("lang", "en");
               } else {
                 i18n.changeLanguage("vi");
+                localStorage.setItem("lang", "vi");
               }
             }}
           >
@@ -264,17 +273,14 @@ function Header({ path }: { path?: string }) {
             setOpenPop(v);
           }}
           open={openPop}
-          placement="leftBottom"
+          placement="bottomRight"
           trigger={["click"]}
           content={
             <div className="w-full flex flex-col body_regular_14 p-2 items-start">
               <button
                 onClick={() => {
                   setOpenPop(false);
-                  dispatch(setHomeIndex(0));
-                  if (pathname != "/") {
-                    router.push("/");
-                  }
+                  router.push("/?tab=0");
                 }}
                 className="py-1 hover:bg-m_neutral_100 w-full flex justify-start"
               >
@@ -283,10 +289,7 @@ function Header({ path }: { path?: string }) {
               <button
                 onClick={() => {
                   setOpenPop(false);
-                  dispatch(setHomeIndex(1));
-                  if (pathname != "/") {
-                    router.push("/");
-                  }
+                  router.push("/?tab=1");
                 }}
                 className="py-1 hover:bg-m_neutral_100 w-full flex justify-start"
               >
@@ -295,10 +298,7 @@ function Header({ path }: { path?: string }) {
               <button
                 onClick={() => {
                   setOpenPop(false);
-                  dispatch(setHomeIndex(2));
-                  if (pathname != "/") {
-                    router.push("/");
-                  }
+                  router.push("/?tab=2");
                 }}
                 className="py-1 hover:bg-m_neutral_100 w-full flex justify-start"
               >
@@ -328,11 +328,11 @@ function Header({ path }: { path?: string }) {
         >
           <button
             onClick={() => setOpenPop(true)}
-            className="absolute right-2 lg:ml-6  cursor-pointer"
+            className="absolute max-lg:right-2 right-0 lg:ml-6  cursor-pointer"
           >
             {user?.avatar ? (
               <Image
-                className="rounded-full max-lg:mr-6"
+                className="rounded-full "
                 loading="lazy"
                 src={user.avatar}
                 alt="avatar"
@@ -340,9 +340,14 @@ function Header({ path }: { path?: string }) {
                 height={34}
               />
             ) : (
-              <div className="h-fit">
-                <AvatarIcon className=" scale-[3] max-lg:-translate-x-8" />
-              </div>
+              <Image
+                className="rounded-full "
+                loading="lazy"
+                src={"/images/avatar-default.png"}
+                alt="avatar"
+                width={34}
+                height={34}
+              />
             )}
           </button>
         </Popover>

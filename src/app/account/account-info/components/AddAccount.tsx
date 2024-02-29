@@ -115,10 +115,10 @@ function AddAccount({ open, onCancel, onOk }: Props) {
         <p className="caption_semibold_14 mt-4 mb-2">{t("role")}</p>
         <Radio.Group buttonStyle="solid" onChange={onChangeValue} value={role}>
           <Space direction="vertical">
-            <Radio className="caption_regular_14" value={"Member"}>
+            <Radio className=" caption_regular_14" value={"Member"}>
               {t("member_role")}
             </Radio>
-            <Radio className="caption_regular_14" value={"Admin"}>
+            <Radio className=" caption_regular_14" value={"Admin"}>
               {t("admin_role")}
             </Radio>
           </Space>

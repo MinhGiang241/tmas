@@ -11,6 +11,7 @@ import { getUserMe } from "@/services/api_services/auth_service";
 import { emailRegex, phoneRegex } from "@/services/validation/regex";
 import { Divider } from "antd";
 import { FormikErrors, useFormik } from "formik";
+import i18next from "i18next";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -137,6 +138,7 @@ function UserProfile() {
 
         <div className="w-full lg:flex justify-between">
           <MDropdown
+            disable
             allowClear={false}
             options={["en", "vi"].map((v: any, i: number) => ({
               label: common.t(v),
@@ -146,7 +148,10 @@ function UserProfile() {
             name="lang"
             title={t("language")}
             id="lang"
-            formik={formik}
+            value={i18next.language == "en" ? "en_US" : "vi_VN"}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            // formik={formik}
           />
           <div className="w-20" />
           <div className="w-full" />

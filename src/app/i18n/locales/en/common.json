@@ -13,7 +13,7 @@
   "forgot_pass": "Forgot password?",
   "no_account": "Don't have an account?",
   "register_now": "Sign up",
-  "register": "Register",
+  "register": "Sign up",
   "full_name": "Full name",
   "enter_full_name": "Enter full name",
   "company_name": "Company name",
@@ -27,7 +27,7 @@
   "success_create_account": "Create account successfully. Please check your email and confirm to complete the registration process",
   "error": "Error",
   "fail": "Failed",
-  "success": "Success",
+  "success": "Successful",
   "close": "Close",
   "enter_required_name": "Please enter your required name.",
   "name_at_least": "Name langth is at least 2 letter.",
@@ -68,7 +68,7 @@
   "cancel": "Cancel",
   "finished": "Done",
   "update": "Update",
-  "complete": "Complete",
+  "complete": "Done",
   "warning": "Warning",
   "danger": "Danger",
   "account_existed": "The account already exists in the studio !",
@@ -79,5 +79,6 @@
   "support": "Support",
   "save": "Save",
   "success_create_new": "Create new successfully!",
-  "success_update": "Update information successfully!"
+  "success_update": "Update information successfully!",
+  "empty_list": "List is empty!"
 }

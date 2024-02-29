@@ -146,7 +146,7 @@ function AccountInfo() {
       dataIndex: "schema",
       key: "schema",
       render: (action, data) =>
-        data.role == "Owner" ? (
+        data.role == "Owner" || user?.studio?.role == "Member" ? (
           <div />
         ) : (
           <div className="min-w-16">

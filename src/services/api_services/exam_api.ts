@@ -92,6 +92,9 @@ export const getSuggestValueHastag = async (text?: string) => {
       limit: 100,
     },
   );
+  if (results.code === 0) {
+    return results.data;
+  }
 
-  return results;
+  return 0;
 };

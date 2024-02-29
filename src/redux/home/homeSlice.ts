@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface HomeState {
-  index: number;
+  index: string;
 }
 
 const initialState: HomeState = {
-  index: 0,
+  index: "0",
 };
 
 export const homeSlice = createSlice({

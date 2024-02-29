@@ -16,7 +16,7 @@ import {
 } from "@/services/api_services/exam_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 
-function QuestionGroup() {
+function QuestionGroup({ hidden }: { hidden: boolean }) {
   useEffect(() => {
     loadingQuestions(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,8 +64,12 @@ function QuestionGroup() {
     loadingQuestions(false);
   };
 
+  if (hidden) {
+    return <div />;
+  }
+
   return (
-    <div className="w-full max-lg:px-4 ">
+    <div className={`${hidden ? "hidden" : ""} w-full max-lg:px-4 `}>
       <ConfirmModal
         text={t("confirm_delete")}
         action={t("delete")}
@@ -139,8 +143,9 @@ function QuestionGroup() {
           <Spin size="large" />
         </div>
       ) : !data || data.length == 0 ? (
-        <div className="w-full flex justify-center mt-28">
-          <div className=" lg:w-1/3 w-1/2 min-h-56  bg-[url('/images/empty.png')] bg-no-repeat bg-contain "></div>
+        <div className="w-full flex flex-col items-center justify-center mt-28">
+          <div className="  w-[350px] h-[213px]  bg-[url('/images/empty.png')] bg-no-repeat bg-contain " />
+          <div className="body_regular_14">{common.t("empty_list")}</div>
         </div>
       ) : (
         data.map((v: QuestionGroupData) => (

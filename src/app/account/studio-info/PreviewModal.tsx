@@ -57,7 +57,7 @@ function PreviewModal(props: Props) {
               className="rounded-l-lg"
               objectFit="cover"
               layout="fill"
-              src={`images/empty.png`}
+              src={`images/banner-default.png`}
               alt="banner"
             />
           )}
@@ -88,7 +88,7 @@ function PreviewModal(props: Props) {
                 className="rounded-[50%]"
                 objectFit="cover"
                 layout="fill"
-                src={`images/logo-default.png`}
+                src={`images/avatar-default.png`}
                 alt="logo"
               />
             )}
