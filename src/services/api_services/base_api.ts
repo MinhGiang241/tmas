@@ -105,7 +105,7 @@ export class callStudioAPI {
   ) {
     const token = localStorage.getItem("access_token");
     var headers: any = {
-      Lang: i18next.language == "en" ? "en_US" : "vi_VN",
+      Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
     };
     try {
@@ -145,7 +145,7 @@ export class callStudioAPI {
   ): Promise<any> {
     const token = localStorage.getItem("access_token");
     var headers = {
-      Lang: i18next.language == "en" ? "en_US" : "vi_VN",
+      Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
     };
     try {
@@ -184,7 +184,7 @@ export class callStudioAPI {
   ): Promise<any> {
     const token = localStorage.getItem("access_token");
     var headers: any = {
-      Lang: i18next.language == "en" ? "en_US" : "vi_VN",
+      Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
     };
     try {
@@ -222,7 +222,7 @@ export class callStudioAPI {
   ): Promise<any> {
     const token = localStorage.getItem("access_token");
     var headers: any = {
-      Lang: i18next.language == "en" ? "en_US" : "vi_VN",
+      Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
     };
 
