@@ -33,6 +33,7 @@ interface Props {
   allowClear?: boolean;
   h?: string;
   loadingValidate?: boolean;
+  extend?: boolean;
 }
 
 function MInput({
@@ -62,6 +63,7 @@ function MInput({
   allowClear,
   h,
   loadingValidate,
+  extend,
 }: Props) {
   var np;
   var er;
@@ -95,7 +97,11 @@ function MInput({
         {action}
       </div>
 
-      <div className="w-full flex flex-col mb-2  ">
+      <div
+        className={`w-full flex flex-col ${
+          extend ? "mb-2" : "mb-[22px]"
+        } relative`}
+      >
         <Input
           autoComplete="off"
           disabled={disable}
@@ -133,7 +139,11 @@ function MInput({
           }
         />
         {successText && touch ? (
-          <div className="flex items-center text-m_success_500">
+          <div
+            className={`flex items-center text-m_success_500 ${
+              !extend && "absolute -bottom-[22px]"
+            }`}
+          >
             <div className="min-w-4">
               <CheckCircleFilled />
             </div>
@@ -143,28 +153,34 @@ function MInput({
           </div>
         ) : null}
         {dangerText && touch ? (
-          <div className="flex items-center  text-m_warning_500">
+          <div
+            className={`flex items-center  text-m_warning_500 ${
+              !extend && "absolute -bottom-[22px]"
+            }`}
+          >
             <div className="min-w-4">
               <ExclamationCircleFilled />
             </div>
-            <div className=" body_regular_14 text-nowrap lg:max-w-xl overflow-hidden text-ellipsis">
+            <div className=" body_regular_14 text-nowrap lg:max-w-2xl overflow-hidden text-ellipsis">
               {common.t(dangerText ?? "")}
             </div>
           </div>
         ) : null}
-        {loadingValidate && !(dangerText || successText || error) ? (
-          <div className="h-[22px]" />
-        ) : (
-          <div />
-        )}
+
         {er && touch ? (
-          <div className="flex items-center">
+          <div
+            className={`flex items-center ${
+              !extend && "absolute -bottom-[22px]"
+            }`}
+          >
             <div className="min-w-4">
               <NoticeIcon />
             </div>
             <div className=" text-m_error_500 body_regular_14">{t(er)}</div>
           </div>
-        ) : null}
+        ) : (
+          <div />
+        )}
       </div>
     </div>
   );

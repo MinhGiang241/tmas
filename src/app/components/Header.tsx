@@ -316,8 +316,8 @@ function Header({ path }: { path?: string }) {
                 onClick={() => {
                   dispatch(setHomeIndex(0));
                   setOpenPop(false);
-                  localStorage.removeItem("access_token");
                   router.push("/signin");
+                  localStorage.removeItem("access_token");
                 }}
                 className="py-1 w-full hover:bg-m_error_100 text-m_error_500 flex justify-start"
               >

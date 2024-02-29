@@ -117,7 +117,7 @@ function UserProfile() {
           />
         </div>
 
-        <div className="my-3 w-full lg:flex justify-between">
+        <div className=" w-full lg:flex justify-between">
           <MInput
             disable
             required

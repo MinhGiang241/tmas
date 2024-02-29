@@ -38,6 +38,7 @@ interface Props {
   disable?: boolean;
   allowClear?: boolean;
   options?: { value: any; label: string; disabled?: boolean }[];
+  extend?: boolean;
 }
 
 function MDropdown({
@@ -64,6 +65,7 @@ function MDropdown({
   namespace,
   dangerText,
   successText,
+  extend,
 }: Props) {
   var np;
   var er;
@@ -122,7 +124,11 @@ function MDropdown({
           placeholder={placeholder}
         />
         {successText && touch ? (
-          <div className="flex items-center text-m_success_500">
+          <div
+            className={`flex items-center  text-m_warning_500 ${
+              !extend && "absolute -bottom-[22px]"
+            }`}
+          >
             <div className="min-w-4">
               <CheckCircleFilled />
             </div>
@@ -132,7 +138,11 @@ function MDropdown({
           </div>
         ) : null}
         {dangerText && touch ? (
-          <div className="flex items-center text-m_warning_500">
+          <div
+            className={`flex items-center  text-m_warning_500 ${
+              !extend && "absolute -bottom-[22px]"
+            }`}
+          >
             <div className="min-w-4">
               <ExclamationCircleFilled />
             </div>
@@ -144,7 +154,13 @@ function MDropdown({
             <div className="min-w-4">
               <NoticeIcon />
             </div>
-            <div className=" text-m_error_500 body_regular_14">{t(er)}</div>
+            <div
+              className={`flex items-center  text-m_warning_500 ${
+                !extend && "absolute -bottom-[22px]"
+              }`}
+            >
+              {t(er)}
+            </div>
           </div>
         ) : null}
       </div>

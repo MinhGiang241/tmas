@@ -112,7 +112,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
           formik={formik}
         />
 
-        <p className="caption_semibold_14 mt-4 mb-2">{t("role")}</p>
+        <p className="caption_semibold_14 mt-7 mb-2">{t("role")}</p>
         <Radio.Group buttonStyle="solid" onChange={onChangeValue} value={role}>
           <Space direction="vertical">
             <Radio className=" caption_regular_14" value={"Member"}>
