@@ -127,7 +127,11 @@ function Header({ path }: { path?: string }) {
       dispatch(setLoadingMember(true));
       dispatch(setMemberData([]));
       var mem = await getMemberListInStudio();
-      var invitedMem = await getInvitaionEmailMember();
+      var invited = await getInvitaionEmailMember();
+      var invitedMem = (invited ?? []).map((i: UserData) => ({
+        ...i,
+        isInvite: true,
+      }));
 
       dispatch(
         setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)]),

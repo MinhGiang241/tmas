@@ -61,15 +61,6 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       dispatch(setUserData(user));
       setLoading(false);
 
-      dispatch(setLoadingMember(true));
-      dispatch(setMemberData([]));
-      var mem = await getMemberListInStudio();
-      var invitedMem = await getInvitaionEmailMember();
-      //loadingQuestionsAndExams(false);
-
-      dispatch(
-        setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)]),
-      );
       // await loadingQuestionsAndExams(false);
     } catch (e: any) {
       console.log(e);
