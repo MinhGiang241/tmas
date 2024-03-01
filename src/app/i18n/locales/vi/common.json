@@ -25,6 +25,7 @@
   "has_account": "Bạn đã có tài khoản rồi?",
   "not_empty": "Không được để trống!",
   "success_create_account": "Tạo tài khoản thành công. Vui lòng kiểm tra email của bạn và thực hiện xác nhận để hoàn tất quá trình đăng ký.",
+  "success_create_account_via_mail": "Tạo tài khoản thành công.",
   "error": "Lỗi",
   "fail": "Thất bại",
   "success": "Thành công",

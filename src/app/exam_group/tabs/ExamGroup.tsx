@@ -209,13 +209,17 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
           />
         </form>
         <div className="max-lg:mt-5  w-full flex justify-end">
-          <MButton
-            onClick={() => setOpenAdd(true)}
-            className="flex items-center px-5  bg-m_neutral_100"
-            type="secondary"
-            icon={<AddIcon />}
-            text={t("create_test_group")}
-          />
+          {user?.studio?.role != "Member" ? (
+            <MButton
+              onClick={() => setOpenAdd(true)}
+              className="flex items-center px-5  bg-m_neutral_100"
+              type="secondary"
+              icon={<AddIcon />}
+              text={t("create_test_group")}
+            />
+          ) : (
+            <div />
+          )}
         </div>
       </div>
       <div className="h-5" />
@@ -254,27 +258,31 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
                         : `(${v.childs?.map((i) => i.name)?.join(", ") ?? ""})`}
                     </div>
                   </div>
-                  <div className="flex">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActive(v);
-                        setOpenEdit(true);
-                      }}
-                    >
-                      <EditBlackIcon />
-                    </button>
-                    <div className="w-3" />
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActive(v);
-                        setOpenDelete(true);
-                      }}
-                    >
-                      <DeleteRedIcon />
-                    </button>
-                  </div>
+                  {user?.studio?.role != "Member" ? (
+                    <div className="flex">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActive(v);
+                          setOpenEdit(true);
+                        }}
+                      >
+                        <EditBlackIcon />
+                      </button>
+                      <div className="w-3" />
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActive(v);
+                          setOpenDelete(true);
+                        }}
+                      >
+                        <DeleteRedIcon />
+                      </button>
+                    </div>
+                  ) : (
+                    <div />
+                  )}
                 </div>
               }
             >
@@ -287,58 +295,64 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
                       key={c.id}
                     >
                       <p>{c?.name}</p>
-                      <div className="flex body_regular_14">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActive(c);
-                            setOpenEdit(true);
-                          }}
-                          className="h-full "
-                        >
-                          {t("edit")}
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActive(c);
-                            setParent(v);
-                            setOpenMove(true);
-                          }}
-                          className="h-full mx-2"
-                        >
-                          {t("move")}
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActive(c);
-                            setOpenDelete(true);
-                          }}
-                          className="h-full text-m_error_500"
-                        >
-                          {t("delete")}
-                        </button>
-                      </div>
+                      {user?.studio?.role != "Member" && (
+                        <div className="flex body_regular_14">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActive(c);
+                              setOpenEdit(true);
+                            }}
+                            className="h-full "
+                          >
+                            {t("edit")}
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActive(c);
+                              setParent(v);
+                              setOpenMove(true);
+                            }}
+                            className="h-full mx-2"
+                          >
+                            {t("move")}
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActive(c);
+                              setOpenDelete(true);
+                            }}
+                            className="h-full text-m_error_500"
+                          >
+                            {t("delete")}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ),
                 )}
               </div>
-              <div className="w-full px-4 my-4 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActive(v);
-                    setOpenCreateChild(true);
-                  }}
-                  className="flex items-center"
-                >
-                  <PlusOutlined />
-                  <p className="ml-2  underline underline-offset-4 body_regular_14">
-                    {t("create_child_group")}
-                  </p>
-                </button>
-              </div>
+              {user?.studio?.role != "Member" ? (
+                <div className="w-full px-4 my-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActive(v);
+                      setOpenCreateChild(true);
+                    }}
+                    className="flex items-center"
+                  >
+                    <PlusOutlined />
+                    <p className="ml-2  underline underline-offset-4 body_regular_14">
+                      {t("create_child_group")}
+                    </p>
+                  </button>
+                </div>
+              ) : (
+                <div className="h-3" />
+              )}
             </Collapse.Panel>
           </Collapse>
         ))

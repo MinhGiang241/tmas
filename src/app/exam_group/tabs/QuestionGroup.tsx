@@ -132,16 +132,18 @@ function QuestionGroup({ hidden }: { hidden: boolean }) {
           />
         </form>
         <div className="max-lg:mt-5 w-full flex justify-end">
-          <MButton
-            onClick={() => {
-              setIsEdit(false);
-              setOpenAdd(true);
-            }}
-            className="flex items-center px-5 bg-m_neutral_100"
-            type="secondary"
-            icon={<AddIcon />}
-            text={t("create_exam_group")}
-          />
+          {user?.studio?.role != "Member" && (
+            <MButton
+              onClick={() => {
+                setIsEdit(false);
+                setOpenAdd(true);
+              }}
+              className="flex items-center px-5 bg-m_neutral_100"
+              type="secondary"
+              icon={<AddIcon />}
+              text={t("create_exam_group")}
+            />
+          )}
         </div>
       </div>
       <div className="h-5" />
@@ -169,26 +171,28 @@ function QuestionGroup({ hidden }: { hidden: boolean }) {
                 {v.name}
               </div>
             </div>
-            <div className="flex">
-              <button
-                onClick={(_) => {
-                  setIsEdit(true);
-                  setActive(v);
-                  setOpenAdd(true);
-                }}
-              >
-                <EditBlackIcon />
-              </button>
-              <div className="w-3" />
-              <button
-                onClick={(_) => {
-                  setActive(v);
-                  setOpenDelete(true);
-                }}
-              >
-                <DeleteRedIcon />
-              </button>
-            </div>
+            {user?.studio?.role != "Member" && (
+              <div className="flex">
+                <button
+                  onClick={(_) => {
+                    setIsEdit(true);
+                    setActive(v);
+                    setOpenAdd(true);
+                  }}
+                >
+                  <EditBlackIcon />
+                </button>
+                <div className="w-3" />
+                <button
+                  onClick={(_) => {
+                    setActive(v);
+                    setOpenDelete(true);
+                  }}
+                >
+                  <DeleteRedIcon />
+                </button>
+              </div>
+            )}
           </div>
         ))
       )}

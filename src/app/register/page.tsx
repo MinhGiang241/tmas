@@ -146,8 +146,9 @@ function RegisterPage() {
         setGLoading(false);
         if (ssoToken && emailParams) {
           successToast(t("success_create_account_via_mail"));
+        } else {
+          successToast(t("success_create_account"));
         }
-        successToast(t("success_create_account"));
         router.push("/signin");
       })
       .catch((e) => {
