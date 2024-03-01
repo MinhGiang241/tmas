@@ -77,6 +77,10 @@ function StudioInfo() {
     }
   };
 
+  useEffect(() => {
+    setValue(user.studio?.studio_name ?? "");
+  }, [user]);
+
   const [error, setError] = useState<string | undefined>();
   const [value, setValue] = useState<string>(user.studio?.studio_name ?? "");
   const validate = () => {
@@ -215,7 +219,9 @@ function StudioInfo() {
         )}
       </button>
       <div className="h-2" />
+
       <MInput
+        defaultValue={user?.studio?.studio_name}
         value={value}
         required
         title={t("studio_name")}

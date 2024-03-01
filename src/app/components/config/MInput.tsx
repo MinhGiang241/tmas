@@ -34,6 +34,7 @@ interface Props {
   h?: string;
   loadingValidate?: boolean;
   extend?: boolean;
+  defaultValue?: string;
 }
 
 function MInput({
@@ -63,6 +64,7 @@ function MInput({
   allowClear,
   h,
   loadingValidate,
+  defaultValue,
   extend,
 }: Props) {
   var np;
@@ -105,7 +107,7 @@ function MInput({
         <Input
           autoComplete="off"
           disabled={disable}
-          // defaultValue={formik.initialValues[name]}
+          defaultValue={defaultValue ?? formik.initialValues[name]}
           maxLength={maxLength ?? 500}
           prefix={prefix}
           onBlur={onBlur}
