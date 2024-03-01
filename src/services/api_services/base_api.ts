@@ -2,7 +2,8 @@ import React from "react";
 import { APIResults } from "@/data/api_results";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import i18next from "i18next";
-import { errorToast } from "@/app/components/toast/customToast";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { navigate } from "../ui/useRedirect";
 
 export class callApi {
   static post = async function (
@@ -17,6 +18,11 @@ export class callApi {
     };
     try {
       var response = await axios.post(url, data, { headers, ...config });
+      if (response?.data?.code == 2) {
+        navigate("/signin");
+        // successToast(i18next.t("error"));
+      }
+
       if (response?.data?.code != 0) {
         return {
           code: response?.data?.code,
@@ -24,6 +30,7 @@ export class callApi {
           message: response.data?.message,
         };
       }
+
       return {
         code: 0,
         data: response?.data?.data ?? response.data,
@@ -49,6 +56,10 @@ export class callApi {
 
     try {
       var response = await axios.get(url, { headers, ...config });
+      if (response?.data?.code == 2) {
+        navigate("/signin");
+        // successToast(i18next.t("error"));
+      }
       if (response?.data?.code != 0) {
         return {
           code: response?.data?.code,

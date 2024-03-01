@@ -99,6 +99,7 @@ function ExamGroup() {
       <ExamGroupTab hidden={index != "0"} />
 
       <QuestionGroup hidden={index != "1"} />
+      <div className="h-3" />
 
       {/*``
         <Tabs

@@ -1,4 +1,4 @@
-import React, { useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import HeadPhoneIcon from "../components/icons/headphone.svg";
@@ -9,7 +9,7 @@ import type { MenuProps } from "antd";
 import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { LOCALES } from "../i18n/locales/locales";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setLoadingMember, setMemberData } from "@/redux/members/MemberSlice";
@@ -44,7 +44,7 @@ import {
 import { APIResults } from "@/data/api_results";
 import { ExamGroupData } from "@/data/exam";
 import { UserData } from "@/data/user";
-import useRedirect from "@/services/ui/useRedirect";
+import Router from "next/router";
 
 function Header({ path }: { path?: string }) {
   const { t, i18n } = useTranslation("account");
@@ -293,7 +293,6 @@ function Header({ path }: { path?: string }) {
 
         <div className="lg:flex hidden h-full items-center">
           <HeadPhoneIcon className=" hidden" />
-
           <Dropdown menu={{ items: itemsStudio }}>
             <button className="ml-3 lg:flex hidden items-center body_semibold_14 text-white">
               {user?.studio?._id === user?._id
