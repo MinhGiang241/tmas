@@ -101,6 +101,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
     >
       <form onSubmit={onSubmit} className="w-full ">
         <MInput
+          extend={false}
           loadingValidate={loadingValidateMail}
           dangerText={danger}
           successText={success}

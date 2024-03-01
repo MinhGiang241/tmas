@@ -9,7 +9,7 @@ import type { MenuProps } from "antd";
 import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { LOCALES } from "../i18n/locales/locales";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setLoadingMember, setMemberData } from "@/redux/members/MemberSlice";
@@ -44,6 +44,7 @@ import {
 import { APIResults } from "@/data/api_results";
 import { ExamGroupData } from "@/data/exam";
 import { UserData } from "@/data/user";
+import useRedirect from "@/services/ui/useRedirect";
 
 function Header({ path }: { path?: string }) {
   const { t, i18n } = useTranslation("account");

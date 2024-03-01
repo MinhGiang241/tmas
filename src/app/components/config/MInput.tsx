@@ -65,7 +65,7 @@ function MInput({
   h,
   loadingValidate,
   defaultValue,
-  extend,
+  extend = true,
 }: Props) {
   var np;
   var er;
@@ -101,13 +101,13 @@ function MInput({
 
       <div
         className={`w-full flex flex-col ${
-          extend ? "mb-2" : "mb-[22px]"
+          extend ? "mb-0" : "mb-[22px]"
         } relative`}
       >
         <Input
           autoComplete="off"
           disabled={disable}
-          defaultValue={defaultValue ?? formik.initialValues[name]}
+          defaultValue={defaultValue}
           maxLength={maxLength ?? 500}
           prefix={prefix}
           onBlur={onBlur}
@@ -171,16 +171,19 @@ function MInput({
 
         {er && touch ? (
           <div
-            className={`flex items-start ${!extend && "absolute top-[49px]"}`}
+            className={` flex items-start  ${!extend && "absolute top-[49px]"}`}
           >
             <div className="min-w-4 mt-[2px]">
               <NoticeIcon />
             </div>
-            <div className=" text-m_error_500 body_regular_14">{t(er)}</div>
+            <div className=" text-m_error_500 body_regular_14 text-pretty">
+              {t(er)}
+            </div>
           </div>
         ) : (
           <div />
         )}
+        {extend && !(er && touch) && <div className="h-[20px]" />}
       </div>
     </div>
   );

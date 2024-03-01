@@ -110,7 +110,13 @@ function RegisterPage() {
       registerAccount(data)
         .then((v) => {
           setLoading(false);
-          successToast(t("success_create_account"));
+
+          if (invitationId && emailParams) {
+            successToast(t("success_create_account_via_mail"));
+          } else {
+            successToast(t("success_create_account"));
+          }
+
           router.push("/signin");
           console.log(v);
         })
@@ -144,11 +150,8 @@ function RegisterPage() {
         console.log("sso", v);
         setFLoading(false);
         setGLoading(false);
-        if (ssoToken && emailParams) {
-          successToast(t("success_create_account_via_mail"));
-        } else {
-          successToast(t("success_create_account"));
-        }
+
+        successToast(t("success_create_account"));
         router.push("/signin");
       })
       .catch((e) => {
@@ -241,6 +244,7 @@ function RegisterPage() {
               formik={formik}
             />
             <MInput
+              extend
               maxLength={16}
               isPassword
               required
