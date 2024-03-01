@@ -45,6 +45,7 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
 
   const common = useTranslation();
 
+  const user = useSelector((state: RootState) => state.user.user);
   const examGroupList = useSelector(
     (state: RootState) => state.examGroup?.list,
   );
@@ -61,6 +62,7 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
     }
     var dataResults: APIResults = await getExamGroupTest({
       text: search.trim(),
+      studioId: user?.studio?._id,
     });
     if (dataResults.code != 0) {
       dispatch(setExamGroupList([]));
@@ -125,7 +127,7 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
   const onOkDelete = async () => {
     try {
       setLoadingDelete(true);
-      var res = await deleteExamGroupTest(active);
+      var res = await deleteExamGroupTest(active, user.studio?._id);
       if (res.code != 0) {
         throw res?.message;
       }

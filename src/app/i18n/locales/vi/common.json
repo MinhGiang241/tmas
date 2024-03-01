@@ -78,7 +78,7 @@
   "change_pass": "Đổi mật khẩu",
   "support": "Hỗ trợ",
   "save": "Lưu",
-  "success_create_new": "Tạo mới thành công!",
-  "success_update": "Cập nhật thông tin thành công!",
+  "success_create_new": "Tạo mới thành công",
+  "success_update": "Cập nhật thông tin thành công",
   "empty_list": "Danh sách trống!"
 }

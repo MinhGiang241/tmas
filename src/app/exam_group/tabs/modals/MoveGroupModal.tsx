@@ -4,11 +4,13 @@ import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { ExamGroupData } from "@/data/exam";
+import { RootState } from "@/redux/store";
 import { updateExamGroupTest } from "@/services/api_services/exam_api";
 import { FormikErrors, useFormik } from "formik";
 import i18next from "i18next";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 interface MoveGroupProps extends BaseModalProps {
   parent?: ExamGroupData;
@@ -39,7 +41,7 @@ function MoveGroupModal(props: MoveGroupProps) {
 
     return errors;
   };
-
+  const user = useSelector((state: RootState) => state.user.user);
   const formik = useFormik({
     initialValues,
     validate,
@@ -51,6 +53,7 @@ function MoveGroupModal(props: MoveGroupProps) {
         name: props.now?.name,
         level: props.now?.level,
         idParent: values.new_group,
+        studioId: user?.studio?._id,
       };
       var res = await updateExamGroupTest(dataSubmit);
 

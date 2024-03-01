@@ -3,10 +3,12 @@ import MButton from "@/app/components/config/MButton";
 import MInput from "@/app/components/config/MInput";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { ExamGroupData } from "@/data/exam";
+import { RootState } from "@/redux/store";
 import { updateExamGroupTest } from "@/services/api_services/exam_api";
 import { FormikErrors, useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 interface EditModalProps extends BaseModalProps {
   data?: ExamGroupData;
@@ -34,7 +36,7 @@ function EditFormModal(props: EditModalProps) {
 
     return errors;
   };
-
+  const user = useSelector((state: RootState) => state?.user?.user);
   const formik = useFormik({
     initialValues,
     validate,
@@ -46,6 +48,7 @@ function EditFormModal(props: EditModalProps) {
         name: values.group_name,
         level: props.data?.level,
         idParent: props.data?.idParent,
+        studioId: user?.studio?._id,
       };
       var res = await updateExamGroupTest(submitData);
       setLoading(false);

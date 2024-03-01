@@ -35,7 +35,7 @@ function MButton({
                 ? " text-m_neutral_400 border-1 border-m_neutral_400"
                 : " text-m_primary_500 border border-m_primary_500"
             }`
-      } h-11  lg:h-12 caption_semibold_14 lg:caption_semibold_16 rounded-lg ${className}`}
+      } h-11  lg:h-12 body_semibold_14 lg:caption_semibold_16 rounded-lg ${className}`}
       loading={loading || false}
       onClick={onClick}
       disabled={disabled}

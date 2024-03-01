@@ -25,6 +25,7 @@
   "has_account": "Already have an account?",
   "not_empty": "Can not be empty!",
   "success_create_account": "Create account successfully. Please check your email and confirm to complete the registration process",
+  "success_create_account_via_mail": "Create account successfully.",
   "error": "Error",
   "fail": "Failed",
   "success": "Successful",

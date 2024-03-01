@@ -134,7 +134,7 @@ function AccountInfo() {
       dataIndex: "role",
       key: "role",
       render: (text) => (
-        <p key={text} className="caption_regular_14">
+        <p key={text} className="min-w-24 caption_regular_14">
           {t(text?.toLowerCase())}
         </p>
       ),
@@ -146,7 +146,7 @@ function AccountInfo() {
       dataIndex: "schema",
       key: "schema",
       render: (action, data) =>
-        data.role == "Owner" || user?.studio?.role == "Member" ? (
+        data.role == "Owner" || user?.studio?.role != "Owner" ? (
           <div />
         ) : (
           <div className="min-w-16">
@@ -183,7 +183,7 @@ function AccountInfo() {
     },
   ];
 
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [activeMem, setActiveMem] = useState<UserData | undefined>();
 
@@ -301,19 +301,21 @@ function AccountInfo() {
             </span>
           </div>
         </div>
-        <div>
-          <Button
-            onClick={() => {
-              setAddKey(Date.now());
-              setOpenAdd(true);
-            }}
-            className="border-m_primary_500 border-1 h-11 px-4 rounded-lg text-m_primary_500 caption_semibold_14 flex items-center"
-            type="default"
-            icon={<AddIcon />}
-          >
-            {t("add_account")}
-          </Button>
-        </div>
+        {user?.studio?.role == "Owner" && (
+          <div>
+            <Button
+              onClick={() => {
+                setAddKey(Date.now());
+                setOpenAdd(true);
+              }}
+              className="border-m_primary_500 border-1 h-11 px-4 rounded-lg text-m_primary_500 caption_semibold_14 flex items-center"
+              type="default"
+              icon={<AddIcon />}
+            >
+              {t("add_account")}
+            </Button>
+          </div>
+        )}
       </div>
       {/* <Divider className="p-0 my-0 mx-5" /> */}
       <div className="mx-5 max-lg:overflow-scroll">

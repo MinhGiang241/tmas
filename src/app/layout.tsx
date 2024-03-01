@@ -9,6 +9,7 @@ import LoadingPage from "./loading";
 import AuthProvider from "./provider/authProvider";
 import useWindowSize from "@/services/ui/useWindowSize";
 import { StoreProviders } from "@/redux/provider";
+import type { Viewport } from "next";
 
 // const inter = Inter({ subsets: ["latin"] });
 const montserrat = Montserrat({ subsets: ["latin"] });
@@ -23,6 +24,14 @@ export const metadata: Metadata = {
   // viewport: "width=device-width, initial-scale=1, maximum-scale=1",
   // viewport: "width=device-width, initial-scale=1.0",
 };
+
+export const viewport: Viewport = {
+  themeColor: "black",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export type LayoutProps = {
   children: ReactNode;
   types: ReactNode;

@@ -99,7 +99,11 @@ function MDropdown({
         {action}
       </div>
 
-      <div className="w-full flex flex-col mb-2  ">
+      <div
+        className={`relative w-full flex flex-col ${
+          extend ? "mb-2" : "mb-[22px]"
+        }`}
+      >
         <Select
           value={value}
           allowClear={allowClear ?? true}
@@ -150,17 +154,15 @@ function MDropdown({
           </div>
         ) : null}
         {er && touch ? (
-          <div className="flex items-center">
+          <div
+            className={`flex items-center  ${
+              !extend && "absolute -bottom-[22px]"
+            }`}
+          >
             <div className="min-w-4">
               <NoticeIcon />
             </div>
-            <div
-              className={`flex items-center  text-m_warning_500 ${
-                !extend && "absolute -bottom-[22px]"
-              }`}
-            >
-              {t(er)}
-            </div>
+            <div className={`text-m_error_500 body_regular_14`}>{t(er)}</div>
           </div>
         ) : null}
       </div>

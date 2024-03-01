@@ -34,6 +34,7 @@ interface Props {
   h?: string;
   itemsSearch: any;
   onSearch: (arg: string) => void;
+  extend?: boolean;
 }
 
 function MSearchInput({
@@ -64,6 +65,7 @@ function MSearchInput({
   h,
   itemsSearch,
   onSearch,
+  extend,
 }: Props) {
   var np;
   var er;
@@ -114,7 +116,11 @@ function MSearchInput({
         {action}
       </div>
 
-      <div className="w-full flex flex-col mb-2  ">
+      <div
+        className={`w-full flex flex-col ${
+          extend ? "mb-2" : "mb-[22px]"
+        } relative`}
+      >
         <Dropdown
           onOpenChange={(v) => {
             // formik.setFieldValue(name, "11st ");
@@ -181,7 +187,11 @@ function MSearchInput({
           />
         </Dropdown>
         {successText && touch ? (
-          <div className="flex items-center text-m_success_500">
+          <div
+            className={`flex items-center text-m_success_500 ${
+              !extend && "absolute -bottom-[22px]"
+            }`}
+          >
             <div className="min-w-4">
               <CheckCircleFilled />
             </div>
@@ -191,15 +201,25 @@ function MSearchInput({
           </div>
         ) : null}
         {dangerText && touch ? (
-          <div className="flex items-center text-m_warning_500">
+          <div
+            className={`flex items-center  text-m_warning_500 ${
+              !extend && "absolute -bottom-[22px]"
+            }`}
+          >
             <div className="min-w-4">
               <ExclamationCircleFilled />
             </div>
-            <div className=" body_regular_14">{common.t(dangerText ?? "")}</div>
+            <div className=" body_regular_14 text-nowrap lg:max-w-2xl overflow-hidden text-ellipsis">
+              {common.t(dangerText ?? "")}
+            </div>
           </div>
         ) : null}
         {er && touch ? (
-          <div className="flex items-center">
+          <div
+            className={`flex items-center ${
+              !extend && "absolute -bottom-[22px]"
+            }`}
+          >
             <div className="min-w-4">
               <NoticeIcon />
             </div>

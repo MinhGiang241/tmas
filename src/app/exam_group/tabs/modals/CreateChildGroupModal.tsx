@@ -3,10 +3,12 @@ import MButton from "@/app/components/config/MButton";
 import MInput from "@/app/components/config/MInput";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { ExamGroupData } from "@/data/exam";
+import { RootState } from "@/redux/store";
 import { createExamGroupTest } from "@/services/api_services/exam_api";
 import { FormikErrors, useFormik } from "formik";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 export interface CreateChildProps extends BaseModalProps {
   parent?: ExamGroupData;
@@ -33,7 +35,7 @@ function CreateChildGroupModal(props: CreateChildProps) {
 
     return errors;
   };
-
+  const user = useSelector((state: RootState) => state.user.user);
   const formik = useFormik({
     initialValues,
     validate,
@@ -42,6 +44,7 @@ function CreateChildGroupModal(props: CreateChildProps) {
         name: values.group_name,
         level: 1,
         idParent: props.parent?.id,
+        studioId: user?.studio?._id,
       };
 
       setLoading(true);

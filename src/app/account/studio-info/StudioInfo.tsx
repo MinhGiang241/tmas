@@ -24,7 +24,7 @@ function StudioInfo() {
   const [showCamBanner, setShowCamBanner] = useState<boolean>(false);
   const { t } = useTranslation("account");
   const common = useTranslation();
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user.user);
 
   const [selectedLogo, setSelectedLogo] = useState(null);
   const [selectedBanner, setSelectedBanner] = useState(null);
@@ -124,11 +124,11 @@ function StudioInfo() {
       }
 
       var data: StudioFormData = {
-        stu_banner: bannerId ?? user.stu_banner,
-        stu_btn_color: buttonColor ?? user.stu_btn_color,
-        stu_logo: logoId ?? user?.stu_logo,
-        studio_name: value ?? user.studio_name,
-        stu_text_color: textColor ?? user?.stu_text_color,
+        stu_banner: bannerId ?? user?.studio?.stu_banner,
+        stu_btn_color: buttonColor ?? user.studio?.stu_btn_color,
+        stu_logo: logoId ?? user?.studio?.stu_logo,
+        studio_name: value ?? user.studio?.studio_name,
+        stu_text_color: textColor ?? user?.studio?.stu_text_color,
       };
 
       var results = await updateStudioInfo(data);
@@ -200,13 +200,14 @@ function StudioInfo() {
             src={previewLogo}
             alt="Preview"
           />
-        ) : user?.stu_logo ? (
+        ) : user?.studio?.stu_logo ? (
           <Image
+            onLoadingComplete={(image) => image.classList.remove("opacity-0")}
             loading="lazy"
-            className="absolute top-0 bottom-0 right-0 left-0 rounded-[50%]"
+            className="transition-opacity opacity-0 duration-500 absolute top-0 bottom-0 right-0 left-0 rounded-[50%]"
             objectFit="cover"
             fill
-            src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user.stu_logo}`}
+            src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user.studio?.stu_logo}`}
             alt="Preview"
           />
         ) : (
@@ -246,19 +247,21 @@ function StudioInfo() {
           {previewBanner ? (
             <Image
               loading="lazy"
-              className="absolute top-0 bottom-0 right-0 left-0 "
+              className="transition-opacity opacity-0 duration-1000 absolute top-0 bottom-0 right-0 left-0 "
+              onLoadingComplete={(image) => image.classList.remove("opacity-0")}
               objectFit="cover"
               fill
               src={previewBanner}
               alt="Preview"
             />
-          ) : user?.stu_banner ? (
+          ) : user?.studio?.stu_banner ? (
             <Image
               loading="lazy"
-              className="absolute top-0 bottom-0 right-0 left-0 "
+              className="transition-opacity opacity-0 duration-1000 absolute top-0 bottom-0 right-0 left-0 "
+              onLoadingComplete={(image) => image.classList.remove("opacity-0")}
               objectFit="cover"
               fill
-              src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user.stu_banner}`}
+              src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user?.studio?.stu_banner}`}
               alt="Preview"
             />
           ) : (
@@ -310,13 +313,15 @@ function StudioInfo() {
           text={t("preview")}
         />
         <div className="w-4" />
-        <MButton
-          loading={loadingUpdate}
-          onClick={onSubmit}
-          // disabled={!previewLogo || !previewBanner}
-          className="w-36"
-          text={common.t("update")}
-        />
+        {user?.studio?.role == "Owner" && (
+          <MButton
+            loading={loadingUpdate}
+            onClick={onSubmit}
+            // disabled={!previewLogo || !previewBanner}
+            className="w-36"
+            text={common.t("update")}
+          />
+        )}
       </div>
     </div>
   );

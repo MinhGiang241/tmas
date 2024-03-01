@@ -68,7 +68,7 @@ export interface Package {
 
 export interface Studio {
   _id?: string;
-  studio_name?: string;
+
   accountType?: string;
   avatar?: string;
   createdTime?: string;
@@ -78,6 +78,11 @@ export interface Studio {
   role?: string;
   ssoid?: string;
   verified?: boolean;
+  stu_btn_color?: string;
+  stu_text_color?: string;
+  studio_name?: string;
+  stu_logo?: string;
+  stu_banner?: string;
 }
 
 export interface Studios {

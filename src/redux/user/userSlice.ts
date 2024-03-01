@@ -1,22 +1,30 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { UserData } from "@/data/user";
 
-const initialState: UserData = {};
+interface UserState {
+  user: UserData;
+}
+
+const initialState: UserState = {
+  user: {},
+};
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
     setUserData: (state, action) => {
-      return action.payload;
+      console.log("action payload", action.payload);
+
+      return { user: action.payload };
     },
-    userLogout: (__, _) => {
-      localStorage.removeItem("access_token");
-      return {};
+    userClear: (state, _) => {
+      // localStorage.removeItem("access_token");
+      return { user: {} };
     },
   },
 });
 
-export const { setUserData, userLogout } = userSlice.actions;
+export const { setUserData, userClear } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -15,31 +15,42 @@ import {
   getQuestionGroups,
 } from "@/services/api_services/exam_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import {
+  setquestionGroupList,
+  setquestionGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
 
 function QuestionGroup({ hidden }: { hidden: boolean }) {
   useEffect(() => {
     loadingQuestions(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const user = useSelector((state: RootState) => state.user.user);
 
   const loadingQuestions = async (init: boolean) => {
     if (init) {
-      setLoading(true);
+      dispatch(setquestionGroupLoading(true));
     }
 
-    var res = await getQuestionGroups(search);
-    setLoading(false);
+    var res = await getQuestionGroups(search, user?.studio?._id);
     if (res.code != 0) {
-      setData([]);
+      dispatch(setquestionGroupList([]));
       errorToast(res.message ?? "");
       return;
     }
-    setData(res.data ?? []);
+
+    dispatch(setquestionGroupList(res.data ?? []));
     console.log("res=", res);
   };
 
-  const [data, setData] = useState<QuestionGroupData[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const data = useSelector((state: RootState) => state.examGroup?.questions);
+  const loading = useSelector((state: RootState) => state.examGroup?.loading);
+  const dispatch = useDispatch();
+
+  // const [data, setData] = useState<QuestionGroupData[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   const { t } = useTranslation("exam");
@@ -52,7 +63,7 @@ function QuestionGroup({ hidden }: { hidden: boolean }) {
 
   const onDeleteQuestion = async () => {
     setDeleteLoading(true);
-    const res = await deleteQuestionGroup(active);
+    const res = await deleteQuestionGroup(active, user?.studio?._id);
     setDeleteLoading(false);
     if (res.code != 0) {
       errorToast(res?.message ?? "");

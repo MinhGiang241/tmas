@@ -140,8 +140,8 @@ function MInput({
         />
         {successText && touch ? (
           <div
-            className={`flex items-center text-m_success_500 ${
-              !extend && "absolute -bottom-[22px]"
+            className={`flex items-start text-m_success_500 ${
+              !extend && "absolute  top-[49px]"
             }`}
           >
             <div className="min-w-4">
@@ -154,8 +154,8 @@ function MInput({
         ) : null}
         {dangerText && touch ? (
           <div
-            className={`flex items-center  text-m_warning_500 ${
-              !extend && "absolute -bottom-[22px]"
+            className={`flex items-start  text-m_warning_500 ${
+              !extend && "absolute top-[49px]"
             }`}
           >
             <div className="min-w-4">
@@ -169,11 +169,9 @@ function MInput({
 
         {er && touch ? (
           <div
-            className={`flex items-center ${
-              !extend && "absolute -bottom-[22px]"
-            }`}
+            className={`flex items-start ${!extend && "absolute top-[49px]"}`}
           >
-            <div className="min-w-4">
+            <div className="min-w-4 mt-[2px]">
               <NoticeIcon />
             </div>
             <div className=" text-m_error_500 body_regular_14">{t(er)}</div>

@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 function UserProfile() {
   const { t } = useTranslation("account");
   const common = useTranslation();
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
 
   const initialValues: UserData = {

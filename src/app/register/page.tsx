@@ -144,6 +144,9 @@ function RegisterPage() {
         console.log("sso", v);
         setFLoading(false);
         setGLoading(false);
+        if (ssoToken && emailParams) {
+          successToast(t("success_create_account_via_mail"));
+        }
         successToast(t("success_create_account"));
         router.push("/signin");
       })

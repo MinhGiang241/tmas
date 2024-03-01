@@ -3,6 +3,7 @@ import MButton from "@/app/components/config/MButton";
 import MInput from "@/app/components/config/MInput";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { QuestionGroupData } from "@/data/exam";
+import { RootState } from "@/redux/store";
 import {
   createQuestionGroup,
   updateQuestionGroups,
@@ -10,6 +11,7 @@ import {
 import { FormikErrors, useFormik } from "formik";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 interface AddQuestModal extends BaseModalProps {
   isEdit?: boolean;
@@ -39,6 +41,8 @@ function AddNewModal(props: AddQuestModal) {
     return errors;
   };
 
+  const user = useSelector((state: RootState) => state?.user?.user);
+
   const formik = useFormik({
     initialValues,
     validate,
@@ -48,6 +52,7 @@ function AddNewModal(props: AddQuestModal) {
       if (!props.isEdit) {
         var res = await createQuestionGroup({
           name: values.group_name?.trim(),
+          studioId: user?.studio?._id,
         });
         setLoading(false);
         if (res?.code != 0) {
@@ -62,6 +67,7 @@ function AddNewModal(props: AddQuestModal) {
         var res = await updateQuestionGroups({
           name: values.group_name?.trim(),
           id: props.data?.id,
+          studioId: user?.studio?._id,
         });
         setLoading(false);
         if (res?.code != 0) {

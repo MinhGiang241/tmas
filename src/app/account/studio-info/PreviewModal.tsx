@@ -17,14 +17,14 @@ interface Props extends BaseModalProps {
 }
 
 function PreviewModal(props: Props) {
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const size = useWindowSize();
   const { t } = useTranslation("account");
 
   return (
     <BaseModal
       offPadding
-      centered={size.width <= 1024 ? false : true}
+      centered={true}
       // width={size.width <= 1024 ? size.width - 20 : size.width * 0.85}
       width={size.width}
       {...props}
@@ -42,13 +42,13 @@ function PreviewModal(props: Props) {
               src={props.banner}
               alt="banner"
             />
-          ) : user?.stu_banner ? (
+          ) : user?.studio?.stu_banner ? (
             <Image
               loading="lazy"
               className="rounded-l-lg"
               objectFit="cover"
               layout="fill"
-              src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user.stu_banner}`}
+              src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user?.studio?.stu_banner}`}
               alt="banner"
             />
           ) : (
@@ -73,13 +73,13 @@ function PreviewModal(props: Props) {
                 src={props.logo}
                 alt="logo"
               />
-            ) : user?.stu_logo ? (
+            ) : user?.studio?.stu_logo ? (
               <Image
                 loading="lazy"
                 className="rounded-[50%]"
                 objectFit="cover"
                 layout="fill"
-                src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user.stu_logo}`}
+                src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user?.studio?.stu_logo}`}
                 alt="logo"
               />
             ) : (

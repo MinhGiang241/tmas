@@ -4,9 +4,17 @@ import { errorToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import QuestionGroup from "@/app/exam_group/tabs/QuestionGroup";
 
-export const getExamGroupTest = async ({ text }: { text?: string }) => {
+export const getExamGroupTest = async ({
+  text,
+  studioId,
+}: {
+  text?: string;
+  studioId?: string;
+}) => {
   var results = await callStudioAPI.get(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/GroupExam?Name=${text}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/GroupExam?Name=${
+      text ?? ""
+    }&&StudioId=${studioId ?? ""}`,
   );
 
   return results;
@@ -29,11 +37,14 @@ export const updateExamGroupTest = async (data: any) => {
   return results;
 };
 
-export const deleteExamGroupTest = async (data?: ExamGroupData) => {
+export const deleteExamGroupTest = async (
+  data?: ExamGroupData,
+  studioId?: string,
+) => {
   var results: APIResults = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/GroupExam?Id=${
       data?.id ?? ""
-    }`,
+    }&&StudioId=${studioId ?? ""}`,
   );
   return results;
 };
@@ -55,11 +66,11 @@ export const createQuestionGroup = async (data: any) => {
   return results;
 };
 
-export const getQuestionGroups = async (text?: string) => {
+export const getQuestionGroups = async (text?: string, studioId?: string) => {
   var results: APIResults = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/GroupQuestion?Name=${
       text ?? ""
-    }`,
+    }&&StudioId=${studioId ?? ""}`,
   );
 
   return results;
@@ -74,9 +85,14 @@ export const updateQuestionGroups = async (data?: QuestionGroupData) => {
   return results;
 };
 
-export const deleteQuestionGroup = async (data?: QuestionGroupData) => {
+export const deleteQuestionGroup = async (
+  data?: QuestionGroupData,
+  studioId?: string,
+) => {
   var results: APIResults = await callStudioAPI.delete(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/GroupQuestion?Id=${data?.id}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/GroupQuestion?Id=${
+      data?.id ?? ""
+    }&&StudioId=${studioId ?? ""}`,
   );
 
   return results;

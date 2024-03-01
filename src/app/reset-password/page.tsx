@@ -171,7 +171,7 @@ function ResetPasswordPage() {
             placeholder={t("enter_email")}
             formik={formik}
           />
-          <div className="mb-4" />
+          <div className="mb-[18px]" />
           <ReCAPTCHA
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
             onChange={setCaptcha}

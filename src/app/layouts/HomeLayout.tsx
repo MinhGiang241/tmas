@@ -8,12 +8,29 @@ import { RootState } from "@/redux/store";
 import { setUserData } from "@/redux/user/userSlice";
 import { useTranslation } from "react-i18next";
 import { UserData } from "@/data/user";
+import { setLoadingMember, setMemberData } from "@/redux/members/MemberSlice";
+import {
+  getInvitaionEmailMember,
+  getMemberListInStudio,
+} from "@/services/api_services/account_services";
+import { sortedMemList } from "../account/account-info/AccountInfo";
+import {
+  setExamAndQuestionLoading,
+  setExamGroupList,
+  setquestionGroupList,
+} from "@/redux/exam_group/examGroupSlice";
+import {
+  getExamGroupTest,
+  getQuestionGroups,
+} from "@/services/api_services/exam_api";
+import { APIResults } from "@/data/api_results";
+import { ExamGroupData } from "@/data/exam";
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user?.user);
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
 
@@ -26,18 +43,40 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       setIsLogin(true);
       getUserMe()
         .then((v) => {
-          var user = v["user"] as UserData;
-          console.log(user);
-
-          dispatch(setUserData(user));
-          setLoading(false);
+          loadData(v);
         })
         .catch((e) => {
           console.log(e);
           router.push("/signin");
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const loadData = async (v: any) => {
+    try {
+      var user = v["user"] as UserData;
+      console.log("set User lần 1", user);
+
+      dispatch(setUserData(user));
+      setLoading(false);
+
+      dispatch(setLoadingMember(true));
+      dispatch(setMemberData([]));
+      var mem = await getMemberListInStudio();
+      var invitedMem = await getInvitaionEmailMember();
+      //loadingQuestionsAndExams(false);
+
+      dispatch(
+        setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)]),
+      );
+      // await loadingQuestionsAndExams(false);
+    } catch (e: any) {
+      console.log(e);
+
+      dispatch(setLoadingMember(false));
+    }
+  };
 
   return (
     <>

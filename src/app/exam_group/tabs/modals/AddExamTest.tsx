@@ -13,6 +13,8 @@ import {
   getSuggestValueHastag,
 } from "@/services/api_services/exam_api";
 import MSearchInput from "@/app/components/config/MSearchInput";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 interface AddExamProps extends BaseModalProps {
   data?: ExamGroupData;
@@ -43,6 +45,7 @@ function AddExamTest(props: AddExamProps) {
 
     return errors;
   };
+  const user = useSelector((state: RootState) => state?.user?.user);
 
   const formik = useFormik({
     initialValues,
@@ -53,6 +56,7 @@ function AddExamTest(props: AddExamProps) {
       var submitData = {
         name: values.group_name,
         level: 0,
+        studioId: user?.studio?._id,
       };
       var dataCall = await createExamGroupTest(submitData);
 
@@ -73,6 +77,7 @@ function AddExamTest(props: AddExamProps) {
           action: "Add",
           level: 1,
           idParent: dataCall.data,
+          studioId: user?.studio?._id,
         };
 
         var submit = await createChildsGroup(dataSubmit);

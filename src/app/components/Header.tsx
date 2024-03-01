@@ -24,13 +24,26 @@ import {
   getMemberListInStudio,
 } from "@/services/api_services/account_services";
 import { errorToast } from "./toast/customToast";
-import { setUserData } from "@/redux/user/userSlice";
+import { setUserData, userClear } from "@/redux/user/userSlice";
 import useWindowSize from "@/services/ui/useWindowSize";
 import { setHomeIndex } from "@/redux/home/homeSlice";
 import {
   compareMembers,
   sortedMemList,
 } from "../account/account-info/AccountInfo";
+import {
+  setExamAndQuestionLoading,
+  setExamGroupList,
+  setquestionGroupList,
+  setquestionGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
+import {
+  getExamGroupTest,
+  getQuestionGroups,
+} from "@/services/api_services/exam_api";
+import { APIResults } from "@/data/api_results";
+import { ExamGroupData } from "@/data/exam";
+import { UserData } from "@/data/user";
 
 function Header({ path }: { path?: string }) {
   const { t, i18n } = useTranslation("account");
@@ -45,7 +58,7 @@ function Header({ path }: { path?: string }) {
     "statistics",
   ];
 
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const pathname = usePathname();
   const dispatch = useDispatch();
 
@@ -94,11 +107,15 @@ function Header({ path }: { path?: string }) {
       var data = await changeStudio(ownerId);
       localStorage.removeItem("access_token");
       localStorage.setItem("access_token", data["token"]);
-      dispatch(setUserData(data["user"]));
-      console.log("1------", data["user"]);
-      await loadMembersWhenChangeStudio();
+      var userNew = data["user"] as UserData;
+      dispatch(userClear({}));
+      dispatch(setUserData(userNew));
+      console.log("newUser set lần 2----->", userNew);
 
-      console.log("uuu", user);
+      await loadMembersWhenChangeStudio();
+      console.log("1------", data["user"]["studio"]);
+      console.log("uuu", user.studio);
+      await loadingQuestionsAndExams(true, userNew.studio?._id);
     } catch (e: any) {
       errorToast(e);
       dispatch(setMemberData([]));
@@ -126,13 +143,52 @@ function Header({ path }: { path?: string }) {
 
   const size = useWindowSize();
 
+  const loadingQuestionsAndExams = async (init: boolean, studioId?: string) => {
+    if (init) {
+      dispatch(setExamAndQuestionLoading(true));
+    }
+
+    var res = await getQuestionGroups("", studioId ?? "");
+    if (res.code != 0) {
+      dispatch(setquestionGroupList([]));
+    }
+    dispatch(setquestionGroupList(res.data ?? []));
+    var dataResults: APIResults = await getExamGroupTest({
+      text: "",
+      studioId: studioId,
+    });
+
+    if (dataResults.code != 0) {
+      dispatch(setExamGroupList([]));
+    } else {
+      var data = dataResults?.data as ExamGroupData[];
+      var levelOne = data?.filter((v: ExamGroupData) => v.level === 0);
+      var levelTwo = data?.filter((v: ExamGroupData) => v.level === 1);
+
+      var list = levelOne.map((e: ExamGroupData) => {
+        var childs = levelTwo.filter(
+          (ch: ExamGroupData) => ch.idParent === e.id,
+        );
+        return { ...e, childs };
+      });
+
+      dispatch(setExamGroupList(list));
+
+      console.log("levelOneHeader", list);
+      console.log("dataHeader", dataResults);
+    }
+
+    console.log("res=", res);
+  };
+
   return (
-    <div className="w-full fixed  lg:h-[68px] h-14 bg-m_primary_500 flex justify-center z-50">
+    <div className="w-full fixed  lg:h-[68px]  h-14 bg-m_primary_500 flex justify-center z-50">
       <div className="max-lg:hidden absolute h-full w-[233px] left-0 bg-[url('/images/left-header.png')] bg-no-repeat bg-contain" />
       <div className="max-lg:hidden absolute h-full w-[748px] right-0 bg-[url('/images/right-header.png')] bg-no-repeat bg-contain" />
       <div className="max-lg:hidden absolute h-full w-[372px] left-0 bg-[url('/images/left-header-2.png')] bg-no-repeat bg-contain" />
       <div className="max-lg:hidden absolute h-full w-[812px] right-0 bg-[url('/images/right-header-2.png')] bg-no-repeat bg-contain" />
 
+      <div className="max-lg:w-4" />
       <Drawer
         headerStyle={{ display: "none" }}
         className="lg:hidden"
@@ -150,7 +206,7 @@ function Header({ path }: { path?: string }) {
               placement={"bottom"}
             >
               <button className="flex  items-center body_semibold_14 ">
-                {user?.studio?._id === user._id
+                {user?.studio?._id === user?._id
                   ? common.t("my_studio")
                   : user?.studio?.studio_name ?? user?.studio?.full_name}
                 <div className="w-2" />
@@ -206,6 +262,8 @@ function Header({ path }: { path?: string }) {
       </button>
       <div className="relative w-[1140px] h-full flex items-center justify-between">
         <Image
+          onClick={() => router.push("/")}
+          className="cursor-pointer"
           loading="lazy"
           src="/images/white-logo.png"
           alt="tmas"
@@ -233,7 +291,7 @@ function Header({ path }: { path?: string }) {
 
           <Dropdown menu={{ items: itemsStudio }}>
             <button className="ml-3 lg:flex hidden items-center body_semibold_14 text-white">
-              {user?.studio?._id === user._id
+              {user?.studio?._id === user?._id
                 ? common.t("my_studio")
                 : user?.studio?.studio_name ?? user?.studio?.full_name}
               <div className="w-2" />
@@ -328,7 +386,7 @@ function Header({ path }: { path?: string }) {
         >
           <button
             onClick={() => setOpenPop(true)}
-            className="absolute max-lg:right-2 right-0 lg:ml-6  cursor-pointer"
+            className="absolute max-lg:pr-5 right-0 lg:ml-6  cursor-pointer"
           >
             {user?.avatar ? (
               <Image

@@ -23,7 +23,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
         <div className=" w-full lg:h-screen max-h-screen flex max-lg:justify-center">
           <div className="lg:flex hidden lg:w-1/2 h-full bg-[url('/images/background.png')] bg-cover"></div>
           <div className="overflow-auto lg:w-1/2  w-full  h-full min-h-screen flex flex-col items-center ">
-            <div className="flex  flex-col xl:w-3/5 w-4/5 my-6">
+            <div className="flex  flex-col xl:w-3/5 w-5/6 my-6">
               <div className="w-full flex justify-center ">
                 <Image
                   loading="lazy"
@@ -35,6 +35,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
               </div>
               <div className="h-9" />
               {children}
+              <div className="h-4" />
             </div>
           </div>
         </div>
