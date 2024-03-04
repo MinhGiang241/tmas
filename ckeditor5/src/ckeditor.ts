@@ -81,7 +81,8 @@ class Editor extends ClassicEditor {
 				'insertTable',
 				'mediaEmbed',
 				'undo',
-				'redo'
+				'redo',
+				'ckbox'
 			]
 		},
 		language: 'en',

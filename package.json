@@ -16,6 +16,7 @@
     "@types/react-google-recaptcha": "^2.1.9",
     "antd": "^5.13.3",
     "axios": "^1.6.7",
+    "ckeditor5-custom-build": "file:ckeditor5",
     "firebase": "^10.7.2",
     "formik": "^2.4.5",
     "framer-motion": "^11.0.8",
@@ -34,8 +35,7 @@
     "react-quill": "^2.0.0",
     "react-radio-buttons": "^1.2.2",
     "react-redux": "^9.1.0",
-    "swr": "^2.2.5",
-    "ckeditor5-custom-build": "file:ckeditor5"
+    "swr": "^2.2.5"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",

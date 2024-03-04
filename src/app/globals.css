@@ -159,6 +159,10 @@ body {
   padding: 0 !important;
 }
 
+.ck-editor__editable {
+  min-height: 100px;
+}
+
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */
