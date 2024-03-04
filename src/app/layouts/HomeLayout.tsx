@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Header from "../components/Header";
 import { redirect, useRouter } from "next/navigation";
 import LoadingPage from "../loading";
@@ -72,15 +72,16 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {loading ? (
-        <LoadingPage />
-      ) : (
         <main className="bg-neutral-100 text-m_neutral_900">
+          <Header />
+          <LoadingPage />
+        </main>
+      ) : (
+        <main className="bg-neutral-100 h-screen text-m_neutral_900">
           <Header />
           <div className="lg:h-[68px] h-14 " />
           <div className="max-w-[1140px] mx-auto">
-            <div className="min-h-screen w-full text-m_neutral_900">
-              {children}
-            </div>
+            <div className=" w-full text-m_neutral_900">{children}</div>
           </div>
         </main>
       )}

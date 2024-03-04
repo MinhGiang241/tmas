@@ -47,6 +47,7 @@ export default function RootLayout({ children }: LayoutProps) {
             <StyledComponentsRegistry>
               <LangProvider>
                 <Suspense fallback={<LoadingPage />}>{children}</Suspense>
+                {/* {children} */}
               </LangProvider>
             </StyledComponentsRegistry>
           </AuthProvider>

@@ -9,7 +9,7 @@ function LoadingPage({
   bg?: string;
 }) {
   return (
-    <div className="relative h-screen w-screen">
+    <div className="">
       <div
         className={`absolute top-0 bottom-0 right-0 left-0 ${
           bg ? bg : "bg-white/25"

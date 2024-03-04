@@ -249,10 +249,10 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
               header={
                 <div className=" h-14 w-full flex flex-grow justify-between items-center">
                   <div>
-                    <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-xs text-ellipsis">
+                    <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-[200px] text-ellipsis">
                       {v.name ?? ""}
                     </div>
-                    <div className="body_regular_14 text-m_neutral_600 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-xs text-ellipsis ">
+                    <div className="body_regular_14 text-m_neutral_600 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-[200px] text-ellipsis ">
                       {v.childs && v.childs.length == 0
                         ? ""
                         : `(${v.childs?.map((i) => i.name)?.join(", ") ?? ""})`}

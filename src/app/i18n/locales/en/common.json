@@ -81,5 +81,6 @@
   "save": "Save",
   "success_create_new": "Create new successfully!",
   "success_update": "Update information successfully!",
-  "empty_list": "List is empty!"
+  "empty_list": "List is empty!",
+  "create_new": "Create new"
 }

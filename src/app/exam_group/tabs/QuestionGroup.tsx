@@ -167,7 +167,7 @@ function QuestionGroup({ hidden }: { hidden: boolean }) {
             className="mb-4 px-6 rounded-lg bg-white h-16 w-full flex flex-grow justify-between items-center"
           >
             <div>
-              <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-xs text-ellipsis">
+              <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-[200px] text-ellipsis">
                 {v.name}
               </div>
             </div>

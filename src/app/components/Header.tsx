@@ -225,7 +225,7 @@ function Header({ path }: { path?: string }) {
           <div className="h-4" />
           {links.map((v, i) => (
             <Link
-              href={v == "exam_group" ? `/${v}` : "/"}
+              href={v == "exam_group" || v == "exams" ? `/${v}` : "/"}
               onClick={() => setOpenDrawer(false)}
               className="block mb-2 body_regular_14 text-m_neutral_900"
               key={i}
@@ -279,7 +279,7 @@ function Header({ path }: { path?: string }) {
           {links.map((e, i) => (
             <Link
               key={i}
-              href={e == "exam_group" ? `/${e}` : "/"}
+              href={e == "exam_group" || e == "exams" ? `/${e}` : "/"}
               className={`flex items-center text-center body_semibold_14 text-white px-4 h-full ${
                 pathname.includes(e)
                   ? "bg-m_primary_400 after:content-[''] border-b-white border-b-4"

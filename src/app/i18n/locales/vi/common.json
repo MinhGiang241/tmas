@@ -81,5 +81,6 @@
   "save": "Lưu",
   "success_create_new": "Tạo mới thành công",
   "success_update": "Cập nhật thông tin thành công",
-  "empty_list": "Danh sách trống!"
+  "empty_list": "Danh sách trống!",
+  "create_new": "Tạo mới"
 }
