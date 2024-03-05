@@ -5,17 +5,20 @@ import { Breadcrumb, Radio, Space, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import MButton from "@/app/components/config/MButton";
-import CustomEditor from "@/app/components/config/CustomCkEditor";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import MRichText from "@/app/components/config/MRichText";
+// import MRichText from "@/app/components/config/MRichText";
 import MTextArea from "@/app/components/config/MTextArea";
 import { usePathname, useRouter } from "next/navigation";
 import MInput from "@/app/components/config/MInput";
-import MSelect from "@/app/components/config/MSelect";
 import MDropdown from "@/app/components/config/MDropdown";
 import DragDropUpload from "../components/DragDropUpload";
 import { FormikErrors, useFormik } from "formik";
+import dynamic from "next/dynamic";
+
+const MRichText = dynamic(() => import("@/app/components/config/MRichText"), {
+  ssr: false,
+});
 
 function CreatePage() {
   const { t } = useTranslation("exam");
