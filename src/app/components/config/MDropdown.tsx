@@ -1,4 +1,4 @@
-import { Input, Select } from "antd";
+import { Input, Select, SelectProps, Tag } from "antd";
 import React, { ReactNode, useEffect, useState } from "react";
 import NoticeIcon from "@/app/components/icons/notice.svg";
 import CloseEye from "@/app/components/icons/close_eye.svg";
@@ -37,8 +37,9 @@ interface Props {
   successText?: string;
   disable?: boolean;
   allowClear?: boolean;
-  options?: { value: any; label: string; disabled?: boolean }[];
+  options?: { value: any; label: React.ReactNode; disabled?: boolean }[];
   extend?: boolean;
+  mode?: "multiple" | "tags";
 }
 
 function MDropdown({
@@ -65,7 +66,8 @@ function MDropdown({
   namespace,
   dangerText,
   successText,
-  extend,
+  extend = true,
+  mode,
 }: Props) {
   var np;
   var er;
@@ -88,6 +90,27 @@ function MDropdown({
   const { t } = useTranslation(np);
   const common = useTranslation();
   useEffect(() => {}, [formik]);
+  type TagRender = SelectProps["tagRender"];
+  const tagRender: TagRender = (props) => {
+    const { label, value, closable, onClose } = props;
+    const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    return (
+      <Tag
+        className="bg-m_primary_100 text-m_primary_900 py-1 rounded-[6px] flex body_regular_14 h-full"
+        color={value}
+        onMouseDown={onPreventMouseDown}
+        closable={closable}
+        onClose={onClose}
+        style={{ marginRight: 3, color: "black" }}
+      >
+        {label}
+      </Tag>
+    );
+  };
+
   return (
     <div className="w-full">
       <div
@@ -105,11 +128,15 @@ function MDropdown({
         }`}
       >
         <Select
+          tagRender={tagRender}
+          mode={mode}
           value={value}
           allowClear={allowClear ?? true}
           options={options}
           disabled={disable}
-          defaultValue={formik?.initialValues[name]}
+          defaultValue={
+            formik?.initialValues[name] ?? formik?.initialValues[name]
+          }
           maxLength={maxLength ?? 500}
           onBlur={onBlur}
           status={error && touch ? `error` : ""}
@@ -165,6 +192,7 @@ function MDropdown({
             <div className={`text-m_error_500 body_regular_14`}>{t(er)}</div>
           </div>
         ) : null}
+        {extend && !(er && touch) && <div className="h-[20px]" />}
       </div>
     </div>
   );

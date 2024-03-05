@@ -159,8 +159,15 @@ body {
   padding: 0 !important;
 }
 
+.ant-switch:not(.ant-switch-checked) {
+  background: #868c9c;
+}
+
 .ck-editor__editable {
-  min-height: 100px;
+  min-height: 200px;
+}
+.ant-tag-close-icon {
+  color: #003953 !important;
 }
 
 /* @font-face { */

@@ -155,7 +155,6 @@ function AccountInfo() {
                 onClick={async () => {
                   setUpdateKey(Date.now());
                   setActiveMem(data);
-                  console.log("act", activeMem);
 
                   setOpenEdit(true);
                 }}
@@ -188,8 +187,6 @@ function AccountInfo() {
   const [activeMem, setActiveMem] = useState<UserData | undefined>();
 
   useEffect(() => {
-    console.log("use effect");
-
     loadMembers();
   }, []);
 

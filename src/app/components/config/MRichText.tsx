@@ -1,25 +1,95 @@
-import React from "react";
+import React, { useState } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import i18next from "i18next";
+import { FormikErrors } from "formik";
 
 interface Props {
   className?: string;
+  title?: string;
+  formik?: any;
+  required?: boolean;
+  action?: React.ReactNode;
+  name: string;
+  id?: string;
+  onChange?: (e: React.ChangeEvent<any>) => void;
+  onBlur?: (e: React.FocusEvent<any, Element>) => void;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
+  touch?: Boolean;
+  error?: string;
+  value?: string;
+  placeholder?: string;
+  maxLength?: number;
+  extend?: boolean;
+  defaultValue?: string;
+  namespace?: string;
+  setValue?: (
+    field: string,
+    value: any,
+    shouldValidate?: boolean | undefined,
+  ) => Promise<FormikErrors<any>> | Promise<void>;
 }
 
-function MRichText({ className }: Props) {
+function MRichText({
+  formik,
+  className,
+  namespace,
+  action,
+  title,
+  required,
+  id,
+  name,
+  onChange,
+  onBlur,
+  value,
+  error,
+  touch,
+  setValue,
+  defaultValue,
+}: Props) {
+  var np;
+  var er;
+  if (formik) {
+    onChange = formik.handleChange;
+    error = formik.errors[name];
+    touch = formik.touched[name];
+    onBlur = formik.handleBlur;
+    value = formik.values[name];
+    setValue = formik.setFieldValue;
+  }
+  if (error?.startsWith("common")) {
+    er = error.replace("common_", "");
+    np = "common";
+  } else {
+    er = error;
+    np = namespace;
+  }
+
   return (
-    <div className={className}>
+    <div className={"w-full"}>
+      <div
+        className={`flex ${action ? "justify-between" : "justify-start"} mb-1 `}
+      >
+        <label className="text-sm font-semibold " htmlFor={id}>
+          {title} {required && <span className="text-m_error_500">*</span>}
+        </label>
+        {action}
+      </div>
       <CKEditor
         editor={ClassicEditor}
-        data="ALooAlloooo"
+        data={defaultValue}
         onReady={(editor) => {
           // You can store the "editor" and use when it is needed.
           console.log("Editor is ready to use!", editor);
         }}
         config={{}}
-        onChange={(event) => {
-          console.log(event);
+        onChange={async (event, editor) => {
+          console.log("event", event);
+          console.log("editor", editor.getData());
+          console.log("value", value);
+          if (setValue) {
+            setValue!(name, editor.getData());
+          }
         }}
         onBlur={(event, editor) => {
           console.log("Blur.", editor);

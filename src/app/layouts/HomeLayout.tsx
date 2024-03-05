@@ -56,7 +56,6 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   const loadData = async (v: any) => {
     try {
       var user = v["user"] as UserData;
-      console.log("set User lần 1", user);
 
       dispatch(setUserData(user));
       setLoading(false);
@@ -77,7 +76,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
           <LoadingPage />
         </main>
       ) : (
-        <main className="bg-neutral-100 h-screen text-m_neutral_900">
+        <main className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900">
           <Header />
           <div className="lg:h-[68px] h-14 " />
           <div className="max-w-[1140px] mx-auto">

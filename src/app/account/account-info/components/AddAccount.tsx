@@ -47,7 +47,6 @@ function AddAccount({ open, onCancel, onOk }: Props) {
       setLoadingValidateMail(true);
       var check = await checkEmailToWorkSpace({ email: values.email });
       setLoadingValidateMail(false);
-      console.log("check", check);
       if (check["type"] == "danger") {
         errors.email = check["message"];
       } else if (check["type"] == "warning") {

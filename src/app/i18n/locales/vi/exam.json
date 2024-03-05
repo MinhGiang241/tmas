@@ -35,6 +35,7 @@
   "reject": "Hủy bỏ",
   "save_info": "Lưu thông tin",
   "test_time": "Thời gian làm bài (phút)",
+  "enter_time": "Nhập thời gian",
   "display_setting": "Cài đặt hiện thị",
   "one_question": "Hiển thị 1 câu hỏi trên một trang",
   "all_question": "Hiển thị toàn bộ câu hỏi trên một trang",
@@ -45,10 +46,12 @@
   "doc_file": "File tài liệu",
   "doc_link": "Link tài liệu",
   "paste_link": "Dán link",
-  "name_exam": "Tên đề thi",
-  "enter_name_exam": "Nhập tên đề thi",
+  "exam_name": "Tên đề thi",
+  "enter_exam_name": "Nhập tên đề thi",
   "tag": "Tags",
   "enter_tag": "Nhập #tag",
   "describe": "Mô tả",
+  "drag_file": "Kéo và thả file vào đây hoặc",
+  "pick_file": "Chọn file",
   "upload_intro": "Kéo và thả file vào đây hoặc chọn file (Định dạng mp4/jpg/png/xlsx/pdf/docx -tối đa 100MB)"
 }

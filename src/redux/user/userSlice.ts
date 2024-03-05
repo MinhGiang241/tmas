@@ -14,8 +14,6 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUserData: (state, action) => {
-      console.log("action payload", action.payload);
-
       return { user: action.payload };
     },
     userClear: (state, _) => {

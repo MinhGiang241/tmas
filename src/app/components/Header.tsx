@@ -111,11 +111,8 @@ function Header({ path }: { path?: string }) {
       var userNew = data["user"] as UserData;
       dispatch(userClear({}));
       dispatch(setUserData(userNew));
-      console.log("newUser set lần 2----->", userNew);
 
       await loadMembersWhenChangeStudio();
-      console.log("1------", data["user"]["studio"]);
-      console.log("uuu", user.studio);
       await loadingQuestionsAndExams(true, userNew.studio?._id);
     } catch (e: any) {
       errorToast(e);
