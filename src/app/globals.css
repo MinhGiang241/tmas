@@ -170,6 +170,17 @@ body {
   color: #003953 !important;
 }
 
+.ql-toolbar {
+  border-top-right-radius: 6px 6px;
+  border-top-left-radius: 6px 6px;
+}
+
+.ql-container {
+  min-height: 200px;
+  border-bottom-right-radius: 6px 6px;
+  border-bottom-left-radius: 6px 6px;
+}
+
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */

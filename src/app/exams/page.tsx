@@ -58,7 +58,7 @@ function ExamsPage() {
   return (
     <HomeLayout>
       <div className="w-full max-lg:px-3">
-        <div className="body_semibold_20 mt-6 w-full flex  justify-between items-center ">
+        <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
           <div className="">{t("exam_list")}</div>
           <MButton
             onClick={() => {
@@ -70,7 +70,7 @@ function ExamsPage() {
             text={common.t("create_new")}
           />
         </div>
-        <div className="w-full mt-3 flex justify-around max-lg:flex-col items-center">
+        <div className="w-full mt-3 flex justify-around max-lg:flex-col items-start">
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {}}
             className=""
@@ -91,9 +91,10 @@ function ExamsPage() {
             id="category"
             name="category"
             placeholder=""
+            h="h-11"
             className="lg:mx-4"
           />
-          <MDropdown id="category" name="category" />
+          <MDropdown h="h-11" className="" id="category" name="category" />
         </div>
         <Divider className="mt-1 mb-6" />
         <div className="w-full">

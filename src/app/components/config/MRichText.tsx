@@ -3,6 +3,15 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import i18next from "i18next";
 import { FormikErrors } from "formik";
+import { callApi } from "@/services/api_services/base_api";
+import axios from "axios";
+
+import { CKBox, CKBoxImageEdit } from "@ckeditor/ckeditor5-ckbox";
+import {
+  UploadAdapter,
+  FileLoader,
+} from "@ckeditor/ckeditor5-upload/src/filerepository";
+import type { Editor, EditorConfig } from "@ckeditor/ckeditor5-core";
 
 interface Props {
   className?: string;
@@ -65,6 +74,99 @@ function MRichText({
     np = namespace;
   }
 
+  const uploadPlugin = (editor: any) => {
+    editor.plugins.get("FileRepository").createUploadAdapter = (
+      loader: any,
+    ) => {
+      return uploadAdapter(loader);
+    };
+  };
+
+  function uploadAdapter(loader: FileLoader): UploadAdapter {
+    return {
+      upload: () => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            const file = await loader.file;
+            const response = await axios.request({
+              method: "POST",
+              url: `${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload`,
+              data: {
+                files: file,
+              },
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            });
+            resolve({
+              default: `${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${response.data}`,
+            });
+          } catch (error) {
+            reject("Hello");
+          }
+        });
+      },
+      abort: () => {},
+    };
+  }
+  const editorConfiguration: EditorConfig = {
+    // extraPlugins: [uploadPlugin],
+    toolbar: {
+      items: [
+        "heading",
+        "|",
+        "bold",
+        "italic",
+        "link",
+        "strikethrough",
+        "subscript",
+        "superscript",
+        "code",
+        "bulletedList",
+        "numberedList",
+        "todoList",
+        "|",
+        "outdent",
+        "indent",
+        "|",
+        "imageUpload",
+        "blockQuote",
+        "insertTable",
+        "mediaEmbed",
+        "undo",
+        "redo",
+      ],
+      shouldNotGroupWhenFull: false,
+    },
+  };
+
+  /*
+  const uploadAdapter = (loader: any) => {
+    return {
+      upload: () => {
+        return new Promise((resolve, reject) => {
+          const body = new FormData();
+          loader.file.then(async (file: any) => {
+            body.append("uploadImg", file);
+
+            var results = await callApi.upload(
+              `${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload`,
+              body,
+            );
+            if (results?.code != 0) {
+              reject(results.message);
+            }
+
+            resolve({
+              default: `${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${results?.data}`,
+            });
+          });
+        });
+      },
+    };
+  };
+  */
+
   return (
     <div className={"w-full"}>
       <div
@@ -82,7 +184,7 @@ function MRichText({
           // You can store the "editor" and use when it is needed.
           console.log("Editor is ready to use!", editor);
         }}
-        config={{}}
+        config={editorConfiguration}
         onChange={async (event, editor) => {
           console.log("event", event);
           console.log("editor", editor.getData());

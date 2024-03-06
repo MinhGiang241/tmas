@@ -40,6 +40,7 @@ interface Props {
   options?: { value: any; label: React.ReactNode; disabled?: boolean }[];
   extend?: boolean;
   mode?: "multiple" | "tags";
+  h?: string;
 }
 
 function MDropdown({
@@ -68,6 +69,7 @@ function MDropdown({
   successText,
   extend = true,
   mode,
+  h,
 }: Props) {
   var np;
   var er;
@@ -142,9 +144,9 @@ function MDropdown({
           status={error && touch ? `error` : ""}
           className={`${successText && touch ? "border-m_success_500" : ""} ${
             dangerText && touch ? "border-m_warning_500" : ""
-          } ${
-            disable ? "text-m_neutral_900" : ""
-          } h-12 rounded-lg ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
+          } ${disable ? "text-m_neutral_900" : ""} ${
+            h ? h : "h-12"
+          } rounded-lg ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
           id={id}
           onKeyDown={onKeyDown}
           onChange={(e) => {

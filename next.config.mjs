@@ -7,6 +7,7 @@ const nextConfig = {
       test: /\.svg$/i,
       use: ["@svgr/webpack"],
     });
+
     config.ignoreWarnings = [
       // https://webpack.js.org/configuration/other-options/#ignorewarnings
       {

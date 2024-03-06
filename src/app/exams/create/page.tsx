@@ -5,9 +5,7 @@ import { Breadcrumb, Radio, Space, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import MButton from "@/app/components/config/MButton";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-// import MRichText from "@/app/components/config/MRichText";
+
 import MTextArea from "@/app/components/config/MTextArea";
 import { usePathname, useRouter } from "next/navigation";
 import MInput from "@/app/components/config/MInput";
@@ -15,6 +13,15 @@ import MDropdown from "@/app/components/config/MDropdown";
 import DragDropUpload from "../components/DragDropUpload";
 import { FormikErrors, useFormik } from "formik";
 import dynamic from "next/dynamic";
+import LexicalEditor from "@/app/components/config/LexicalEditor";
+// import EditorHook from "../components/react_quill/EditorWithUseQuill";
+import Editor from "../components/react_quill/Editor";
+const EditorHook = dynamic(
+  () => import("../components/react_quill/EditorWithUseQuill"),
+  {
+    ssr: false,
+  },
+);
 
 const MRichText = dynamic(() => import("@/app/components/config/MRichText"), {
   ssr: false,
@@ -223,7 +230,7 @@ function CreatePage() {
             title={t("exam_name")}
             action={
               <div className="body_regular_14 text-m_neutral_500">
-                {"0/225"}
+                {`${formik.values["exam_name"]?.length ?? 0}/225`}
               </div>
             }
             formik={formik}
@@ -242,6 +249,7 @@ function CreatePage() {
             title={t("tag")}
             formik={formik}
           />
+          {/*
           <MRichText
             id="describe"
             name="describe"
@@ -252,6 +260,16 @@ function CreatePage() {
                 {"0/500"}
               </div>
             }
+          />
+          <LexicalEditor />
+                    <Editor />
+          */}
+          <EditorHook
+            id="describe"
+            name="describe"
+            formik={formik}
+            title={t("describe")}
+            maxLength={500}
           />
         </div>
       </div>
