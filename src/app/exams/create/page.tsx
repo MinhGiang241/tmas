@@ -225,6 +225,7 @@ function CreatePage() {
           <MTextArea
             maxLength={225}
             required
+            placeholder={t("enter_exam_name")}
             id="exam_name"
             name="exam_name"
             title={t("exam_name")}
@@ -237,13 +238,14 @@ function CreatePage() {
           />
           <MDropdown
             mode="multiple"
-            options={[
-              { value: "1", label: <div>leee</div> },
-              {
-                value: "2",
-                label: <div>222</div>,
-              },
-            ]}
+            // options={[
+            //   { value: "1", label: <div>leee</div> },
+            //   {
+            //     value: "2",
+            //     label: <div>222</div>,
+            //   },
+            // ]}
+            placeholder={t("enter_tag")}
             id="tag"
             name="tag"
             title={t("tag")}

@@ -5,18 +5,18 @@ import MInput from "../components/config/MInput";
 import { SearchOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import MDropdown from "../components/config/MDropdown";
-import { Collapse, Divider, Pagination } from "antd";
+import { Collapse, Divider, Pagination, Select } from "antd";
 import EditBlackIcon from "../components/icons/edit-black.svg";
 import DeleteRedIcon from "../components/icons/trash-red.svg";
-import CopyIcon from "./icons/export.svg";
-import CupIcon from "./icons/cup.svg";
-import FolderIcon from "./icons/folder.svg";
-import LinkIcon from "./icons/link-2.svg";
-import CalendarIcon from "./icons/calendar.svg";
-import MessIcon from "./icons/message-question.svg";
+import CopyIcon from "../components/icons/export.svg";
+import CupIcon from "../components/icons/cup.svg";
+import FolderIcon from "../components/icons/folder.svg";
+import LinkIcon from "../components/icons/link-2.svg";
+import CalendarIcon from "../components/icons/calendar.svg";
+import MessIcon from "../components/icons/message-question.svg";
 import MButton from "../components/config/MButton";
 import AddIcon from "../components/icons/add.svg";
-import SizeIcon from "./icons/size.svg";
+import SizeIcon from "../components/icons/size.svg";
 import { RightOutlined, LeftOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 
@@ -57,6 +57,7 @@ function ExamsPage() {
 
   return (
     <HomeLayout>
+      <div className="h-4" />
       <div className="w-full max-lg:px-3">
         <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
           <div className="">{t("exam_list")}</div>
@@ -133,9 +134,6 @@ function ExamsPage() {
                         <span className="ml-2">Kế toán</span>
                       </div>
                     </div>
-                    {/* <div className="body_regular_14 text-m_neutral_600 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-[200px] text-ellipsis "> */}
-                    {/**/}
-                    {/* </div> */}
                   </div>
 
                   <div className="flex ">
@@ -208,7 +206,24 @@ function ExamsPage() {
             </Collapse.Panel>
           </Collapse>
         </div>
-        <div className="w-full flex justify-center">
+        <div className="w-full flex lg:justify-between justify-center">
+          <div className="hidden lg:flex items-center">
+            <span className="body_regular_14 mr-2">{`136 ${t("result")}`}</span>
+            <Select
+              defaultValue={"1"}
+              options={[
+                {
+                  value: "1",
+                  label: (
+                    <span className="body_regular_14">{`${15}/${common.t(
+                      "page",
+                    )}`}</span>
+                  ),
+                },
+              ]}
+              className="min-w-[124px]"
+            />
+          </div>
           <Pagination defaultCurrent={1} total={50} showSizeChanger={false} />
         </div>
       </div>

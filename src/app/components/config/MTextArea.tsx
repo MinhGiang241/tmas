@@ -108,7 +108,7 @@ function MTextArea({
           disabled={disable}
           defaultValue={defaultValue}
           maxLength={maxLength}
-          autoSize={{ minRows: 5, maxRows: 5 }}
+          autoSize={{ minRows: 4, maxRows: 4 }}
           onBlur={onBlur}
           className={`${disable ? "text-m_neutral_900" : ""} ${
             successText && touch ? "border-m_success_500" : ""
