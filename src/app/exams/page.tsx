@@ -34,6 +34,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { errorToast, successToast } from "../components/toast/customToast";
 import {
   deleteExamination,
+  getAllExaminationList,
   getExaminationList,
 } from "@/services/api_services/examination_api";
 import { FormattedDate } from "react-intl";
@@ -47,7 +48,6 @@ function ExamsPage() {
   const user = useAppSelector((state: RootState) => state.user.user);
   const examGroup = useSelector((state: RootState) => state.examGroup?.list);
 
-  const [examList, setExamList] = useState<ExamData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -72,10 +72,11 @@ function ExamsPage() {
       "Paging.StartIndex": (indexPage - 1) * recordNum,
       StudioId: user?.studio?._id,
     });
+
     console.log("rsss", res);
     if (res?.code != 0) {
       setLoading(false);
-      setExamList([]);
+      setList([]);
       return;
     }
     var data: ExamListDataResult = res.data;
@@ -285,6 +286,7 @@ function ExamsPage() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
+                              router.push(`/exams/${v?.id}`);
                             }}
                           >
                             <EditBlackIcon />
@@ -390,6 +392,9 @@ function ExamsPage() {
               />
             </div>
             <Pagination
+              onChange={(v) => {
+                setRecordNum(v);
+              }}
               current={indexPage}
               total={total}
               showSizeChanger={false}

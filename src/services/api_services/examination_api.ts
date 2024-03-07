@@ -19,10 +19,25 @@ export const getExaminationList = async (params: ParamGetExamList) => {
   return results;
 };
 
+export const getAllExaminationList = async (Id?: string, StudioId?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${StudioId}/${Id}`,
+  );
+
+  return results;
+};
+
 export const deleteExamination = async (Id?: string, StudioId?: string) => {
   const results = await callStudioAPI.delete(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam`,
-    { params: { Id, StudioId } },
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${StudioId}/${Id}`,
+  );
+
+  return results;
+};
+
+export const getExamById = async (Id?: string, StudioId?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${StudioId}/${Id}`,
   );
 
   return results;

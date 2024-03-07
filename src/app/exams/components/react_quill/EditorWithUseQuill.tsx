@@ -97,7 +97,7 @@ const Editor = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [quill, Quill, quillRef]);
+  }, [quill, Quill, quillRef, formik.initialValues[name]]);
 
   return (
     <div className={"w-full"}>

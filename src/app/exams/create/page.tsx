@@ -16,7 +16,7 @@ import dynamic from "next/dynamic";
 import LexicalEditor from "@/app/components/config/LexicalEditor";
 // import EditorHook from "../components/react_quill/EditorWithUseQuill";
 import Editor from "../components/react_quill/Editor";
-import { ExamGroupData } from "@/data/exam";
+import { ExamData, ExamGroupData } from "@/data/exam";
 import { RootState } from "@/redux/store";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { APIResults } from "@/data/api_results";
@@ -30,6 +30,7 @@ import { ExamFormData } from "@/data/form_interface";
 import { auth } from "@/firebase/config";
 import { createExaminationList } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
+import TextArea from "antd/es/input/TextArea";
 const EditorHook = dynamic(
   () => import("../components/react_quill/EditorWithUseQuill"),
   {
@@ -37,19 +38,17 @@ const EditorHook = dynamic(
   },
 );
 
-const MRichText = dynamic(() => import("@/app/components/config/MRichText"), {
-  ssr: false,
-});
-
-function CreatePage() {
+function CreatePage({ exam }: { exam?: ExamData }) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const router = useRouter();
 
-  const [audio, setAudio] = useState("OnlyOneTime");
-  const [lang, setLang] = useState("Vietnamese");
-  const [page, setPage] = useState("SinglePage");
-  const [sw, setSw] = useState<boolean>(false);
+  const [audio, setAudio] = useState(exam?.playAudio ?? "OnlyOneTime");
+  const [lang, setLang] = useState(exam?.language ?? "Vietnamese");
+  const [page, setPage] = useState(exam?.examViewQuestionType ?? "SinglePage");
+  const [sw, setSw] = useState<boolean>(
+    !exam ? false : exam?.examNextQuestion != "FreeByUser" ? true : false,
+  );
   const [files, setFiles] = useState([]);
 
   interface FormValue {
@@ -60,15 +59,20 @@ function CreatePage() {
     describe?: string;
     tag?: [];
   }
+  console.log("exammmm", exam);
 
   const initialValues: FormValue = {
-    test_time: undefined,
-    exam_group: undefined,
-    doc_link: undefined,
-    exam_name: undefined,
-    describe: undefined,
-    tag: [],
+    test_time: exam?.timeLimitMinutes,
+    exam_group: exam?.idExamGroup,
+    doc_link:
+      exam?.externalLinks && exam?.externalLinks?.length != 0
+        ? exam?.externalLinks[0]
+        : undefined,
+    exam_name: exam?.name,
+    describe: exam?.description,
+    tag: exam?.tags ?? [],
   };
+  console.log("state", initialValues);
   const validate = (values: FormValue) => {
     const errors: FormikErrors<FormValue> = {};
     if (!values.exam_name?.trim()) {
@@ -82,6 +86,7 @@ function CreatePage() {
   };
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues,
     validate,
     onSubmit: async (values: FormValue) => {
@@ -131,8 +136,9 @@ function CreatePage() {
     if (user?.studio?._id) {
       dispatch(fetchDataExamGroup(async () => loadExamTestList(true)));
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, exam]);
 
   const loadExamTestList = async (init?: boolean) => {
     if (init) {
@@ -218,7 +224,7 @@ function CreatePage() {
         </div>
       </div>
       <div className="w-full grid grid-cols-12 gap-6 min-h-96">
-        <div className="max-lg:mx-5 max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-4 col-span-12 bg-white h-full rounded-lg">
+        <div className="max-lg:mx-5 max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-4 col-span-12 bg-white h-fit rounded-lg">
           <MInput
             onKeyDown={(e) => {
               if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
@@ -266,7 +272,7 @@ function CreatePage() {
             {t("change_position_question")}
           </div>
           <Switch
-            value={sw}
+            checked={sw}
             onChange={(v) => {
               setSw(v);
             }}
@@ -327,7 +333,9 @@ function CreatePage() {
 
         <div className="max-lg:mx-5 max-lg:grid-cols-1 max-lg:mb-5 lg:col-span-8 col-span-12 bg-white h-fit rounded-lg p-4">
           {/* <CustomEditor /> */}
+
           <MTextArea
+            defaultValue={exam?.name}
             maxLength={225}
             required
             placeholder={t("enter_exam_name")}
@@ -366,6 +374,7 @@ function CreatePage() {
                     <Editor />
           */}
           <EditorHook
+            defaultValue={exam?.description}
             id="describe"
             name="describe"
             formik={formik}

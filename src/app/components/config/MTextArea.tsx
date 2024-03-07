@@ -1,5 +1,6 @@
+"use client";
 import TextArea from "antd/es/input/TextArea";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { CheckCircleFilled, ExclamationCircleFilled } from "@ant-design/icons";
 import NoticeIcon from "@/app/components/icons/notice.svg";
 import { useTranslation } from "react-i18next";
@@ -107,7 +108,8 @@ function MTextArea({
           onChange={onChange}
           placeholder={placeholder}
           disabled={disable}
-          defaultValue={defaultValue}
+          value={value ?? formik?.initialValues[name]}
+          defaultValue={defaultValue ?? formik?.initialValues[name]}
           maxLength={maxLength}
           autoSize={{ minRows: 4, maxRows: 4 }}
           onBlur={onBlur}
