@@ -100,6 +100,7 @@ function MTextArea({
         } relative`}
       >
         <TextArea
+          style={{ borderColor: er && touch && "#EA3434" }}
           id={id}
           allowClear={allowClear}
           onKeyDown={onKeyDown}

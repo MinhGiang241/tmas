@@ -31,3 +31,36 @@ export interface Hashtag {
   name?: string;
   code?: string;
 }
+
+export interface ExamListDataResult {
+  paging?: {
+    startIndex?: number;
+    recordPerPage?: number;
+  };
+  records?: ExamData[];
+  totalOfRecords?: number;
+}
+
+export interface ExamData {
+  name?: string;
+  numberOfTests?: number;
+  numberOfQuestions?: number;
+  totalPoints?: number;
+  idExamGroup?: string;
+  version?: string;
+  timeLimitMinutes?: number;
+  examNextQuestion: "FreeByUser" | "ByOrderQuestion";
+  examViewQuestionType?: "SinglePage" | "MultiplePages";
+  language?: "English" | "Vietnamese";
+  playAudio?: "OnlyOneTime" | "MultipleTimes";
+  idDocuments?: string[];
+  externalLinks?: string[];
+  tags?: string[];
+  description?: string;
+  id?: string;
+  createdTime?: string;
+  createdBy?: string;
+  updateTime?: string;
+  updateBy?: string;
+  studioId?: string;
+}

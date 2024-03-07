@@ -1,4 +1,4 @@
-import { Input, Select, SelectProps, Tag } from "antd";
+import { Input, Select, SelectProps, Tag, TreeSelect } from "antd";
 import React, { ReactNode, useEffect, useState } from "react";
 import NoticeIcon from "@/app/components/icons/notice.svg";
 import CloseEye from "@/app/components/icons/close_eye.svg";
@@ -37,13 +37,20 @@ interface Props {
   successText?: string;
   disable?: boolean;
   allowClear?: boolean;
-  options?: { value: any; label: React.ReactNode; disabled?: boolean }[];
+  options?: {
+    value?: any;
+    title?: React.ReactNode | string;
+    disabled?: boolean;
+    isLeaf?: boolean;
+    children?: { title?: React.ReactNode | string; value?: any }[];
+  }[];
   extend?: boolean;
   mode?: "multiple" | "tags";
   h?: string;
+  defaultValue?: any;
 }
 
-function MDropdown({
+function MTreeSelect({
   disable,
   onChange,
   required = false,
@@ -69,6 +76,7 @@ function MDropdown({
   successText,
   extend = true,
   mode,
+  defaultValue,
   h,
 }: Props) {
   var np;
@@ -129,17 +137,14 @@ function MDropdown({
           extend ? "mb-2" : "mb-[22px]"
         }`}
       >
-        <Select
-          showSearch={true}
+        <TreeSelect
+          treeDefaultExpandAll
           tagRender={tagRender}
-          mode={mode}
           value={value}
           allowClear={allowClear ?? true}
-          options={options}
+          treeData={options}
           disabled={disable}
-          defaultValue={
-            formik?.initialValues[name] ?? formik?.initialValues[name]
-          }
+          defaultValue={defaultValue ?? formik?.initialValues[name]}
           maxLength={maxLength ?? 500}
           onBlur={onBlur}
           status={error && touch ? `error` : ""}
@@ -201,4 +206,4 @@ function MDropdown({
   );
 }
 
-export default MDropdown;
+export default MTreeSelect;

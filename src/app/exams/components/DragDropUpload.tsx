@@ -13,9 +13,13 @@ interface UploadedFile {
   size?: number;
 }
 
-function DragDropUpload(props: any) {
+interface Props {
+  files: UploadedFile[];
+  setFiles: any;
+}
+
+function DragDropUpload({ files, setFiles }: Props) {
   const { t } = useTranslation("exam");
-  const [files, setFiles] = useState<UploadedFile[]>([]);
   const fileRef = useRef(null);
 
   const handleFileChange = async (fileList: any) => {

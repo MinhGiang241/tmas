@@ -16,6 +16,7 @@ import FolderIcon from "../components/icons/folder.svg";
 import LinkIcon from "../components/icons/link-2.svg";
 import CalendarIcon from "../components/icons/calendar.svg";
 import MessIcon from "../components/icons/message-question.svg";
+import { TreeSelect } from "primereact/treeselect";
 
 function ExaminationPage() {
   const router = useRouter();

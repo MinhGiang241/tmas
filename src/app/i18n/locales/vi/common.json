@@ -83,5 +83,7 @@
   "success_update": "Cập nhật thông tin thành công",
   "empty_list": "Danh sách trống!",
   "create_new": "Tạo mới",
-  "page": "Trang"
+  "page": "Trang",
+  "delete": "Xóa",
+  "delete_success": "Xóa thành công"
 }

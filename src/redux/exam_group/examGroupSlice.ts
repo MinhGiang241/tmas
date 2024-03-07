@@ -1,5 +1,5 @@
 import { ExamGroupData, QuestionGroupData } from "@/data/exam";
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface ExamGroupState {
   list?: ExamGroupData[];
@@ -12,6 +12,14 @@ const initialState: ExamGroupState = {
   loading: false,
   questions: [],
 };
+
+export const fetchDataExamGroup = createAsyncThunk(
+  "examGroup",
+  async (fetcher: any, _) => {
+    const data = await fetcher();
+    return data;
+  },
+);
 
 export const examGroupSlice = createSlice({
   name: "exam_group",
@@ -32,6 +40,12 @@ export const examGroupSlice = createSlice({
     setExamAndQuestionLoading: (state, action) => {
       return { loading: true, questions: [], list: [] };
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchDataExamGroup.fulfilled, (state, action) => {
+      state.list = action.payload;
+      state.loading = false;
+    });
   },
 });
 

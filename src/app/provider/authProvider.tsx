@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { SWRConfig } from "swr";
+import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const { i18n } = useTranslation();
@@ -21,7 +22,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   };
   return (
     <SWRConfig>
-      {children}
+      <PrimeReactProvider>{children}</PrimeReactProvider>
       <Toaster
         containerStyle={{ top: 0, bottom: 0, left: 0, right: 0 }}
         toastOptions={{ custom: { duration: 300000 } }}

@@ -1,7 +1,7 @@
 "use client";
 import HomeLayout from "@/app/layouts/HomeLayout";
-import React, { useState } from "react";
-import { Breadcrumb, Radio, Space, Switch } from "antd";
+import React, { useEffect, useState } from "react";
+import { Breadcrumb, Radio, Space, Switch, Tree, TreeSelect } from "antd";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import MButton from "@/app/components/config/MButton";
@@ -16,6 +16,20 @@ import dynamic from "next/dynamic";
 import LexicalEditor from "@/app/components/config/LexicalEditor";
 // import EditorHook from "../components/react_quill/EditorWithUseQuill";
 import Editor from "../components/react_quill/Editor";
+import { ExamGroupData } from "@/data/exam";
+import { RootState } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { APIResults } from "@/data/api_results";
+import {
+  fetchDataExamGroup,
+  setExamGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
+import { getExamGroupTest } from "@/services/api_services/exam_api";
+import MTreeSelect from "@/app/components/config/MTreeSelect";
+import { ExamFormData } from "@/data/form_interface";
+import { auth } from "@/firebase/config";
+import { createExaminationList } from "@/services/api_services/examination_api";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
 const EditorHook = dynamic(
   () => import("../components/react_quill/EditorWithUseQuill"),
   {
@@ -32,10 +46,11 @@ function CreatePage() {
   const common = useTranslation();
   const router = useRouter();
 
-  const [audio, setAudio] = useState("1");
-  const [lang, setLang] = useState("vi");
-  const [page, setPage] = useState("One");
-  const [sw, setSw] = useState<boolean>(true);
+  const [audio, setAudio] = useState("OnlyOneTime");
+  const [lang, setLang] = useState("Vietnamese");
+  const [page, setPage] = useState("SinglePage");
+  const [sw, setSw] = useState<boolean>(false);
+  const [files, setFiles] = useState([]);
 
   interface FormValue {
     test_time?: string;
@@ -56,6 +71,12 @@ function CreatePage() {
   };
   const validate = (values: FormValue) => {
     const errors: FormikErrors<FormValue> = {};
+    if (!values.exam_name?.trim()) {
+      errors.exam_name = "common_not_empty";
+    }
+    if (!values.exam_group?.trim()) {
+      errors.exam_group = "common_not_empty";
+    }
 
     return errors;
   };
@@ -65,6 +86,33 @@ function CreatePage() {
     validate,
     onSubmit: async (values: FormValue) => {
       console.log("values", values);
+      console.log("files", files);
+      const dataSubmit: ExamFormData = {
+        description: values.describe,
+        name: values.exam_name?.trim(),
+        externalLinks: values?.doc_link?.trim()
+          ? [values.doc_link?.trim()]
+          : [],
+        tags: values?.tag ?? [],
+        examNextQuestion: sw ? "ByOrderQuestion" : "FreeByUser",
+        examViewQuestionType: page as "SinglePage" | "MultiplePages",
+        timeLimitMinutes: parseInt(values?.test_time ?? "0"),
+        playAudio: audio as "OnlyOneTime" | "MultipleTimes",
+        studioId: user?.studio?._id,
+        language: lang as "Vietnamese" | "English",
+        idExamGroup: values?.exam_group,
+        idDocuments: files.map((i: any) => i.id),
+      };
+
+      const results = await createExaminationList(dataSubmit);
+      if (results?.code != 0) {
+        errorToast(results?.message ?? "");
+        return;
+      }
+      successToast(common.t("success_create_new"));
+      router.push("/exams");
+
+      console.log("resulttt", results);
     },
   });
 
@@ -76,6 +124,58 @@ function CreatePage() {
     formik.handleSubmit();
   };
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state: RootState) => state.user.user);
+
+  useEffect(() => {
+    if (user?.studio?._id) {
+      dispatch(fetchDataExamGroup(async () => loadExamTestList(true)));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  const loadExamTestList = async (init?: boolean) => {
+    if (init) {
+      dispatch(setExamGroupLoading(true));
+    }
+
+    var dataResults: APIResults = await getExamGroupTest({
+      text: "",
+      studioId: user?.studio?._id,
+    });
+
+    if (dataResults.code != 0) {
+      return [];
+    } else {
+      var data = dataResults?.data as ExamGroupData[];
+      var levelOne = data?.filter((v: ExamGroupData) => v.level === 0);
+      var levelTwo = data?.filter((v: ExamGroupData) => v.level === 1);
+
+      var list = levelOne.map((e: ExamGroupData) => {
+        var childs = levelTwo.filter(
+          (ch: ExamGroupData) => ch.idParent === e.id,
+        );
+        return { ...e, childs };
+      });
+      console.log("list", list);
+      return list;
+    }
+  };
+  const examGroup = useAppSelector((state: RootState) => state.examGroup?.list);
+
+  const optionSelect = (examGroup ?? []).map((v: ExamGroupData, i: number) => ({
+    title: <p>{v?.name}</p>,
+    value: v?.id,
+    disabled: true,
+    isLeaf: false,
+    children: [
+      ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
+        title: e?.name,
+        value: e?.id,
+      })),
+    ],
+  }));
+
   return (
     <HomeLayout>
       <div className="h-5" />
@@ -120,6 +220,11 @@ function CreatePage() {
       <div className="w-full grid grid-cols-12 gap-6 min-h-96">
         <div className="max-lg:mx-5 max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-4 col-span-12 bg-white h-full rounded-lg">
           <MInput
+            onKeyDown={(e) => {
+              if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+                e.preventDefault();
+              }
+            }}
             id="test_time"
             name="test_time"
             title={t("test_time")}
@@ -128,7 +233,8 @@ function CreatePage() {
             formik={formik}
           />
 
-          <MDropdown
+          <MTreeSelect
+            options={optionSelect}
             required
             id="exam_group"
             name="exam_group"
@@ -147,10 +253,10 @@ function CreatePage() {
             value={page}
           >
             <Space direction="vertical">
-              <Radio className=" caption_regular_14" value={"One"}>
+              <Radio className=" caption_regular_14" value={"SinglePage"}>
                 {t("one_question")}
               </Radio>
-              <Radio className=" caption_regular_14" value={"All"}>
+              <Radio className=" caption_regular_14" value={"MultiplePages"}>
                 {t("all_question")}
               </Radio>
             </Space>
@@ -160,7 +266,6 @@ function CreatePage() {
             {t("change_position_question")}
           </div>
           <Switch
-            defaultChecked
             value={sw}
             onChange={(v) => {
               setSw(v);
@@ -178,10 +283,10 @@ function CreatePage() {
             value={lang}
           >
             <Space direction="vertical">
-              <Radio className=" caption_regular_14" value={"en"}>
+              <Radio className=" caption_regular_14" value={"Vietnamese"}>
                 {common.t("vi")}
               </Radio>
-              <Radio className=" caption_regular_14" value={"vi"}>
+              <Radio className=" caption_regular_14" value={"English"}>
                 {common.t("en")}
               </Radio>
             </Space>
@@ -198,16 +303,16 @@ function CreatePage() {
             value={audio}
           >
             <Space direction="vertical">
-              <Radio className=" caption_regular_14" value={"1"}>
+              <Radio className=" caption_regular_14" value={"OnlyOneTime"}>
                 {t("listen_one_time")}
               </Radio>
-              <Radio className=" caption_regular_14" value={"2"}>
+              <Radio className=" caption_regular_14" value={"MultipleTimes"}>
                 {t("listen_many_time")}
               </Radio>
             </Space>
           </Radio.Group>
 
-          <DragDropUpload />
+          <DragDropUpload files={files} setFiles={setFiles} />
 
           <div className="h-4" />
           <MInput
@@ -236,15 +341,9 @@ function CreatePage() {
             }
             formik={formik}
           />
+
           <MDropdown
-            mode="multiple"
-            // options={[
-            //   { value: "1", label: <div>leee</div> },
-            //   {
-            //     value: "2",
-            //     label: <div>222</div>,
-            //   },
-            // ]}
+            mode="tags"
             placeholder={t("enter_tag")}
             id="tag"
             name="tag"

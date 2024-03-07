@@ -5,10 +5,11 @@ import LoadingPage from "../loading";
 import { getUserMe } from "@/services/api_services/auth_service";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { setUserData } from "@/redux/user/userSlice";
+import { fetchDataUser, setUserData } from "@/redux/user/userSlice";
 import { useTranslation } from "react-i18next";
 import { UserData } from "@/data/user";
 import { setLoadingMember, setMemberData } from "@/redux/members/MemberSlice";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import {
   getInvitaionEmailMember,
   getMemberListInStudio,
@@ -25,13 +26,14 @@ import {
 } from "@/services/api_services/exam_api";
 import { APIResults } from "@/data/api_results";
 import { ExamGroupData } from "@/data/exam";
+import { throws } from "assert";
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const user = useSelector((state: RootState) => state.user?.user);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
 
   useEffect(() => {
@@ -41,21 +43,35 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       redirect("/signin");
     } else {
       setIsLogin(true);
-      getUserMe()
-        .then((v) => {
-          loadData(v);
-        })
-        .catch((e) => {
-          console.log(e);
-          router.push("/signin");
-        });
+      dispatch(fetchDataUser(fetchUser));
+      // getUserMe()
+      //   .then((v) => {
+      //     loadData(v);
+      //   })
+      //   .catch((e) => {
+      //     console.log(e);
+      //     router.push("/signin");
+      //   });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const fetchUser = async () => {
+    try {
+      var data = await getUserMe();
+      setLoading(false);
+      return data["user"];
+    } catch (e: any) {
+      setLoading(false);
+      router.push("/signin");
+      return {};
+    }
+  };
+
   const loadData = async (v: any) => {
     try {
       var user = v["user"] as UserData;
+      console.log("set User lần 1", user);
 
       dispatch(setUserData(user));
       setLoading(false);

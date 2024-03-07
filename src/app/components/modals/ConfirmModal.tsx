@@ -54,7 +54,7 @@ function ConfirmModal({
           <div className="w-5" />
           <MButton
             loading={loading}
-            text={action}
+            text={action ?? t("delete")}
             className="h-12 w-36 bg-m_primary_500 text-white"
             onClick={async () => {
               onOk();
