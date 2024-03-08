@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 export interface BaseModalProps {
   open: boolean;
   onCancel: () => void;
-  onOk?: () => void;
+  onOk?: any;
   title?: string;
   children?: React.ReactNode;
   width?: number;

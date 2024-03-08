@@ -41,7 +41,7 @@ const EditorHook = dynamic(
   },
 );
 
-function CreatePage({ exam }: { exam?: ExamData }) {
+function CreatePage({ exam }: any) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const router = useRouter();
@@ -208,6 +208,7 @@ function CreatePage({ exam }: { exam?: ExamData }) {
     <HomeLayout>
       <div className="h-5" />
       <Breadcrumb
+        className="max-lg:ml-5 mb-3"
         separator=">"
         items={[
           {
@@ -231,7 +232,7 @@ function CreatePage({ exam }: { exam?: ExamData }) {
           },
         ]}
       />
-      <div className="flex w-full justify-between mb-3">
+      <div className="flex max-lg:px-5 w-full justify-between mb-3">
         <div className="my-3 body_semibold_20">{t("create_exam")}</div>
         <div className="flex">
           <MButton
@@ -245,7 +246,7 @@ function CreatePage({ exam }: { exam?: ExamData }) {
           <MButton
             loading={loading}
             onClick={onSubmit}
-            text={common.t("update")}
+            text={exam ? common.t("update") : t("save_info")}
           />
         </div>
       </div>

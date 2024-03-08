@@ -85,5 +85,6 @@
   "create_new": "Create new",
   "page": "Page",
   "delete": "Delete",
-  "delete_success": "Successfully deleted"
+  "delete_success": "Successfully deleted",
+  "all": "All"
 }

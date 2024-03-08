@@ -217,7 +217,7 @@ function ExamsPage() {
           </form>
           <MTreeSelect
             value={groupId}
-            setValue={(name, e) => {
+            setValue={(name: any, e: any) => {
               setGroupId(e);
             }}
             allowClear={false}
@@ -230,8 +230,9 @@ function ExamsPage() {
             options={optionSelect}
           />
           <MDropdown
+            allowClear={false}
             value={sort}
-            setValue={(n, value) => {
+            setValue={(n: any, value: any) => {
               setSort(value);
               setIndexPage(1);
             }}

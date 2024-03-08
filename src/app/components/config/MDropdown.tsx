@@ -10,11 +10,7 @@ import { FormikErrors } from "formik";
 interface Props {
   onChange?: (e: React.ChangeEvent<any>) => void;
   onBlur?: (e: React.FocusEvent<any, Element>) => void;
-  setValue?: (
-    field: string,
-    value: any,
-    shouldValidate?: boolean | undefined,
-  ) => Promise<FormikErrors<any>> | Promise<void>;
+  setValue?: any;
   title?: string;
   required?: Boolean;
   id: string;

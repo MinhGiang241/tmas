@@ -60,6 +60,12 @@ body {
   border-radius: 6px !important;
 }
 
+.ant-pagination-item-ellipsis {
+  background-color: white;
+  border: 1px solid #edf2f7;
+  border-radius: 6px !important;
+}
+
 .ant-pagination-prev,
 .ant-pagination-next {
   border-color: #edf2f7 !important;

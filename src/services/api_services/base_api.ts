@@ -11,7 +11,9 @@ export class callApi {
     data: any,
     config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
-    const token = localStorage.getItem("access_token");
+    const token =
+      sessionStorage.getItem("access_token") ??
+      localStorage.getItem("access_token");
     var headers = {
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
@@ -48,7 +50,9 @@ export class callApi {
     url: string,
     config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
-    const token = localStorage.getItem("access_token");
+    const token =
+      sessionStorage.getItem("access_token") ??
+      localStorage.getItem("access_token");
     var headers = {
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
@@ -86,7 +90,9 @@ export class callApi {
     data: any,
     config?: AxiosRequestConfig<any> | undefined,
   ) {
-    const token = localStorage.getItem("access_token");
+    const token =
+      sessionStorage.getItem("access_token") ??
+      localStorage.getItem("access_token");
     var headers = {
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
@@ -114,7 +120,9 @@ export class callStudioAPI {
     data: any,
     config?: AxiosRequestConfig<any> | undefined,
   ) {
-    const token = localStorage.getItem("access_token");
+    const token =
+      sessionStorage.getItem("access_token") ??
+      localStorage.getItem("access_token");
     var headers: any = {
       Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
@@ -154,7 +162,9 @@ export class callStudioAPI {
     url: string,
     config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
-    const token = localStorage.getItem("access_token");
+    const token =
+      sessionStorage.getItem("access_token") ??
+      localStorage.getItem("access_token");
     var headers = {
       Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
@@ -193,7 +203,9 @@ export class callStudioAPI {
     data: any,
     config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
-    const token = localStorage.getItem("access_token");
+    const token =
+      sessionStorage.getItem("access_token") ??
+      localStorage.getItem("access_token");
     var headers: any = {
       Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
@@ -231,7 +243,9 @@ export class callStudioAPI {
     url: string,
     config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
-    const token = localStorage.getItem("access_token");
+    const token =
+      sessionStorage.getItem("access_token") ??
+      localStorage.getItem("access_token");
     var headers: any = {
       Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,

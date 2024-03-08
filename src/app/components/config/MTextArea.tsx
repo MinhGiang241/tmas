@@ -34,6 +34,7 @@ interface Props {
   loadingValidate?: boolean;
   extend?: boolean;
   defaultValue?: string;
+  line?: number;
 }
 
 function MTextArea({
@@ -65,6 +66,7 @@ function MTextArea({
   loadingValidate,
   defaultValue,
   extend = true,
+  line,
 }: Props) {
   var np;
   var er;
@@ -111,7 +113,7 @@ function MTextArea({
           value={value ?? formik?.initialValues[name]}
           defaultValue={defaultValue ?? formik?.initialValues[name]}
           maxLength={maxLength}
-          autoSize={{ minRows: 4, maxRows: 4 }}
+          autoSize={{ minRows: line ?? 4, maxRows: line ?? 4 }}
           onBlur={onBlur}
           className={`${disable ? "text-m_neutral_900" : ""} ${
             successText && touch ? "border-m_success_500" : ""
