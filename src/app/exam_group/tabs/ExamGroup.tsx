@@ -38,14 +38,14 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
   //   loadExamTestList(true),
   // );
 
+  const user = useSelector((state: RootState) => state.user.user);
   useEffect(() => {
     loadExamTestList(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   const common = useTranslation();
 
-  const user = useSelector((state: RootState) => state.user.user);
   const examGroupList = useSelector(
     (state: RootState) => state.examGroup?.list,
   );

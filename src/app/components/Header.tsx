@@ -112,8 +112,8 @@ function Header({ path }: { path?: string }) {
       dispatch(userClear({}));
       dispatch(setUserData(userNew));
 
-      await loadMembersWhenChangeStudio();
-      await loadingQuestionsAndExams(true, userNew.studio?._id);
+      // await loadMembersWhenChangeStudio();
+      // await loadingQuestionsAndExams(true, userNew.studio?._id);
     } catch (e: any) {
       errorToast(e);
       dispatch(setMemberData([]));

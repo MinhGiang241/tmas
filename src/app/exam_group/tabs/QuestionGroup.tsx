@@ -23,11 +23,11 @@ import {
 } from "@/redux/exam_group/examGroupSlice";
 
 function QuestionGroup({ hidden }: { hidden: boolean }) {
+  const user = useSelector((state: RootState) => state.user.user);
   useEffect(() => {
     loadingQuestions(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const user = useSelector((state: RootState) => state.user.user);
+  }, [user]);
 
   const loadingQuestions = async (init: boolean) => {
     if (init) {
@@ -82,6 +82,7 @@ function QuestionGroup({ hidden }: { hidden: boolean }) {
   return (
     <div className={`${hidden ? "hidden" : ""} w-full max-lg:px-4 `}>
       <ConfirmModal
+        loading={deleteLoading}
         text={t("confirm_delete")}
         action={t("delete")}
         open={openDelete}

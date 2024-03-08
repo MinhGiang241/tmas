@@ -24,7 +24,7 @@ function ExamDetail({ params }: { params: { id: string } }) {
   }, [user]);
 
   const loadExamDetails = async () => {
-    const results: APIResults = await getExamById(params.id, user?.studio?._id);
+    const results: APIResults = await getExamById(params.id);
 
     if (results?.code != 0) {
       setExam(undefined);

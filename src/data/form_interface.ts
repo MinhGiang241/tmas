@@ -44,6 +44,7 @@ export interface StudioFormData {
 }
 
 export interface ExamFormData {
+  id?: string;
   studioId?: string;
   description?: string;
   examNextQuestion?: "FreeByUser" | "ByOrderQuestion";
@@ -59,14 +60,15 @@ export interface ExamFormData {
 }
 
 export interface ParamGetExamList {
+  "FilterByIds.Name"?: string;
+  "FilterByIds.InValues"?: string;
   "FilterByNameOrTag.Name"?: string;
   "FilterByNameOrTag.InValues"?: string;
   "FilterByExamGroupId.Name"?: string;
   "FilterByExamGroupId.InValues"?: string;
   "SortByCreateTime.Name"?: string;
-  "SortByCreateTime.IsAsc"?: string;
+  "SortByCreateTime.IsAsc"?: boolean;
+  "SortByName.IsAsc"?: boolean;
   "Paging.StartIndex"?: number;
   "Paging.RecordPerPage"?: number;
-  StudioId?: string;
-  lang?: string;
 }

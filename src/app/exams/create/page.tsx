@@ -28,7 +28,10 @@ import { getExamGroupTest } from "@/services/api_services/exam_api";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { ExamFormData } from "@/data/form_interface";
 import { auth } from "@/firebase/config";
-import { createExaminationList } from "@/services/api_services/examination_api";
+import {
+  createExaminationList,
+  updateExam,
+} from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import TextArea from "antd/es/input/TextArea";
 const EditorHook = dynamic(
@@ -43,6 +46,8 @@ function CreatePage({ exam }: { exam?: ExamData }) {
   const common = useTranslation();
   const router = useRouter();
 
+  const [loading, setLoading] = useState<boolean>(false);
+  const [uploaded, setUploaded] = useState([]);
   const [audio, setAudio] = useState(exam?.playAudio ?? "OnlyOneTime");
   const [lang, setLang] = useState(exam?.language ?? "Vietnamese");
   const [page, setPage] = useState(exam?.examViewQuestionType ?? "SinglePage");
@@ -50,6 +55,15 @@ function CreatePage({ exam }: { exam?: ExamData }) {
     !exam ? false : exam?.examNextQuestion != "FreeByUser" ? true : false,
   );
   const [files, setFiles] = useState([]);
+  useEffect(() => {
+    if (exam) {
+      setAudio(exam?.playAudio);
+      setLang(exam?.language);
+      setPage(exam?.examViewQuestionType);
+      setSw(exam?.examNextQuestion);
+      setUploaded(exam?.idDocuments);
+    }
+  }, [exam]);
 
   interface FormValue {
     test_time?: string;
@@ -57,12 +71,12 @@ function CreatePage({ exam }: { exam?: ExamData }) {
     doc_link?: string;
     exam_name?: string;
     describe?: string;
-    tag?: [];
+    tag?: string[];
   }
   console.log("exammmm", exam);
 
   const initialValues: FormValue = {
-    test_time: exam?.timeLimitMinutes,
+    test_time: exam?.timeLimitMinutes?.toString(),
     exam_group: exam?.idExamGroup,
     doc_link:
       exam?.externalLinks && exam?.externalLinks?.length != 0
@@ -72,7 +86,7 @@ function CreatePage({ exam }: { exam?: ExamData }) {
     describe: exam?.description,
     tag: exam?.tags ?? [],
   };
-  console.log("state", initialValues);
+
   const validate = (values: FormValue) => {
     const errors: FormikErrors<FormValue> = {};
     if (!values.exam_name?.trim()) {
@@ -90,9 +104,11 @@ function CreatePage({ exam }: { exam?: ExamData }) {
     initialValues,
     validate,
     onSubmit: async (values: FormValue) => {
+      setLoading(true);
       console.log("values", values);
       console.log("files", files);
       const dataSubmit: ExamFormData = {
+        id: exam?.id,
         description: values.describe,
         name: values.exam_name?.trim(),
         externalLinks: values?.doc_link?.trim()
@@ -106,18 +122,24 @@ function CreatePage({ exam }: { exam?: ExamData }) {
         studioId: user?.studio?._id,
         language: lang as "Vietnamese" | "English",
         idExamGroup: values?.exam_group,
-        idDocuments: files.map((i: any) => i.id),
+        idDocuments: [...files.map((i: any) => i.id), ...uploaded],
       };
 
-      const results = await createExaminationList(dataSubmit);
+      const results = exam?.id
+        ? await updateExam(dataSubmit)
+        : await createExaminationList(dataSubmit);
       if (results?.code != 0) {
         errorToast(results?.message ?? "");
+        setLoading(false);
         return;
       }
-      successToast(common.t("success_create_new"));
+      if (exam?.id) {
+        successToast(common.t("success_update"));
+      } else {
+        successToast(common.t("success_create_new"));
+      }
+      setLoading(false);
       router.push("/exams");
-
-      console.log("resulttt", results);
     },
   });
 
@@ -220,7 +242,11 @@ function CreatePage({ exam }: { exam?: ExamData }) {
             text={t("reject")}
           />
           <div className="w-4" />
-          <MButton onClick={onSubmit} text={common.t("update")} />
+          <MButton
+            loading={loading}
+            onClick={onSubmit}
+            text={common.t("update")}
+          />
         </div>
       </div>
       <div className="w-full grid grid-cols-12 gap-6 min-h-96">
@@ -318,7 +344,12 @@ function CreatePage({ exam }: { exam?: ExamData }) {
             </Space>
           </Radio.Group>
 
-          <DragDropUpload files={files} setFiles={setFiles} />
+          <DragDropUpload
+            uploaded={uploaded}
+            setUploaded={setUploaded}
+            files={files}
+            setFiles={setFiles}
+          />
 
           <div className="h-4" />
           <MInput

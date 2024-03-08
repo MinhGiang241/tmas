@@ -50,6 +50,14 @@ function ExamsPage() {
 
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [indexPage, setIndexPage] = useState<number>(1);
+  const [recordNum, setRecordNum] = useState<number>(15);
+  const [total, setTotal] = useState<number>(0);
+  const [list, setList] = useState<ExamData[]>([]);
+  const [search, setSearch] = useState();
+  const [groupId, setGroupId] = useState();
+  const [sort, setSort] = useState("time");
+
   useEffect(() => {
     if (user?.studio?._id) {
       dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
@@ -57,11 +65,7 @@ function ExamsPage() {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-  const [indexPage, setIndexPage] = useState<number>(1);
-  const [recordNum, setRecordNum] = useState<number>(15);
-  const [total, setTotal] = useState<number>(0);
-  const [list, setList] = useState<ExamData[]>([]);
+  }, [user, indexPage, recordNum, groupId, sort]);
 
   const loadExamList = async (init: boolean) => {
     if (init) {
@@ -70,7 +74,12 @@ function ExamsPage() {
     const res: APIResults = await getExaminationList({
       "Paging.RecordPerPage": recordNum,
       "Paging.StartIndex": (indexPage - 1) * recordNum,
-      StudioId: user?.studio?._id,
+      "FilterByNameOrTag.InValues": search,
+      "FilterByNameOrTag.Name": "Name",
+      "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
+      "FilterByExamGroupId.Name": "Name",
+      "SortByCreateTime.IsAsc": sort == "time" ? true : undefined,
+      "SortByName.IsAsc": sort == "name" ? true : undefined,
     });
 
     console.log("rsss", res);
@@ -137,10 +146,7 @@ function ExamsPage() {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const handleDeleteExam = async () => {
     setDeleteLoading(true);
-    var res: APIResults = await deleteExamination(
-      active?.id,
-      user?.studio?._id,
-    );
+    var res: APIResults = await deleteExamination(active?.id);
 
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
@@ -181,23 +187,39 @@ function ExamsPage() {
           />
         </div>
         <div className="w-full mt-3 flex justify-around max-lg:flex-col items-start">
-          <MInput
-            onChange={(e: React.ChangeEvent<any>) => {}}
-            className=""
-            placeholder={t("search_test_group")}
-            h="h-11"
-            id="search"
-            name="search"
-            suffix={
-              <button
-                type="submit"
-                className="bg-m_primary_500 w-11 lg:h-11 h-11 rounded-r-lg text-white"
-              >
-                <SearchOutlined className="scale-150" />
-              </button>
-            }
-          />
+          <form
+            className="w-full"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setIndexPage(1);
+              loadExamList(true);
+            }}
+          >
+            <MInput
+              value={search}
+              onChange={(e: React.ChangeEvent<any>) => {
+                setSearch(e.target.value);
+              }}
+              className=""
+              placeholder={t("search_test_group")}
+              h="h-11"
+              id="search"
+              name="search"
+              suffix={
+                <button
+                  type="submit"
+                  className="bg-m_primary_500 w-11 lg:h-11 h-11 rounded-r-lg text-white"
+                >
+                  <SearchOutlined className="scale-150" />
+                </button>
+              }
+            />
+          </form>
           <MTreeSelect
+            value={groupId}
+            setValue={(name, e) => {
+              setGroupId(e);
+            }}
             allowClear={false}
             defaultValue=""
             id="category"
@@ -207,7 +229,24 @@ function ExamsPage() {
             className="lg:mx-4"
             options={optionSelect}
           />
-          <MDropdown h="h-11" className="" id="category" name="category" />
+          <MDropdown
+            value={sort}
+            setValue={(n, value) => {
+              setSort(value);
+              setIndexPage(1);
+            }}
+            options={[
+              { value: "name", label: t("sort_by_name") },
+              {
+                value: "time",
+                label: t("sort_by_time"),
+              },
+            ]}
+            h="h-11"
+            className=""
+            id="category"
+            name="category"
+          />
         </div>
         <Divider className="mt-1 mb-6" />
         <div className="w-full">
@@ -367,7 +406,7 @@ function ExamsPage() {
             })
           )}
         </div>
-        {!loading && list.length != 0 && (
+        {list.length != 0 && (
           <div className="w-full flex lg:justify-between justify-center">
             <div className="hidden lg:flex items-center">
               <span className="body_regular_14 mr-2">{`${total} ${t(
@@ -392,8 +431,9 @@ function ExamsPage() {
               />
             </div>
             <Pagination
+              pageSize={recordNum}
               onChange={(v) => {
-                setRecordNum(v);
+                setIndexPage(v);
               }}
               current={indexPage}
               total={total}

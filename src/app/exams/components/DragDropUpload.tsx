@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import FileIcon from "../../components/icons/file.svg";
 import CloseIcon from "../../components/icons/close.svg";
 import { FormattedNumber } from "react-intl";
+import Link from "next/link";
 
 interface UploadedFile {
   id?: string;
@@ -14,11 +15,13 @@ interface UploadedFile {
 }
 
 interface Props {
+  uploaded: string[];
+  setUploaded: any;
   files: UploadedFile[];
   setFiles: any;
 }
 
-function DragDropUpload({ files, setFiles }: Props) {
+function DragDropUpload({ uploaded, setUploaded, files, setFiles }: Props) {
   const { t } = useTranslation("exam");
   const fileRef = useRef(null);
 
@@ -66,7 +69,7 @@ function DragDropUpload({ files, setFiles }: Props) {
         style={{ display: "none" }}
         onChange={(e) => handleFileChange(e.target.files)}
       />
-      {files.length == 0 && (
+      {files.length == 0 && uploaded.length == 0 && (
         <button
           onDragOverCapture={(e) => {
             setIsDrag(true);
@@ -100,7 +103,42 @@ function DragDropUpload({ files, setFiles }: Props) {
           </div>
         </button>
       )}
-      {files?.length != 0 && <div className="h-4" />}
+      {(files?.length != 0 || uploaded?.length != 0) && <div className="h-4" />}
+      {uploaded?.map((u: any) => (
+        <Link
+          href={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${u}`}
+          target="_top"
+          key={u}
+          className="p-4 rounded-lg mb-2 w-full justify-between items-center flex bg-neutral-100"
+        >
+          <div className="flex items-center">
+            <div className="min-w-6">
+              <FileIcon />
+            </div>
+            <div className="ml-2 flex flex-col items-start">
+              <p className="body_semibold_14">{u}</p>
+              {/*  <p className="caption_regular_14"> */}
+              {/*   { */}
+              {/*     <FormattedNumber */}
+              {/*       value={(v?.size ?? 0) / (1024 * 1024)} */}
+              {/*       style="decimal" */}
+              {/*       maximumFractionDigits={2} */}
+              {/*     /> */}
+              {/*   } */}
+              {/*   MB */}
+              {/* </p>  */}
+            </div>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setUploaded(files.filter((c) => c != u));
+            }}
+          >
+            <CloseIcon />
+          </button>
+        </Link>
+      ))}
       {files?.map((v: UploadedFile, i: number) => (
         <div
           key={v.id}
@@ -125,7 +163,8 @@ function DragDropUpload({ files, setFiles }: Props) {
             </div>
           </div>
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setFiles(files.filter((c) => c?.id != v?.id));
             }}
           >
@@ -133,7 +172,7 @@ function DragDropUpload({ files, setFiles }: Props) {
           </button>
         </div>
       ))}
-      {files.length != 0 && (
+      {(files.length != 0 || uploaded.length) != 0 && (
         <button
           onClick={handleFileClick}
           className="text-[#4D7EFF] body_regular_12 underline underline-offset-4"

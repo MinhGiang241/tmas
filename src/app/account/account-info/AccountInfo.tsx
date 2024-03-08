@@ -188,7 +188,7 @@ function AccountInfo() {
 
   useEffect(() => {
     loadMembers();
-  }, []);
+  }, [user]);
 
   const resendEmail = async (mem: UserData) => {
     try {

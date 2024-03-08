@@ -109,5 +109,7 @@
   "examination_link": "Link đợt thi",
   "qr_in": "QR tham gia đợt thi",
   "no_examination": "Chưa có đợt thi tuyển nào được tạo ra từ đề thi này !",
-  "confirm_delete_exam": "Bạn có chắc chắn muốn xoá đề thi này không?"
+  "confirm_delete_exam": "Bạn có chắc chắn muốn xoá đề thi này không?",
+  "sort_by_name": "A-Z",
+  "sort_by_time": "Tạo gần đây"
 }
