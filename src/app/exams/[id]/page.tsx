@@ -17,9 +17,10 @@ function ExamDetail({ params }: { params: { id: string } }) {
     setCount(count + 1);
     console.log("count", count);
 
-    if (count == 3) {
-      loadExamDetails();
-    }
+    loadExamDetails();
+    // if (count == 3) {
+    //   loadExamDetails();
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 

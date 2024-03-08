@@ -7,23 +7,15 @@ function Test() {
   const ref = useRef(null);
   const router = useRouter();
   useEffect(() => {
-    document.addEventListener("eee", (event: any) => {
-      console.log("đang Lắng nghe được sự kiện eee");
-      console.log("data từ sự kiện eee", event.data);
+    window.addEventListener("message", function (event) {
+      console.log("Event nhận từ bên ngoài:", event);
+      if (event?.data?.type == "authorization") {
+        sessionStorage.setItem("access_token", event.data?.data);
+      }
     });
-
-    window.addEventListener("authorization", (event: any) => {
-      console.log("đã Lắng nghe được sự kiện authorization");
-      console.log("data từ sự kiện authorization", event.data);
-      sessionStorage.setItem("access_token", event.data);
-    });
-
     return () => {
-      document.removeEventListener("eee", (event: any) => {
-        console.log("Gỡ lắng nghe sự kiện eee", event);
-      });
-      document.removeEventListener("authorization", (event: any) => {
-        console.log("Gỡ lắng nghe sự kiện authorization", event);
+      window.removeEventListener("authorization", (event: any) => {
+        console.log("Gỡ lắng nghe message", event);
       });
     };
   }, []);
@@ -38,11 +30,10 @@ function Test() {
       <div className="w-4" />
       <MButton
         onClick={(e) => {
-          var event = new MessageEvent("eee", {
-            bubbles: true,
-            data: "Đây là lời nhắn được phát ra từ sự kiện eee",
-          });
-          e.target.dispatchEvent(event);
+          window.parent.postMessage(
+            { type: "event-name", data: "đây là data tù bên trong iframe" },
+            "*",
+          );
           console.log("Phát ra sự kiện eee");
         }}
         text="Dispatch Event"

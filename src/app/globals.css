@@ -123,6 +123,8 @@ body {
 .ant-collapse-header {
   display: flex;
   align-items: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .ant-input-group-addon {

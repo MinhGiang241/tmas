@@ -247,7 +247,7 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
             <Collapse.Panel
               key={v.id ?? ""}
               header={
-                <div className=" h-14 w-full flex flex-grow justify-between items-center">
+                <div className="py-5 px-3 w-full flex flex-grow justify-between items-center">
                   <div>
                     <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg max-w-[200px] text-ellipsis">
                       {v.name ?? ""}

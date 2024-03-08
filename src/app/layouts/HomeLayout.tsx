@@ -37,7 +37,9 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
+    const token =
+      sessionStorage.getItem("access_token") ??
+      localStorage.getItem("access_token");
     if (!token) {
       setIsLogin(false);
       redirect("/signin");

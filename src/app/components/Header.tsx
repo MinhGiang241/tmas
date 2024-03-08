@@ -75,6 +75,7 @@ function Header({ path }: { path?: string }) {
           className="body_regular_14"
           onClick={async () => {
             localStorage.removeItem("access_token");
+            sessionStorage.removeItem("access_token");
             router.push("/signin");
           }}
         >
@@ -107,7 +108,12 @@ function Header({ path }: { path?: string }) {
     try {
       var data = await changeStudio(ownerId);
       localStorage.removeItem("access_token");
-      localStorage.setItem("access_token", data["token"]);
+      if (sessionStorage.getItem("access_token")) {
+        sessionStorage.removeItem("access_token");
+        sessionStorage.setItem("access_token", data["token"]);
+      } else {
+        localStorage.setItem("access_token", data["token"]);
+      }
       var userNew = data["user"] as UserData;
       dispatch(userClear({}));
       dispatch(setUserData(userNew));
@@ -385,6 +391,7 @@ function Header({ path }: { path?: string }) {
                   setOpenPop(false);
                   router.push("/signin");
                   localStorage.removeItem("access_token");
+                  sessionStorage.removeItem("access_token");
                 }}
                 className="py-1 w-full hover:bg-m_error_100 text-m_error_500 flex justify-start"
               >
