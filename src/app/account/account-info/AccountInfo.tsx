@@ -54,6 +54,34 @@ export const sortedMemList = (a: UserData[]) => {
   return [...owner, ...admin, ...member];
 };
 
+export var rowStartStyle = {
+  style: {
+    fontSize: "0.875rem",
+    lineHeight: "1.25rem",
+    color: "#003953",
+    background: "#F4F5F5",
+    borderRadius: "10px 0 0 0",
+  },
+};
+
+export var rowStyle = {
+  style: {
+    fontSize: "0.875rem",
+    lineHeight: "1.25rem",
+    color: "#003953",
+    background: "#F4F5F5",
+  },
+};
+export var rowEndStyle = {
+  style: {
+    fontSize: "0.875rem",
+    lineHeight: "1.25rem",
+    color: "#003953",
+    background: "#F4F5F5",
+    borderRadius: "0 10px 0 0 ",
+  },
+};
+
 function AccountInfo() {
   const { t } = useTranslation("account");
   const common = useTranslation();
@@ -65,34 +93,6 @@ function AccountInfo() {
     (state: RootState) => state.members?.loading,
   );
   const dispatch = useDispatch();
-
-  var rowStartStyle = {
-    style: {
-      fontSize: "0.875rem",
-      lineHeight: "1.25rem",
-      color: "#003953",
-      background: "#F4F5F5",
-      borderRadius: "10px 0 0 0",
-    },
-  };
-
-  var rowStyle = {
-    style: {
-      fontSize: "0.875rem",
-      lineHeight: "1.25rem",
-      color: "#003953",
-      background: "#F4F5F5",
-    },
-  };
-  var rowEndStyle = {
-    style: {
-      fontSize: "0.875rem",
-      lineHeight: "1.25rem",
-      color: "#003953",
-      background: "#F4F5F5",
-      borderRadius: "0 10px 0 0 ",
-    },
-  };
 
   const columns: ColumnsType<UserData> = [
     {

@@ -15,7 +15,7 @@ function Share({ value, setValue }: { value: any; setValue: any }) {
         <Collapse.Panel
           key={"saddas"}
           header={
-            <div className="w-full  py-2 flex flex-grow justify-between items-center">
+            <div className="w-full py-4 flex flex-grow justify-between items-center">
               <div className=" body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg  text-ellipsis">
                 {t("share")}
               </div>

@@ -86,5 +86,7 @@
   "page": "Page",
   "delete": "Delete",
   "delete_success": "Successfully deleted",
-  "all": "All"
+  "all": "All",
+  "created_date": "Created date",
+  "action": "Action"
 }

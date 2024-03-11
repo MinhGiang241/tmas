@@ -4,19 +4,52 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
 import CreateCodeModal from "../modals/CreateCodeModal";
+import CodeListModal from "../modals/CodeListModal";
+import { v4 as uuidv4 } from "uuid";
 
-function ExaminationCode({ value, setValue }: { value: any; setValue: any }) {
+export interface ExaminationCode {
+  code?: string;
+  createdDate?: string;
+  id?: string;
+}
+
+function ExaminationCodePage({
+  value,
+  setValue,
+}: {
+  value: any;
+  setValue: any;
+}) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const [openCreateCode, setOpenCreateCode] = useState<boolean>(false);
+  const [openCodeList, setOpenCodeList] = useState<boolean>(false);
   const [codes, setCodes] = useState<string[]>([]);
   return (
     <>
+      <CodeListModal
+        setCodes={setCodes}
+        list={codes}
+        open={openCodeList}
+        onCancel={() => {
+          setOpenCodeList(false);
+        }}
+      />
       <CreateCodeModal
         open={openCreateCode}
         onCancel={() => setOpenCreateCode(false)}
         onOk={(v: any) => {
-          setCodes([...codes, ...v?.split("\n").filter((c: any) => c)]);
+          setCodes([
+            ...codes,
+            ...v
+              ?.split("\n")
+              .filter((c: any) => c)
+              .map((r) => ({
+                code: r,
+                createdDate: Date.now(),
+                id: uuidv4(),
+              })),
+          ]);
         }}
       />
 
@@ -28,7 +61,7 @@ function ExaminationCode({ value, setValue }: { value: any; setValue: any }) {
         <Collapse.Panel
           key={"1"}
           header={
-            <div className="w-full  py-2 flex flex-grow justify-between items-center">
+            <div className="w-full py-4 flex flex-grow justify-between items-center">
               <div className=" body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg  text-ellipsis">
                 {t("examination_code")}
               </div>
@@ -92,11 +125,16 @@ function ExaminationCode({ value, setValue }: { value: any; setValue: any }) {
                       className="p-1 mb-1 mr-1 border border-m_neutral_200 rounded-md"
                       key={i}
                     >
-                      {v}
+                      {v?.code}
                     </div>
                   ))}
                   {codes.length > 0 && (
-                    <button className="ml-2 text-m_primary_500 underline-offset-4 underline">
+                    <button
+                      onClick={() => {
+                        setOpenCodeList(true);
+                      }}
+                      className="ml-2 text-m_primary_500 underline-offset-4 underline"
+                    >
                       {common.t("all")}
                     </button>
                   )}
@@ -126,4 +164,4 @@ function ExaminationCode({ value, setValue }: { value: any; setValue: any }) {
   );
 }
 
-export default ExaminationCode;
+export default ExaminationCodePage;

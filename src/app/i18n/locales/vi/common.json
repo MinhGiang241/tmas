@@ -86,5 +86,7 @@
   "page": "Trang",
   "delete": "Xóa",
   "delete_success": "Xóa thành công",
-  "all": "Tất cả"
+  "all": "Tất cả",
+  "created_date": "Ngày tạo",
+  "action": "Tác vụ"
 }

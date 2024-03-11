@@ -9,6 +9,7 @@ import MButton from "@/app/components/config/MButton";
 import { useRouter } from "next/navigation";
 import Share from "../components/Share";
 import ExaminationCode from "../components/ExaminationCode";
+import { RightOutlined } from "@ant-design/icons";
 
 function CreateExaminationPage() {
   const { t } = useTranslation("exam");
@@ -24,12 +25,12 @@ function CreateExaminationPage() {
       <div className="h-5" />
       <Breadcrumb
         className="max-lg:ml-5 mb-3"
-        separator=">"
+        separator={<RightOutlined />}
         items={[
           {
             title: (
               <Link className="body_regular_14" href={"/examination"}>
-                {t("exam_list")}
+                {t("examination_list")}
               </Link>
             ),
           },
@@ -43,13 +44,13 @@ function CreateExaminationPage() {
                 } body_regular_14`}
                 href={"/examination/create"}
               >
-                {t("create_exam")}
+                {t("create_examination")}
               </Link>
             ),
           },
         ]}
       />
-      <div className="flex max-lg:px-5 w-full justify-between mb-3">
+      <div className=" flex max-lg:px-5 w-full justify-between mb-3">
         <div className="my-3 body_semibold_20">{t("create_exam")}</div>
         <div className="flex">
           <MButton

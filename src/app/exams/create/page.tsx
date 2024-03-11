@@ -24,6 +24,7 @@ import {
 import { getExamGroupTest } from "@/services/api_services/exam_api";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { ExamFormData } from "@/data/form_interface";
+import { RightOutlined } from "@ant-design/icons";
 import { auth } from "@/firebase/config";
 import {
   createExaminationList,
@@ -229,7 +230,7 @@ function CreatePage({ exam }: any) {
       <div className="h-5" />
       <Breadcrumb
         className="max-lg:ml-5 mb-3"
-        separator=">"
+        separator={<RightOutlined />}
         items={[
           {
             title: (
