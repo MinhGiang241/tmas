@@ -129,7 +129,7 @@ export class callStudioAPI {
     };
     try {
       var response = await axios.post(url, data, { headers, ...config });
-      console.log("res", response);
+      console.log("resPost", response);
 
       if (response?.data?.isSuccess === false) {
         return {
@@ -271,6 +271,37 @@ export class callStudioAPI {
         data: response.statusText,
         message: response.statusText,
       };
+    } catch (error: any) {
+      return {
+        code: 1,
+        message: error.message,
+        data: error.message,
+      };
+    }
+  };
+
+  static download = async function (
+    url: string,
+    config?: AxiosRequestConfig<any> | undefined,
+  ): Promise<any> {
+    const token =
+      sessionStorage.getItem("access_token") ??
+      localStorage.getItem("access_token");
+    var headers: any = {
+      Lang: i18next.language,
+      Authorization: token ? `Bearer ${token}` : null,
+    };
+
+    try {
+      var response = await axios.get(url, { headers, ...config });
+      console.log("dl", response);
+
+      if (response.status == 200) {
+        return {
+          code: 0,
+          data: response?.data,
+        };
+      }
     } catch (error: any) {
       return {
         code: 1,

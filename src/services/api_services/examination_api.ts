@@ -52,3 +52,73 @@ export const updateExam = async (data?: ExamFormData) => {
 
   return results;
 };
+
+export const createSessionUpload = async () => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Session`,
+    {},
+  );
+
+  return results;
+};
+
+export const saveDocumentSessionUpload = async (
+  items?: { id?: string; isCommited?: boolean }[],
+) => {
+  const results = await callStudioAPI.put(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Session`,
+    { items },
+  );
+
+  return results;
+};
+
+export const deleteAllDocument = async (ids?: string[]) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/PostDelete`,
+    {
+      ids,
+    },
+  );
+
+  return results;
+};
+
+export const deleteDocumentById = async (id: string) => {
+  const results = await callStudioAPI.delete(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/${id}`,
+  );
+
+  return results;
+};
+
+export const uploadStudioDocument = async (IdSession?: string, data?: any) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/upload/${IdSession}`,
+    data,
+  );
+
+  return results;
+};
+
+export const downloadStudioDocument = async (id: string) => {
+  const results = await callStudioAPI.download(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/download/${id}`,
+  );
+  return results;
+};
+
+export const getInfoStudioDocuments = async (ids: string[]) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/`,
+    { params: { "Ids.InValues": ids, "Ids.Name": "Name" } },
+  );
+  return results;
+};
+
+export const getInfoAStudioDocument = async (id?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/${id}`,
+  );
+  return results;
+};

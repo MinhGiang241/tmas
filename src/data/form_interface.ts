@@ -57,6 +57,11 @@ export interface ExamFormData {
   playAudio?: "OnlyOneTime" | "MultipleTimes";
   tags?: string[];
   timeLimitMinutes?: number;
+  approvedState?: {
+    approvedState?: "Approved" | "Pending" | "Rejected";
+    rejectedMessage?: string;
+  };
+  idSession?: string;
 }
 
 export interface ParamGetExamList {

@@ -6,22 +6,39 @@ import FileIcon from "../../components/icons/file.svg";
 import CloseIcon from "../../components/icons/close.svg";
 import { FormattedNumber } from "react-intl";
 import Link from "next/link";
+import {
+  downloadStudioDocument,
+  uploadStudioDocument,
+} from "@/services/api_services/examination_api";
+import { Tooltip } from "antd";
 
-interface UploadedFile {
+import { error } from "console";
+import UploadedDocument from "./UploadedDocument";
+
+export interface UploadedFile {
   id?: string;
   name?: string;
   type?: string;
+  error?: boolean;
   size?: number;
+  errorMessage?: string;
 }
 
 interface Props {
   uploaded: string[];
   setUploaded: any;
   files: UploadedFile[];
+  idSession?: string;
   setFiles: any;
 }
 
-function DragDropUpload({ uploaded, setUploaded, files, setFiles }: Props) {
+function DragDropUpload({
+  idSession,
+  uploaded,
+  setUploaded,
+  files,
+  setFiles,
+}: Props) {
   const { t } = useTranslation("exam");
   const fileRef = useRef(null);
 
@@ -30,12 +47,16 @@ function DragDropUpload({ uploaded, setUploaded, files, setFiles }: Props) {
       var uploaded = [];
       for (let file of fileList) {
         var formData = new FormData();
-        formData.append("file", file);
+        formData.append("files", file);
         formData.append("name", file?.name);
 
-        var id = await uploadFile(formData);
+        var idData = await uploadStudioDocument(idSession, formData);
+        console.log("id upload", idData);
+
         uploaded.push({
-          id,
+          error: idData.code != 0,
+          errorMessage: idData.code != 0 ? idData?.message : undefined,
+          id: idData.code != 0 ? Date.now().toString() : idData?.data[0],
           name: file?.name,
           type: file?.type,
           size: file?.size,
@@ -47,7 +68,8 @@ function DragDropUpload({ uploaded, setUploaded, files, setFiles }: Props) {
     }
   };
 
-  const handleFileClick = () => {
+  const handleFileClick = (e: any) => {
+    e.stopPropagation();
     if (fileRef) {
       (fileRef!.current! as any).click();
     }
@@ -104,73 +126,33 @@ function DragDropUpload({ uploaded, setUploaded, files, setFiles }: Props) {
         </button>
       )}
       {(files?.length != 0 || uploaded?.length != 0) && <div className="h-4" />}
-      {uploaded?.map((u: any) => (
-        <Link
-          href={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${u}`}
-          target="_top"
+      {uploaded?.map((u: any, i: number) => (
+        <UploadedDocument
+          isExist={true}
           key={u}
-          className="p-4 rounded-lg mb-2 w-full justify-between items-center flex bg-neutral-100"
-        >
-          <div className="flex items-center">
-            <div className="min-w-6">
-              <FileIcon />
-            </div>
-            <div className="ml-2 flex flex-col items-start">
-              <p className="body_semibold_14">{u}</p>
-              {/*  <p className="caption_regular_14"> */}
-              {/*   { */}
-              {/*     <FormattedNumber */}
-              {/*       value={(v?.size ?? 0) / (1024 * 1024)} */}
-              {/*       style="decimal" */}
-              {/*       maximumFractionDigits={2} */}
-              {/*     /> */}
-              {/*   } */}
-              {/*   MB */}
-              {/* </p>  */}
-            </div>
-          </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setUploaded(files.filter((c) => c != u));
-            }}
-          >
-            <CloseIcon />
-          </button>
-        </Link>
+          id={u}
+          deleteDoc={async (e: any) => {
+            e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation();
+            setUploaded(uploaded.filter((c) => c != u));
+          }}
+        />
       ))}
+
       {files?.map((v: UploadedFile, i: number) => (
-        <div
+        <UploadedDocument
+          file={v}
+          isExist={false}
           key={v.id}
-          className="p-4 rounded-lg mb-2 w-full justify-between items-center flex bg-neutral-100"
-        >
-          <div className="flex items-center">
-            <div className="min-w-6">
-              <FileIcon />
-            </div>
-            <div className="ml-2 flex flex-col items-start">
-              <p className="body_semibold_14">{v.name}</p>
-              <p className="caption_regular_14">
-                {
-                  <FormattedNumber
-                    value={(v?.size ?? 0) / (1024 * 1024)}
-                    style="decimal"
-                    maximumFractionDigits={2}
-                  />
-                }{" "}
-                MB
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setFiles(files.filter((c) => c?.id != v?.id));
-            }}
-          >
-            <CloseIcon />
-          </button>
-        </div>
+          deleteDoc={async (e: any) => {
+            console.log(e);
+            console.log(files);
+
+            // e.stopPropagation();
+            // e.nativeEvent.stopImmediatePropagation();
+            setFiles(files.filter((c) => c?.id != v?.id));
+          }}
+        />
       ))}
       {(files.length != 0 || uploaded.length) != 0 && (
         <button

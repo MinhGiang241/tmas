@@ -10,12 +10,9 @@ import MTextArea from "@/app/components/config/MTextArea";
 import { usePathname, useRouter } from "next/navigation";
 import MInput from "@/app/components/config/MInput";
 import MDropdown from "@/app/components/config/MDropdown";
-import DragDropUpload from "../components/DragDropUpload";
+import DragDropUpload, { UploadedFile } from "../components/DragDropUpload";
 import { FormikErrors, useFormik } from "formik";
 import dynamic from "next/dynamic";
-import LexicalEditor from "@/app/components/config/LexicalEditor";
-// import EditorHook from "../components/react_quill/EditorWithUseQuill";
-import Editor from "../components/react_quill/Editor";
 import { ExamData, ExamGroupData } from "@/data/exam";
 import { RootState } from "@/redux/store";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -30,6 +27,8 @@ import { ExamFormData } from "@/data/form_interface";
 import { auth } from "@/firebase/config";
 import {
   createExaminationList,
+  createSessionUpload,
+  getInfoStudioDocuments,
   updateExam,
 } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
@@ -47,23 +46,38 @@ function CreatePage({ exam }: any) {
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [uploaded, setUploaded] = useState([]);
-  const [audio, setAudio] = useState(exam?.playAudio ?? "OnlyOneTime");
-  const [lang, setLang] = useState(exam?.language ?? "Vietnamese");
-  const [page, setPage] = useState(exam?.examViewQuestionType ?? "SinglePage");
+  const [uploaded, setUploaded] = useState<any>([]);
+  const [audio, setAudio] = useState<any>(exam?.playAudio ?? "OnlyOneTime");
+  const [lang, setLang] = useState<any>(exam?.language ?? "Vietnamese");
+  const [page, setPage] = useState<any>(
+    exam?.examViewQuestionType ?? "SinglePage",
+  );
   const [sw, setSw] = useState<boolean>(
     !exam ? false : exam?.examNextQuestion != "FreeByUser" ? true : false,
   );
   const [files, setFiles] = useState([]);
+  const [idSession, setIdSession] = useState<string | undefined>();
   useEffect(() => {
     if (exam) {
       setAudio(exam?.playAudio);
       setLang(exam?.language);
       setPage(exam?.examViewQuestionType);
-      setSw(exam?.examNextQuestion);
-      setUploaded(exam?.idDocuments);
+      setSw(exam?.examNextQuestion != "FreeByUser" ? true : false);
+      setUploaded(exam?.idDocuments ?? []);
     }
+    if (!idSession) {
+      createIdSession();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exam]);
+
+  const createIdSession = async () => {
+    var res = await createSessionUpload();
+    if (res.code != 0) {
+      errorToast(res?.message ?? "");
+    }
+    setIdSession(res?.data);
+  };
 
   interface FormValue {
     test_time?: string;
@@ -105,8 +119,13 @@ function CreatePage({ exam }: any) {
     validate,
     onSubmit: async (values: FormValue) => {
       setLoading(true);
-      console.log("values", values);
-      console.log("files", files);
+
+      var submitDocs = [
+        ...uploaded,
+        ...files.filter((v: UploadedFile) => !v.error).map((i: any) => i.id),
+      ];
+      console.log("submitDocs", submitDocs);
+
       const dataSubmit: ExamFormData = {
         id: exam?.id,
         description: values.describe,
@@ -122,7 +141,8 @@ function CreatePage({ exam }: any) {
         studioId: user?.studio?._id,
         language: lang as "Vietnamese" | "English",
         idExamGroup: values?.exam_group,
-        idDocuments: [...files.map((i: any) => i.id), ...uploaded],
+        idDocuments: submitDocs,
+        idSession: idSession,
       };
 
       const results = exam?.id
@@ -346,6 +366,7 @@ function CreatePage({ exam }: any) {
           </Radio.Group>
 
           <DragDropUpload
+            idSession={idSession}
             uploaded={uploaded}
             setUploaded={setUploaded}
             files={files}
