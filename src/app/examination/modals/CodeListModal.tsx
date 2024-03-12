@@ -87,7 +87,10 @@ function CodeListModal(props: Props) {
         className="w-full"
         bordered={false}
         columns={columns}
-        dataSource={props.list?.slice(indexPage - 1, recordNum)}
+        dataSource={props.list?.slice(
+          (indexPage - 1) * recordNum,
+          (indexPage - 1) * recordNum + recordNum,
+        )}
         pagination={false}
         rowKey={"id"}
         onRow={(data: any, index: any) =>
@@ -99,7 +102,7 @@ function CodeListModal(props: Props) {
           }) as HTMLAttributes<any>
         }
       />
-
+      <div className="h-8" />
       <div className="w-full flex lg:justify-between justify-center">
         <div className="hidden lg:flex items-center">
           <span className="body_regular_14 mr-2">{`${props.list?.length} ${t(
@@ -109,6 +112,7 @@ function CodeListModal(props: Props) {
             value={recordNum}
             onChange={(v) => {
               setRecordNum(v);
+              setIndexPage(1);
             }}
             options={[
               ...[15, 25, 30, 50, 100].map((i: number) => ({

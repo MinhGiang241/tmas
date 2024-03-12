@@ -86,7 +86,7 @@
   "auto_create_code_intro": "Nhập mã vào form hoặc tạo tự động từ hệ thống",
   "one_line_code": "Mỗi dòng là một mã",
   "auto_code_num": "Số lượng mã tự động",
-  "not_select_time": "Nếu không chọn thời gian đợ thi có hiệu lực thì đợ thi sẽ có hiệu lực không giới hạn",
+  "not_select_time": "Nếu không chọn thời gian đợt thi có hiệu lực thì đợt thi sẽ có hiệu lực không giới hạn",
   "allow_ip_test": "Danh sách địa chỉ IP được truy cập bài test",
   "point": "Điểm",
   "percent_complete": "Phần trăm hoàn thành",
@@ -111,5 +111,11 @@
   "no_examination": "Chưa có đợt thi tuyển nào được tạo ra từ đề thi này !",
   "confirm_delete_exam": "Bạn có chắc chắn muốn xoá đề thi này không?",
   "sort_by_name": "A-Z",
-  "sort_by_time": "Tạo gần đây"
+  "sort_by_time": "Tạo gần đây",
+  "start_time": "Thời gian bắt đầu",
+  "end_time": "Thời gian kết thúc",
+  "num_out_screen": "Số lần cho phép thoát khỏi màn hình (vượt quá tự động nộp bài)",
+  "examination_name": "Tên đợt thi",
+  "enter_examination_name": "Nhập tên đợt thi",
+  "pick_image": "Chọn ảnh"
 }

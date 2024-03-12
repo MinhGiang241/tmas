@@ -24,7 +24,7 @@ function ExaminationCodePage({
   const common = useTranslation();
   const [openCreateCode, setOpenCreateCode] = useState<boolean>(false);
   const [openCodeList, setOpenCodeList] = useState<boolean>(false);
-  const [codes, setCodes] = useState<string[]>([]);
+  const [codes, setCodes] = useState<any[]>([]);
   return (
     <>
       <CodeListModal
@@ -44,7 +44,7 @@ function ExaminationCodePage({
             ...v
               ?.split("\n")
               .filter((c: any) => c)
-              .map((r) => ({
+              .map((r: any) => ({
                 code: r,
                 createdDate: Date.now(),
                 id: uuidv4(),

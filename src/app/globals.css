@@ -189,6 +189,11 @@ body {
   border-bottom-left-radius: 6px 6px;
 }
 
+.ant-picker-ok button {
+  background-color: #0b8199 !important;
+  border-radius: 6px;
+}
+
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */

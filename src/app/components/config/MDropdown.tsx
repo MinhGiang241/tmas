@@ -16,7 +16,7 @@ interface Props {
   id: string;
   name: string;
   error?: string;
-  value?: string;
+  value?: any;
   className?: string;
   type?: string;
   action?: React.ReactNode;
@@ -37,6 +37,16 @@ interface Props {
   extend?: boolean;
   mode?: "multiple" | "tags";
   h?: string;
+  popupClassName?: string;
+  defaultValue?: string;
+  dropdownRender?:
+    | ((
+        menu: React.ReactElement<
+          any,
+          string | React.JSXElementConstructor<any>
+        >,
+      ) => React.ReactElement<any, string | React.JSXElementConstructor<any>>)
+    | undefined;
 }
 
 function MDropdown({
@@ -66,6 +76,9 @@ function MDropdown({
   extend = true,
   mode,
   h,
+  popupClassName,
+  defaultValue,
+  dropdownRender,
 }: Props) {
   var np;
   var er;
@@ -126,16 +139,17 @@ function MDropdown({
         }`}
       >
         <Select
+          popupClassName={popupClassName}
+          dropdownRender={dropdownRender}
           showSearch={true}
+          notFoundContent={null}
           tagRender={tagRender}
           mode={mode}
           value={value}
           allowClear={allowClear ?? true}
           options={options}
           disabled={disable}
-          defaultValue={
-            formik?.initialValues[name] ?? formik?.initialValues[name]
-          }
+          defaultValue={defaultValue ?? formik?.initialValues[name]}
           maxLength={maxLength ?? 500}
           onBlur={onBlur}
           status={error && touch ? `error` : ""}

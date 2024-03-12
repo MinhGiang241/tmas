@@ -28,6 +28,7 @@ const StyledComponentsRegistry: React.FC<{ children: ReactNode }> = ({
           colorText: "#0D1939",
           colorPrimaryActive: "#6DB3C2",
           colorTextDisabled: "#0D1939",
+
           borderRadius: 2,
           ...montserrat.style,
           // Alias Token
