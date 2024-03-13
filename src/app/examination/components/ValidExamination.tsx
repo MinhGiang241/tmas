@@ -4,14 +4,14 @@ import { RangePickerProps } from "antd/es/date-picker";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
+import CalendarIcon from "@/app/components/icons/calendar-black.svg";
 
 interface Props {
   startTime?: string;
   setStartTime?: any;
   endTime?: string;
   setEndTime?: any;
-  ips?: string[];
-  setIps?: any;
+  formik?: any;
 }
 
 function ValidExamination({
@@ -19,8 +19,7 @@ function ValidExamination({
   setStartTime,
   endTime,
   setEndTime,
-  ips,
-  setIps,
+  formik,
 }: Props) {
   const [value, setValue] = useState<number>(0);
   const { t } = useTranslation("exam");
@@ -77,6 +76,7 @@ function ValidExamination({
             </div>
             <div className="w-full mt-3 flex justify-between">
               <DatePicker
+                suffixIcon={<CalendarIcon />}
                 value={startTime ? dayjs(startTime, dateFormat) : undefined}
                 placeholder={t("start_time")}
                 format={["DD/MM/YYYY HH:mm"]}
@@ -88,6 +88,7 @@ function ValidExamination({
               />
               <div className="w-8" />
               <DatePicker
+                suffixIcon={<CalendarIcon />}
                 value={endTime ? dayjs(endTime, dateFormat) : undefined}
                 placeholder={t("end_time")}
                 format={["DD/MM/YYYY HH:mm"]}
@@ -100,14 +101,11 @@ function ValidExamination({
             </div>
             <div className="h-3" />
             <MDropdown
-              value={ips}
-              setValue={(e: any, value: any) => {
-                setIps(value);
-              }}
+              formik={formik}
               h="h-9"
               popupClassName="hidden"
-              id="ip"
-              name="ip"
+              id="ips"
+              name="ips"
               title={t("allow_ip_test")}
               mode="tags"
             />

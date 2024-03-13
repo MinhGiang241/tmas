@@ -16,24 +16,11 @@ function ResultTest({
   const common = useTranslation();
 
   const plainOptions: CheckboxOptionType[] = [
-    { value: 0, label: t("point") },
-    { value: 1, label: t("percent_complete") },
-    { value: 2, label: t("detail") },
-    { value: 3, label: t("pass_fail") },
+    { value: "showPoint", label: t("point") },
+    { value: "showPercent", label: t("percent_complete") },
+    { value: "showPassOrFail", label: t("detail") },
+    { value: "showPassOrFailDetail", label: t("pass_fail") },
   ];
-  const defaultCheckedList: CheckboxOptionType[] = [];
-
-  const checkAll = plainOptions.length === checkedList.length;
-  const indeterminate =
-    checkedList.length > 0 && checkedList.length < plainOptions.length;
-
-  const onChange = (list: CheckboxOptionType[]) => {
-    setCheckedList(list);
-  };
-
-  const onCheckAllChange: CheckboxProps["onChange"] = (e) => {
-    setCheckedList(e.target.checked ? plainOptions : []);
-  };
 
   const onChangeCheck: GetProp<typeof Checkbox.Group, "onChange"> = (
     checkedValues,
@@ -72,7 +59,7 @@ function ResultTest({
           <div className="flex  w-full items-center">
             <div className=" w-1/2 h-full flex flex-col justify-around">
               <div className="body_regular_14 w-1/2">{t("point")}: </div>
-              <div className="h-5" />
+              <div className="h-10" />
               <div className="body_regular_14">{t("result")}:</div>
             </div>
             <div className=" right-0 w-1/2">
@@ -80,10 +67,18 @@ function ResultTest({
                 rootClassName="flex flex-col"
                 onChange={onChangeCheck}
               >
-                <Checkbox value={0}>{t("point")}</Checkbox>
-                <Checkbox value={1}>{t("percent_complete")}</Checkbox>
-                <Checkbox value={2}>{t("detail")}</Checkbox>
-                <Checkbox value={3}>{t("pass_fail")}</Checkbox>
+                <Checkbox className="my-1" value={0}>
+                  {t("point")}
+                </Checkbox>
+                <Checkbox className="my-1" value={1}>
+                  {t("percent_complete")}
+                </Checkbox>
+                <Checkbox className="my-1" value={2}>
+                  {t("detail")}
+                </Checkbox>
+                <Checkbox className="my-1" value={3}>
+                  {t("pass_fail")}
+                </Checkbox>
               </CheckboxGroup>
             </div>
           </div>

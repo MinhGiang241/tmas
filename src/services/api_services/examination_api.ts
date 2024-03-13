@@ -1,4 +1,9 @@
-import { ExamFormData, ParamGetExamList } from "@/data/form_interface";
+import {
+  ExamFormData,
+  ExaminationFormData,
+  ExaminationListParams,
+  ParamGetExamList,
+} from "@/data/form_interface";
 import { callStudioAPI } from "./base_api";
 import { ExamData } from "@/data/exam";
 
@@ -119,6 +124,44 @@ export const getInfoStudioDocuments = async (ids: string[]) => {
 export const getInfoAStudioDocument = async (id?: string) => {
   const results = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/${id}`,
+  );
+  return results;
+};
+
+export const createExamination = async (data: ExaminationFormData) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest`,
+    data,
+  );
+  return results;
+};
+
+export const updateExamination = async (data: ExaminationFormData) => {
+  const results = await callStudioAPI.put(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest`,
+    data,
+  );
+  return results;
+};
+
+export const getExaminationTestList = async (params: ExaminationListParams) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest`,
+    { params },
+  );
+  return results;
+};
+
+export const getExaminationById = async (id?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/${id}`,
+  );
+  return results;
+};
+
+export const deleteExaminationById = async (id?: string) => {
+  const results = await callStudioAPI.delete(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/${id}`,
   );
   return results;
 };

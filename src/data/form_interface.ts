@@ -77,3 +77,73 @@ export interface ParamGetExamList {
   "Paging.StartIndex"?: number;
   "Paging.RecordPerPage"?: number;
 }
+
+export interface AccessCodeExaminantionSetting {
+  id?: string;
+  createdTime?: string;
+  createdBy?: string;
+  updatedBy?: string;
+  ownerId?: string;
+  studioId?: string;
+  code?: string;
+  numberOfAccess?: number;
+  limitOfAccess?: number;
+}
+
+export interface ExaminationFormData {
+  id?: string;
+  accessCodeSettings?: AccessCodeExaminantionSetting[];
+  cheatingSetting?: {
+    disableCopy?: boolean;
+    disablePatse?: boolean;
+    limitExitScreen?: number;
+  };
+  description?: string;
+  idAvatarThumbnail?: string;
+  idExam?: string;
+  name?: string;
+  linkJoinTest?: string;
+  passingSetting?: {
+    passPointPercent?: number;
+    passMessage?: string;
+    failMessage?: string;
+  };
+  requiredInfoSetting?: {
+    phoneNumber?: boolean;
+    fullName?: boolean;
+    idGroup?: boolean;
+    birthday?: boolean;
+    email?: boolean;
+    identifier?: boolean;
+    jobPosition?: boolean;
+  };
+  sharingSetting?: "Public" | "Private";
+  testResultSetting?: {
+    showPoint?: boolean;
+    showPercent?: boolean;
+    showPassOrFail?: boolean;
+    showPassOrFailDetail?: boolean;
+  };
+  validAccessSetting?: {
+    validFrom?: string;
+    validTo?: string;
+    ipWhiteLists?: string[];
+  };
+}
+
+export interface ExaminationListParams {
+  "FilterByName.Name"?: string;
+  "FilterByName.InValues"?: string;
+  "FilterByIds.Name"?: string;
+  "FilterByIds.InValues"?: string;
+  "FilterByExamId.Name"?: string;
+  "FilterByExamId.InValues"?: string;
+  "Sorter.Name"?: string;
+  "Sorter.IsAsc"?: boolean;
+  "Paging.StartIndex"?: number;
+  "Paging.RecordPerPage"?: number;
+  "SorterByCreateTime.Name"?: string;
+  "SorterByCreateTime.IsAsc"?: boolean;
+  "SorterByName.Name"?: string;
+  "SorterByName.isAsc"?: boolean;
+}

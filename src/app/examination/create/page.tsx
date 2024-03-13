@@ -1,7 +1,7 @@
 "use client";
 import HomeLayout from "@/app/layouts/HomeLayout";
 import { Breadcrumb } from "antd";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
@@ -20,6 +20,19 @@ import dynamic from "next/dynamic";
 import { FormikErrors, useFormik } from "formik";
 import Image from "next/image";
 import { CameraFilled } from "@ant-design/icons";
+import { ExaminationFormData } from "@/data/form_interface";
+import { format } from "path";
+import { useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import {
+  createExamination,
+  createSessionUpload,
+  getExaminationById,
+  uploadStudioDocument,
+} from "@/services/api_services/examination_api";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
+import dayjs from "dayjs";
+import { ExaminationData } from "@/data/exam";
 const EditorHook = dynamic(
   () => import("../../exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -27,38 +40,114 @@ const EditorHook = dynamic(
   },
 );
 
-function CreateExaminationPage() {
+function CreateExaminationPage({
+  examination,
+}: {
+  examination?: ExaminationData;
+}) {
+  useEffect(() => {
+    if (examination) {
+      console.log("examination", examination);
+
+      setStartTime(
+        examination?.validAccessSetting?.validFrom
+          ? dayjs(examination?.validAccessSetting?.validFrom).format(dateFormat)
+          : undefined,
+      );
+      setEndTime(
+        examination?.validAccessSetting?.validTo
+          ? dayjs(examination?.validAccessSetting?.validTo).format(dateFormat)
+          : undefined,
+      );
+
+      setShare(examination?.sharingSetting ?? "Public");
+      if (examination?.accessCodeSettings?.length === 0) {
+        setCode(0);
+      } else if (examination?.accessCodeSettings?.length === 1) {
+        setCode(1);
+      } else {
+        setCode(2);
+      }
+      setCodeList(
+        examination?.accessCodeSettings?.map((i: any) => {
+          i.code;
+        }) ?? [],
+      );
+      var results = [];
+      for (let i in examination?.testResultSetting) {
+        if ((examination?.testResultSetting as any)[i] == true) {
+          results.push(i);
+        }
+      }
+      setResultChecked(results);
+      console.log("redd", results);
+    }
+  }, [examination]);
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const [share, setShare] = useState(0);
+  const [share, setShare] = useState<"Private" | "Public">("Public");
   const [code, setCode] = useState(0);
   const [startTime, setStartTime] = useState<string | undefined>();
   const [endTime, setEndTime] = useState<string | undefined>();
-  const [ips, setIps] = useState<string[]>([]);
   const [resultChecked, setResultChecked] = useState<any[]>([]);
   const [infoChecked, setInfoChecked] = useState<any[]>([]);
-  const [passPoint, setPassPoint] = useState<string | undefined>();
-  const [informWhenPass, setInformWhenPass] = useState<string | undefined>();
-  const [informWhenFail, setInformWhenFail] = useState<string | undefined>();
   const [preventCheched, setPreventChecked] = useState<any[]>([]);
-  const [numOut, setNumOut] = useState<string | undefined>();
+  const [codeList, setCodeList] = useState<any[]>([]);
 
-  interface FormValue {}
-  const initialValues: FormValue = {};
+  const dateFormat = "DD/MM/YYYY HH:mm";
+
+  interface FormValue {
+    one_code?: string;
+    turn_per_code?: string;
+    start_time?: string;
+    end_time?: string;
+    ips?: string[];
+    pass_point?: string;
+    inform_pass?: string;
+    inform_fail?: string;
+    out_screen?: string;
+    examination_name?: string;
+    avatarId?: string;
+    description?: string;
+  }
+  const initialValues: FormValue = {
+    one_code: undefined,
+    turn_per_code: "0",
+    start_time: examination?.validAccessSetting?.validFrom
+      ? dayjs(examination?.validAccessSetting?.validFrom).format(dateFormat)
+      : undefined,
+    end_time: examination?.validAccessSetting?.validTo
+      ? dayjs(examination?.validAccessSetting?.validTo).format(dateFormat)
+      : undefined,
+
+    ips: examination?.validAccessSetting?.ipWhiteLists ?? [],
+    pass_point: undefined,
+    inform_pass: examination?.passingSetting?.passMessage,
+    inform_fail: examination?.passingSetting?.failMessage,
+    out_screen: examination?.cheatingSetting?.limitExitScreen?.toString(),
+    examination_name: examination?.name,
+    avatarId: examination?.idAvatarThumbnail,
+    description: examination?.description,
+  };
+
+  const user = useAppSelector((state: RootState) => state.user.user);
 
   const validate = (values: FormValue) => {
     const errors: FormikErrors<FormValue> = {};
-
+    if (!values.examination_name) {
+      errors.examination_name = "common_not_empty";
+    }
     return errors;
   };
   const onSubmit = (e: any) => {
     e.preventDefault();
-    Object.keys(initialValues).map(async (v) => {
-      await formik.setFieldTouched(v, true);
-    });
+    // Object.keys(initialValues).map(async (v) => {
+    //   await formik.setFieldTouched(v, true);
+    // });
     formik.handleSubmit();
   };
 
@@ -66,7 +155,112 @@ function CreateExaminationPage() {
     enableReinitialize: true,
     initialValues,
     validate,
-    onSubmit: async (values: FormValue) => {},
+    onSubmit: async (values: FormValue) => {
+      var idAvatarThumbnail;
+      setLoading(true);
+      if (selectedAvatar) {
+        var idSessionData = await createSessionUpload();
+        if (idSessionData?.code != 0) {
+          errorToast(idSessionData?.message ?? "");
+          setLoading(false);
+          return;
+        }
+        var idSession = idSessionData?.data;
+        var formData = new FormData();
+        formData.append("files", selectedAvatar);
+        var avatarIdData = await uploadStudioDocument(idSession, formData);
+        if (avatarIdData.code != 0) {
+          errorToast(idSessionData?.message ?? "");
+          setLoading(false);
+          return;
+        }
+        idAvatarThumbnail = avatarIdData?.data[0];
+      }
+
+      var requiredInfoSetting: any = {};
+      var cheatingSetting: any = {};
+      var testResultSetting: any = {};
+      for (let i of infoChecked) {
+        requiredInfoSetting[i] = true;
+      }
+      for (let i of preventCheched) {
+        if (i == "limitExitScreen") {
+          cheatingSetting[i] = formik.values["out_screen"]
+            ? parseInt(formik.values["out_screen"])
+            : undefined;
+        } else {
+          cheatingSetting[i] = true;
+        }
+      }
+      for (let i of resultChecked) {
+        testResultSetting[i] = true;
+      }
+      var studio = user.studios?.find((d) => d.ownerId == user.studio?._id);
+
+      const submitData: ExaminationFormData = {
+        accessCodeSettings:
+          code == 0
+            ? []
+            : code == 1
+              ? [
+                  {
+                    //TODO: sửa sau cái này để vì _id trong studio là ownerId
+                    studioId: studio?._id,
+                    ownerId: user?._id,
+                    code: formik.values["one_code"],
+                    numberOfAccess: 0,
+                  },
+                ]
+              : [
+                  ...codeList.map((e: any) => ({
+                    //TODO: sửa sau cái này để vì _id trong studio là ownerId
+                    studioId: studio?._id,
+                    ownerId: user?._id,
+                    code: e.code,
+                    limitOfAccess: formik.values["turn_per_code"]
+                      ? parseInt(formik.values["turn_per_code"])
+                      : undefined,
+                    numberOfAccess: 0,
+                  })),
+                ],
+        cheatingSetting,
+        description: values?.description?.trim(),
+        name: values?.examination_name?.trim(),
+        linkJoinTest: "https://e.tmas.vn/demo123_6434",
+        passingSetting: {
+          passPointPercent: parseFloat(values?.pass_point?.trim() ?? "0"),
+          failMessage: values?.inform_fail?.trim(),
+          passMessage: values?.inform_pass?.trim(),
+        },
+        requiredInfoSetting,
+        sharingSetting: share,
+        idAvatarThumbnail,
+        testResultSetting,
+        validAccessSetting: {
+          ipWhiteLists: formik.values["ips"],
+          validFrom: startTime
+            ? dayjs(startTime, dateFormat).toISOString()
+            : undefined,
+          validTo: endTime
+            ? dayjs(endTime, dateFormat).toISOString()
+            : undefined,
+        },
+        idExam: "65f15646165767558efed631",
+      };
+
+      console.log("submitData", submitData);
+
+      var dataResults = await createExamination(submitData);
+      if (dataResults?.code != 0) {
+        setLoading(false);
+        errorToast(dataResults?.message ?? "");
+        return;
+      }
+
+      successToast(common.t("success_create_new"));
+      setLoading(false);
+      router.push("/examination");
+    },
   });
 
   const [selectedAvatar, setSelectedAvatar] = useState<any>(null);
@@ -89,170 +283,175 @@ function CreateExaminationPage() {
 
   return (
     <HomeLayout>
-      <input
-        accept=".jpg, .png, .jpeg,"
-        type="file"
-        ref={avatarRef}
-        style={{ display: "none" }}
-        onChange={handleAvatarChange}
-      />
-      <div className="h-5" />
-      <Breadcrumb
-        className="max-lg:ml-5 mb-3"
-        separator={<RightOutlined />}
-        items={[
-          {
-            title: (
-              <Link className="body_regular_14" href={"/examination"}>
-                {t("examination_list")}
-              </Link>
-            ),
-          },
-          {
-            title: (
-              <Link
-                className={`${
-                  pathname.includes("/examination/create")
-                    ? "text-m_neutral_900"
-                    : ""
-                } body_regular_14`}
-                href={"/examination/create"}
-              >
-                {t("create_examination")}
-              </Link>
-            ),
-          },
-        ]}
-      />
-      <div className=" flex max-lg:px-5 w-full justify-between mb-3">
-        <div className="my-3 body_semibold_20">{t("create_exam")}</div>
-        <div className="flex">
-          <MButton
-            onClick={() => {
-              router.back();
-            }}
-            type="secondary"
-            text={t("reject")}
-          />
-          <div className="w-4" />
-          <MButton
-            // loading={loading}
-            // onClick={onSubmit}
-            text={t("save_info")}
-          />
-        </div>
-      </div>
-
-      <div className="max-lg:mx-5  grid grid-cols-12 gap-6">
-        <div className="max-lg:grid-cols-1 max-lg:mb-5 lg:col-span-6 col-span-12  h-fit rounded-lg">
-          <Share value={share} setValue={setShare} />
-          <div className="h-4" />
-          <ExaminationCode value={code} setValue={setCode} />
-          <div className="h-4" />
-          <ValidExamination
-            startTime={startTime}
-            setStartTime={setStartTime}
-            endTime={endTime}
-            setEndTime={setEndTime}
-            ips={ips}
-            setIps={setIps}
-          />
-          <div className="h-4" />
-          <ResultTest
-            checkedList={resultChecked}
-            setCheckedList={setResultChecked}
-          />
-          <div className="h-4" />
-          <RequireInfo value={infoChecked} setValue={setInfoChecked} />
-          <div className="h-4" />
-          <PassPoint
-            passPoint={passPoint}
-            setPassPoint={setPassPoint}
-            informWhenFail={informWhenFail}
-            setInformWhenFail={setInformWhenFail}
-            setInformWhenPass={setInformWhenPass}
-          />
-          <div className="h-4" />
-          <PreventTrick
-            numOut={numOut}
-            setNumOut={setNumOut}
-            values={preventCheched}
-            setValues={setPreventChecked}
-          />
-        </div>
-        <div className="max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-6 col-span-12 bg-white h-fit rounded-lg">
-          <MTextArea
-            // defaultValue={exam?.name}
-            maxLength={225}
-            required
-            placeholder={t("enter_examination_name")}
-            id="examination_name"
-            name="examination_name"
-            title={t("examination_name")}
-            action={
-              <div className="body_regular_14 text-m_neutral_500">
-                {/* {`${formik.values["exam_name"]?.length ?? 0}/225`} */}
-              </div>
-            }
-            formik={formik}
-          />
-          <EditorHook
-            // defaultValue={exam?.description}
-            id="describe"
-            name="describe"
-            formik={formik}
-            title={t("describe")}
-            maxLength={500}
-          />
-          <div className="body_semibold_14 mt-2">{t("web_avatar")}</div>
-
-          <button
-            onClick={(e: any) => {
-              if (avatarRef) {
-                (avatarRef!.current! as any).click();
-              }
-            }}
-            className="my-2"
-          >
-            {previewAvatar ? (
-              <div
-                onMouseOver={() => {
-                  setShowCamAvatar(true);
-                }}
-                onMouseLeave={() => {
-                  setShowCamAvatar(false);
-                }}
-                className="relative w-[146px] h-[154px]"
-              >
-                {showCamAvatar && (
-                  <div className="z-20 bg-neutral-900/40 flex justify-center items-center absolute top-0 bottom-0 right-0 left-0 ">
-                    <CameraFilled className=" scale-[2] text-white z-20" />
-                  </div>
-                )}
-                <Image
-                  loading="lazy"
-                  className="absolute top-0 bottom-0 right-0 left-0"
-                  objectFit="cover"
-                  fill
-                  src={previewAvatar}
-                  alt="Preview"
-                />
-              </div>
-            ) : (
-              <div className="w-[146px] h-[154px] border-dashed border flex justify-center items-center">
-                <div className="text-[#4D7EFF] body_regular_14 underline underline-offset-4">
-                  {t("pick_image")}
-                </div>
-              </div>
-            )}
-          </button>
-          <div className="mb-5 italic text-m_neutral_500">
-            {t("web_avatar_limit")}
+      <form
+        onSubmit={(e: any) => {
+          e.preventDefault();
+        }}
+      >
+        <input
+          accept=".jpg, .png, .jpeg,"
+          type="file"
+          ref={avatarRef}
+          style={{ display: "none" }}
+          onChange={handleAvatarChange}
+        />
+        <div className="h-5" />
+        <Breadcrumb
+          className="max-lg:ml-5 mb-3"
+          separator={<RightOutlined />}
+          items={[
+            {
+              title: (
+                <Link className="body_regular_14" href={"/examination"}>
+                  {t("examination_list")}
+                </Link>
+              ),
+            },
+            {
+              title: (
+                <Link
+                  className={`${
+                    pathname.includes("/examination/create")
+                      ? "text-m_neutral_900"
+                      : ""
+                  } body_regular_14`}
+                  href={"/examination/create"}
+                >
+                  {t("create_examination")}
+                </Link>
+              ),
+            },
+          ]}
+        />
+        <div className=" flex max-lg:px-5 w-full justify-between mb-3">
+          <div className="my-3 body_semibold_20">{t("create_exam")}</div>
+          <div className="flex">
+            <MButton
+              onClick={() => {
+                router.back();
+              }}
+              type="secondary"
+              text={t("reject")}
+            />
+            <div className="w-4" />
+            <MButton
+              loading={loading}
+              onClick={onSubmit}
+              text={t("save_info")}
+            />
           </div>
-
-          <div className="body_semibold_14">{t("selected_exam")}</div>
         </div>
-      </div>
+
+        <div className="max-lg:mx-5  grid grid-cols-12 gap-6">
+          <div className="max-lg:grid-cols-1 max-lg:mb-5 lg:col-span-6 col-span-12  h-fit rounded-lg">
+            <Share value={share} setValue={setShare} />
+            <div className="h-4" />
+            <ExaminationCode
+              codeList={codeList}
+              setCodeList={setCodeList}
+              formik={formik}
+              value={code}
+              setValue={setCode}
+            />
+            <div className="h-4" />
+            <ValidExamination
+              startTime={startTime}
+              setStartTime={setStartTime}
+              endTime={endTime}
+              setEndTime={setEndTime}
+              formik={formik}
+            />
+            <div className="h-4" />
+            <ResultTest
+              checkedList={resultChecked}
+              setCheckedList={setResultChecked}
+            />
+            <div className="h-4" />
+            <RequireInfo value={infoChecked} setValue={setInfoChecked} />
+            <div className="h-4" />
+            <PassPoint formik={formik} />
+            <div className="h-4" />
+            <PreventTrick
+              formik={formik}
+              values={preventCheched}
+              setValues={setPreventChecked}
+            />
+            <div className="lg:h-4" />
+          </div>
+          <div className="max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-6 col-span-12 bg-white h-fit rounded-lg">
+            <MTextArea
+              // defaultValue={exam?.name}
+              maxLength={225}
+              required
+              placeholder={t("enter_examination_name")}
+              id="examination_name"
+              name="examination_name"
+              title={t("examination_name")}
+              action={
+                <div className="body_regular_14 text-m_neutral_500">
+                  {`${formik.values["examination_name"]?.length ?? 0}/225`}
+                </div>
+              }
+              formik={formik}
+            />
+            <EditorHook
+              // defaultValue={exam?.description}
+              id="description"
+              name="description"
+              formik={formik}
+              title={t("describe")}
+              maxLength={500}
+            />
+            <div className="body_semibold_14 mt-2">{t("web_avatar")}</div>
+
+            <button
+              onClick={(e: any) => {
+                if (avatarRef) {
+                  (avatarRef!.current! as any).click();
+                }
+              }}
+              className="my-2"
+            >
+              {previewAvatar ? (
+                <div
+                  onMouseOver={() => {
+                    setShowCamAvatar(true);
+                  }}
+                  onMouseLeave={() => {
+                    setShowCamAvatar(false);
+                  }}
+                  className="relative w-[146px] h-[154px]"
+                >
+                  {showCamAvatar && (
+                    <div className="z-20 bg-neutral-900/40 flex justify-center items-center absolute top-0 bottom-0 right-0 left-0 ">
+                      <CameraFilled className=" scale-[2] text-white z-20" />
+                    </div>
+                  )}
+                  <Image
+                    loading="lazy"
+                    className="absolute top-0 bottom-0 right-0 left-0"
+                    objectFit="cover"
+                    fill
+                    src={previewAvatar}
+                    alt="Preview"
+                  />
+                </div>
+              ) : (
+                <div className="w-[146px] h-[154px] border-dashed border flex justify-center items-center">
+                  <div className="text-[#4D7EFF] body_regular_14 underline underline-offset-4">
+                    {t("pick_image")}
+                  </div>
+                </div>
+              )}
+            </button>
+            <div className="mb-5 italic text-m_neutral_500">
+              {t("web_avatar_limit")}
+            </div>
+
+            <div className="body_semibold_14">{t("selected_exam")}</div>
+          </div>
+        </div>
+      </form>
     </HomeLayout>
   );
 }

@@ -16,9 +16,15 @@ export interface ExaminationCode {
 function ExaminationCodePage({
   value,
   setValue,
+  formik,
+  codeList,
+  setCodeList,
 }: {
   value: any;
   setValue: any;
+  formik: any;
+  codeList: any;
+  setCodeList: any;
 }) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
@@ -107,9 +113,10 @@ function ExaminationCodePage({
               <>
                 <div className="h-3" />
                 <MInput
+                  formik={formik}
                   h="h-9"
-                  id="code"
-                  name="code"
+                  id="one_code"
+                  name="one_code"
                   placeholder={t("enter_code")}
                   title={t("code")}
                 />
@@ -148,10 +155,11 @@ function ExaminationCodePage({
                   </button>
                 </div>
                 <MInput
+                  formik={formik}
                   defaultValue="0"
                   h="h-9"
-                  id="turn"
-                  name="turn"
+                  id="turn_per_code"
+                  name="turn_per_code"
                   placeholder={t("turn_per_code")}
                   title={t("turn_per_code")}
                 />

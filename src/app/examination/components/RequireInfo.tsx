@@ -11,13 +11,13 @@ function RequireInfo({ value, setValue }: { value: any[]; setValue?: any }) {
     setValue(checkedValues);
   };
   const options = [
-    { value: 0, label: t("phone_number") },
-    { value: 1, label: t("full_name") },
-    { value: 2, label: t("group") },
-    { value: 3, label: t("dob") },
-    { value: 4, label: t("email") },
-    { value: 5, label: t("identify_code") },
-    { value: 6, label: t("position_job") },
+    { value: "phoneNumber", label: t("phone_number") },
+    { value: "fullName", label: t("full_name") },
+    { value: "idGroup", label: t("group") },
+    { value: "birthday", label: t("dob") },
+    { value: "email", label: t("email") },
+    { value: "identifier", label: t("identify_code") },
+    { value: "jobPosition", label: t("position_job") },
   ];
   const CheckboxGroup = Checkbox.Group;
   return (
@@ -51,7 +51,7 @@ function RequireInfo({ value, setValue }: { value: any[]; setValue?: any }) {
           <CheckboxGroup rootClassName="flex " onChange={onChange}>
             {options.map((r: any) => (
               <Checkbox
-                className="body_regular_14"
+                className="body_regular_14 my-1"
                 key={r.value}
                 value={r.value}
               >

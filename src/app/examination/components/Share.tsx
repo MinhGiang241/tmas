@@ -34,16 +34,18 @@ function Share({ value, setValue }: { value: any; setValue: any }) {
               value={value}
             >
               <Space className="w-full" direction="horizontal">
-                <Radio className="mr-24 caption_regular_14" value={0}>
+                <Radio className="mr-24 caption_regular_14" value={"Public"}>
                   {t("public")}
                 </Radio>
-                <Radio className=" caption_regular_14" value={1}>
+                <Radio className=" caption_regular_14" value={"Private"}>
                   {t("private")}
                 </Radio>
               </Space>
             </Radio.Group>
             <p className="mt-3">
-              {value == 1 ? t("private_share_intro") : t("public_share_intro")}
+              {value == "Private"
+                ? t("private_share_intro")
+                : t("public_share_intro")}
             </p>
           </div>
         </Collapse.Panel>

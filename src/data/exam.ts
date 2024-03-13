@@ -1,3 +1,5 @@
+import { AccessCodeExaminantionSetting } from "./form_interface";
+
 export interface ExamGroupData {
   name?: string;
   level?: 0 | 1;
@@ -63,4 +65,82 @@ export interface ExamData {
   updateTime?: string;
   updateBy?: string;
   studioId?: string;
+}
+
+export interface ExamVersion {
+  id?: string;
+  approvedState?: {
+    approvedState?: string;
+    rejectedMessage?: string;
+  };
+  createdBy?: string;
+  createdTime?: string;
+  description?: string;
+  documents?: any;
+  examNextQuestion?: string;
+  examViewQuestionType?: string;
+  externalLinks?: string[];
+  idDocuments?: any[];
+  idExamGroup?: string;
+  idTags?: any;
+  language?: string;
+  name?: string;
+  numberOfQuestions?: number;
+  numberOfTests?: number;
+  ownerId?: string;
+  playAudio?: string;
+  studioId?: string;
+  tags?: any;
+  timeLimitMinutes?: number;
+  totalPoints?: number;
+  updateBy?: string;
+  updateTime?: string;
+  version?: string;
+}
+
+export interface ExaminationData {
+  id?: string;
+  examVersion: ExamVersion;
+  accessCodeSettings?: AccessCodeExaminantionSetting[];
+  cheatingSetting?: {
+    disableCopy?: boolean;
+    disablePatse?: boolean;
+    limitExitScreen?: number;
+  };
+  studioId?: string;
+  isActive?: boolean;
+  isAvaiableTest?: boolean;
+  linkQRJoinTest?: string;
+  description?: string;
+  ownerId?: string;
+  idAvatarThumbnail?: string;
+  idExam?: string;
+  name?: string;
+  linkJoinTest?: string;
+  passingSetting?: {
+    passPointPercent?: number;
+    passMessage?: string;
+    failMessage?: string;
+  };
+  requiredInfoSetting?: {
+    phoneNumber?: boolean;
+    fullName?: boolean;
+    idGroup?: boolean;
+    birthday?: boolean;
+    email?: boolean;
+    identifier?: boolean;
+    jobPosition?: boolean;
+  };
+  sharingSetting?: "Public" | "Private";
+  testResultSetting?: {
+    showPoint?: boolean;
+    showPercent?: boolean;
+    showPassOrFail?: boolean;
+    showPassOrFailDetail?: boolean;
+  };
+  validAccessSetting?: {
+    validFrom?: string;
+    validTo?: string;
+    ipWhiteLists?: string[];
+  };
 }

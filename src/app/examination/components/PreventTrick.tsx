@@ -6,20 +6,18 @@ import { useTranslation } from "react-i18next";
 function PreventTrick({
   values,
   setValues,
-  numOut,
-  setNumOut,
+  formik,
 }: {
   values?: any;
   setValues?: any;
-  numOut?: any;
-  setNumOut?: any;
+  formik?: any;
 }) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const options = [
-    { value: 0, label: t("prevent_copy") },
-    { value: 1, label: t("prevent_paste") },
-    { value: 2, label: t("out_screen") },
+    { value: "disableCopy", label: t("prevent_copy") },
+    { value: "disablePatse", label: t("prevent_paste") },
+    { value: "limitExitScreen", label: t("out_screen") },
   ];
   const CheckboxGroup = Checkbox.Group;
   const onChange: GetProp<typeof Checkbox.Group, "onChange"> = (
@@ -59,7 +57,7 @@ function PreventTrick({
           <CheckboxGroup rootClassName="flex " onChange={onChange}>
             {options.map((r: any) => (
               <Checkbox
-                className="body_regular_14"
+                className="my-1 body_regular_14"
                 key={r.value}
                 value={r.value}
               >
@@ -67,16 +65,14 @@ function PreventTrick({
               </Checkbox>
             ))}
           </CheckboxGroup>
-          {values.some((e: any) => e == 2) ? (
+          {values.some((e: any) => e == "limitExitScreen") ? (
             <>
               <div className="h-3" />
               <MInput
-                value={numOut}
-                onChange={(e: any) => {
-                  setNumOut(e.target.value);
-                }}
-                id="num_out_screen"
-                name="num_out_screen"
+                formik={formik}
+                h="h-9"
+                id="out_screen"
+                name="out_screen"
                 title={t("num_out_screen")}
                 onKeyDown={(e) => {
                   if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {

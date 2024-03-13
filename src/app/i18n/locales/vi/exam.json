@@ -117,5 +117,7 @@
   "num_out_screen": "Số lần cho phép thoát khỏi màn hình (vượt quá tự động nộp bài)",
   "examination_name": "Tên đợt thi",
   "enter_examination_name": "Nhập tên đợt thi",
-  "pick_image": "Chọn ảnh"
+  "pick_image": "Chọn ảnh",
+  "no_limit_time": "Vô thời hạn",
+  "confirm_delete_examination": "Bạn có chắc chắn muốn xoá đợt thi này không?"
 }
