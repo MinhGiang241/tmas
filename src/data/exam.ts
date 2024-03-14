@@ -44,6 +44,7 @@ export interface ExamListDataResult {
 }
 
 export interface ExamData {
+  examinations?: ExaminationData[];
   name?: string;
   numberOfTests?: number;
   numberOfQuestions?: number;
@@ -100,7 +101,9 @@ export interface ExamVersion {
 
 export interface ExaminationData {
   id?: string;
-  examVersion: ExamVersion;
+  updateTime?: string;
+  createdTime?: string;
+  examVersion?: ExamVersion;
   accessCodeSettings?: AccessCodeExaminantionSetting[];
   cheatingSetting?: {
     disableCopy?: boolean;

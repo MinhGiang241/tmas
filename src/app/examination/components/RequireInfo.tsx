@@ -48,7 +48,11 @@ function RequireInfo({ value, setValue }: { value: any[]; setValue?: any }) {
             </div>
           }
         >
-          <CheckboxGroup rootClassName="flex " onChange={onChange}>
+          <CheckboxGroup
+            value={value}
+            rootClassName="flex "
+            onChange={onChange}
+          >
             {options.map((r: any) => (
               <Checkbox
                 className="body_regular_14 my-1"

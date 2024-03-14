@@ -92,6 +92,7 @@ export interface AccessCodeExaminantionSetting {
 
 export interface ExaminationFormData {
   id?: string;
+  isActive?: boolean;
   accessCodeSettings?: AccessCodeExaminantionSetting[];
   cheatingSetting?: {
     disableCopy?: boolean;
@@ -132,6 +133,8 @@ export interface ExaminationFormData {
 }
 
 export interface ExaminationListParams {
+  "FilterByExamGroupId.InValues"?: string;
+  "FilterByExamGroupId.Name"?: string;
   "FilterByName.Name"?: string;
   "FilterByName.InValues"?: string;
   "FilterByIds.Name"?: string;

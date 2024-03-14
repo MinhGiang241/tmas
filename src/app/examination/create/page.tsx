@@ -1,14 +1,16 @@
 "use client";
 import HomeLayout from "@/app/layouts/HomeLayout";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Switch } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import MButton from "@/app/components/config/MButton";
 import { useRouter } from "next/navigation";
 import Share from "../components/Share";
-import ExaminationCode from "../components/ExaminationCode";
+import ExaminationCodePage, {
+  ExaminationCode,
+} from "../components/ExaminationCode";
 import { RightOutlined } from "@ant-design/icons";
 import ValidExamination from "../components/ValidExamination";
 import ResultTest from "../components/ResultTest";
@@ -27,12 +29,15 @@ import { RootState } from "@/redux/store";
 import {
   createExamination,
   createSessionUpload,
+  getExamById,
   getExaminationById,
+  updateExamination,
   uploadStudioDocument,
 } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import dayjs from "dayjs";
-import { ExaminationData } from "@/data/exam";
+import { ExamData, ExaminationData } from "@/data/exam";
+import { v4 as uuidv4 } from "uuid";
 const EditorHook = dynamic(
   () => import("../../exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -40,15 +45,12 @@ const EditorHook = dynamic(
   },
 );
 
-function CreateExaminationPage({
-  examination,
-}: {
-  examination?: ExaminationData;
-}) {
+function CreateExaminationPage({ examination }: any) {
   useEffect(() => {
+    loadExam();
     if (examination) {
       console.log("examination", examination);
-
+      setActive(examination?.isActive ?? false);
       setStartTime(
         examination?.validAccessSetting?.validFrom
           ? dayjs(examination?.validAccessSetting?.validFrom).format(dateFormat)
@@ -70,25 +72,38 @@ function CreateExaminationPage({
       }
       setCodeList(
         examination?.accessCodeSettings?.map((i: any) => {
-          i.code;
+          return {
+            id: uuidv4(),
+            createdDate: Date.now(),
+            code: i.code,
+          };
         }) ?? [],
       );
-      var results = [];
-      for (let i in examination?.testResultSetting) {
-        if ((examination?.testResultSetting as any)[i] == true) {
-          results.push(i);
-        }
-      }
+      var results = Object.keys(examination?.testResultSetting as any)?.filter(
+        (s: any) => (examination?.testResultSetting as any)[s],
+      );
       setResultChecked(results);
-      console.log("redd", results);
+
+      var required = Object.keys(
+        examination?.requiredInfoSetting as any,
+      )?.filter((s: any) => (examination?.requiredInfoSetting as any)[s]);
+      setInfoChecked(required);
+
+      var tricks = Object.keys(examination?.cheatingSetting as any)?.filter(
+        (s: any) => (examination?.cheatingSetting as any)[s],
+      );
+      setPreventChecked(tricks);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examination]);
+
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [active, setActive] = useState<boolean>(false);
   const [share, setShare] = useState<"Private" | "Public">("Public");
   const [code, setCode] = useState(0);
   const [startTime, setStartTime] = useState<string | undefined>();
@@ -96,9 +111,26 @@ function CreateExaminationPage({
   const [resultChecked, setResultChecked] = useState<any[]>([]);
   const [infoChecked, setInfoChecked] = useState<any[]>([]);
   const [preventCheched, setPreventChecked] = useState<any[]>([]);
-  const [codeList, setCodeList] = useState<any[]>([]);
+  const [codeList, setCodeList] = useState<ExaminationCode[]>([]);
+  const [exam, setExam] = useState<ExamData | undefined>(undefined);
 
   const dateFormat = "DD/MM/YYYY HH:mm";
+  const search = useSearchParams();
+
+  const loadExam = async () => {
+    const examId = search.get("examId");
+    if (!examId && !examination?.idExam) {
+      return;
+    }
+    const res = await getExamById(
+      examination?.idExam ? examination?.idExam : examId,
+    );
+    if (res.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    setExam(res?.data?.records[0]);
+  };
 
   interface FormValue {
     one_code?: string;
@@ -115,8 +147,11 @@ function CreateExaminationPage({
     description?: string;
   }
   const initialValues: FormValue = {
-    one_code: undefined,
-    turn_per_code: "0",
+    one_code:
+      examination?.accessCodeSettings?.length == 1
+        ? examination?.accessCodeSettings[0].code
+        : undefined,
+
     start_time: examination?.validAccessSetting?.validFrom
       ? dayjs(examination?.validAccessSetting?.validFrom).format(dateFormat)
       : undefined,
@@ -125,13 +160,18 @@ function CreateExaminationPage({
       : undefined,
 
     ips: examination?.validAccessSetting?.ipWhiteLists ?? [],
-    pass_point: undefined,
+    pass_point: examination?.passingSetting?.passPointPercent?.toString(),
     inform_pass: examination?.passingSetting?.passMessage,
     inform_fail: examination?.passingSetting?.failMessage,
     out_screen: examination?.cheatingSetting?.limitExitScreen?.toString(),
     examination_name: examination?.name,
     avatarId: examination?.idAvatarThumbnail,
     description: examination?.description,
+    turn_per_code:
+      examination?.accessCodeSettings &&
+      examination?.accessCodeSettings?.length != 0
+        ? examination?.accessCodeSettings[0].limitOfAccess?.toString()
+        : undefined,
   };
 
   const user = useAppSelector((state: RootState) => state.user.user);
@@ -198,6 +238,8 @@ function CreateExaminationPage({
       var studio = user.studios?.find((d) => d.ownerId == user.studio?._id);
 
       const submitData: ExaminationFormData = {
+        id: examination?.id,
+        isActive: active,
         accessCodeSettings:
           code == 0
             ? []
@@ -226,7 +268,8 @@ function CreateExaminationPage({
         cheatingSetting,
         description: values?.description?.trim(),
         name: values?.examination_name?.trim(),
-        linkJoinTest: "https://e.tmas.vn/demo123_6434",
+        linkJoinTest:
+          examination?.linkJoinTest ?? "https://e.tmas.vn/demo123_6434",
         passingSetting: {
           passPointPercent: parseFloat(values?.pass_point?.trim() ?? "0"),
           failMessage: values?.inform_fail?.trim(),
@@ -245,19 +288,29 @@ function CreateExaminationPage({
             ? dayjs(endTime, dateFormat).toISOString()
             : undefined,
         },
-        idExam: "65f15646165767558efed631",
+        idExam:
+          exam?.id ?? examination?.id ?? search.get("examId") ?? undefined,
       };
 
       console.log("submitData", submitData);
 
-      var dataResults = await createExamination(submitData);
+      // setLoading(false);
+      // return;
+      //TODO: Tạm tắt update vì đang lổi api chỗ A Dũng và Tiệp
+      var dataResults = examination?.id
+        ? await updateExamination(submitData)
+        : await createExamination(submitData);
       if (dataResults?.code != 0) {
         setLoading(false);
         errorToast(dataResults?.message ?? "");
         return;
       }
 
-      successToast(common.t("success_create_new"));
+      successToast(
+        examination
+          ? common.t("success_update")
+          : common.t("success_create_new"),
+      );
       setLoading(false);
       router.push("/examination");
     },
@@ -308,7 +361,11 @@ function CreateExaminationPage({
               ),
             },
             {
-              title: (
+              title: examination ? (
+                <button className="text-m_neutral_900 body_regular_14">
+                  {examination?.name}
+                </button>
+              ) : (
                 <Link
                   className={`${
                     pathname.includes("/examination/create")
@@ -323,8 +380,16 @@ function CreateExaminationPage({
             },
           ]}
         />
-        <div className=" flex max-lg:px-5 w-full justify-between mb-3">
-          <div className="my-3 body_semibold_20">{t("create_exam")}</div>
+        <div className=" mt-3 mb-4 flex max-lg:px-5 w-full justify-between ">
+          <div className="w-full flex flex-col">
+            <div className=" body_semibold_20">{t("create_exam")}</div>
+            {examination ? (
+              <div className="flex mt-2">
+                <Switch checked={active} onChange={(v) => setActive(v)} />{" "}
+                <span className="ml-2">{t("activate")}</span>
+              </div>
+            ) : null}
+          </div>
           <div className="flex">
             <MButton
               onClick={() => {
@@ -333,6 +398,12 @@ function CreateExaminationPage({
               type="secondary"
               text={t("reject")}
             />
+            {examination ? (
+              <>
+                <div className="w-4" />
+                <MButton text={t("view_result")} />
+              </>
+            ) : null}
             <div className="w-4" />
             <MButton
               loading={loading}
@@ -346,7 +417,7 @@ function CreateExaminationPage({
           <div className="max-lg:grid-cols-1 max-lg:mb-5 lg:col-span-6 col-span-12  h-fit rounded-lg">
             <Share value={share} setValue={setShare} />
             <div className="h-4" />
-            <ExaminationCode
+            <ExaminationCodePage
               codeList={codeList}
               setCodeList={setCodeList}
               formik={formik}
@@ -436,6 +507,30 @@ function CreateExaminationPage({
                     alt="Preview"
                   />
                 </div>
+              ) : examination?.idAvatarThumbnail ? (
+                <div
+                  onMouseOver={() => {
+                    setShowCamAvatar(true);
+                  }}
+                  onMouseLeave={() => {
+                    setShowCamAvatar(false);
+                  }}
+                  className="relative w-[146px] h-[154px]"
+                >
+                  {showCamAvatar && (
+                    <div className="z-20 bg-neutral-900/40 flex justify-center items-center absolute top-0 bottom-0 right-0 left-0 ">
+                      <CameraFilled className=" scale-[2] text-white z-20" />
+                    </div>
+                  )}
+                  <Image
+                    loading="lazy"
+                    className="absolute top-0 bottom-0 right-0 left-0"
+                    objectFit="cover"
+                    fill
+                    src={`${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/download/${examination?.idAvatarThumbnail}`}
+                    alt="Preview"
+                  />
+                </div>
               ) : (
                 <div className="w-[146px] h-[154px] border-dashed border flex justify-center items-center">
                   <div className="text-[#4D7EFF] body_regular_14 underline underline-offset-4">
@@ -449,6 +544,37 @@ function CreateExaminationPage({
             </div>
 
             <div className="body_semibold_14">{t("selected_exam")}</div>
+            <div className="text-[#4D7EFF] body_regular_14 underline underline-offset-4">
+              {exam?.name ?? ""}
+            </div>
+            {examination?.linkJoinTest ? (
+              <>
+                <div className="h-4" />
+                <div className="body_semibold_14">{t("examination_link")}</div>
+                <Link
+                  target="_blank"
+                  href={examination?.linkJoinTest}
+                  className="text-[#4D7EFF] body_regular_14 underline underline-offset-4"
+                >
+                  {examination?.linkJoinTest ?? ""}
+                </Link>
+              </>
+            ) : null}
+            {examination?.linkQRJoinTest ? (
+              <>
+                <div className="h-4" />
+                <div className="body_semibold_14">{t("qr_in")}</div>
+                <div className="w-[102px] h-[102px] relative">
+                  <Image
+                    loading="lazy"
+                    objectFit="cover"
+                    layout="fill"
+                    src={examination?.linkQRJoinTest}
+                    alt="Preview"
+                  />
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
       </form>

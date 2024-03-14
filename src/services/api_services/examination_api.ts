@@ -41,7 +41,7 @@ export const deleteExamination = async (Id?: string) => {
   return results;
 };
 
-export const getExamById = async (Id?: string) => {
+export const getExamById = async (Id?: string | null) => {
   const results = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${Id}`,
   );

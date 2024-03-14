@@ -119,5 +119,8 @@
   "enter_examination_name": "Nhập tên đợt thi",
   "pick_image": "Chọn ảnh",
   "no_limit_time": "Vô thời hạn",
-  "confirm_delete_examination": "Bạn có chắc chắn muốn xoá đợt thi này không?"
+  "confirm_delete_examination": "Bạn có chắc chắn muốn xoá đợt thi này không?",
+  "activate": "Kích hoạt",
+  "view_result": "Xem kết quả",
+  "examination": "Đợt thi"
 }

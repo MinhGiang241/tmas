@@ -64,21 +64,15 @@ function ResultTest({
             </div>
             <div className=" right-0 w-1/2">
               <CheckboxGroup
+                value={checkedList}
                 rootClassName="flex flex-col"
                 onChange={onChangeCheck}
               >
-                <Checkbox className="my-1" value={0}>
-                  {t("point")}
-                </Checkbox>
-                <Checkbox className="my-1" value={1}>
-                  {t("percent_complete")}
-                </Checkbox>
-                <Checkbox className="my-1" value={2}>
-                  {t("detail")}
-                </Checkbox>
-                <Checkbox className="my-1" value={3}>
-                  {t("pass_fail")}
-                </Checkbox>
+                {plainOptions?.map((a: any, i: number) => (
+                  <Checkbox key={i} className="my-1" value={a?.value}>
+                    {a?.label}
+                  </Checkbox>
+                ))}
               </CheckboxGroup>
             </div>
           </div>

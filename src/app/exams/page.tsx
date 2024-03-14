@@ -22,7 +22,13 @@ import { useRouter } from "next/navigation";
 import MTreeSelect from "../components/config/MTreeSelect";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { ExamData, ExamGroupData, ExamListDataResult } from "@/data/exam";
+import Link from "next/link";
+import {
+  ExamData,
+  ExamGroupData,
+  ExamListDataResult,
+  ExaminationData,
+} from "@/data/exam";
 import {
   fetchDataExamGroup,
   setExamGroupList,
@@ -36,9 +42,12 @@ import {
   deleteExamination,
   getAllExaminationList,
   getExaminationList,
+  getExaminationTestList,
 } from "@/services/api_services/examination_api";
 import { FormattedDate } from "react-intl";
 import ConfirmModal from "../components/modals/ConfirmModal";
+import copy from "copy-text-to-clipboard";
+import toast from "react-hot-toast";
 
 function ExamsPage() {
   const { t } = useTranslation("exam");
@@ -140,6 +149,30 @@ function ExamsPage() {
     title: t("all_category"),
     value: "",
   });
+
+  const getExaminationListByExamID = async (c: any[]) => {
+    if (c?.length != 0) {
+      var dataResults = await getExaminationTestList({
+        "FilterByExamId.Name": "Name",
+        "FilterByExamId.InValues": c[0],
+      });
+      console.log("dataResults", dataResults);
+      if (dataResults?.code != 0) {
+        return;
+      }
+      var examinationIndex = list.findIndex(
+        (g: ExaminationData) => g?.id == c[0],
+      );
+      var newValue = {
+        ...list[examinationIndex],
+        examinations: dataResults?.data?.records,
+      };
+      console.log("new Value", newValue);
+      var newList = list.splice(examinationIndex, 1, newValue);
+      console.log("newList", newList);
+      setList(list.splice(examinationIndex, 1, newValue));
+    }
+  };
 
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [active, setActive] = useState<ExamData | undefined>(undefined);
@@ -280,9 +313,12 @@ function ExamsPage() {
                   ghost
                   expandIconPosition="end"
                   className="mb-5  rounded-lg bg-white overflow-hidden "
+                  onChange={(c: any) => {
+                    getExaminationListByExamID(c);
+                  }}
                 >
                   <Collapse.Panel
-                    key={"saddas"}
+                    key={v?.id as string}
                     header={
                       <div className="my-3  w-full flex flex-grow justify-between items-center">
                         <div>
@@ -293,7 +329,7 @@ function ExamsPage() {
                             <div className="flex">
                               <CupIcon />
                               <span className="ml-2">
-                                {v?.totalPoints} điểm
+                                {v?.totalPoints} {t("point").toLowerCase()}
                               </span>
                             </div>
                             <div className="flex mx-8">
@@ -309,7 +345,9 @@ function ExamsPage() {
                             </div>
                             <div className="flex">
                               <LinkIcon />
-                              <span className="ml-2">0 đợt thi</span>
+                              <span className="ml-2">{`${
+                                v?.examinations?.length ?? 0
+                              } ${t("examination").toLowerCase()}`}</span>
                             </div>
                             <div className="flex mx-8">
                               <MessIcon />
@@ -335,7 +373,9 @@ function ExamsPage() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              router.push("/examination/create");
+                              router.push(
+                                `/examination/create?examId=${v?.id}`,
+                              );
                             }}
                           >
                             <CopyIcon />
@@ -355,51 +395,65 @@ function ExamsPage() {
                       </div>
                     }
                   >
-                    {true ? (
+                    {!v?.examinations || v?.examinations?.length == 0 ? (
                       <div className="w-full text-m_error_500 italic text-sm">
                         {t("no_examination")}
                       </div>
                     ) : (
-                      Array.from({ length: 2 }).map((v: any, i: number) => {
-                        return (
-                          <div
-                            className="rounded-md px-4 text-wrap flex lg:min-h-[60px] min-h-[52px] items-center w-full bg-m_neutral_100 flex-wrap  my-4 justify-between"
-                            key={i}
-                          >
-                            <div>
-                              <p className="body_semibold_14">
-                                {"Đợt tuyển dụng đầu năm"}
-                              </p>
-                              <div className="flex">
-                                <p className="underline underline-offset-4">
-                                  https://tmas.vn/t/cEhfdyuerka
-                                </p>
-                                <SizeIcon />
+                      Array.from(v?.examinations).map(
+                        (k: ExaminationData, i: number) => {
+                          return (
+                            <div
+                              className="rounded-md px-4 text-wrap flex lg:min-h-[60px] min-h-[52px] items-center w-full bg-m_neutral_100 flex-wrap  my-4 justify-between"
+                              key={i}
+                            >
+                              <div>
+                                <p className="body_semibold_14">{k?.name}</p>
+                                <div className="flex">
+                                  <Link
+                                    target="_blank"
+                                    href={k?.linkJoinTest ?? ""}
+                                    className="text-m_neutral_900 underline underline-offset-4"
+                                  >
+                                    {k?.linkJoinTest}
+                                  </Link>
+
+                                  <button
+                                    onClick={(e) => {
+                                      copy(k?.linkJoinTest ?? "");
+                                      toast(common.t("success_copy"));
+                                    }}
+                                    className="ml-2"
+                                  >
+                                    <SizeIcon />
+                                  </button>
+                                </div>
+                              </div>
+
+                              <div className="flex body_regular_14">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    router.push(`/examination/${k?.id}`);
+                                  }}
+                                  className="h-full "
+                                >
+                                  {t("setting")}
+                                </button>
+                                <div className="w-2" />
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                  className="h-full mx-2"
+                                >
+                                  {t("result")}
+                                </button>
                               </div>
                             </div>
-
-                            <div className="flex body_regular_14">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                }}
-                                className="h-full "
-                              >
-                                {t("setting")}
-                              </button>
-                              <div className="w-2" />
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                }}
-                                className="h-full mx-2"
-                              >
-                                {t("result")}
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })
+                          );
+                        },
+                      )
                     )}
                   </Collapse.Panel>
                 </Collapse>

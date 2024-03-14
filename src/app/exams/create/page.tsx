@@ -99,7 +99,7 @@ function CreatePage({ exam }: any) {
         : undefined,
     exam_name: exam?.name,
     describe: exam?.description,
-    tag: exam?.tags ?? [],
+    tag: exam?.tags?.map((d: any) => d?.name) ?? [],
   };
 
   const validate = (values: FormValue) => {
@@ -240,7 +240,11 @@ function CreatePage({ exam }: any) {
             ),
           },
           {
-            title: (
+            title: exam ? (
+              <button className="text-m_neutral_900 body_regular_14">
+                {common.t("edit")}
+              </button>
+            ) : (
               <Link
                 className={`${
                   pathname.includes("/exams/create") ? "text-m_neutral_900" : ""

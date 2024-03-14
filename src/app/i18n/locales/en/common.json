@@ -88,5 +88,7 @@
   "delete_success": "Successfully deleted",
   "all": "All",
   "created_date": "Created date",
-  "action": "Action"
+  "action": "Action",
+  "success_copy": "Successfully Copy",
+  "edit": "Edit"
 }

@@ -88,5 +88,7 @@
   "delete_success": "Xóa thành công",
   "all": "Tất cả",
   "created_date": "Ngày tạo",
-  "action": "Tác vụ"
+  "action": "Tác vụ",
+  "success_copy": "Copy thành công",
+  "edit": "Chỉnh sửa"
 }

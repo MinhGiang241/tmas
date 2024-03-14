@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import AddIcon from "../components/icons/add.svg";
 import MInput from "../components/config/MInput";
 import MDropdown from "../components/config/MDropdown";
-import { Divider, Pagination, Select, Switch } from "antd";
+import { Divider, Pagination, Select, Spin, Switch } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import EditBlackIcon from "../components/icons/edit-black.svg";
 import DeleteRedIcon from "../components/icons/trash-red.svg";
@@ -16,7 +16,7 @@ import LinkIcon from "../components/icons/link-2.svg";
 import CalendarIcon from "../components/icons/calendar.svg";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import { ExamGroupData } from "@/data/exam";
+import { ExamGroupData, ExaminationData } from "@/data/exam";
 import { useDispatch } from "react-redux";
 import {
   fetchDataExamGroup,
@@ -29,11 +29,13 @@ import {
   createExamination,
   deleteExaminationById,
   getExaminationTestList,
+  updateExamination,
 } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "../components/toast/customToast";
 import { ExaminationFormData } from "@/data/form_interface";
 import { FormattedDate } from "react-intl";
 import ConfirmModal from "../components/modals/ConfirmModal";
+import dayjs from "dayjs";
 
 function ExaminationPage() {
   const router = useRouter();
@@ -54,22 +56,25 @@ function ExaminationPage() {
   useEffect(() => {
     if (user?.studio?._id) {
       dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
-      loadExamination();
+      loadExamination(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, recordNum, indexPage, groupId, sort]);
 
-  const loadExamination = async () => {
+  const loadExamination = async (init: boolean) => {
+    if (init) {
+      setLoading(true);
+    }
     const dataExamination: APIResults = await getExaminationTestList({
       "FilterByName.InValues": search,
-      "FilterByExamId.InValues": !groupId ? undefined : groupId,
-      "FilterByExamId.Name": "Name",
+      "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
+      "FilterByExamGroupId.Name": "Name",
       "Paging.RecordPerPage": recordNum,
       "Paging.StartIndex": (indexPage - 1) * recordNum,
       "SorterByName.isAsc": sort == "name" ? true : undefined,
       "SorterByCreateTime.IsAsc": sort == "time" ? true : undefined,
     });
-    console.log("exmainationlist", dataExamination);
+    console.log("exminationlist", dataExamination);
     if (dataExamination?.code != 0) {
       setLoading(false);
       setList([]);
@@ -129,6 +134,8 @@ function ExaminationPage() {
     value: "",
   });
 
+  const dateFormat = "DD/MM/YYYY HH:mm";
+
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [active, setActive] = useState<ExaminationData | undefined>(undefined);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
@@ -169,7 +176,7 @@ function ExaminationPage() {
           <div className="">{t("examination_list")}</div>
           <MButton
             onClick={() => {
-              router.push("/examination/create");
+              router.push("/exams");
             }}
             className="flex items-center"
             icon={<AddIcon />}
@@ -241,94 +248,126 @@ function ExaminationPage() {
         </div>
         <Divider className="mt-1 mb-6" />
 
-        {Array.from(list).map((v: ExaminationFormData, i: number) => {
-          return (
-            <div
-              key={i}
-              className="w-full p-3 min-h-[100px] mb-4 flex items-center justify-between rounded-lg bg-white"
-            >
-              <div className="flex w-full items-center justify-between">
-                <div className="flex-1 items-start justify-start flex-grow flex flex-col">
+        {loading ? (
+          <div
+            className={
+              "bg-m_neutral_100 w-full flex justify-center min-h-40 items-center"
+            }
+          >
+            <Spin size="large" />
+          </div>
+        ) : !list || list?.length === 0 ? (
+          <div className="w-full flex flex-col items-center justify-center mt-28">
+            <div className="  w-[350px] h-[213px]  bg-[url('/images/empty.png')] bg-no-repeat bg-contain " />
+            <div className="body_regular_14">{common.t("empty_list")}</div>
+          </div>
+        ) : (
+          Array.from(list).map((v: ExaminationData, i: number) => {
+            return (
+              <div
+                key={i}
+                className="w-full p-3 min-h-[100px] mb-4 flex items-center justify-between rounded-lg bg-white"
+              >
+                <div className="flex w-full items-center justify-between">
+                  <div className="flex-1 items-start justify-start flex-grow flex flex-col">
+                    <div className="flex items-center ">
+                      <div
+                        className={`ml-1 mr-3 rounded-[50%] w-3 h-3 ${
+                          v?.isActive ? "bg-m_success_500" : "bg-m_neutral_300"
+                        }`}
+                      />
+                      <div className="body_semibold_16">{v.name}</div>
+                    </div>
+                    <div className="w-full justify-start my-3 flex max-lg:flex-wrap">
+                      <div className="flex ">
+                        <CalendarIcon />
+                        <span className="ml-2">
+                          <FormattedDate
+                            value={v?.createdTime}
+                            day="2-digit"
+                            month="2-digit"
+                            year="numeric"
+                          />
+                        </span>
+                      </div>
+                      <div className="flex">
+                        <span className="mx-4">
+                          {!v?.validAccessSetting?.validFrom &&
+                          !v?.validAccessSetting?.validTo
+                            ? t("no_limit_time")
+                            : `${dayjs(v?.validAccessSetting?.validFrom).format(
+                                dateFormat,
+                              )} - ${dayjs(
+                                v?.validAccessSetting?.validTo,
+                              ).format(dateFormat)}`}
+                        </span>
+                      </div>
+                      <div className="flex">
+                        <LinkIcon />
+
+                        <span className="ml-2">{v?.linkJoinTest ?? ""}</span>
+                      </div>
+                    </div>
+                  </div>
                   <div className="flex items-center ">
-                    <div className="ml-1 mr-3 rounded-[50%] w-3 h-3 bg-m_success_500" />
-                    <div className="body_semibold_16">{v.name}</div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/examination/${v?.id}`);
+                      }}
+                    >
+                      <EditBlackIcon />
+                    </button>
+                    <div className="w-3" />
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        var submitData: ExaminationFormData = {
+                          ...v,
+                          name: v?.name + " Copy",
+                        };
+
+                        var data = await createExamination(submitData);
+                        if (data?.code != 0) {
+                          errorToast(data?.message ?? "");
+                          return;
+                        }
+                        successToast(common.t("success_create_new"));
+                        loadExamination(false);
+                      }}
+                    >
+                      <CopyIcon />
+                    </button>
+                    <div className="w-3" />
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActive(v);
+                        setOpenDelete(true);
+                      }}
+                    >
+                      <DeleteRedIcon />
+                    </button>
                   </div>
-                  <div className="w-full justify-start my-3 flex max-lg:flex-wrap">
-                    <div className="flex ">
-                      <CalendarIcon />
-                      <span className="ml-2">
-                        <FormattedDate
-                          value={v?.createdTime}
-                          day="2-digit"
-                          month="2-digit"
-                          year="numeric"
-                        />
-                      </span>
-                    </div>
-                    <div className="flex">
-                      <span className="mx-4">
-                        {!v?.validAccessSetting?.validFrom &&
-                        !v?.validAccessSetting?.validTo
-                          ? t("no_limit_time")
-                          : `${v?.validAccessSetting?.validFrom} - ${v?.validAccessSetting?.validTo}`}
-                      </span>
-                    </div>
-                    <div className="flex">
-                      <LinkIcon />
+                  <div className="mx-4">
+                    <Switch
+                      onChange={async (t: any) => {
+                        console.log("t", t);
 
-                      <span className="ml-2">{v?.linkJoinTest ?? ""}</span>
-                    </div>
+                        await updateExamination({ ...v, isActive: t });
+                        loadExamination(false);
+                      }}
+                      value={v?.isActive ?? false}
+                      size="small"
+                    />
                   </div>
+                  <MButton text={t("result")} h="h-9" className="w-[114px]" />
                 </div>
-                <div className="flex items-center ">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/examination/${v?.id}`);
-                    }}
-                  >
-                    <EditBlackIcon />
-                  </button>
-                  <div className="w-3" />
-                  <button
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      var submitData: ExaminationFormData = {
-                        ...v,
-                        name: v?.name + " Copy",
-                      };
-
-                      var data = await createExamination(submitData);
-                      if (data?.code != 0) {
-                        errorToast(data?.message ?? "");
-                        return;
-                      }
-                      successToast(common.t("success_create_new"));
-                      loadExamination(false);
-                    }}
-                  >
-                    <CopyIcon />
-                  </button>
-                  <div className="w-3" />
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActive(v);
-                      setOpenDelete(true);
-                    }}
-                  >
-                    <DeleteRedIcon />
-                  </button>
-                </div>
-                <div className="mx-4">
-                  <Switch size="small" />
-                </div>
-                <MButton text={t("result")} h="h-9" className="w-[114px]" />
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
         {list.length != 0 && (
           <div className="w-full flex lg:justify-between justify-center">
             <div className="hidden lg:flex items-center">

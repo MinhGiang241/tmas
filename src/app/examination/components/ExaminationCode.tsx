@@ -30,12 +30,11 @@ function ExaminationCodePage({
   const common = useTranslation();
   const [openCreateCode, setOpenCreateCode] = useState<boolean>(false);
   const [openCodeList, setOpenCodeList] = useState<boolean>(false);
-  const [codes, setCodes] = useState<any[]>([]);
   return (
     <>
       <CodeListModal
-        setCodes={setCodes}
-        list={codes}
+        setCodes={setCodeList}
+        list={codeList}
         open={openCodeList}
         onCancel={() => {
           setOpenCodeList(false);
@@ -45,8 +44,8 @@ function ExaminationCodePage({
         open={openCreateCode}
         onCancel={() => setOpenCreateCode(false)}
         onOk={(v: any) => {
-          setCodes([
-            ...codes,
+          setCodeList([
+            ...codeList,
             ...v
               ?.split("\n")
               .filter((c: any) => c)
@@ -125,9 +124,9 @@ function ExaminationCodePage({
 
             {value == 2 && (
               <>
-                {codes.length != 0 && <div className="mt-2" />}
+                {codeList.length != 0 && <div className="mt-2" />}
                 <div className="w-full flex flex-wrap">
-                  {codes.map((v: any, i: number) => (
+                  {codeList.map((v: any, i: number) => (
                     <div
                       className="p-1 mb-1 mr-1 border border-m_neutral_200 rounded-md"
                       key={i}
@@ -135,7 +134,7 @@ function ExaminationCodePage({
                       {v?.code}
                     </div>
                   ))}
-                  {codes.length > 0 && (
+                  {codeList.length > 0 && (
                     <button
                       onClick={() => {
                         setOpenCodeList(true);
