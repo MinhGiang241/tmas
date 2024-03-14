@@ -34,6 +34,10 @@ import {
 } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import TextArea from "antd/es/input/TextArea";
+import { createTag, getTags } from "@/services/api_services/tag_api";
+import { title } from "process";
+import TagSearchSelect from "@/app/components/config/TagsSearch";
+import { TagData } from "@/data/tag";
 const EditorHook = dynamic(
   () => import("../components/react_quill/EditorWithUseQuill"),
   {
@@ -126,6 +130,7 @@ function CreatePage({ exam }: any) {
         ...files.filter((v: UploadedFile) => !v.error).map((i: any) => i.id),
       ];
       console.log("submitDocs", submitDocs);
+      // var tagUpdate = await createTag(values?.tag ?? []);
 
       const dataSubmit: ExamFormData = {
         id: exam?.id,
@@ -134,10 +139,13 @@ function CreatePage({ exam }: any) {
         externalLinks: values?.doc_link?.trim()
           ? [values.doc_link?.trim()]
           : [],
-        tags: values?.tag ?? [],
+        tags: values.tag ?? [],
+        //  idTags: tagUpdate?.data ?? [],
         examNextQuestion: sw ? "ByOrderQuestion" : "FreeByUser",
         examViewQuestionType: page as "SinglePage" | "MultiplePages",
-        timeLimitMinutes: parseInt(values?.test_time ?? "0"),
+        timeLimitMinutes: values?.test_time
+          ? parseInt(values?.test_time)
+          : undefined,
         playAudio: audio as "OnlyOneTime" | "MultipleTimes",
         studioId: user?.studio?._id,
         language: lang as "Vietnamese" | "English",
@@ -210,6 +218,7 @@ function CreatePage({ exam }: any) {
       return list;
     }
   };
+
   const examGroup = useAppSelector((state: RootState) => state.examGroup?.list);
 
   const optionSelect = (examGroup ?? []).map((v: ExamGroupData, i: number) => ({
@@ -224,6 +233,27 @@ function CreatePage({ exam }: any) {
       })),
     ],
   }));
+
+  const [optionTag, setOptionTag] = useState<any[]>([]);
+  const onSearchTags = async (searchKey: any) => {
+    console.log("onSearchKey", searchKey);
+    const data = await getTags({
+      "Names.Name": searchKey,
+      "Names.InValues": searchKey,
+      "Paging.StartIndex": 0,
+      "Paging.RecordPerPage": 10,
+    });
+    if (data?.code != 0) {
+      return [];
+    }
+    console.log("dataTag", data);
+
+    var op = (data?.data?.records ?? []).map((e: TagData) => ({
+      value: e?.name,
+      label: e.name,
+    }));
+    setOptionTag(op);
+  };
 
   return (
     <HomeLayout>
@@ -258,9 +288,12 @@ function CreatePage({ exam }: any) {
         ]}
       />
       <div className="flex max-lg:px-5 w-full justify-between mb-3">
-        <div className="my-3 body_semibold_20">{t("create_exam")}</div>
+        <div className="my-3 body_semibold_20">
+          {exam ? common.t("edit") : t("create_exam")}
+        </div>
         <div className="flex">
           <MButton
+            h="h-11"
             onClick={() => {
               router.back();
             }}
@@ -269,6 +302,7 @@ function CreatePage({ exam }: any) {
           />
           <div className="w-4" />
           <MButton
+            h="h-11"
             loading={loading}
             onClick={onSubmit}
             text={exam ? common.t("update") : t("save_info")}
@@ -394,7 +428,7 @@ function CreatePage({ exam }: any) {
 
           <MTextArea
             defaultValue={exam?.name}
-            maxLength={225}
+            maxLength={255}
             required
             placeholder={t("enter_exam_name")}
             id="exam_name"
@@ -402,13 +436,15 @@ function CreatePage({ exam }: any) {
             title={t("exam_name")}
             action={
               <div className="body_regular_14 text-m_neutral_500">
-                {`${formik.values["exam_name"]?.length ?? 0}/225`}
+                {`${formik.values["exam_name"]?.length ?? 0}/255`}
               </div>
             }
             formik={formik}
           />
 
           <MDropdown
+            onSearch={onSearchTags}
+            options={optionTag}
             mode="tags"
             placeholder={t("enter_tag")}
             id="tag"
@@ -416,6 +452,7 @@ function CreatePage({ exam }: any) {
             title={t("tag")}
             formik={formik}
           />
+
           {/*
           <MRichText
             id="describe"

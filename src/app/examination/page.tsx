@@ -175,6 +175,7 @@ function ExaminationPage() {
         <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
           <div className="">{t("examination_list")}</div>
           <MButton
+            h="h-11"
             onClick={() => {
               router.push("/exams");
             }}

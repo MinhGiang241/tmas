@@ -87,7 +87,7 @@ function ExamsPage() {
       "FilterByNameOrTag.Name": "Name",
       "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
       "FilterByExamGroupId.Name": "Name",
-      "SortByCreateTime.IsAsc": sort == "time" ? true : undefined,
+      "SortByCreateTime.IsAsc": sort == "time" ? false : undefined,
       "SortByName.IsAsc": sort == "name" ? true : undefined,
     });
 
@@ -167,10 +167,11 @@ function ExamsPage() {
         ...list[examinationIndex],
         examinations: dataResults?.data?.records,
       };
-      console.log("new Value", newValue);
-      var newList = list.splice(examinationIndex, 1, newValue);
-      console.log("newList", newList);
-      setList(list.splice(examinationIndex, 1, newValue));
+      var newList = JSON.parse(JSON.stringify(list));
+      newList[examinationIndex] = newValue;
+      //var newList = list.splice(examinationIndex, 1, newValue);
+      //setList(list.splice(examinationIndex, 1, newValue));
+      setList(newList);
     }
   };
 
@@ -210,6 +211,7 @@ function ExamsPage() {
         <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
           <div className="">{t("exam_list")}</div>
           <MButton
+            h="h-11"
             onClick={() => {
               router.push("/exams/create");
             }}
@@ -234,7 +236,7 @@ function ExamsPage() {
                 setSearch(e.target.value);
               }}
               className=""
-              placeholder={t("search_test_group")}
+              placeholder={t("enter_key_search")}
               h="h-11"
               id="search"
               name="search"
@@ -325,16 +327,16 @@ function ExamsPage() {
                           <div className=" body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg  text-ellipsis">
                             {v?.name}
                           </div>
-                          <div className="w-full my-3 flex max-lg:flex-wrap">
+                          <div className=" w-full my-3 flex max-lg:flex-wrap">
                             <div className="flex">
                               <CupIcon />
-                              <span className="ml-2">
+                              <span className="body_regular_14 ml-2">
                                 {v?.totalPoints} {t("point").toLowerCase()}
                               </span>
                             </div>
-                            <div className="flex mx-8">
+                            <div className="flex mx-8 body_regular_14">
                               <CalendarIcon />
-                              <span className="ml-2">
+                              <span className="ml-2 body_regular_14">
                                 <FormattedDate
                                   value={v?.createdTime}
                                   day="2-digit"
@@ -345,17 +347,21 @@ function ExamsPage() {
                             </div>
                             <div className="flex">
                               <LinkIcon />
-                              <span className="ml-2">{`${
+                              <span className="ml-2 body_regular_14">{`${
                                 v?.examinations?.length ?? 0
                               } ${t("examination").toLowerCase()}`}</span>
                             </div>
                             <div className="flex mx-8">
                               <MessIcon />
-                              <span className="ml-2">0 câu hỏi</span>
+                              <span className="ml-2 body_regular_14">
+                                0 câu hỏi
+                              </span>
                             </div>
                             <div className="flex">
                               <FolderIcon />
-                              <span className="ml-2">{group?.name ?? ""}</span>
+                              <span className="ml-2 body_regular_14">
+                                {group?.name ?? ""}
+                              </span>
                             </div>
                           </div>
                         </div>

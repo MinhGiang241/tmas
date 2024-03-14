@@ -390,8 +390,9 @@ function CreateExaminationPage({ examination }: any) {
               </div>
             ) : null}
           </div>
-          <div className="flex">
+          <div className=" flex">
             <MButton
+              h="h-11"
               onClick={() => {
                 router.back();
               }}
@@ -401,11 +402,12 @@ function CreateExaminationPage({ examination }: any) {
             {examination ? (
               <>
                 <div className="w-4" />
-                <MButton text={t("view_result")} />
+                <MButton h="h-11" text={t("view_result")} />
               </>
             ) : null}
             <div className="w-4" />
             <MButton
+              h="h-11"
               loading={loading}
               onClick={onSubmit}
               text={t("save_info")}

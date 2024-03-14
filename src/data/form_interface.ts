@@ -44,6 +44,7 @@ export interface StudioFormData {
 }
 
 export interface ExamFormData {
+  idTags?: string[];
   id?: string;
   studioId?: string;
   description?: string;

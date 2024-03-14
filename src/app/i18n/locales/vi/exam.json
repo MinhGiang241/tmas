@@ -53,7 +53,7 @@
   "describe": "Mô tả",
   "drag_file": "Kéo và thả file vào đây hoặc",
   "pick_file": "Chọn file",
-  "upload_intro": "Kéo và thả file vào đây hoặc chọn file (Định dạng mp4/jpg/png/xlsx/pdf/docx -tối đa 100MB)",
+  "upload_intro": " (Định dạng pdf/ppt/docx/xlsx - tối đa 5MB)",
   "examination_list": "Danh sách đợt thi",
   "create_examination": "Tạo mới đợt thi",
   "examination_code": "Mã truy cập đợt thi",

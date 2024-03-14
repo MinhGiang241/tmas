@@ -117,7 +117,7 @@ function MInput({
             successText && touch ? "border-m_success_500" : ""
           } ${dangerText && touch ? "border-m_warning_500" : ""}  ${
             h ? h : `h-12`
-          } rounded-lg ${suffix ? "pr-0" : ""} ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
+          } rounded-lg ${suffix ? "pr-0" : ""} ${className} body_regular_14`} //shadow-inner shadow-gray-300 bg-m_neutral_100
           name={name}
           id={id}
           allowClear={allowClear ?? true}

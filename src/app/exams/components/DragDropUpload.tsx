@@ -85,12 +85,13 @@ function DragDropUpload({
     <>
       <input
         multiple
-        accept=".mp4,.jpg, .png, .jpeg, .xlsx, .pdf, .docx"
+        accept=".xlsx, .pdf, .docx, ppt"
         type="file"
         ref={fileRef}
         style={{ display: "none" }}
         onChange={(e) => handleFileChange(e.target.files)}
       />
+      <div className="mt-4 body_semibold_14">{t("pick_file")}</div>
       {files.length == 0 && uploaded.length == 0 && (
         <button
           onDragOverCapture={(e) => {
@@ -119,7 +120,9 @@ function DragDropUpload({
           >
             <p className="body_regular_14 text-m_neutral_500">
               {t("drag_file")}{" "}
-              <span className="text-[#4D7EFF]">{t("pick_file")}</span>{" "}
+              <span className="text-[#4D7EFF]">
+                {t("pick_file").toLowerCase()}
+              </span>{" "}
               {t("upload_intro")}
             </p>
           </div>

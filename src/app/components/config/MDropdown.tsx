@@ -1,4 +1,4 @@
-import { Input, Select, SelectProps, Tag } from "antd";
+import { Input, Select, SelectProps, Spin, Tag } from "antd";
 import React, { ReactNode, useEffect, useState } from "react";
 import NoticeIcon from "@/app/components/icons/notice.svg";
 import CloseEye from "@/app/components/icons/close_eye.svg";
@@ -39,6 +39,8 @@ interface Props {
   h?: string;
   popupClassName?: string;
   defaultValue?: string;
+  fetching?: boolean;
+  onSearch?: any;
   dropdownRender?:
     | ((
         menu: React.ReactElement<
@@ -78,6 +80,8 @@ function MDropdown({
   h,
   popupClassName,
   defaultValue,
+  fetching = false,
+  onSearch,
   dropdownRender,
 }: Props) {
   var np;
@@ -139,10 +143,12 @@ function MDropdown({
         }`}
       >
         <Select
+          onSearch={onSearch}
+          notFoundContent={fetching ? <Spin size="small" /> : null}
           popupClassName={popupClassName}
           dropdownRender={dropdownRender}
           showSearch={true}
-          notFoundContent={null}
+          // notFoundContent={null}
           tagRender={tagRender}
           mode={mode}
           value={value}
@@ -157,7 +163,7 @@ function MDropdown({
             dangerText && touch ? "border-m_warning_500" : ""
           } ${disable ? "text-m_neutral_900" : ""} ${
             h ? h : "h-12"
-          } rounded-lg ${className}`} //shadow-inner shadow-gray-300 bg-m_neutral_100
+          } rounded-lg ${className} body_regular_14`} //shadow-inner shadow-gray-300 bg-m_neutral_100
           id={id}
           onKeyDown={onKeyDown}
           onChange={(e) => {

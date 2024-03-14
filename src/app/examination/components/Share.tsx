@@ -20,7 +20,7 @@ function Share({ value, setValue }: { value: any; setValue: any }) {
                 {t("share")}
               </div>
               <div className="body_regular_14 text-m_neutral_500">
-                {value == 1 ? t("private") : t("public")}
+                {value == "Private" ? t("private") : t("public")}
               </div>
             </div>
           }
