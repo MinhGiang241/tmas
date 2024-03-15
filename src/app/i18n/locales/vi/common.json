@@ -91,5 +91,6 @@
   "action": "Tác vụ",
   "success_copy": "Copy thành công",
   "edit": "Chỉnh sửa",
-  "duplicate": "Nhân bản"
+  "duplicate": "Nhân bản",
+  "delete_success_examination": "Xóa đợt thi thành công"
 }

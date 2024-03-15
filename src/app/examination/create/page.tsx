@@ -317,7 +317,9 @@ function CreateExaminationPage({ examination }: any) {
         linkJoinTest:
           examination?.linkJoinTest ?? "https://e.tmas.vn/demo123_6434",
         passingSetting: {
-          passPointPercent: parseFloat(values?.pass_point?.trim() ?? "0"),
+          passPointPercent: values?.pass_point
+            ? parseFloat(values?.pass_point?.trim()!)
+            : undefined,
           failMessage: values?.inform_fail?.trim(),
           passMessage: values?.inform_pass?.trim(),
         },

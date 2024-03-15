@@ -28,6 +28,7 @@ import MTreeSelect from "../components/config/MTreeSelect";
 import {
   createExamination,
   deleteExaminationById,
+  duplicateExamination,
   getExaminationTestList,
   updateExamination,
 } from "@/services/api_services/examination_api";
@@ -174,13 +175,9 @@ function ExaminationPage() {
   const [openDup, setOpenDup] = useState<boolean>(false);
 
   const handleDuplicate = async () => {
-    var submitData: ExaminationFormData = {
-      ...active,
-      name: active?.name + " Copy",
-    };
     setDupLoading(true);
 
-    var data = await createExamination(submitData);
+    var data = await duplicateExamination({ ids: [active?.id as string] });
     if (data?.code != 0) {
       errorToast(data?.message ?? "");
       setActive(undefined);

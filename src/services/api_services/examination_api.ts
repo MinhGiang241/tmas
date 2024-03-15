@@ -173,3 +173,14 @@ export const createSession = async (sessionId?: string) => {
   );
   return results;
 };
+
+export const duplicateExamination = async (data: {
+  ids?: string[];
+  documentLinkFormatById?: string;
+}) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/Copy`,
+    data,
+  );
+  return results;
+};

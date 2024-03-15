@@ -35,7 +35,7 @@ function MButton({
           : `${
               disabled
                 ? " text-m_neutral_400 border-1 border-m_neutral_400"
-                : " text-m_primary_500 border border-m_primary_500"
+                : " text-m_primary_500 border bg-transparent border-m_primary_500"
             }`
       } ${
         h ? h : "h-11  lg:h-12"
