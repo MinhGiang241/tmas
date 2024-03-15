@@ -168,7 +168,7 @@ export const deleteExaminationById = async (id?: string) => {
 
 export const createSession = async (sessionId?: string) => {
   const results = await callStudioAPI.post(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Session/${sessionId}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Session/${sessionId ?? ""}`,
     {},
   );
   return results;

@@ -90,5 +90,6 @@
   "created_date": "Created date",
   "action": "Action",
   "success_copy": "Successfully Copy",
-  "edit": "Edit"
+  "edit": "Edit",
+  "duplicate": "Duplicate"
 }

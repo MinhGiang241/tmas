@@ -143,6 +143,9 @@ function MDropdown({
         }`}
       >
         <Select
+          onFocus={() => {
+            // formik.setFieldValue[name] = "";
+          }}
           onSearch={onSearch}
           notFoundContent={fetching ? <Spin size="small" /> : null}
           popupClassName={popupClassName}
@@ -159,10 +162,11 @@ function MDropdown({
           maxLength={maxLength ?? 500}
           onBlur={onBlur}
           status={error && touch ? `error` : ""}
+          style={{ minHeight: "44px" }}
           className={`${successText && touch ? "border-m_success_500" : ""} ${
             dangerText && touch ? "border-m_warning_500" : ""
           } ${disable ? "text-m_neutral_900" : ""} ${
-            h ? h : "h-12"
+            mode == "tags" ? "tag-selector" : h ? h : "h-12"
           } rounded-lg ${className} body_regular_14`} //shadow-inner shadow-gray-300 bg-m_neutral_100
           id={id}
           onKeyDown={onKeyDown}

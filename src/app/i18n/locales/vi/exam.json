@@ -119,8 +119,12 @@
   "enter_examination_name": "Nhập tên đợt thi",
   "pick_image": "Chọn ảnh",
   "no_limit_time": "Vô thời hạn",
-  "confirm_delete_examination": "Bạn có chắc chắn muốn xoá đợt thi này không?",
+  "confirm_delete_examination": "Khi xoá đợt thi tuyển, tất cả kết quả đợt thi tuyển sẽ bị xoá. Bạn có muốn xoá đợt thi tuyển này?",
   "activate": "Kích hoạt",
   "view_result": "Xem kết quả",
-  "examination": "Đợt thi"
+  "examination": "Đợt thi",
+  "question": "Câu hỏi",
+  "confirm_dup_examination": "Bạn có muốn nhân bản đợt thi này không?",
+  "min_max_one_code": "Số lượng ký tự lớn hơn 3 và nhỏ hơn 255",
+  "list_code_not_empty": "Danh sách mã truy cập không được để trống"
 }

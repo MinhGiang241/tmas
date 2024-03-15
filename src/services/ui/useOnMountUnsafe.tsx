@@ -2,7 +2,7 @@
 import type { EffectCallback } from "react";
 import { useEffect, useRef } from "react";
 
-export function useOnMountUnsafe(effect: EffectCallback) {
+export function useOnMountUnsafe(effect: any, dependencies?: any) {
   const initialized = useRef(false);
 
   useEffect(() => {
@@ -10,5 +10,5 @@ export function useOnMountUnsafe(effect: EffectCallback) {
       initialized.current = true;
       effect();
     }
-  }, []);
+  }, dependencies ?? []);
 }

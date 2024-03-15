@@ -93,7 +93,9 @@ export interface AccessCodeExaminantionSetting {
 
 export interface ExaminationFormData {
   id?: string;
+  idSession?: string;
   isActive?: boolean;
+  accessCodeSettingType?: "None" | "One" | "MultiCode";
   accessCodeSettings?: AccessCodeExaminantionSetting[];
   cheatingSetting?: {
     disableCopy?: boolean;

@@ -49,21 +49,26 @@ function UploadedDocument({ isExist, id, deleteDoc, file }: Props) {
         className="hidden "
       ></Link>
       <div
-        onClick={() => {
-          if (linkRef && !file?.error) {
-            (linkRef!.current! as any).click();
-          }
-        }}
         className={`z-40 relative cursor-pointer p-4 rounded-lg mb-2 w-full justify-between items-center flex ${
           file?.error ? "bg-m_error_100" : "bg-neutral-100"
         }`}
       >
+        <div
+          onClick={() => {
+            if (linkRef && !file?.error) {
+              (linkRef!.current! as any).click();
+            }
+          }}
+          className="absolute top-0 bottom-0 left-0 right-12"
+        />
         <div className="flex items-center">
           <div className="min-w-6">
             <FileIcon />
           </div>
           <div className="ml-2 flex flex-col items-start">
-            <p className="body_semibold_14">{info?.name}</p>
+            <p className="body_semibold_14 text-wrap overflow-clip max-w-[230px]">
+              {info?.name}
+            </p>
             <p className="caption_regular_14">
               {
                 <FormattedNumber

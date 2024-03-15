@@ -25,9 +25,11 @@ import { getExamGroupTest } from "@/services/api_services/exam_api";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { ExamFormData } from "@/data/form_interface";
 import { RightOutlined } from "@ant-design/icons";
+
 import { auth } from "@/firebase/config";
 import {
   createExaminationList,
+  createSession,
   createSessionUpload,
   getInfoStudioDocuments,
   updateExam,
@@ -38,6 +40,7 @@ import { createTag, getTags } from "@/services/api_services/tag_api";
 import { title } from "process";
 import TagSearchSelect from "@/app/components/config/TagsSearch";
 import { TagData } from "@/data/tag";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 const EditorHook = dynamic(
   () => import("../components/react_quill/EditorWithUseQuill"),
   {
@@ -45,7 +48,7 @@ const EditorHook = dynamic(
   },
 );
 
-function CreatePage({ exam }: any) {
+function CreatePage({ exam, isEdit }: any) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const router = useRouter();
@@ -62,7 +65,28 @@ function CreatePage({ exam }: any) {
   );
   const [files, setFiles] = useState([]);
   const [idSession, setIdSession] = useState<string | undefined>();
+
+  const createSessionId = async () => {
+    if (isEdit && exam) {
+      var dataSessionId = await createSession(exam?.idSession);
+      console.log("dataSessionId edit", dataSessionId);
+      console.log("exam idSession", exam?.idSession);
+
+      if (dataSessionId?.code == 0) {
+        setIdSession(dataSessionId?.data);
+      }
+    } else if (!isEdit) {
+      var dataSessionId = await createSession();
+      console.log("dataSessionId notEdit", dataSessionId);
+      if (dataSessionId?.code == 0) {
+        setIdSession(dataSessionId?.data);
+      }
+    }
+  };
+  // useOnMountUnsafe(createSessionId, [exam]);
+
   useEffect(() => {
+    createSessionId();
     if (exam) {
       setAudio(exam?.playAudio);
       setLang(exam?.language);
@@ -70,19 +94,8 @@ function CreatePage({ exam }: any) {
       setSw(exam?.examNextQuestion != "FreeByUser" ? true : false);
       setUploaded(exam?.idDocuments ?? []);
     }
-    if (!idSession) {
-      createIdSession();
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exam]);
-
-  const createIdSession = async () => {
-    var res = await createSessionUpload();
-    if (res.code != 0) {
-      errorToast(res?.message ?? "");
-    }
-    setIdSession(res?.data);
-  };
 
   interface FormValue {
     test_time?: string;
@@ -187,6 +200,7 @@ function CreatePage({ exam }: any) {
     if (user?.studio?._id) {
       dispatch(fetchDataExamGroup(async () => loadExamTestList(true)));
     }
+    onSearchTags("");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, exam]);
@@ -237,12 +251,16 @@ function CreatePage({ exam }: any) {
   const [optionTag, setOptionTag] = useState<any[]>([]);
   const onSearchTags = async (searchKey: any) => {
     console.log("onSearchKey", searchKey);
-    const data = await getTags({
-      "Names.Name": searchKey,
-      "Names.InValues": searchKey,
-      "Paging.StartIndex": 0,
-      "Paging.RecordPerPage": 10,
-    });
+    const data = await getTags(
+      searchKey
+        ? {
+            "Names.Name": "Name",
+            "Names.InValues": searchKey,
+            "Paging.StartIndex": 0,
+            "Paging.RecordPerPage": 100,
+          }
+        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
+    );
     if (data?.code != 0) {
       return [];
     }
@@ -258,6 +276,7 @@ function CreatePage({ exam }: any) {
   return (
     <HomeLayout>
       <div className="h-5" />
+
       <Breadcrumb
         className="max-lg:ml-5 mb-3"
         separator={<RightOutlined />}

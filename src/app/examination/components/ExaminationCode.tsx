@@ -71,9 +71,9 @@ function ExaminationCodePage({
                 {t("examination_code")}
               </div>
               <div className="body_regular_14 text-m_neutral_500">
-                {value == 0
+                {value == "None"
                   ? t("no_have")
-                  : value == 1
+                  : value == "One"
                     ? t("one_code")
                     : t("code_list")}
               </div>
@@ -89,40 +89,42 @@ function ExaminationCodePage({
               value={value}
             >
               <Space className="w-full" direction="horizontal">
-                <Radio className=" caption_regular_14" value={0}>
+                <Radio className=" caption_regular_14" value={"None"}>
                   {t("no_have")}
                 </Radio>
-                <Radio className="mx-20 caption_regular_14" value={1}>
+                <Radio className="mx-20 caption_regular_14" value={"One"}>
                   {t("one_code")}
                 </Radio>
-                <Radio className=" caption_regular_14" value={2}>
+                <Radio className=" caption_regular_14" value={"MultiCode"}>
                   {t("code_list")}
                 </Radio>
               </Space>
             </Radio.Group>
             <p className="mt-3">
-              {value == 0
+              {value == "None"
                 ? t("no_code_intro")
-                : value == 1
+                : value == "One"
                   ? t("one_code_intro")
                   : t("code_list_intro")}
             </p>
 
-            {value == 1 && (
+            {value == "One" && (
               <>
                 <div className="h-3" />
                 <MInput
+                  required={true}
                   formik={formik}
                   h="h-9"
                   id="one_code"
                   name="one_code"
                   placeholder={t("enter_code")}
                   title={t("code")}
+                  namespace="exam"
                 />
               </>
             )}
 
-            {value == 2 && (
+            {value == "MultiCode" && (
               <>
                 {codeList.length != 0 && <div className="mt-2" />}
                 <div className="w-full flex flex-wrap">
@@ -154,8 +156,8 @@ function ExaminationCodePage({
                   </button>
                 </div>
                 <MInput
+                  required={true}
                   formik={formik}
-                  defaultValue="0"
                   h="h-9"
                   id="turn_per_code"
                   name="turn_per_code"

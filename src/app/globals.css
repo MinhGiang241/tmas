@@ -194,6 +194,14 @@ body {
   border-radius: 6px;
 }
 
+.select-page .ant-select-selection-item {
+  display: flex;
+  justify-content: center;
+}
+.tag-selector .ant-select-selector {
+  min-height: 44px;
+}
+
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */

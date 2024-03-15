@@ -347,14 +347,16 @@ function ExamsPage() {
                             </div>
                             <div className="flex">
                               <LinkIcon />
-                              <span className="ml-2 body_regular_14">{`${
-                                v?.examinations?.length ?? 0
-                              } ${t("examination").toLowerCase()}`}</span>
+                              <span className="ml-2 body_regular_14">{`${v?.numberOfTests} ${t(
+                                "examination",
+                              ).toLowerCase()}`}</span>
                             </div>
                             <div className="flex mx-8">
                               <MessIcon />
                               <span className="ml-2 body_regular_14">
-                                0 câu hỏi
+                                {`${v?.numberOfQuestions} ${t(
+                                  "question",
+                                )?.toLowerCase()}`}
                               </span>
                             </div>
                             <div className="flex">
@@ -429,7 +431,7 @@ function ExamsPage() {
                                       copy(k?.linkJoinTest ?? "");
                                       toast(common.t("success_copy"));
                                     }}
-                                    className="ml-2"
+                                    className="ml-4 cursor-copy"
                                   >
                                     <SizeIcon />
                                   </button>
@@ -468,29 +470,11 @@ function ExamsPage() {
           )}
         </div>
         {list.length != 0 && (
-          <div className="w-full flex lg:justify-between justify-center">
-            <div className="hidden lg:flex items-center">
-              <span className="body_regular_14 mr-2">{`${total} ${t(
-                "result",
-              )}`}</span>
-              <Select
-                value={recordNum}
-                onChange={(v) => {
-                  setRecordNum(v);
-                }}
-                options={[
-                  ...[15, 25, 30, 50, 100].map((i: number) => ({
-                    value: i,
-                    label: (
-                      <span className="body_regular_14">{`${i}/${common.t(
-                        "page",
-                      )}`}</span>
-                    ),
-                  })),
-                ]}
-                className="min-w-[124px]"
-              />
-            </div>
+          <div className="w-full flex items-center justify-center">
+            <span className="body_regular_14 mr-2">{`${total} ${t(
+              "result",
+            )}`}</span>
+
             <Pagination
               pageSize={recordNum}
               onChange={(v) => {
@@ -500,9 +484,29 @@ function ExamsPage() {
               total={total}
               showSizeChanger={false}
             />
+            <div className="hidden ml-2 lg:flex items-center">
+              <Select
+                value={recordNum}
+                onChange={(v) => {
+                  setRecordNum(v);
+                }}
+                options={[
+                  ...[15, 25, 30, 50, 100].map((i: number) => ({
+                    value: i,
+                    label: (
+                      <span className="pl-3 body_regular_14">{`${i}/${common.t(
+                        "page",
+                      )}`}</span>
+                    ),
+                  })),
+                ]}
+                className="select-page min-w-[124px]"
+              />
+            </div>
           </div>
         )}
       </div>
+      <div className="h-16" />
     </HomeLayout>
   );
 }

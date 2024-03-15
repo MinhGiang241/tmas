@@ -38,7 +38,7 @@ function ExamDetail({ params }: { params: { id: string } }) {
   };
   return (
     <>
-      <CreatePage exam={exam} />
+      <CreatePage exam={exam} isEdit />
     </>
   );
 }

@@ -28,6 +28,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import {
   createExamination,
+  createSession,
   createSessionUpload,
   getExamById,
   getExaminationById,
@@ -38,6 +39,7 @@ import { errorToast, successToast } from "@/app/components/toast/customToast";
 import dayjs from "dayjs";
 import { ExamData, ExaminationData } from "@/data/exam";
 import { v4 as uuidv4 } from "uuid";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 const EditorHook = dynamic(
   () => import("../../exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -46,6 +48,33 @@ const EditorHook = dynamic(
 );
 
 function CreateExaminationPage({ examination }: any) {
+  const createSessionId = async () => {
+    var dataSessionId = await createSession(examination?.idSession ?? "");
+    console.log("dataSessionId", dataSessionId);
+
+    if (dataSessionId?.code == 0) {
+      setSessionId(dataSessionId?.data);
+    }
+  };
+  useOnMountUnsafe(createSessionId);
+  //  const createSessionId = async () => {
+  //   if (isEdit && exam) {
+  //     var dataSessionId = await createSession(exam?.idSession);
+  //     console.log("dataSessionId edit", dataSessionId);
+  //     console.log("exam idSession", exam?.idSession);
+  //
+  //     if (dataSessionId?.code == 0) {
+  //       setIdSession(exam?.idSession);
+  //     }
+  //   } else if (!isEdit) {
+  //     var dataSessionId = await createSession();
+  //     console.log("dataSessionId notEdit", dataSessionId);
+  //     if (dataSessionId?.code == 0) {
+  //       setIdSession(dataSessionId?.data);
+  //     }
+  //   }
+  // };
+
   useEffect(() => {
     loadExam();
     if (examination) {
@@ -63,22 +92,18 @@ function CreateExaminationPage({ examination }: any) {
       );
 
       setShare(examination?.sharingSetting ?? "Public");
-      if (examination?.accessCodeSettings?.length === 0) {
-        setCode(0);
-      } else if (examination?.accessCodeSettings?.length === 1) {
-        setCode(1);
-      } else {
-        setCode(2);
+      setCode(examination?.accessCodeSettingType);
+      if (examination?.accessCodeSettingType == "MultiCode") {
+        setCodeList(
+          examination?.accessCodeSettings?.map((i: any) => {
+            return {
+              id: uuidv4(),
+              createdDate: Date.now(),
+              code: i.code,
+            };
+          }) ?? [],
+        );
       }
-      setCodeList(
-        examination?.accessCodeSettings?.map((i: any) => {
-          return {
-            id: uuidv4(),
-            createdDate: Date.now(),
-            code: i.code,
-          };
-        }) ?? [],
-      );
       var results = Object.keys(examination?.testResultSetting as any)?.filter(
         (s: any) => (examination?.testResultSetting as any)[s],
       );
@@ -103,9 +128,12 @@ function CreateExaminationPage({ examination }: any) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [sessionId, setSessionId] = useState<string | undefined>();
   const [active, setActive] = useState<boolean>(false);
   const [share, setShare] = useState<"Private" | "Public">("Public");
-  const [code, setCode] = useState(0);
+  const [code, setCode] = useState<"None" | "One" | "MultiCode" | undefined>(
+    "None",
+  );
   const [startTime, setStartTime] = useState<string | undefined>();
   const [endTime, setEndTime] = useState<string | undefined>();
   const [resultChecked, setResultChecked] = useState<any[]>([]);
@@ -148,7 +176,7 @@ function CreateExaminationPage({ examination }: any) {
   }
   const initialValues: FormValue = {
     one_code:
-      examination?.accessCodeSettings?.length == 1
+      examination?.accessCodeSettingType == "One"
         ? examination?.accessCodeSettings[0].code
         : undefined,
 
@@ -169,7 +197,7 @@ function CreateExaminationPage({ examination }: any) {
     description: examination?.description,
     turn_per_code:
       examination?.accessCodeSettings &&
-      examination?.accessCodeSettings?.length != 0
+      examination?.accessCodeSettingType == "MultiCode"
         ? examination?.accessCodeSettings[0].limitOfAccess?.toString()
         : undefined,
   };
@@ -181,6 +209,19 @@ function CreateExaminationPage({ examination }: any) {
     if (!values.examination_name) {
       errors.examination_name = "common_not_empty";
     }
+    if (!values.one_code && code == "One") {
+      errors.one_code = "common_not_empty";
+    } else if (
+      code == "One" &&
+      ((values.one_code ?? [])?.length < 3 ||
+        (values.one_code ?? [])?.length > 255)
+    ) {
+      errors.one_code = "min_max_one_code";
+    }
+
+    if (!values.turn_per_code && code == "MultiCode") {
+      errors.turn_per_code = "common_not_empty";
+    }
     return errors;
   };
   const onSubmit = (e: any) => {
@@ -188,6 +229,10 @@ function CreateExaminationPage({ examination }: any) {
     // Object.keys(initialValues).map(async (v) => {
     //   await formik.setFieldTouched(v, true);
     // });
+    if (codeList.length == 0 && code == "MultiCode") {
+      errorToast(t("list_code_not_empty"));
+      return;
+    }
     formik.handleSubmit();
   };
 
@@ -196,21 +241,21 @@ function CreateExaminationPage({ examination }: any) {
     initialValues,
     validate,
     onSubmit: async (values: FormValue) => {
-      var idAvatarThumbnail;
+      var idAvatarThumbnail = examination?.idAvatarThumbnail;
       setLoading(true);
       if (selectedAvatar) {
-        var idSessionData = await createSessionUpload();
-        if (idSessionData?.code != 0) {
-          errorToast(idSessionData?.message ?? "");
-          setLoading(false);
-          return;
-        }
-        var idSession = idSessionData?.data;
+        // var idSessionData = await createSessionUpload();
+        // if (idSessionData?.code != 0) {
+        //   errorToast(idSessionData?.message ?? "");
+        //   setLoading(false);
+        //   return;
+        // }
+        // var idSession = idSessionData?.data;
         var formData = new FormData();
         formData.append("files", selectedAvatar);
-        var avatarIdData = await uploadStudioDocument(idSession, formData);
+        var avatarIdData = await uploadStudioDocument(sessionId, formData);
         if (avatarIdData.code != 0) {
-          errorToast(idSessionData?.message ?? "");
+          errorToast(avatarIdData?.message ?? "");
           setLoading(false);
           return;
         }
@@ -239,11 +284,12 @@ function CreateExaminationPage({ examination }: any) {
 
       const submitData: ExaminationFormData = {
         id: examination?.id,
+        accessCodeSettingType: code,
         isActive: active,
         accessCodeSettings:
-          code == 0
+          code == "None"
             ? []
-            : code == 1
+            : code == "One"
               ? [
                   {
                     //TODO: sửa sau cái này để vì _id trong studio là ownerId
@@ -290,6 +336,7 @@ function CreateExaminationPage({ examination }: any) {
         },
         idExam:
           exam?.id ?? examination?.id ?? search.get("examId") ?? undefined,
+        idSession: sessionId,
       };
 
       console.log("submitData", submitData);
@@ -312,7 +359,7 @@ function CreateExaminationPage({ examination }: any) {
           : common.t("success_create_new"),
       );
       setLoading(false);
-      router.push("/examination");
+      router.push("/examination/details");
     },
   });
 
@@ -382,7 +429,9 @@ function CreateExaminationPage({ examination }: any) {
         />
         <div className=" mt-3 mb-4 flex max-lg:px-5 w-full justify-between ">
           <div className="w-full flex flex-col">
-            <div className=" body_semibold_20">{t("create_exam")}</div>
+            <div className=" body_semibold_20">
+              {examination ? examination?.name : t("create_examination")}
+            </div>
             {examination ? (
               <div className="flex mt-2">
                 <Switch checked={active} onChange={(v) => setActive(v)} />{" "}
@@ -394,7 +443,7 @@ function CreateExaminationPage({ examination }: any) {
             <MButton
               h="h-11"
               onClick={() => {
-                router.back();
+                router.push("/examination");
               }}
               type="secondary"
               text={t("reject")}
@@ -454,7 +503,7 @@ function CreateExaminationPage({ examination }: any) {
           <div className="max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-6 col-span-12 bg-white h-fit rounded-lg">
             <MTextArea
               // defaultValue={exam?.name}
-              maxLength={225}
+              maxLength={255}
               required
               placeholder={t("enter_examination_name")}
               id="examination_name"
@@ -462,7 +511,7 @@ function CreateExaminationPage({ examination }: any) {
               title={t("examination_name")}
               action={
                 <div className="body_regular_14 text-m_neutral_500">
-                  {`${formik.values["examination_name"]?.length ?? 0}/225`}
+                  {`${formik.values["examination_name"]?.length ?? 0}/255`}
                 </div>
               }
               formik={formik}

@@ -66,6 +66,7 @@ export interface ExamData {
   updateTime?: string;
   updateBy?: string;
   studioId?: string;
+  idSession?: string;
 }
 
 export interface ExamVersion {
@@ -101,6 +102,7 @@ export interface ExamVersion {
 
 export interface ExaminationData {
   id?: string;
+  idSession?: string;
   updateTime?: string;
   createdTime?: string;
   examVersion?: ExamVersion;

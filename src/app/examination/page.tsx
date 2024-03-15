@@ -17,7 +17,7 @@ import CalendarIcon from "../components/icons/calendar.svg";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import { ExamGroupData, ExaminationData } from "@/data/exam";
-import { useDispatch } from "react-redux";
+import copy from "copy-text-to-clipboard";
 import {
   fetchDataExamGroup,
   setExamGroupLoading,
@@ -36,6 +36,7 @@ import { ExaminationFormData } from "@/data/form_interface";
 import { FormattedDate } from "react-intl";
 import ConfirmModal from "../components/modals/ConfirmModal";
 import dayjs from "dayjs";
+import toast from "react-hot-toast";
 
 function ExaminationPage() {
   const router = useRouter();
@@ -65,15 +66,27 @@ function ExaminationPage() {
     if (init) {
       setLoading(true);
     }
-    const dataExamination: APIResults = await getExaminationTestList({
-      "FilterByName.InValues": search,
-      "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
-      "FilterByExamGroupId.Name": "Name",
-      "Paging.RecordPerPage": recordNum,
-      "Paging.StartIndex": (indexPage - 1) * recordNum,
-      "SorterByName.isAsc": sort == "name" ? true : undefined,
-      "SorterByCreateTime.IsAsc": sort == "time" ? true : undefined,
-    });
+    const dataExamination: APIResults = await getExaminationTestList(
+      search
+        ? {
+            "FilterByName.Name": "Name",
+            "FilterByName.InValues": search ?? undefined,
+            "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
+            "FilterByExamGroupId.Name": "Name",
+            "Paging.RecordPerPage": recordNum,
+            "Paging.StartIndex": (indexPage - 1) * recordNum,
+            "SorterByName.isAsc": sort == "name" ? true : undefined,
+            "SorterByCreateTime.IsAsc": sort == "time" ? true : undefined,
+          }
+        : {
+            "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
+            "FilterByExamGroupId.Name": "Name",
+            "Paging.RecordPerPage": recordNum,
+            "Paging.StartIndex": (indexPage - 1) * recordNum,
+            "SorterByName.isAsc": sort == "name" ? true : undefined,
+            "SorterByCreateTime.IsAsc": sort == "time" ? true : undefined,
+          },
+    );
     console.log("exminationlist", dataExamination);
     if (dataExamination?.code != 0) {
       setLoading(false);
@@ -157,8 +170,42 @@ function ExaminationPage() {
     successToast(common.t("delete_success_examination"));
   };
 
+  const [dupLoading, setDupLoading] = useState<boolean>(false);
+  const [openDup, setOpenDup] = useState<boolean>(false);
+
+  const handleDuplicate = async () => {
+    var submitData: ExaminationFormData = {
+      ...active,
+      name: active?.name + " Copy",
+    };
+    setDupLoading(true);
+
+    var data = await createExamination(submitData);
+    if (data?.code != 0) {
+      errorToast(data?.message ?? "");
+      setActive(undefined);
+      setDupLoading(false);
+      return;
+    }
+    setDupLoading(false);
+    successToast(common.t("success_create_new"));
+    setActive(undefined);
+    loadExamination(false);
+    setOpenDup(false);
+  };
   return (
     <HomeLayout>
+      <ConfirmModal
+        action={common.t("duplicate")}
+        loading={dupLoading}
+        text={t("confirm_dup_examination")}
+        open={openDup}
+        onCancel={() => {
+          setActive(undefined);
+          setOpenDup(false);
+        }}
+        onOk={handleDuplicate}
+      />
       <ConfirmModal
         loading={deleteLoading}
         text={t("confirm_delete_examination")}
@@ -282,7 +329,7 @@ function ExaminationPage() {
                     <div className="w-full justify-start my-3 flex max-lg:flex-wrap">
                       <div className="flex ">
                         <CalendarIcon />
-                        <span className="ml-2">
+                        <span className="body_regular_14 ml-2">
                           <FormattedDate
                             value={v?.createdTime}
                             day="2-digit"
@@ -291,8 +338,8 @@ function ExaminationPage() {
                           />
                         </span>
                       </div>
-                      <div className="flex">
-                        <span className="mx-4">
+                      <div className="flex mx-4">
+                        <span className="mx-4 body_regular_14">
                           {!v?.validAccessSetting?.validFrom &&
                           !v?.validAccessSetting?.validTo
                             ? t("no_limit_time")
@@ -306,7 +353,15 @@ function ExaminationPage() {
                       <div className="flex">
                         <LinkIcon />
 
-                        <span className="ml-2">{v?.linkJoinTest ?? ""}</span>
+                        <button
+                          onClick={() => {
+                            copy(v?.linkJoinTest ?? "");
+                            toast(common?.t("success_copy"));
+                          }}
+                          className="ml-2 body_regular_14 cursor-copy"
+                        >
+                          {v?.linkJoinTest ?? ""}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -323,18 +378,8 @@ function ExaminationPage() {
                     <button
                       onClick={async (e) => {
                         e.stopPropagation();
-                        var submitData: ExaminationFormData = {
-                          ...v,
-                          name: v?.name + " Copy",
-                        };
-
-                        var data = await createExamination(submitData);
-                        if (data?.code != 0) {
-                          errorToast(data?.message ?? "");
-                          return;
-                        }
-                        successToast(common.t("success_create_new"));
-                        loadExamination(false);
+                        setActive(v);
+                        setOpenDup(true);
                       }}
                     >
                       <CopyIcon />
@@ -353,10 +398,19 @@ function ExaminationPage() {
                   </div>
                   <div className="mx-4">
                     <Switch
+                      className="scale-[1.18]"
                       onChange={async (t: any) => {
                         console.log("t", t);
 
-                        await updateExamination({ ...v, isActive: t });
+                        var data = await updateExamination({
+                          ...v,
+                          isActive: t,
+                        });
+                        if (data?.code != 0) {
+                          errorToast(data?.message ?? "");
+                          return;
+                        }
+
                         loadExamination(false);
                       }}
                       value={v?.isActive ?? false}
@@ -370,12 +424,22 @@ function ExaminationPage() {
           })
         )}
         {list.length != 0 && (
-          <div className="w-full flex lg:justify-between justify-center">
-            <div className="hidden lg:flex items-center">
-              <span className="body_regular_14 mr-2">{`${total} ${t(
-                "result",
-              )}`}</span>
+          <div className="w-full flex h-12 items-center  justify-center">
+            <span className="body_regular_14 mr-2">{`${total} ${t(
+              "result",
+            )}`}</span>
+            <Pagination
+              pageSize={recordNum}
+              onChange={(v) => {
+                setIndexPage(v);
+              }}
+              current={indexPage}
+              total={total}
+              showSizeChanger={false}
+            />
+            <div className="hidden ml-2 h-12 lg:flex items-center">
               <Select
+                rootClassName="m-0 p-0"
                 onChange={(v) => {
                   setRecordNum(v);
                 }}
@@ -390,21 +454,13 @@ function ExaminationPage() {
                     ),
                   })),
                 ]}
-                className="min-w-[124px]"
+                className="select-page min-w-[124px]"
               />
             </div>
-            <Pagination
-              pageSize={recordNum}
-              onChange={(v) => {
-                setIndexPage(v);
-              }}
-              current={indexPage}
-              total={total}
-              showSizeChanger={false}
-            />
           </div>
         )}
       </div>
+      <div className="h-16" />
     </HomeLayout>
   );
 }

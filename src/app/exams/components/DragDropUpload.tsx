@@ -7,6 +7,7 @@ import CloseIcon from "../../components/icons/close.svg";
 import { FormattedNumber } from "react-intl";
 import Link from "next/link";
 import {
+  deleteDocumentById,
   downloadStudioDocument,
   uploadStudioDocument,
 } from "@/services/api_services/examination_api";
@@ -85,7 +86,7 @@ function DragDropUpload({
     <>
       <input
         multiple
-        accept=".xlsx, .pdf, .docx, ppt"
+        accept=".xlsx, .pdf, .docx, ppt, pptx"
         type="file"
         ref={fileRef}
         style={{ display: "none" }}
@@ -137,6 +138,7 @@ function DragDropUpload({
           deleteDoc={async (e: any) => {
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
+            await deleteDocumentById(u);
             setUploaded(uploaded.filter((c) => c != u));
           }}
         />
@@ -150,7 +152,7 @@ function DragDropUpload({
           deleteDoc={async (e: any) => {
             console.log(e);
             console.log(files);
-
+            await deleteDocumentById(v?.id ?? "");
             // e.stopPropagation();
             // e.nativeEvent.stopImmediatePropagation();
             setFiles(files.filter((c) => c?.id != v?.id));

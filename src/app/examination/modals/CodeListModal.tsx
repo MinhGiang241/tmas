@@ -26,18 +26,19 @@ function CodeListModal(props: Props) {
   const columns: ColumnsType<ExaminationCode> = [
     {
       onHeaderCell: (_) => rowStartStyle,
-      title: <div className="w-full flex justify-start">{t("code")}</div>,
+      width: "33.33%",
+      title: <div className="w-1/3 flex justify-start">{t("code")}</div>,
       dataIndex: "code",
       key: "code",
       render: (text, data) => (
-        <p key={text} className="min-w-24 caption_regular_14">
+        <p key={text} className="w-full caption_regular_14">
           {text}
         </p>
       ),
     },
     {
       onHeaderCell: (_) => rowStyle,
-
+      width: "33.33%",
       title: (
         <div className="w-full flex justify-center">
           {common.t("created_date")}
@@ -46,7 +47,10 @@ function CodeListModal(props: Props) {
       dataIndex: "createdDate",
       key: "createdDate",
       render: (text) => (
-        <p key={text} className="flex justify-center caption_regular_14">
+        <p
+          key={text}
+          className="w-full  flex justify-center caption_regular_14"
+        >
           <FormattedDate
             value={text}
             day="2-digit"
@@ -59,13 +63,14 @@ function CodeListModal(props: Props) {
 
     {
       onHeaderCell: (_) => rowEndStyle,
+      width: "33.33%",
       title: (
-        <div className="w-full flex justify-end">{common.t("action")}</div>
+        <div className="w-full  flex justify-end">{common.t("action")}</div>
       ),
       dataIndex: "schema",
       key: "schema",
       render: (action, data) => (
-        <div className="flex justify-end min-w-16">
+        <div className="w-full flex justify-end ">
           <button
             className="ml-2"
             onClick={() => {
@@ -103,11 +108,20 @@ function CodeListModal(props: Props) {
         }
       />
       <div className="h-8" />
-      <div className="w-full flex lg:justify-between justify-center">
-        <div className="hidden lg:flex items-center">
-          <span className="body_regular_14 mr-2">{`${props.list?.length} ${t(
-            "result",
-          )}`}</span>
+      <div className="w-full flex items-center justify-center">
+        <span className="body_regular_14 mr-2">{`${props.list?.length} ${t(
+          "result",
+        )}`}</span>
+        <Pagination
+          pageSize={recordNum}
+          onChange={(v) => {
+            setIndexPage(v);
+          }}
+          current={indexPage}
+          total={props.list?.length}
+          showSizeChanger={false}
+        />
+        <div className="hidden ml-2 lg:flex items-center">
           <Select
             value={recordNum}
             onChange={(v) => {
@@ -124,18 +138,9 @@ function CodeListModal(props: Props) {
                 ),
               })),
             ]}
-            className="min-w-[124px]"
+            className="select-page min-w-[124px]"
           />
         </div>
-        <Pagination
-          pageSize={recordNum}
-          onChange={(v) => {
-            setIndexPage(v);
-          }}
-          current={indexPage}
-          total={props.list?.length}
-          showSizeChanger={false}
-        />
       </div>
     </BaseModal>
   );
