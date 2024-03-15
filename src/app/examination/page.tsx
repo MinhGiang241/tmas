@@ -311,6 +311,11 @@ function ExaminationPage() {
           </div>
         ) : (
           Array.from(list).map((v: ExaminationData, i: number) => {
+            console.log(
+              "compare",
+              dayjs(v?.validAccessSetting?.validTo).isAfter(Date()),
+            );
+
             return (
               <div
                 key={i}
@@ -321,9 +326,16 @@ function ExaminationPage() {
                     <div className="flex items-center ">
                       <div
                         className={`ml-1 mr-3 rounded-[50%] w-3 h-3 ${
-                          v?.isActive ? "bg-m_success_500" : "bg-m_neutral_300"
+                          v?.isActive &&
+                          (!v?.validAccessSetting?.validTo ||
+                            dayjs(v?.validAccessSetting?.validTo).isAfter(
+                              Date(),
+                            ))
+                            ? "bg-m_success_500"
+                            : "bg-m_neutral_300"
                         }`}
                       />
+
                       <div className="body_semibold_16">{v.name}</div>
                     </div>
                     <div className="w-full justify-start my-3 flex max-lg:flex-wrap">

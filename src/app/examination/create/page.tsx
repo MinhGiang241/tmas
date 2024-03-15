@@ -434,8 +434,8 @@ function CreateExaminationPage({ examination }: any) {
             </div>
             {examination ? (
               <div className="flex mt-2">
+                <span className="mr-2">{t("activate")}</span>
                 <Switch checked={active} onChange={(v) => setActive(v)} />{" "}
-                <span className="ml-2">{t("activate")}</span>
               </div>
             ) : null}
           </div>
