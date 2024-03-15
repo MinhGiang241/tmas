@@ -3,6 +3,10 @@ const nextConfig = {
   output: "standalone",
   images: { unoptimized: true },
   reactStrictMode: true,
+  server: {
+    host: "localhost",
+    port: 3000,
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
