@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 import CalendarIcon from "@/app/components/icons/calendar-black.svg";
+import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 
 interface Props {
   startTime?: string;
@@ -63,8 +64,8 @@ function ValidExamination({
                 {t("valid_examination")}
               </div>
               <div className="body_regular_14 text-m_neutral_500">
-                {!startTime && !endTime
-                  ? t("no_have")
+                {!formik.values["start_time"] && !formik.values["end_time"]
+                  ? t("no_limit_time")
                   : `${startTime ?? ""} - ${endTime ?? ""}`}
               </div>
             </div>
@@ -74,6 +75,26 @@ function ValidExamination({
             <div className="body_regular_14 text-m_neutral_500">
               {t("not_select_time")}
             </div>
+            <div className="w-full mt-3 flex justify-between">
+              <MDateTimeSelect
+                placeholder={t("start_time")}
+                h="h-9"
+                id="start_time"
+                name="start_time"
+                formik={formik}
+                value={startTime ? dayjs(startTime, dateFormat) : undefined}
+              />
+              <div className="w-8" />
+              <MDateTimeSelect
+                placeholder={t("end_time")}
+                h="h-9"
+                id="end_time"
+                name="end_time"
+                formik={formik}
+                value={startTime ? dayjs(startTime, dateFormat) : undefined}
+              />
+            </div>
+            {/*
             <div className="w-full mt-3 flex justify-between">
               <DatePicker
                 suffixIcon={<CalendarIcon />}
@@ -97,9 +118,11 @@ function ValidExamination({
                 onChange={onChangeEnd}
                 onOk={onOkEnd}
                 className="h-9 rounded-lg w-full"
-              />
+              /> 
             </div>
-            <div className="h-3" />
+ <div className="h-3" />
+            */}
+
             <MDropdown
               formik={formik}
               h="h-9"

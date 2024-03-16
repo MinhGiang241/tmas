@@ -403,9 +403,13 @@ function ExamsPage() {
                       </div>
                     }
                   >
-                    {!v?.examinations || v?.examinations?.length == 0 ? (
+                    {v?.numberOfTests == 0 ? (
                       <div className="w-full text-m_error_500 italic text-sm">
                         {t("no_examination")}
+                      </div>
+                    ) : !v?.examinations || v?.examinations?.length == 0 ? (
+                      <div>
+                        <Spin />
                       </div>
                     ) : (
                       Array.from(v?.examinations).map(

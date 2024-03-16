@@ -36,7 +36,7 @@ function RequireInfo({ value, setValue }: { value: any[]; setValue?: any }) {
               </div>
               <div className="body_regular_14 text-wrap max-w-80 text-m_neutral_500">
                 {value.length == 0
-                  ? t("no_have")
+                  ? ""
                   : value
                       .sort((d: any, r: any) => d - r)
                       .map((i: any) => {

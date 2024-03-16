@@ -44,7 +44,7 @@ function ResultTest({
               </div>
               <div className="body_regular_14 text-m_neutral_500">
                 {checkedList.length == 0
-                  ? t("no_have")
+                  ? ""
                   : checkedList
                       .sort((d: any, r: any) => d - r)
                       .map((i: any) => {

@@ -198,7 +198,7 @@ function CreateExaminationPage({ examination }: any) {
     turn_per_code:
       examination?.accessCodeSettings &&
       examination?.accessCodeSettingType == "MultiCode"
-        ? examination?.accessCodeSettings[0].limitOfAccess?.toString()
+        ? examination?.accessCodeSettings[0]?.limitOfAccess?.toString()
         : undefined,
   };
 
@@ -222,6 +222,13 @@ function CreateExaminationPage({ examination }: any) {
     if (!values.turn_per_code && code == "MultiCode") {
       errors.turn_per_code = "common_not_empty";
     }
+    if (values?.start_time && !values?.end_time) {
+      errors.end_time = "common_not_empty";
+    }
+    if (!values?.start_time && values?.end_time) {
+      errors.start_time = "common_not_empty";
+    }
+
     return errors;
   };
   const onSubmit = (e: any) => {
@@ -244,18 +251,12 @@ function CreateExaminationPage({ examination }: any) {
       var idAvatarThumbnail = examination?.idAvatarThumbnail;
       setLoading(true);
       if (selectedAvatar) {
-        // var idSessionData = await createSessionUpload();
-        // if (idSessionData?.code != 0) {
-        //   errorToast(idSessionData?.message ?? "");
-        //   setLoading(false);
-        //   return;
-        // }
-        // var idSession = idSessionData?.data;
         var formData = new FormData();
         formData.append("files", selectedAvatar);
         var avatarIdData = await uploadStudioDocument(sessionId, formData);
         if (avatarIdData.code != 0) {
           errorToast(avatarIdData?.message ?? "");
+          createSessionId();
           setLoading(false);
           return;
         }
@@ -329,11 +330,11 @@ function CreateExaminationPage({ examination }: any) {
         testResultSetting,
         validAccessSetting: {
           ipWhiteLists: formik.values["ips"],
-          validFrom: startTime
-            ? dayjs(startTime, dateFormat).toISOString()
+          validFrom: values.start_time
+            ? dayjs(values?.start_time, dateFormat).toISOString()
             : undefined,
-          validTo: endTime
-            ? dayjs(endTime, dateFormat).toISOString()
+          validTo: values?.end_time
+            ? dayjs(values?.end_time, dateFormat).toISOString()
             : undefined,
         },
         idExam:

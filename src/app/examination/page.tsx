@@ -77,7 +77,7 @@ function ExaminationPage() {
             "Paging.RecordPerPage": recordNum,
             "Paging.StartIndex": (indexPage - 1) * recordNum,
             "SorterByName.isAsc": sort == "name" ? true : undefined,
-            "SorterByCreateTime.IsAsc": sort == "time" ? true : undefined,
+            "SorterByCreateTime.IsAsc": sort == "time" ? false : undefined,
           }
         : {
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
@@ -85,7 +85,7 @@ function ExaminationPage() {
             "Paging.RecordPerPage": recordNum,
             "Paging.StartIndex": (indexPage - 1) * recordNum,
             "SorterByName.isAsc": sort == "name" ? true : undefined,
-            "SorterByCreateTime.IsAsc": sort == "time" ? true : undefined,
+            "SorterByCreateTime.IsAsc": sort == "time" ? false : undefined,
           },
     );
     console.log("exminationlist", dataExamination);
