@@ -123,6 +123,9 @@ function CodeListModal(props: Props) {
         />
         <div className="hidden ml-2 lg:flex items-center">
           <Select
+            optionRender={(oriOption) => (
+              <div className="flex justify-center">{oriOption?.label}</div>
+            )}
             value={recordNum}
             onChange={(v) => {
               setRecordNum(v);

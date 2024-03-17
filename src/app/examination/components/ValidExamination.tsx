@@ -65,7 +65,7 @@ function ValidExamination({
               </div>
               <div className="body_regular_14 text-m_neutral_500">
                 {!formik.values["start_time"] && !formik.values["end_time"]
-                  ? t("no_limit_time")
+                  ? t("no_limit")
                   : `${startTime ?? ""} - ${endTime ?? ""}`}
               </div>
             </div>

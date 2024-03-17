@@ -438,6 +438,7 @@ function ExaminationPage() {
               "result",
             )}`}</span>
             <Pagination
+              i18nIsDynamicList
               pageSize={recordNum}
               onChange={(v) => {
                 setIndexPage(v);
@@ -448,6 +449,9 @@ function ExaminationPage() {
             />
             <div className="hidden ml-2 h-12 lg:flex items-center">
               <Select
+                optionRender={(oriOption) => (
+                  <div className="flex justify-center">{oriOption?.label}</div>
+                )}
                 rootClassName="m-0 p-0"
                 onChange={(v) => {
                   setRecordNum(v);
@@ -457,7 +461,7 @@ function ExaminationPage() {
                   ...[15, 25, 30, 50, 100].map((i: number) => ({
                     value: i,
                     label: (
-                      <span className="body_regular_14">{`${i}/${common.t(
+                      <span className=" body_regular_14">{`${i}/${common.t(
                         "page",
                       )}`}</span>
                     ),

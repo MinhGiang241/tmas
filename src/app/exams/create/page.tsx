@@ -127,6 +127,9 @@ function CreatePage({ exam, isEdit }: any) {
     if (!values.exam_group?.trim()) {
       errors.exam_group = "common_not_empty";
     }
+    if (values?.tag && values?.tag?.length > 10) {
+      errors.tag = "tag_limit";
+    }
 
     return errors;
   };
@@ -462,6 +465,7 @@ function CreatePage({ exam, isEdit }: any) {
           />
 
           <MDropdown
+            namespace="exam"
             onSearch={onSearchTags}
             options={optionTag}
             mode="tags"
