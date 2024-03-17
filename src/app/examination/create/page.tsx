@@ -346,12 +346,13 @@ function CreateExaminationPage({ examination }: any) {
 
       // setLoading(false);
       // return;
-      //TODO: Tạm tắt update vì đang lổi api chỗ A Dũng và Tiệp
+
       var dataResults = examination?.id
         ? await updateExamination(submitData)
         : await createExamination(submitData);
       if (dataResults?.code != 0) {
         setLoading(false);
+        createSessionId();
         errorToast(dataResults?.message ?? "");
         return;
       }
