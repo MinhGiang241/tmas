@@ -45,6 +45,7 @@ export interface ExamListDataResult {
 
 export interface ExamData {
   examinations?: ExaminationData[];
+  changePositionQuestion?: boolean;
   name?: string;
   numberOfTests?: number;
   numberOfQuestions?: number;

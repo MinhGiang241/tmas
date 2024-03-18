@@ -128,5 +128,8 @@
   "min_max_one_code": "Số lượng ký tự lớn hơn 3 và nhỏ hơn 255",
   "list_code_not_empty": "Danh sách mã truy cập không được để trống",
   "tag_limit": "Chỉ có thể có tối da 10 tag",
-  "no_limit": "Không giới hạn"
+  "no_limit": "Không giới hạn",
+  "transfer_past": "Chuyển phần",
+  "transfer_free": "Chuyển phần tư do: mặc định lựa chọn, ứng viên có thể làm các phần theo thứ tự tùy chọn",
+  "transfer_turn": "Lần lượt các phần: ứng viên không thể quay lại làm các phần thi trước"
 }

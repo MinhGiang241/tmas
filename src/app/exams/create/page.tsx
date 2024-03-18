@@ -57,6 +57,7 @@ function CreatePage({ exam, isEdit }: any) {
   const [uploaded, setUploaded] = useState<any>([]);
   const [audio, setAudio] = useState<any>(exam?.playAudio ?? "OnlyOneTime");
   const [lang, setLang] = useState<any>(exam?.language ?? "Vietnamese");
+  const [transfer, setTransfer] = useState<any>("FreeByUser");
   const [page, setPage] = useState<any>(
     exam?.examViewQuestionType ?? "SinglePage",
   );
@@ -91,7 +92,8 @@ function CreatePage({ exam, isEdit }: any) {
       setAudio(exam?.playAudio);
       setLang(exam?.language);
       setPage(exam?.examViewQuestionType);
-      setSw(exam?.examNextQuestion != "FreeByUser" ? true : false);
+      setSw(exam?.changePositionQuestion ?? false);
+      setTransfer(exam?.examNextQuestion ?? "FreeByUser");
       setUploaded(exam?.idDocuments ?? []);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,7 +159,8 @@ function CreatePage({ exam, isEdit }: any) {
           : [],
         tags: values.tag ?? [],
         //  idTags: tagUpdate?.data ?? [],
-        examNextQuestion: sw ? "ByOrderQuestion" : "FreeByUser",
+        examNextQuestion: transfer,
+        changePositionQuestion: sw,
         examViewQuestionType: page as "SinglePage" | "MultiplePages",
         timeLimitMinutes: values?.test_time
           ? parseInt(values?.test_time)
@@ -184,7 +187,7 @@ function CreatePage({ exam, isEdit }: any) {
         successToast(common.t("success_create_new"));
       }
       setLoading(false);
-      router.push("/exams");
+      router.push("/exams/details");
     },
   });
 
@@ -385,6 +388,24 @@ function CreatePage({ exam, isEdit }: any) {
               setSw(v);
             }}
           />
+
+          <div className="body_semibold_14 mb-2 mt-3">{t("transfer_past")}</div>
+          <Radio.Group
+            buttonStyle="solid"
+            onChange={(v) => {
+              setTransfer(v.target.value);
+            }}
+            value={transfer}
+          >
+            <Space direction="vertical">
+              <Radio className=" caption_regular_14" value={"FreeByUser"}>
+                {t("transfer_free")}
+              </Radio>
+              <Radio className=" caption_regular_14" value={"ByOrderQuestion"}>
+                {t("transfer_turn")}
+              </Radio>
+            </Space>
+          </Radio.Group>
 
           <div className="body_semibold_14 mb-2 mt-3">
             {common.t("language")}

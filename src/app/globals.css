@@ -194,6 +194,11 @@ body {
   border-radius: 6px;
 }
 
+/* .ant-radio-wrapper { */
+/*   display: flex !important; */
+/*   align-items: start !important; */
+/* } */
+
 .select-page .ant-select-selection-item {
   display: flex;
   justify-content: center;

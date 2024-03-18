@@ -128,7 +128,7 @@ function ExaminationCodePage({
               <>
                 <div className="flex">
                   {codeList.length != 0 && <div className="mt-2" />}
-                  <div className="w-full  flex flex-nowrap items-center  overflow-hidden">
+                  <div className="flex flex-nowrap items-center  overflow-hidden">
                     {codeList.map((v: any, i: number) => (
                       <div
                         className="p-1 mr-1  border border-m_neutral_200 rounded-md"
@@ -137,25 +137,25 @@ function ExaminationCodePage({
                         {v?.code}
                       </div>
                     ))}
-                    {codeList.length > 0 && (
-                      <button
-                        onClick={() => {
-                          setOpenCodeList(true);
-                        }}
-                        className="ml-2 text-m_primary_500 underline-offset-4 underline"
-                      >
-                        {common.t("all")}
-                      </button>
-                    )}
                   </div>
-                  <div className="pl-3 flex items-center text-m_primary_500 min-w-24 ">
+                  {codeList.length > 0 && (
                     <button
-                      onClick={() => setOpenCreateCode(true)}
-                      className="underline font-semibold underline-offset-4"
+                      onClick={() => {
+                        setOpenCodeList(true);
+                      }}
+                      className="ml-2 min-w-12 text-m_primary_500 underline-offset-4 underline"
                     >
-                      <PlusOutlined /> {t("create_code")}
+                      {common.t("all")}
                     </button>
-                  </div>
+                  )}
+                </div>
+                <div className="my-2 flex items-center text-m_primary_500 min-w-24 ">
+                  <button
+                    onClick={() => setOpenCreateCode(true)}
+                    className="underline font-semibold underline-offset-4"
+                  >
+                    <PlusOutlined /> {t("create_code")}
+                  </button>
                 </div>
                 <MInput
                   required={true}

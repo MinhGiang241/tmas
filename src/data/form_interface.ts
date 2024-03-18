@@ -48,6 +48,7 @@ export interface ExamFormData {
   id?: string;
   studioId?: string;
   description?: string;
+  changePositionQuestion?: boolean;
   examNextQuestion?: "FreeByUser" | "ByOrderQuestion";
   examViewQuestionType?: "SinglePage" | "MultiplePages";
   externalLinks?: string[];
