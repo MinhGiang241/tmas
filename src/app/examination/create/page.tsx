@@ -363,7 +363,11 @@ function CreateExaminationPage({ examination }: any) {
           : common.t("success_create_new"),
       );
       setLoading(false);
-      router.push("/examination/details");
+      if (exam) {
+        createSessionId();
+        router?.refresh();
+      }
+      router.push(`/examination/${dataResults?.data}`);
     },
   });
 

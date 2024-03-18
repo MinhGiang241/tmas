@@ -131,5 +131,14 @@
   "no_limit": "Không giới hạn",
   "transfer_past": "Chuyển phần",
   "transfer_free": "Chuyển phần tư do: mặc định lựa chọn, ứng viên có thể làm các phần theo thứ tự tùy chọn",
-  "transfer_turn": "Lần lượt các phần: ứng viên không thể quay lại làm các phần thi trước"
+  "transfer_turn": "Lần lượt các phần: ứng viên không thể quay lại làm các phần thi trước",
+  "manual_add": "Thêm thủ công",
+  "many_results": "Nhiều đáp án",
+  "true_false": "Đúng sai",
+  "connect_quest": "Ghép/nối",
+  "explain": "Tự luận",
+  "coding": "Coding",
+  "sql": "SQL",
+  "fill_blank": "Điền vào chỗ trống",
+  "random": "Ngẫu nhiên"
 }

@@ -62,7 +62,7 @@ function CreatePage({ exam, isEdit }: any) {
     exam?.examViewQuestionType ?? "SinglePage",
   );
   const [sw, setSw] = useState<boolean>(
-    !exam ? false : exam?.examNextQuestion != "FreeByUser" ? true : false,
+    !exam ? false : exam?.changePositionQuestion ?? false,
   );
   const [files, setFiles] = useState([]);
   const [idSession, setIdSession] = useState<string | undefined>();
@@ -187,7 +187,7 @@ function CreatePage({ exam, isEdit }: any) {
         successToast(common.t("success_create_new"));
       }
       setLoading(false);
-      router.push("/exams/details");
+      router.push(`/exams/details/${results?.data}`);
     },
   });
 

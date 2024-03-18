@@ -2,7 +2,10 @@ import React, { useEffect } from "react";
 import { useQuill } from "react-quilljs";
 import BlotFormatter from "quill-blot-formatter";
 import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
 import { FormikErrors } from "formik";
+import { Montserrat } from "next/font/google";
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 interface Props {
   className?: string;
@@ -23,6 +26,7 @@ interface Props {
   extend?: boolean;
   defaultValue?: string;
   namespace?: string;
+  isBubble?: boolean;
   setValue?: (
     field: string,
     value: any,
@@ -46,7 +50,9 @@ const Editor = ({
   touch,
   setValue,
   maxLength = 500,
+  isBubble = false,
   defaultValue,
+  placeholder,
 }: Props) => {
   var np;
   var er;
@@ -68,6 +74,8 @@ const Editor = ({
 
   const { quill, quillRef, Quill } = useQuill({
     modules: { blotFormatter: {} },
+    theme: isBubble ? "bubble" : "snow",
+    placeholder: placeholder,
   });
 
   if (Quill && !quill) {
@@ -109,7 +117,9 @@ const Editor = ({
           (quill?.getLength() ?? 0) - 1
         }/${maxLength}`}</div>
       </div>
-      <div ref={quillRef} />
+      <div className="custom-ql-snow">
+        <div className={`${montserrat.className}`} ref={quillRef} />
+      </div>
     </div>
   );
 };
