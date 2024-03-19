@@ -60,7 +60,7 @@ function ConnectQuestion() {
         </div>
         <div className="mb-3 body_regular_14">{t("many_result_intro")}</div>
         <div className="border rounded-lg p-4">
-          <div className="w-full flex">
+          <div className="w-full flex relative z-10">
             <div className="w-1/2">
               {numResults?.map((s: any, i: number) => (
                 <div
@@ -124,7 +124,7 @@ function ConnectQuestion() {
                   </button>
                 </div>
               ))}
-              <div className="w-full flex justify-end ">
+              <div className="w-full flex justify-end  ">
                 <button
                   onClick={() => {
                     setTextResults([...textResults, 1]);
@@ -144,12 +144,12 @@ function ConnectQuestion() {
               <p className="w-14 body_semibold_14 mr-3 ">{i + 1}.</p>
               <CheckboxGroup
                 // value={checkedResults}
-                rootClassName="flex items-center"
+                rootClassName="flex items-center "
                 // onChange={onChangeCheckResult}
               >
                 {textResults.map((b: any, i: number) => (
                   <>
-                    <p className="body_semibold_14">
+                    <p className="body_semibold_14 relative z-0">
                       {String.fromCharCode(65 + i)}.
                     </p>
                     <Checkbox key={i} value={i}></Checkbox>
