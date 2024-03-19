@@ -5,15 +5,22 @@ import { errorToast } from "@/app/components/toast/customToast";
 import HomeLayout from "@/app/layouts/HomeLayout";
 import { ExamData } from "@/data/exam";
 import { getExamById } from "@/services/api_services/examination_api";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CodingQuestion from "./questions_components/CodingQuestion";
+import SqlQuestion from "./questions_components/SqlQuestion";
+import ManyResultsQuestion from "./questions_components/ManyResultsQuestion";
+import TrueFalseQuestion from "./questions_components/TrueFalseQuestion";
+import ExplainQuestion from "./questions_components/ExplainQuestion";
+import ConnectQuestion from "./questions_components/ConnectQuestion";
 
 function CreateQuestionPage({ params }: any) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const router = useRouter();
+  var search = useSearchParams();
+  var question = search.get("question");
 
   const [exam, setExam] = useState<ExamData | undefined>();
 
@@ -35,17 +42,17 @@ function CreateQuestionPage({ params }: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [activeTab, setActiveTab] = useState<string>(t("many_results"));
+  const [activeTab, setActiveTab] = useState<string>("many_results");
 
   const questionList = [
-    t("many_results"),
-    t("true_false"),
-    t("connect_quest"),
-    t("explain"),
-    t("coding"),
-    t("sql"),
-    t("fill_blank"),
-    t("random"),
+    "many_results",
+    "true_false",
+    "connect_quest",
+    "explain",
+    "coding",
+    "sql",
+    "fill_blank",
+    "random",
   ];
   return (
     <HomeLayout>
@@ -85,19 +92,30 @@ function CreateQuestionPage({ params }: any) {
         {questionList.map((a: any, i: number) => (
           <button
             onClick={() => {
-              setActiveTab(a);
+              // setActiveTab(a);
+              router.push(`/exams/details/${params.id}/add?question=${a}`, {
+                scroll: false,
+              });
             }}
             className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 rounded-lg ${
-              activeTab == a ? "bg-m_primary_100" : "bg-white "
+              a == question ? "bg-m_primary_100" : "bg-white "
             }`}
             key={i}
           >
-            {a}
+            {t(a)}
           </button>
         ))}
       </div>
       <div className="h-4" />
-      {activeTab == t("coding") && <CodingQuestion />}
+      {(question == "many_results" ||
+        !questionList.some((a: any) => a == question)) && (
+        <ManyResultsQuestion />
+      )}
+      {question == "true_false" && <TrueFalseQuestion />}
+      {question == "explain" && <ExplainQuestion />}
+      {question == "connect_quest" && <ConnectQuestion />}
+      {question == "coding" && <CodingQuestion />}
+      {question == "sql" && <SqlQuestion />}
     </HomeLayout>
   );
 }

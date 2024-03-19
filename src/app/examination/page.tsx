@@ -322,7 +322,7 @@ function ExaminationPage() {
                   <div className="flex-1 items-start justify-start flex-grow flex flex-col">
                     <div className="flex items-center ">
                       <div
-                        className={`ml-1 mr-3 rounded-[50%] w-3 h-3 ${
+                        className={`ml-1 mr-3 rounded-[50%] min-w-3 w-3 h-3 ${
                           v?.isActive &&
                           (!v?.validAccessSetting?.validTo ||
                             dayjs(v?.validAccessSetting?.validTo).isAfter(

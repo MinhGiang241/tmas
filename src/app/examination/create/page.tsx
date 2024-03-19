@@ -417,7 +417,7 @@ function CreateExaminationPage({ examination }: any) {
             },
             {
               title: examination ? (
-                <button className="text-m_neutral_900 body_regular_14">
+                <button className="truncate lg:max-w-lg md:max-w-md sm:max-w-sm max-w-xs text-m_neutral_900 body_regular_14">
                   {examination?.name}
                 </button>
               ) : (
@@ -435,9 +435,9 @@ function CreateExaminationPage({ examination }: any) {
             },
           ]}
         />
-        <div className=" mt-3 mb-4 flex max-lg:px-5 w-full justify-between ">
+        <div className="max-lg:flex-wrap mt-3 mb-4 flex max-lg:px-5 w-full justify-between ">
           <div className="w-full flex flex-col">
-            <div className=" body_semibold_20">
+            <div className=" body_semibold_20 truncate lg:max-w-xl md:max-w-md max-w-sx ">
               {examination ? examination?.name : t("create_examination")}
             </div>
             {examination ? (
@@ -451,7 +451,7 @@ function CreateExaminationPage({ examination }: any) {
             <MButton
               h="h-11"
               onClick={() => {
-                router.push("/examination");
+                router.back();
               }}
               type="secondary"
               text={t("reject")}

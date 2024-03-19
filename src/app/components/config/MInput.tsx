@@ -34,10 +34,12 @@ interface Props {
   h?: string;
   loadingValidate?: boolean;
   extend?: boolean;
+  isTextRequire?: boolean;
   defaultValue?: string;
 }
 
 function MInput({
+  isTextRequire = true,
   disable,
   onChange,
   required = false,
@@ -183,7 +185,9 @@ function MInput({
         ) : (
           <div />
         )}
-        {extend && !(er && touch) && <div className="h-[20px]" />}
+        {extend && !(er && touch) && isTextRequire && (
+          <div className="h-[20px]" />
+        )}
       </div>
     </div>
   );
