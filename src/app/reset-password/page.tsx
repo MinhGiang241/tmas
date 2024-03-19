@@ -146,6 +146,12 @@ function ResetPasswordPage() {
       formik.handleSubmit();
     }
   };
+  const [captchaKey, setCaptchaKey] = useState<any>(Date.now());
+  useEffect(() => {
+    setCaptchaKey(Date.now());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18next.language]);
+
   return (
     <AuthLayout>
       <div className="mb-4 flex justify-between">
@@ -173,6 +179,7 @@ function ResetPasswordPage() {
           />
           <div className="mb-[18px]" />
           <ReCAPTCHA
+            key={captchaKey}
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
             onChange={setCaptcha}
             className="m-auto"

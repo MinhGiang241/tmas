@@ -37,6 +37,11 @@ function LoginPage() {
     email: undefined,
     password: undefined,
   };
+  const [capchKey, setCaptchaKey] = useState<any>(Date.now());
+  useEffect(() => {
+    setCaptchaKey(Date.now());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18next.language]);
   const validate = (values: LoginFormValue) => {
     const errors: FormikErrors<LoginFormValue> = {};
     if (!values.email?.trim()) {
@@ -186,6 +191,7 @@ function LoginPage() {
         <div className="h-5" />
         <div className="w-full flex flex-col justify-center items-center">
           <ReCAPTCHA
+            key={capchKey}
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
             onChange={setCaptcha}
             className="m-auto"
