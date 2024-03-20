@@ -29,11 +29,7 @@ interface Props {
   namespace?: string;
   isBubble?: boolean;
   isCount?: boolean;
-  setValue?: (
-    field: string,
-    value: any,
-    shouldValidate?: boolean | undefined,
-  ) => Promise<FormikErrors<any>> | Promise<void>;
+  setValue?: any;
 }
 
 const Editor = ({
@@ -119,6 +115,7 @@ const Editor = ({
         <label className="text-sm font-semibold " htmlFor={id}>
           {title} {required && <span className="text-m_error_500">*</span>}
         </label>
+        {action}
         {isCount && (
           <div className="body_regular_14 text-m_neutral_500">{`${
             (quill?.getLength() ?? 0) - 1

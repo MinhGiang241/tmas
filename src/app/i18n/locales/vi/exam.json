@@ -182,5 +182,22 @@
   "connect_count_each": "Tính từng match (điểm câu hỏi chia số match)",
   "select_result": "Chọn đáp án",
   "select_result_intro": "Bạn hãy chọn đáp án tương ứng để hệ thống tự động chấm điểm cho ứng viên",
-  "result0": "Đáp án"
+  "result0": "Đáp án",
+  "all_fill_count": "Tính toàn bộ câu hỏi (điểm tính khi đúng toàn bộ c trong câu hỏi)",
+  "each_fill_count": "Tính từng ch (điểm câu hỏi chia số match)",
+  "save_and_setting_result": "Lưu và cài đặt đáp án",
+  "fill_instruct": "Hướng dẫn: Để tạo chỗ trống tại vị trí con trỏ chuột của bạn, hãy nhập theo định dạng sau",
+  "blank_name": "%Tên_chỗ_trống%",
+  "blank_name_only": "Tên chỗ trống chỉ nhập số, không được cho nhập chữ cái và các ký tự đặc biệt",
+  "example_fill": "Ví dụ: Điền đáp án vào chỗ trống",
+  "example_fill_sentence_1": "Công cha như núi thái",
+  "example_fill_sentence_2": "như nước trong nguồn chảy ra",
+  "_1": "%1%",
+  "_2": "%2%",
+  "setting_result": "cài đặt đáp án",
+  "system_lower_upper": "(*) Hệ thống không phân biệt in hoa, in thường",
+  "system_semi_colon": "(*) Để ghi nhận nhiều hơn một đáp án đúng, vui lòng ngăn cách các đáp án bằng dấu chấm phẩy",
+  "group_random_quest": "Câu hỏi ngẫu nhiên của nhóm",
+  "guide": "Hướng dẫn",
+  "guide_intro": "Đề thi sẽ lấy ngẫu nhiên 1 câu hỏi trong ngân hàng câu hỏi của bạn theo nhóm câu hỏi đã chọn. Khi chấm điểm sẽ lấy theo điểm bạn cài đặt ở đây."
 }

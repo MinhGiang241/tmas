@@ -14,6 +14,8 @@ import ManyResultsQuestion from "./questions_components/ManyResultsQuestion";
 import TrueFalseQuestion from "./questions_components/TrueFalseQuestion";
 import ExplainQuestion from "./questions_components/ExplainQuestion";
 import ConnectQuestion from "./questions_components/ConnectQuestion";
+import FillBlankQuestion from "./questions_components/FillBlankQuestion";
+import RandomQuestion from "./questions_components/RandomQuestion";
 
 function CreateQuestionPage({ params }: any) {
   const { t } = useTranslation("exam");
@@ -116,6 +118,8 @@ function CreateQuestionPage({ params }: any) {
       {question == "connect_quest" && <ConnectQuestion />}
       {question == "coding" && <CodingQuestion />}
       {question == "sql" && <SqlQuestion />}
+      {question == "fill_blank" && <FillBlankQuestion />}
+      {question == "random" && <RandomQuestion />}
     </HomeLayout>
   );
 }
