@@ -129,7 +129,7 @@ function CreateQuestionPage({ params }: any) {
           <MButton
             className="min-w-20"
             h="h-11"
-            onClick={() => {}}
+            onClick={() => { }}
             text={common.t("create_new")}
           />
         </div>

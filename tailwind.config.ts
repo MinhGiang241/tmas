@@ -59,6 +59,7 @@ const config: Config = {
         m_success_200: "#99E5BA",
         m_success_100: "#BAEDD0",
         m_success_50: "#E9F9F0",
+        m_question: "#F4FAFB",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
