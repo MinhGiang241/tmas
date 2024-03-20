@@ -75,7 +75,7 @@ function CreateQuestionPage({ params }: any) {
           <MButton
             className="min-w-20"
             h="h-11"
-            onClick={() => {}}
+            onClick={() => { }}
             text={common.t("create_new")}
           />
         </div>
@@ -87,9 +87,8 @@ function CreateQuestionPage({ params }: any) {
             onClick={() => {
               setActiveTab(a);
             }}
-            className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 rounded-lg ${
-              activeTab == a ? "bg-m_primary_100" : "bg-white "
-            }`}
+            className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 rounded-lg ${activeTab == a ? "bg-m_primary_100" : "bg-white "
+              }`}
             key={i}
           >
             {a}
