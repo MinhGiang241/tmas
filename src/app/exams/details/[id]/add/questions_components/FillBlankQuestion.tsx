@@ -9,6 +9,8 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import "react-quill/dist/quill.core.css";
 import parse from "html-react-parser";
+import { ExamGroupData } from "@/data/exam";
+import MTreeSelect from "@/app/components/config/MTreeSelect";
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -16,13 +18,32 @@ const EditorHook = dynamic(
   },
 );
 
-function FillBlankQuestion() {
+interface Props {
+  examGroups?: ExamGroupData[];
+}
+
+function FillBlankQuestion({ examGroups }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
 
   const [value, setValue] = useState<string | undefined>();
   const [isSave, setIsSave] = useState<boolean>(false);
   const [results, setResults] = useState<any>([]);
+
+  const optionSelect = (examGroups ?? []).map<any>(
+    (v: ExamGroupData, i: number) => ({
+      title: v?.name,
+      value: v?.id,
+      disabled: true,
+      isLeaf: false,
+      children: [
+        ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
+          title: e?.name,
+          value: e?.id,
+        })),
+      ],
+    }),
+  );
 
   return (
     <div className="grid grid-cols-12 gap-4">
@@ -39,7 +60,8 @@ function FillBlankQuestion() {
           </Space>
         </Radio.Group>
         <div className="h-4" />
-        <MDropdown
+        <MTreeSelect
+          options={optionSelect}
           h="h-9"
           title={t("question_group")}
           placeholder={t("select_question_group")}

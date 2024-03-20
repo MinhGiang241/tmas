@@ -29,7 +29,10 @@ import { python } from "@codemirror/lang-python";
 import { StreamLanguage, language } from "@codemirror/language";
 import { csharp } from "@replit/codemirror-lang-csharp";
 import { lua } from "@codemirror/legacy-modes/mode/lua";
-import { useSearchParams } from "next/navigation";
+import { ExamGroupData } from "@/data/exam";
+import MTreeSelect from "@/app/components/config/MTreeSelect";
+import { useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -38,7 +41,11 @@ const EditorHook = dynamic(
   },
 );
 
-function CodingQuestion() {
+interface Props {
+  examGroups?: ExamGroupData[];
+}
+
+function CodingQuestion({ examGroups }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
 
@@ -133,6 +140,21 @@ function CodingQuestion() {
     { code: "1223", input: "hello", output: "world" },
   ]);
 
+  const optionSelect = (examGroups ?? []).map<any>(
+    (v: ExamGroupData, i: number) => ({
+      title: v?.name,
+      value: v?.id,
+      disabled: true,
+      isLeaf: false,
+      children: [
+        ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
+          title: e?.name,
+          value: e?.id,
+        })),
+      ],
+    }),
+  );
+
   return (
     <div className="grid grid-cols-12 gap-4">
       <div className="bg-white rounded-lg col-span-4 p-5 h-fit">
@@ -154,7 +176,8 @@ function CodingQuestion() {
           </Space>
         </Radio.Group>
         <div className="h-3" />
-        <MDropdown
+        <MTreeSelect
+          options={optionSelect}
           h="h-9"
           title={t("question_group")}
           placeholder={t("select_question_group")}

@@ -6,6 +6,8 @@ import dynamic from "next/dynamic";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import _ from "lodash";
+import { ExamGroupData } from "@/data/exam";
+import MTreeSelect from "@/app/components/config/MTreeSelect";
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -13,14 +15,35 @@ const EditorHook = dynamic(
   },
 );
 
-function ExplainQuestion() {
+interface Props {
+  examGroups?: ExamGroupData[];
+}
+
+function ExplainQuestion({ examGroups }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
+
+  const optionSelect = (examGroups ?? []).map<any>(
+    (v: ExamGroupData, i: number) => ({
+      title: v?.name,
+      value: v?.id,
+      disabled: true,
+      isLeaf: false,
+      children: [
+        ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
+          title: e?.name,
+          value: e?.id,
+        })),
+      ],
+    }),
+  );
+
   return (
     <div className="grid grid-cols-12 gap-4">
       <div className="bg-white rounded-lg col-span-4 p-5 h-fit">
         <MInput h="h-9" name="point" id="point" required title={t("point")} />
-        <MDropdown
+        <MTreeSelect
+          options={optionSelect}
           h="h-9"
           title={t("question_group")}
           placeholder={t("select_question_group")}

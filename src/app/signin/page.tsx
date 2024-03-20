@@ -97,65 +97,58 @@ function LoginPage() {
   };
 
   const signInGoogle = async () => {
-    setSubmit(true);
-    if (captcha) {
-      try {
-        var data = await signInWithPopup(auth, googleProvider);
-        if (data) {
-          // setGLoading(true);
-          loginSSO((data?.user as any)["accessToken"]);
-        }
-      } catch (e: any) {
-        // errorToast(e);
-        setGLoading(false);
+    // setSubmit(true);
+    try {
+      var data = await signInWithPopup(auth, googleProvider);
+      if (data) {
+        // setGLoading(true);
+        loginSSO((data?.user as any)["accessToken"]);
       }
-      // signInWithPopup(auth, googleProvider)
-      //   .then((data: any) => {
-      //   })
-      //   .catch((e) => {});
+    } catch (e: any) {
+      //errorToast(e);
+      setGLoading(false);
     }
+    // signInWithPopup(auth, googleProvider)
+    //   .then((data: any) => {
+    //   })
+    //   .catch((e) => {});
   };
   const signInFacebook = () => {
-    setSubmit(true);
-    if (captcha) {
-      // signInWithRedirect(auth, facebookProvider)
-      signInWithPopup(auth, facebookProvider)
-        .then((data) => {
-          setFLoading(true);
-          loginSSO((data?.user as any)["accessToken"]);
-        })
-        .catch((e) => {
-          console.log(e);
-          setFLoading(false);
-        });
-    }
+    // setSubmit(true);
+    // signInWithRedirect(auth, facebookProvider)
+    signInWithPopup(auth, facebookProvider)
+      .then((data) => {
+        setFLoading(true);
+        loginSSO((data?.user as any)["accessToken"]);
+      })
+      .catch((e) => {
+        console.log(e);
+        setFLoading(false);
+      });
   };
 
   const loginSSO = (sso: string | undefined) => {
-    if (captcha) {
-      var data: LoginFormData = {
-        email: undefined,
-        password: undefined,
-        sso_token: sso,
-        captcha_token: captcha,
-        log_type: "sso",
-      };
-      login(data)
-        .then((v) => {
-          console.log("sso", v);
-          setGLoading(false);
-          setFLoading(false);
-          successToast(t("success_login"));
-          router.push("/");
-        })
-        .catch((e) => {
-          console.log("error", e);
+    var data: LoginFormData = {
+      email: undefined,
+      password: undefined,
+      sso_token: sso,
+      log_type: "sso",
+    };
+    login(data)
+      .then((v) => {
+        console.log("sso", v);
+        setGLoading(false);
+        setFLoading(false);
+        successToast(t("success_login"));
+        router.push("/");
+      })
+      .catch((e) => {
+        console.log("error", e);
 
-          errorToast(e);
-          setGLoading(false);
-          setFLoading(false);
-        });
-    }
+        errorToast(e);
+        setGLoading(false);
+        setFLoading(false);
+      });
   };
   return (
     <AuthLayout>

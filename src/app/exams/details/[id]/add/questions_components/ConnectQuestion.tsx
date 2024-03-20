@@ -6,6 +6,8 @@ import dynamic from "next/dynamic";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import _ from "lodash";
+import { ExamGroupData } from "@/data/exam";
+import MTreeSelect from "@/app/components/config/MTreeSelect";
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -13,14 +15,33 @@ const EditorHook = dynamic(
   },
 );
 
+interface Props {
+  examGroups?: ExamGroupData[];
+}
+
 const CheckboxGroup = Checkbox.Group;
 
-function ConnectQuestion() {
+function ConnectQuestion({ examGroups }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
 
   const [numResults, setNumResults] = useState<number[]>([0, 1]);
   const [textResults, setTextResults] = useState<number[]>([0, 1]);
+
+  const optionSelect = (examGroups ?? []).map<any>(
+    (v: ExamGroupData, i: number) => ({
+      title: v?.name,
+      value: v?.id,
+      disabled: true,
+      isLeaf: false,
+      children: [
+        ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
+          title: e?.name,
+          value: e?.id,
+        })),
+      ],
+    }),
+  );
 
   return (
     <div className="grid grid-cols-12 gap-4">
@@ -37,7 +58,8 @@ function ConnectQuestion() {
           </Space>
         </Radio.Group>
         <div className="h-3" />
-        <MDropdown
+        <MTreeSelect
+          options={optionSelect}
           h="h-9"
           title={t("question_group")}
           placeholder={t("select_question_group")}

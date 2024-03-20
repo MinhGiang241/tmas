@@ -52,7 +52,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
       } else if (check["type"] == "warning") {
         setDanger(check["message"]);
       } else {
-        setSuccess(t("allow_add_account"));
+        // setSuccess(t("allow_add_account"));
       }
     }
 
@@ -133,6 +133,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
           />
           <div className="w-5" />
           <MButton
+            disabled={!!danger || !!formik.errors["email"]}
             htmlType="submit"
             loading={loading}
             className="w-36"

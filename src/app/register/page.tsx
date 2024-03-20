@@ -148,11 +148,13 @@ function RegisterPage() {
     registerAccount(data)
       .then((v) => {
         console.log("sso", v);
+        localStorage.removeItem("access_token");
+        localStorage.setItem("access_token", v?.access_token);
         setFLoading(false);
         setGLoading(false);
 
         successToast(t("success_create_account"));
-        router.push("/signin");
+        router.push("/");
       })
       .catch((e) => {
         errorToast(e);

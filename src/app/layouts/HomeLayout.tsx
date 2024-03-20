@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Header from "../components/Header";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import LoadingPage from "../loading";
 import { getUserMe } from "@/services/api_services/auth_service";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +35,16 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   const user = useSelector((state: RootState) => state.user?.user);
   const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (user?._id) {
+      if (!user?.verified && pathname != "/") {
+        router.push("/");
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, pathname]);
 
   useEffect(() => {
     const token =
@@ -88,7 +98,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {loading ? (
+      {loading || (!user?.verified && pathname != "/") ? (
         <main className="bg-neutral-100 text-m_neutral_900">
           <Header />
           <LoadingPage />

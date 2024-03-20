@@ -42,5 +42,6 @@
   "studio_qr": "Scan the QR code to take the test!",
   "test": "Aptitude assessment tests",
   "join_now": "Join now",
-  "owner": "Owner"
+  "owner": "Owner",
+  "warning_verify_account": "Your account has not been verified. We have sent a verification email to your email, Please check your email and verify your account!"
 }
