@@ -478,7 +478,7 @@ function ExamDetails({ params }: any) {
                   Nhóm câu hỏi: <span>Toán học</span>
                 </div>
               </Collapse.Panel>
-            </Collapse> */}
+            </Collapse>
           </Collapse.Panel>
         </Collapse>
         <Explain />

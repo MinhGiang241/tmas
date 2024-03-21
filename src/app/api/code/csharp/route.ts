@@ -1,10 +1,10 @@
-import edge from "edge-js";
+//import edge from "edge-js";
 //
-var helloWorld = edge.func(`
-    async (input) => {
-        return ".NET Welcomes " + input.ToString();
-    }
-`);
+// var helloWorld = edge.func(`
+//     async (input) => {
+//         return ".NET Welcomes " + input.ToString();
+//     }
+// `);
 
 export async function POST(req: Request) {
   // helloWorld("JavaScript", function (error, result) {
