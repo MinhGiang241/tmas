@@ -153,6 +153,10 @@ function AccountInfo() {
             {!data.isInvite ? (
               <button
                 onClick={async () => {
+                  if (!user?.verified) {
+                    errorToast(t("please_verify"));
+                    return;
+                  }
                   setUpdateKey(Date.now());
                   setActiveMem(data);
 
@@ -163,7 +167,15 @@ function AccountInfo() {
               </button>
             ) : (
               <Tooltip placement="bottom" title={t("resend_invite_email")}>
-                <button onClick={() => resendEmail(data)}>
+                <button
+                  onClick={() => {
+                    if (!user?.verified) {
+                      errorToast(t("please_verify"));
+                      return;
+                    }
+                    resendEmail(data);
+                  }}
+                >
                   <RotateIcon />
                 </button>
               </Tooltip>
@@ -171,6 +183,10 @@ function AccountInfo() {
             <button
               className="ml-2"
               onClick={() => {
+                if (!user?.verified) {
+                  errorToast(t("please_verify"));
+                  return;
+                }
                 setActiveMem(data);
                 setOpenDelete(true);
               }}
@@ -302,6 +318,10 @@ function AccountInfo() {
           <div>
             <Button
               onClick={() => {
+                if (!user?.verified) {
+                  errorToast(t("please_verify"));
+                  return;
+                }
                 setAddKey(Date.now());
                 setOpenAdd(true);
               }}

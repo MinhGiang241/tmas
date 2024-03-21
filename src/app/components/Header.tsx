@@ -435,8 +435,8 @@ function Header({ path }: { path?: string }) {
         </div>
       </div>
       {user?._id && !user?.verified && (
-        <div className="m-auto truncate flex items-center lg:justify-center justify-start text-m_warning_700 w-full h-5 bg-m_warning_100">
-          <div className="min-w-4">
+        <div className="m-auto truncate flex items-center lg:justify-center justify-start text-[#EC8E00] w-full h-[44px] bg-m_warning_50">
+          <div className="min-w-4 mr-4">
             <ExclamationCircleFilled />
           </div>{" "}
           <div className=" body_regular_14">{t("warning_verify_account")}</div>

@@ -156,8 +156,8 @@ function CodingQuestion({ examGroups }: Props) {
   );
 
   return (
-    <div className="grid grid-cols-12 gap-4">
-      <div className="bg-white rounded-lg col-span-4 p-5 h-fit">
+    <div className="grid grid-cols-12 gap-4 max-lg:px-5">
+      <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput h="h-9" name="point" id="point" required title={t("point")} />
         <Radio.Group
           buttonStyle="solid"
@@ -198,7 +198,7 @@ function CodingQuestion({ examGroups }: Props) {
           ))}
         </CheckboxGroup>
       </div>
-      <div className="bg-white p-5 rounded-lg col-span-8">
+      <div className="bg-white p-5 rounded-lg lg:col-span-8 col-span-12">
         <EditorHook
           placeholder={t("enter_content")}
           isCount={false}

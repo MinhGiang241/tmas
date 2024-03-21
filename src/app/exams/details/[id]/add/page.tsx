@@ -41,15 +41,12 @@ function CreateQuestionPage({ params }: any) {
 
   const loadExamById = async () => {
     var res = await getExamById(params?.id);
-    if (res?.code != 0) {
-      return;
-    }
-
     if (res.code != 0) {
       errorToast(res?.message ?? "");
       return;
     }
     setExam(res?.data?.records[0]);
+    console.log("exam", exam);
   };
 
   const loadExamGroupList = async (init?: boolean) => {
@@ -75,7 +72,6 @@ function CreateQuestionPage({ params }: any) {
         );
         return { ...e, childs };
       });
-      console.log("dataResults", list);
       return list;
     }
   };
@@ -120,7 +116,7 @@ function CreateQuestionPage({ params }: any) {
             h="h-11"
             className="min-w-20"
             onClick={() => {
-              router.back();
+              router.push(`/exams/details/${params.id}`);
             }}
             type="secondary"
             text={common.t("cancel")}
@@ -129,13 +125,13 @@ function CreateQuestionPage({ params }: any) {
           <MButton
             className="min-w-20"
             h="h-11"
-            onClick={() => { }}
+            onClick={() => {}}
             text={common.t("create_new")}
           />
         </div>
       </div>
 
-      <div className="flex mt-5">
+      <div className="max-lg:ml-5 flex mt-5 flex-wrap">
         {questionList.map((a: any, i: number) => (
           <button
             onClick={() => {
@@ -144,8 +140,13 @@ function CreateQuestionPage({ params }: any) {
                 scroll: false,
               });
             }}
-            className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 rounded-lg ${
-              a == question ? "bg-m_primary_100" : "bg-white "
+            className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${
+              a == "many_results" &&
+              !questionList.some((a: any) => a == question)
+                ? "bg-m_primary_100"
+                : a == question
+                  ? "bg-m_primary_100"
+                  : "bg-white "
             }`}
             key={i}
           >

@@ -99,13 +99,15 @@ function LoginPage() {
   const signInGoogle = async () => {
     // setSubmit(true);
     try {
+      setGLoading(true);
       var data = await signInWithPopup(auth, googleProvider);
       if (data) {
         // setGLoading(true);
         loginSSO((data?.user as any)["accessToken"]);
       }
     } catch (e: any) {
-      //errorToast(e);
+      console.log("googe error", e);
+      errorToast(e?.message);
       setGLoading(false);
     }
     // signInWithPopup(auth, googleProvider)
@@ -113,42 +115,39 @@ function LoginPage() {
     //   })
     //   .catch((e) => {});
   };
-  const signInFacebook = () => {
+  const signInFacebook = async () => {
     // setSubmit(true);
     // signInWithRedirect(auth, facebookProvider)
-    signInWithPopup(auth, facebookProvider)
-      .then((data) => {
-        setFLoading(true);
-        loginSSO((data?.user as any)["accessToken"]);
-      })
-      .catch((e) => {
-        console.log(e);
-        setFLoading(false);
-      });
+    setFLoading(true);
+    try {
+      var data = await signInWithPopup(auth, facebookProvider);
+      loginSSO((data?.user as any)["accessToken"]);
+    } catch (e: any) {
+      console.log(e);
+      errorToast(e?.message);
+      setFLoading(false);
+    }
   };
 
-  const loginSSO = (sso: string | undefined) => {
+  const loginSSO = async (sso: string | undefined) => {
     var data: LoginFormData = {
       email: undefined,
       password: undefined,
       sso_token: sso,
       log_type: "sso",
     };
-    login(data)
-      .then((v) => {
-        console.log("sso", v);
-        setGLoading(false);
-        setFLoading(false);
-        successToast(t("success_login"));
-        router.push("/");
-      })
-      .catch((e) => {
-        console.log("error", e);
-
-        errorToast(e);
-        setGLoading(false);
-        setFLoading(false);
-      });
+    var resultData = await login(data);
+    if (resultData?.code != 0) {
+      setGLoading(false);
+      setFLoading(false);
+      errorToast(resultData?.message);
+      return;
+    }
+    console.log("sso", resultData);
+    setGLoading(false);
+    setFLoading(false);
+    successToast(t("success_login"));
+    router.push("/");
   };
   return (
     <AuthLayout>

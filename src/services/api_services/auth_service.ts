@@ -20,10 +20,10 @@ export const login = async (data: LoginFormData) => {
 
   localStorage.setItem("access_token", results?.data["access_token"]);
 
-  if (results?.code != 0) {
-    throw results?.message ?? "";
-  }
-  return results.data;
+  // if (results?.code != 0) {
+  //   throw results?.message ?? "";
+  // }
+  return results;
 };
 
 export const sendOtpResetPassword = async ({ email }: { email?: string }) => {

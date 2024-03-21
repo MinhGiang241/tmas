@@ -28,7 +28,7 @@ function AccountPage() {
 
   return (
     <HomeLayout>
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center mt-3">
         <div className="lg:block hidden max-h-[400px] bg-white w-[267px] mt-10 rounded-lg p-4">
           <button
             onClick={() => {

@@ -116,8 +116,11 @@ function RegisterPage() {
           } else {
             successToast(t("success_create_account"));
           }
+          console.log("register", v);
 
-          router.push("/signin");
+          localStorage.removeItem("access_token");
+          localStorage.setItem("access_token", v?.access_token);
+          router.push("/");
           console.log(v);
         })
         .catch((e) => {
@@ -146,14 +149,18 @@ function RegisterPage() {
       reg_type: "sso",
     };
     registerAccount(data)
-      .then((v) => {
+      .then((v: any) => {
         console.log("sso", v);
         localStorage.removeItem("access_token");
         localStorage.setItem("access_token", v?.access_token);
         setFLoading(false);
         setGLoading(false);
-
-        successToast(t("success_create_account"));
+        if (v?.user?.verified) {
+          successToast(t("success_create_account_via_mail"));
+        } else {
+          successToast(t("success_create_account"));
+        }
+        //successToast(t("success_create_account"));
         router.push("/");
       })
       .catch((e) => {
@@ -164,26 +171,28 @@ function RegisterPage() {
   };
 
   const signInGoogle = () => {
+    setGLoading(true);
     signInWithPopup(auth, googleProvider)
       .then((data: any) => {
         setGLoading(true);
         registerSSO((data?.user as any)["accessToken"]);
         console.log("googleauth", data);
       })
-      .catch((e) => {
-        // errorToast(e);
+      .catch((e: any) => {
+        errorToast(e?.message);
         setGLoading(false);
       });
   };
   const signInFacebook = () => {
+    setFLoading(true);
     signInWithPopup(auth, facebookProvider)
       .then((data) => {
         setFLoading(true);
         registerSSO((data?.user as any)["accessToken"]);
         console.log("facebook auth", data);
       })
-      .catch((e) => {
-        // errorToast(e);
+      .catch((e: any) => {
+        errorToast(e?.message);
         setFLoading(false);
       });
   };

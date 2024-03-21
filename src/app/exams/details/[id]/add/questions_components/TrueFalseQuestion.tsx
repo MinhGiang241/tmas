@@ -40,8 +40,8 @@ function TrueFalseQuestion({ examGroups }: Props) {
   );
 
   return (
-    <div className="grid grid-cols-12 gap-4">
-      <div className="bg-white rounded-lg col-span-4 p-5 h-fit">
+    <div className="grid grid-cols-12 gap-4 max-lg:px-5">
+      <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput h="h-9" name="point" id="point" required title={t("point")} />
         <MTreeSelect
           options={optionSelect}
@@ -54,7 +54,7 @@ function TrueFalseQuestion({ examGroups }: Props) {
         <div className="body_semibold_14 mb-2">{t("relocate_result")}</div>
         <Switch />
       </div>
-      <div className="bg-white rounded-lg col-span-8 p-5 h-fit">
+      <div className="bg-white rounded-lg lg:col-span-8 col-span-12 p-5 h-fit">
         <EditorHook
           placeholder={t("enter_content")}
           isCount={false}

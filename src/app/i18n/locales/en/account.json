@@ -43,5 +43,6 @@
   "test": "Aptitude assessment tests",
   "join_now": "Join now",
   "owner": "Owner",
-  "warning_verify_account": "Your account has not been verified. We have sent a verification email to your email, Please check your email and verify your account!"
+  "warning_verify_account": "Your account has not been verified. We have sent a verification email to your email, Please check your email and verify your account!",
+  "please_verify": "Please verify your account to access this feature."
 }
