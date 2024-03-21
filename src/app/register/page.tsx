@@ -156,7 +156,7 @@ function RegisterPage() {
         setFLoading(false);
         setGLoading(false);
         if (v?.user?.verified) {
-          successToast(t("success_create_account_via_mail"));
+          successToast(t("success_login"));
         } else {
           successToast(t("success_create_account"));
         }

@@ -286,6 +286,7 @@ function Header({ path }: { path?: string }) {
             width={97}
             height={40}
           />
+          <div className="flex-1" />
           <div className="hidden h-full lg:flex items-center justify-center">
             {links.map((e, i) => (
               <Link
@@ -297,7 +298,7 @@ function Header({ path }: { path?: string }) {
                       ? `/${e}`
                       : "/"
                 }
-                className={`flex items-center text-center body_semibold_14 text-white px-4 h-full ${
+                className={`flex items-center text-center body_semibold_14 text-white px-5 h-full ${
                   pathname.includes(e)
                     ? "bg-m_primary_400 after:content-[''] border-b-white border-b-4"
                     : ""
@@ -307,8 +308,8 @@ function Header({ path }: { path?: string }) {
               </Link>
             ))}
           </div>
-
-          <div className="lg:flex hidden h-full items-center">
+          <div className="flex-1" />
+          <div className="lg:flex hidden h-full items-center mr-9">
             <HeadPhoneIcon className=" hidden" />
             <Dropdown menu={{ items: itemsStudio }}>
               <button className="ml-3 lg:flex hidden items-center body_semibold_14 text-white">
@@ -321,7 +322,7 @@ function Header({ path }: { path?: string }) {
             </Dropdown>
           </div>
 
-          <div className="h-full lg:flex hidden items-center">
+          <div className="h-full lg:flex hidden items-center mr-9">
             <button
               className="flex items-center"
               onClick={() => {
@@ -361,7 +362,7 @@ function Header({ path }: { path?: string }) {
                     setOpenPop(false);
                     router.push("/?tab=0");
                   }}
-                  className="py-1 hover:bg-m_neutral_100 w-full flex justify-start"
+                  className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >
                   {t("account_management")}
                 </button>
@@ -370,7 +371,7 @@ function Header({ path }: { path?: string }) {
                     setOpenPop(false);
                     router.push("/?tab=1");
                   }}
-                  className="py-1 hover:bg-m_neutral_100 w-full flex justify-start"
+                  className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >
                   {t("personal_information")}
                 </button>
@@ -379,14 +380,14 @@ function Header({ path }: { path?: string }) {
                     setOpenPop(false);
                     router.push("/?tab=2");
                   }}
-                  className="py-1 hover:bg-m_neutral_100 w-full flex justify-start"
+                  className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >
                   {t("business_information")}
                 </button>
-                <button className="py-1 hover:bg-m_neutral_100 w-full flex justify-start">
+                <button className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start">
                   {common.t("support")}
                 </button>
-                <button className="py-1 hover:bg-m_neutral_100 w-full flex justify-start">
+                <button className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start">
                   {common.t("change_pass")}
                 </button>
 
@@ -399,7 +400,7 @@ function Header({ path }: { path?: string }) {
                     localStorage.removeItem("access_token");
                     sessionStorage.removeItem("access_token");
                   }}
-                  className="py-1 w-full hover:bg-m_error_100 text-m_error_500 flex justify-start"
+                  className="px-1 rounded py-1 w-full hover:bg-m_error_100 text-m_error_500 flex justify-start"
                 >
                   {common.t("sign_out")}
                 </button>

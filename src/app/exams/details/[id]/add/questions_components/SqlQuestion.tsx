@@ -6,6 +6,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
+import { dracula } from "@uiw/codemirror-theme-dracula";
 import { ExamGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 
@@ -74,7 +75,7 @@ function SqlQuestion({ examGroups }: Props) {
           <div className="bg-m_neutral_100 rounded-lg">
             <div className="p-4 flex body_semibold_14 ">{t("mysql")}</div>
             <CodeMirror
-              theme={"dark"}
+              theme={dracula}
               height="300px"
               extensions={[javascript({ jsx: true })]}
               onChange={(v) => {}}
@@ -88,7 +89,7 @@ function SqlQuestion({ examGroups }: Props) {
           <div className="bg-m_neutral_100 rounded-lg">
             <div className="p-4 flex body_semibold_14 ">{t("mysql")}</div>
             <CodeMirror
-              theme={"dark"}
+              theme={dracula}
               height="300px"
               extensions={[javascript({ jsx: true })]}
               onChange={(v) => {}}

@@ -29,6 +29,7 @@ import { python } from "@codemirror/lang-python";
 import { StreamLanguage, language } from "@codemirror/language";
 import { csharp } from "@replit/codemirror-lang-csharp";
 import { lua } from "@codemirror/legacy-modes/mode/lua";
+import { dracula } from "@uiw/codemirror-theme-dracula";
 import { ExamGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { useAppSelector } from "@/redux/hooks";
@@ -323,12 +324,9 @@ function CodingQuestion({ examGroups }: Props) {
             </div>
             <CodeMirror
               lang="lua"
-              theme={"dark"}
+              theme={dracula}
               height="300px"
-              extensions={[
-                javascript({ jsx: true }),
-                StreamLanguage.define(lua),
-              ]}
+              extensions={[javascript({ jsx: true })]}
               onChange={(v) => {}}
             />
           </div>
