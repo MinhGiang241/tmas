@@ -25,6 +25,8 @@ import Cup from "@/app/components/icons/cup.svg";
 import Time from "@/app/components/icons/timer.svg";
 import Document from "@/app/components/icons/document.svg";
 import Group from "@/app/components/icons/group.svg";
+import Explain from "./question/Explain";
+import ManyResult from "./question/ManyResult";
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -272,7 +274,7 @@ function ExamDetails({ params }: any) {
               </div>
             }
             key={""}>
-            <Collapse
+            {/* <Collapse
               // key={v?.id}
               ghost
               expandIconPosition="end"
@@ -283,7 +285,7 @@ function ExamDetails({ params }: any) {
                   <div className="my-3 flex justify-between items-center">
                     <div>
                       <div className="text-base font-semibold">Phần hình học</div>
-                      <div className="text-sm text-m_neutral_500">Câu dễ làm trước, khó làm sau</div>
+                      <div className="text-sm text-m_neutral_500">Câu dễ làm trước, khó làm sau 1</div>
                     </div>
                     <div>
                       <button onClick={(e) => {
@@ -365,9 +367,11 @@ function ExamDetails({ params }: any) {
                 <div className="text-m_primary_500 text-sm font-semibold mb-2">Thông tin câu hỏi</div>
                 <div>Nhóm câu hỏi: <span>Toán học</span></div>
               </Collapse.Panel>
-            </Collapse>
+            </Collapse> */}
           </Collapse.Panel>
         </Collapse>
+        <Explain />
+        <ManyResult />
       </div>
     </HomeLayout>
   );

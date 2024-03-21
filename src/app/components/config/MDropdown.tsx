@@ -162,7 +162,6 @@ function MDropdown({
           maxLength={maxLength ?? 500}
           onBlur={onBlur}
           status={error && touch ? `error` : ""}
-          style={{ minHeight: "44px" }}
           className={`${successText && touch ? "border-m_success_500" : ""} ${
             dangerText && touch ? "border-m_warning_500" : ""
           } ${disable ? "text-m_neutral_900" : ""} ${

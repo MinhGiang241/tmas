@@ -5,6 +5,7 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import { FormikErrors } from "formik";
 import { Montserrat } from "next/font/google";
+import dynamic from "next/dynamic";
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 interface Props {
@@ -27,11 +28,8 @@ interface Props {
   defaultValue?: string;
   namespace?: string;
   isBubble?: boolean;
-  setValue?: (
-    field: string,
-    value: any,
-    shouldValidate?: boolean | undefined,
-  ) => Promise<FormikErrors<any>> | Promise<void>;
+  isCount?: boolean;
+  setValue?: any;
 }
 
 const Editor = ({
@@ -53,6 +51,7 @@ const Editor = ({
   isBubble = false,
   defaultValue,
   placeholder,
+  isCount = true,
 }: Props) => {
   var np;
   var er;
@@ -85,7 +84,10 @@ const Editor = ({
 
   useEffect(() => {
     if (quill) {
-      quill.clipboard.dangerouslyPasteHTML(formik.initialValues[name] ?? "");
+      //quill.clipboard.dangerouslyPasteHTML(formik?.initialValues[name] ?? "");
+      quill?.setContents(
+        quill.clipboard.convert(formik?.initialValues[name] ?? ""),
+      );
       quill.on("text-change", (delta, oldContents) => {
         if (quill.getLength() > maxLength) {
           quill.deleteText(maxLength, quill.getLength());
@@ -105,19 +107,28 @@ const Editor = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [quill, Quill, quillRef, formik.initialValues[name]]);
+  }, [quill, Quill, quillRef, formik?.initialValues[name] ?? defaultValue]);
 
   return (
     <div className={"w-full"}>
-      <div className={`flex ${"justify-between"} mb-1 `}>
+      <div className={`flex ${"justify-between"} ${title && "mb-1"} `}>
         <label className="text-sm font-semibold " htmlFor={id}>
           {title} {required && <span className="text-m_error_500">*</span>}
         </label>
-        <div className="body_regular_14 text-m_neutral_500">{`${
-          (quill?.getLength() ?? 0) - 1
-        }/${maxLength}`}</div>
+        {action}
+        {isCount && (
+          <div className="body_regular_14 text-m_neutral_500">{`${
+            (quill?.getLength() ?? 0) - 1
+          }/${maxLength}`}</div>
+        )}
       </div>
-      <div className="custom-ql-snow">
+      <div
+        className={
+          !isBubble
+            ? "custom-ql-snow"
+            : "custom-ql-bubble border rounded-lg p-2"
+        }
+      >
         <div className={`${montserrat.className}`} ref={quillRef} />
       </div>
     </div>

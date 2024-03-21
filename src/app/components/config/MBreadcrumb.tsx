@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 import { RightOutlined } from "@ant-design/icons";
 
-interface Props {
+interface BreadcrumbProps {
   items: Item[];
 }
 interface Item {
@@ -12,7 +12,7 @@ interface Item {
   href?: string;
 }
 
-function MBreadcrumb({ items }: Props) {
+function MBreadcrumb({ items }: BreadcrumbProps) {
   return (
     <Breadcrumb
       className="max-lg:ml-5 mb-3"

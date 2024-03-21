@@ -34,7 +34,7 @@
   "name_at_least": "Tên phải chứa ít nhất 2 ký tự.",
   "name_not_number": "Tên không được chứa ký tự đặc biệt hoặc số.",
   "enter_required_email": "Vui lòng nhập địa chỉ email của bạn.",
-  "invalid_email": "Địa chỉ email không hợp lệ. Vui lòng kiểm tra lại.",
+  "invalid_email": "Email sai định dạng. Vui lòng kiểm tra lại.",
   "email_is_used": "Email này đã được sử dụng. Vui lòng sử dụng email khác",
   "enter_required_phone": "Vui lòng nhập số điện thoại của bạn.",
   "invalid_phone": "Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại hợp lệ.",

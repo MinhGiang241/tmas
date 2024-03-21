@@ -31,7 +31,11 @@ function MButton({
       type="default"
       className={`${
         type == "primary"
-          ? `${disabled ? "bg-m_neutral_400" : "bg-m_primary_500 text-white"}`
+          ? `${
+              disabled
+                ? "bg-m_neutral_400 text-m_neutral_100"
+                : "bg-m_primary_500 text-white"
+            }`
           : `${
               disabled
                 ? " text-m_neutral_400 border-1 border-m_neutral_400"

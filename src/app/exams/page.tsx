@@ -435,7 +435,7 @@ function ExamsPage() {
                                       copy(k?.linkJoinTest ?? "");
                                       toast(common.t("success_copy"));
                                     }}
-                                    className="ml-4 cursor-copy"
+                                    className="ml-4"
                                   >
                                     <SizeIcon />
                                   </button>
