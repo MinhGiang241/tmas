@@ -137,7 +137,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
             htmlType="submit"
             loading={loading}
             className="w-36"
-            text={danger ? t("invite") : common.t("complete")}
+            text={t("invite")}
           />
         </div>
       </form>
