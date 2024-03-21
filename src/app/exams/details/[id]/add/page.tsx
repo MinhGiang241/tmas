@@ -157,8 +157,8 @@ function CreateQuestionPage({ params }: any) {
       <div className="h-4" />
       {(question == "many_results" ||
         !questionList.some((a: any) => a == question)) && (
-        <ManyResultsQuestion examGroups={examGroups} />
-      )}
+          <ManyResultsQuestion examGroups={examGroups} />
+        )}
       {question == "true_false" && (
         <TrueFalseQuestion examGroups={examGroups} />
       )}

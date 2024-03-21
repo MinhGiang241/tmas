@@ -25,6 +25,8 @@ import Cup from "@/app/components/icons/cup.svg";
 import Time from "@/app/components/icons/timer.svg";
 import Document from "@/app/components/icons/document.svg";
 import Group from "@/app/components/icons/group.svg";
+import Explain from "./question/Explain";
+import ManyResult from "./question/ManyResult";
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -476,9 +478,11 @@ function ExamDetails({ params }: any) {
                   Nhóm câu hỏi: <span>Toán học</span>
                 </div>
               </Collapse.Panel>
-            </Collapse>
+            </Collapse> */}
           </Collapse.Panel>
         </Collapse>
+        <Explain />
+        <ManyResult />
       </div>
     </HomeLayout>
   );
