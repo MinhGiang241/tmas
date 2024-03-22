@@ -240,12 +240,20 @@ function Header({ path }: { path?: string }) {
                 onClick={() => {
                   if (
                     !user?.verified &&
-                    ["/exam_group", "/exams", "/examination"].some((d) => {
-                      return d === pathname;
+                    [
+                      "exam_group",
+                      "exams",
+                      "examination",
+                      "overview",
+                      "exam_bank",
+                      "statistics",
+                    ].some((d) => {
+                      return d == e;
                     })
                   ) {
                     errorToast(t("please_verify"));
                   }
+
                   setOpenDrawer(false);
                 }}
                 className="block mb-2 body_regular_14 text-m_neutral_900"
@@ -311,8 +319,15 @@ function Header({ path }: { path?: string }) {
                 onClick={() => {
                   if (
                     !user?.verified &&
-                    ["/exam_group", "/exams", "/examination"].some((d) => {
-                      return d === pathname;
+                    [
+                      "exam_group",
+                      "exams",
+                      "examination",
+                      "overview",
+                      "exam_bank",
+                      "statistics",
+                    ].some((d) => {
+                      return d == e;
                     })
                   ) {
                     errorToast(t("please_verify"));
