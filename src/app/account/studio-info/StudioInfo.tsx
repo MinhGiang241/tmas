@@ -78,11 +78,13 @@ function StudioInfo() {
   };
 
   useEffect(() => {
-    setValue(user.studio?.studio_name ?? "");
+    setValue(user.studio?.studio_name ?? user?.studio?.full_name ?? "");
   }, [user]);
 
   const [error, setError] = useState<string | undefined>();
-  const [value, setValue] = useState<string>(user.studio?.studio_name ?? "");
+  const [value, setValue] = useState<string>(
+    user.studio?.studio_name ?? user?.studio?.full_name ?? "",
+  );
   const validate = () => {
     if (!value) {
       setError("common_not_empty");

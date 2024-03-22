@@ -237,7 +237,17 @@ function Header({ path }: { path?: string }) {
                       ? `/${v}`
                       : "/"
                 }
-                onClick={() => setOpenDrawer(false)}
+                onClick={() => {
+                  if (
+                    !user?.verified &&
+                    ["/exam_group", "/exams", "/examination"].some((d) => {
+                      return d === pathname;
+                    })
+                  ) {
+                    errorToast(t("please_verify"));
+                  }
+                  setOpenDrawer(false);
+                }}
                 className="block mb-2 body_regular_14 text-m_neutral_900"
                 key={i}
               >
@@ -298,6 +308,16 @@ function Header({ path }: { path?: string }) {
                       ? `/${e}`
                       : "/"
                 }
+                onClick={() => {
+                  if (
+                    !user?.verified &&
+                    ["/exam_group", "/exams", "/examination"].some((d) => {
+                      return d === pathname;
+                    })
+                  ) {
+                    errorToast(t("please_verify"));
+                  }
+                }}
                 className={`flex items-center text-center body_semibold_14 text-white px-5 h-full ${
                   pathname.includes(e)
                     ? "bg-m_primary_400 after:content-[''] border-b-white border-b-4"

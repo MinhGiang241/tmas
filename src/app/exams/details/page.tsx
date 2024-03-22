@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "@uiw/codemirror-theme-dracula";
-import { StreamLanguage } from "@codemirror/language";
+import { LanguageSupport, StreamLanguage } from "@codemirror/language";
 import { go } from "@codemirror/legacy-modes/mode/go";
 import { sql } from "@codemirror/lang-sql";
 import { csharp } from "@replit/codemirror-lang-csharp";
@@ -13,6 +13,41 @@ import axios from "axios";
 import MButton from "@/app/components/config/MButton";
 import MInput from "@/app/components/config/MInput";
 import { Select } from "antd";
+import { loadLanguage, langs } from "@uiw/codemirror-extensions-langs";
+import { errorToast } from "@/app/components/toast/customToast";
+
+const renderExtension: (
+  lan: string,
+) => LanguageSupport | StreamLanguage<unknown> | undefined = (lan: string) => {
+  switch (lan) {
+    case "javascript":
+      return javascript({ jsx: true });
+    case "python":
+      return langs.python();
+    case "java":
+      return langs.java();
+    case "csharp":
+      return langs.csharp();
+    case "html":
+      return langs.html();
+    case "css":
+      return langs.css();
+    case "lua":
+      return langs.lua();
+    case "dart":
+      return langs.dart();
+    case "php":
+      return langs.php();
+    case "ruby":
+      return langs.ruby();
+    case "rust":
+      return langs.rust();
+    default:
+      return langs.javascript();
+  }
+};
+
+export { renderExtension };
 
 function DetailsPage() {
   const executeCode = async () => {
@@ -28,11 +63,12 @@ function DetailsPage() {
 
   const [value, setValue] = React.useState();
   const [results, setReSults] = useState<string[]>([]);
-  const [lang, setLang] = useState<string | undefined>("python");
+  const [lang, setLang] = useState<string>("python");
   const onChange = React.useCallback((val: any, viewUpdate: any) => {
     console.log("val:", val);
     setValue(val);
   }, []);
+
   return (
     <HomeLayout>
       <Select
@@ -46,21 +82,21 @@ function DetailsPage() {
           { value: "csharp", label: "C#" },
           { value: "python", label: "python" },
           { value: "go", label: "go" },
+          { value: "cpp", label: "C++" },
+          { value: "html", label: "HTML" },
+          { value: "dart", label: "dart" },
+          { value: "php", label: "PHP" },
+          { value: "java", label: "Java" },
+          { value: "css", label: "CSS" },
         ]}
       />
       <CodeMirror
         value={value}
-        lang="javascript"
+        lang={lang}
         theme={dracula}
         height="300px"
         onChange={onChange}
-        extensions={[
-          lang == "python"
-            ? python()
-            : lang == "csharp"
-              ? csharp()
-              : javascript({ jsx: true }),
-        ]}
+        extensions={[renderExtension(lang) as any]}
       />
 
       <MButton

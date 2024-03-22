@@ -70,18 +70,16 @@ function LoginPage() {
       };
       setLoading(true);
 
-      await login(data)
-        .then((v) => {
-          console.log("login", v);
-          setLoading(false);
-          successToast(t("success_login"));
-          router.push("/");
-        })
-        .catch((e) => {
-          console.log("error login", e);
-          setLoading(false);
-          errorToast(e);
-        });
+      var dataResults = await login(data);
+      setLoading(false);
+      if (dataResults?.code != 0) {
+        errorToast(dataResults?.message);
+        localStorage.removeItem("access_token");
+        return;
+      }
+      // localStorage.setItem("access_token", dataResults?.data);
+      successToast(t("success_login"));
+      router.push("/");
     },
   });
 

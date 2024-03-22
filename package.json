@@ -23,6 +23,7 @@
     "@types/quill": "^2.0.14",
     "@types/react-google-recaptcha": "^2.1.9",
     "@types/uuid": "^9.0.8",
+    "@uiw/codemirror-extensions-langs": "^4.21.24",
     "@uiw/codemirror-theme-dracula": "^4.21.24",
     "@uiw/react-codemirror": "^4.21.24",
     "antd": "^5.13.3",

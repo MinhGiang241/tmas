@@ -25,6 +25,9 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 bloggroup
 RUN adduser --system --uid 1001 bloguser
 
+# Install python/pip
+RUN apk add --no-cache python3 py3-pip
+
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 

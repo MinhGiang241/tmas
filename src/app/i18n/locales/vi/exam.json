@@ -199,5 +199,6 @@
   "system_semi_colon": "(*) Để ghi nhận nhiều hơn một đáp án đúng, vui lòng ngăn cách các đáp án bằng dấu chấm phẩy",
   "group_random_quest": "Câu hỏi ngẫu nhiên của nhóm",
   "guide": "Hướng dẫn",
-  "guide_intro": "Đề thi sẽ lấy ngẫu nhiên 1 câu hỏi trong ngân hàng câu hỏi của bạn theo nhóm câu hỏi đã chọn. Khi chấm điểm sẽ lấy theo điểm bạn cài đặt ở đây."
+  "guide_intro": "Đề thi sẽ lấy ngẫu nhiên 1 câu hỏi trong ngân hàng câu hỏi của bạn theo nhóm câu hỏi đã chọn. Khi chấm điểm sẽ lấy theo điểm bạn cài đặt ở đây.",
+  "history_push_approve": "Lịch sử đẩy phê duyệt"
 }

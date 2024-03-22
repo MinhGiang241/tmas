@@ -9,6 +9,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 import { ExamGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
+import { sql } from "@codemirror/lang-sql";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -75,9 +76,10 @@ function SqlQuestion({ examGroups }: Props) {
           <div className="bg-m_neutral_100 rounded-lg">
             <div className="p-4 flex body_semibold_14 ">{t("mysql")}</div>
             <CodeMirror
+              lang="sql"
               theme={dracula}
               height="300px"
-              extensions={[javascript({ jsx: true })]}
+              extensions={[sql()]}
               onChange={(v) => {}}
             />
           </div>
@@ -89,9 +91,10 @@ function SqlQuestion({ examGroups }: Props) {
           <div className="bg-m_neutral_100 rounded-lg">
             <div className="p-4 flex body_semibold_14 ">{t("mysql")}</div>
             <CodeMirror
+              lang="sql"
               theme={dracula}
               height="300px"
-              extensions={[javascript({ jsx: true })]}
+              extensions={[sql()]}
               onChange={(v) => {}}
             />
           </div>

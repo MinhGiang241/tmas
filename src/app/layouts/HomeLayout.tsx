@@ -1,16 +1,22 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Header from "../components/Header";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import {
+  redirect,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import LoadingPage from "../loading";
 import { getUserMe } from "@/services/api_services/auth_service";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { fetchDataUser, setUserData } from "@/redux/user/userSlice";
+import { fetchDataUser, setUserData, userClear } from "@/redux/user/userSlice";
 import { useTranslation } from "react-i18next";
 import { UserData } from "@/data/user";
 import { setLoadingMember, setMemberData } from "@/redux/members/MemberSlice";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import {
+  changeStudio,
   getInvitaionEmailMember,
   getMemberListInStudio,
 } from "@/services/api_services/account_services";
@@ -36,6 +42,33 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
   const pathname = usePathname();
+  const search = useSearchParams();
+  const studioId = search.get("studioId");
+  const onChangeStudio = async (ownerId?: string) => {
+    try {
+      var data = await changeStudio(ownerId);
+      localStorage.removeItem("access_token");
+      if (sessionStorage.getItem("access_token")) {
+        sessionStorage.removeItem("access_token");
+        sessionStorage.setItem("access_token", data["token"]);
+      } else {
+        localStorage.setItem("access_token", data["token"]);
+      }
+      var userNew = data["user"] as UserData;
+      dispatch(userClear({}));
+      dispatch(setUserData(userNew));
+
+      // await loadMembersWhenChangeStudio();
+      // await loadingQuestionsAndExams(true, userNew.studio?._id);
+    } catch (e: any) {}
+  };
+
+  useEffect(() => {
+    if (studioId) {
+      onChangeStudio(studioId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studioId]);
 
   useEffect(() => {
     if (user?._id) {
