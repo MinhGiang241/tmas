@@ -3,23 +3,26 @@ import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import { Checkbox, Switch } from "antd";
 import dynamic from "next/dynamic";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import _ from "lodash";
 import { ExamGroupData, QuestionGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { MultiAnswerQuestionFormData } from "@/data/form_interface";
-import { useFormik } from "formik";
+import { FormikErrors, useFormik } from "formik";
 import { useQuill } from "react-quilljs";
 import cheerio from "cheerio";
+import EditorCom from "@/app/exams/components/react_quill/Editor";
+import ReactQuill from "react-quill";
+import "quill/dist/quill.bubble.css";
+
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
-    ssr: false,
+    ssr: true,
   },
 );
-
 const CheckboxGroup = Checkbox.Group;
 
 interface Props {
@@ -35,6 +38,7 @@ function ManyResultsQuestion({
 }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
+  console.log("re render");
 
   const [results, setResults] = useState<any[]>([
     { value: undefined },
@@ -42,6 +46,13 @@ function ManyResultsQuestion({
     { value: undefined },
     { value: undefined },
   ]);
+
+  // var results = [
+  //   { value: undefined },
+  //   { value: undefined },
+  //   { value: undefined },
+  //   { value: undefined },
+  // ];
   const [checkedResults, setCheckedResults] = useState<number[]>([]);
 
   const onChangeCheckResult = (v: any) => {
@@ -53,6 +64,7 @@ function ManyResultsQuestion({
     question_group?: string;
     question?: string;
     explain?: string;
+    items?: { check?: boolean; value?: string }[];
   }
 
   const optionSelect = (examGroups ?? []).map<any>(
@@ -67,6 +79,12 @@ function ManyResultsQuestion({
     question_group: undefined,
     question: undefined,
     explain: undefined,
+    items: [
+      { check: false, value: "" },
+      { check: false, value: "" },
+      { check: false, value: "" },
+      { check: false, value: "" },
+    ],
   };
 
   const validate = async (values: MultiAnswerQuestionValue) => {
@@ -87,7 +105,7 @@ function ManyResultsQuestion({
   const formik = useFormik({
     initialValues,
     validate,
-    onSubmit: async (values: LoginFormValue) => {
+    onSubmit: async (values: MultiAnswerQuestionValue) => {
       console.log(values);
       console.log("result", results);
     },
@@ -151,26 +169,33 @@ function ManyResultsQuestion({
             rootClassName="flex flex-col"
             onChange={onChangeCheckResult}
           >
-            <button
-              onClick={() => {
-                console.log(results);
-              }}
-            >
-              show list
-            </button>
-            {_.cloneDeep(results)?.map((a: any, i: number) => (
+            {(formik.values?.items ?? []).map((a: any, i: number) => (
               <div key={i} className="w-full flex items-center mb-4">
                 <Checkbox value={i} />
                 <div className="body_semibold_14 ml-2 w-5">
                   {String.fromCharCode(65 + i)}.
                 </div>
+                {/* <ReactQuill */}
+                {/*   theme="bubble" */}
+                {/*   modules={modules} */}
+                {/*   formats={formats} */}
+                {/*   value={a.value} */}
+                {/*   onChange={(v) => {}} */}
+                {/* /> */}
                 <EditorHook
+                  key={i}
+                  // formik={formik}
                   setValue={(name: any, e: any) => {
                     console.log("results", results);
-                    var newList = _.cloneDeep(results);
+
+                    var newList = _.cloneDeep(formik.values?.items ?? []);
+                    // newList.splice(i, 1);
+
                     newList[i].value = e;
                     console.log("newList", newList);
-                    setResults(newList);
+                    formik.setFieldValue("items", newList);
+                    // setResults(newList);
+                    //setResults(_.cloneDeep(newList));
                   }}
                   isCount={false}
                   isBubble={true}
@@ -178,10 +203,12 @@ function ManyResultsQuestion({
                   name={`result-${String.fromCharCode(65 + i)}`}
                 />
                 <button
-                  onClick={() => {
-                    var newList = _.cloneDeep(results);
+                  onClick={async () => {
+                    var newList = _.cloneDeep(formik.values?.items ?? []);
                     newList.splice(i, 1);
-                    setResults(newList);
+                    // setResults(newList);
+                    formik.setFieldValue("items", newList);
+                    // setResults(_.cloneDeep(newList));
                   }}
                   className=" text-neutral-500 text-2xl mt-[8px] ml-2 "
                 >
@@ -191,8 +218,13 @@ function ManyResultsQuestion({
             ))}
             <div className="w-full flex justify-end">
               <button
-                onClick={() => {
-                  setResults([...results, { value: undefined }]);
+                onClick={async () => {
+                  await formik.setFieldValue("items", [
+                    ...(formik.values?.items ?? []),
+                    { check: false, value: "" },
+                  ]);
+                  // setResults([...results, { value: "" }]);
+                  // results.push({ value: undefined });
                 }}
                 className="text-m_primary_500 underline body_semibold_14 underline-offset-4"
               >

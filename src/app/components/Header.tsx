@@ -248,7 +248,7 @@ function Header({ path }: { path?: string }) {
                       "exam_bank",
                       "statistics",
                     ].some((d) => {
-                      return d == e;
+                      return d == v;
                     })
                   ) {
                     errorToast(t("please_verify"));

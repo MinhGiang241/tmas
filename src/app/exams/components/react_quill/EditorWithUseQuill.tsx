@@ -78,7 +78,9 @@ const Editor = ({
   const { t } = useTranslation(np);
 
   const { quill, quillRef, Quill } = useQuill({
-    modules: { blotFormatter: {} },
+    modules: {
+      blotFormatter: {},
+    },
     theme: isBubble ? "bubble" : "snow",
     placeholder: placeholder,
   });
