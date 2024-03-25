@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import _ from "lodash";
-import { ExamGroupData } from "@/data/exam";
+import { ExamGroupData, QuestionGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -16,12 +16,14 @@ const EditorHook = dynamic(
 );
 
 interface Props {
-  examGroups?: ExamGroupData[];
+  questionGroups?: QuestionGroupData[];
+  submitRef?: any;
+  idExam?: string;
 }
 
 const CheckboxGroup = Checkbox.Group;
 
-function ConnectQuestion({ examGroups }: Props) {
+function ConnectQuestion({ questionGroups: examGroups, submitRef }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
 
@@ -29,22 +31,22 @@ function ConnectQuestion({ examGroups }: Props) {
   const [textResults, setTextResults] = useState<number[]>([0, 1]);
 
   const optionSelect = (examGroups ?? []).map<any>(
-    (v: ExamGroupData, i: number) => ({
-      title: v?.name,
+    (v: QuestionGroupData, i: number) => ({
+      label: v?.name,
       value: v?.id,
-      disabled: true,
-      isLeaf: false,
-      children: [
-        ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
-          title: e?.name,
-          value: e?.id,
-        })),
-      ],
     }),
   );
 
   return (
     <div className="grid grid-cols-12 gap-4 max-lg:px-5">
+      <button
+        className="hidden"
+        onClick={() => {
+          alert("Connect");
+        }}
+        ref={submitRef}
+      />
+
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput h="h-9" name="point" id="point" required title={t("point")} />
         <Radio.Group buttonStyle="solid" onChange={(v) => {}}>

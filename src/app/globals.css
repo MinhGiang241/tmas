@@ -183,10 +183,18 @@ body {
   border-top-left-radius: 6px 6px;
 }
 
+.custom-ql-snow.ql-error .ql-toolbar {
+  border-color: #ea3434 !important;
+}
+
 .custom-ql-snow .ql-container {
   min-height: 200px;
   border-bottom-right-radius: 6px 6px;
   border-bottom-left-radius: 6px 6px;
+}
+
+.custom-ql-snow.ql-error .ql-container {
+  border-color: #ea3434 !important;
 }
 
 .custom-ql-bubble .ql-toolbar {
@@ -210,6 +218,10 @@ body {
 .ant-picker-ok button {
   background-color: #0b8199 !important;
   border-radius: 6px;
+}
+
+.ql-editor.ql-blank::before {
+  font-style: normal !important;
 }
 
 /* .ant-radio-wrapper { */

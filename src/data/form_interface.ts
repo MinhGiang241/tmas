@@ -154,3 +154,137 @@ export interface ExaminationListParams {
   "SorterByName.Name"?: string;
   "SorterByName.isAsc"?: boolean;
 }
+
+export type CodingDataType =
+  | "String"
+  | "Integer"
+  | "LongInteger"
+  | "Float"
+  | "Boolean"
+  | "Double"
+  | "Character"
+  | "IntegerArray"
+  | "StringArray"
+  | "LongIntegerArray"
+  | "FloatArray"
+  | "DoubleArray"
+  | "CharacterArray"
+  | "BooleanArray"
+  | "Integer2DArray"
+  | "String2DArray"
+  | "LongInteger2DArray"
+  | "Float2DArray"
+  | "Double2DArray"
+  | "Character2DArray"
+  | "Boolean2DArray"
+  | "Void";
+
+export type QuestionType =
+  | "MutilAnswer"
+  | "YesNoQuestion"
+  | "Pairing"
+  | "Essay"
+  | "Coding"
+  | "SQL"
+  | "FillBlank"
+  | "Random";
+
+export interface BaseQuestionFormData {
+  question?: string;
+  numberPoint?: number;
+  idGroupQuestion?: string;
+  questionType?: QuestionType;
+  idExam?: string;
+  idExamQuestionPart?: string;
+}
+
+export interface CodingQuestionFormData extends BaseQuestionFormData {
+  content?: {
+    codingScroringMethod?: "PassAllTestcase" | "EachTestcase";
+    codeLanguages:
+      | "PHP"
+      | "Javascrip"
+      | "Java"
+      | "Python"
+      | "Ruby"
+      | "CShape"[];
+    testcases: {
+      name?: string;
+      inputData?: string;
+      outputData?: string;
+    }[];
+    codingTemplate?: {
+      nameFunction?: string;
+      returnType?: CodingDataType;
+      parameterInputs?: {
+        nameParameter?: string;
+        returnType?: CodingDataType;
+      }[];
+      template?: string;
+      explainAnswer?: string;
+    };
+  };
+}
+
+export interface ExamQuestionPart {
+  _id?: string;
+  name?: string;
+  description?: string;
+}
+
+export interface PagingGetData {
+  paging?: {
+    startIndex?: number;
+    recordPerPage?: number;
+  };
+  ids?: string[];
+  sorters?: { name?: string; isAsc?: boolean }[];
+}
+
+export interface EssayQuestionFormData extends BaseQuestionFormData {
+  content?: {
+    gradingNote?: string;
+    requiredFile?: boolean;
+  };
+}
+
+export interface FillBlankQuestionFormData extends BaseQuestionFormData {
+  content?: {
+    fillBlankScoringMethod?: "CorrectAllBlank" | "EachCorrectBlank";
+    explainAnswer?: string;
+    formatBlank?: string;
+    anwserItems?: { label?: string; anwsers?: string[] }[];
+  };
+}
+
+export interface MultiAnswerQuestionFormData extends BaseQuestionFormData {
+  content?: {
+    explainAnswer?: string;
+    isChangePosition?: boolean;
+    answers?: { label?: string; text?: string; isCorrectAnswer?: boolean }[];
+  };
+}
+
+export interface ConnectQuestionFormData extends BaseQuestionFormData {
+  content?: {
+    pairingScroringMethod?: "EachCorrectItem" | "CorrectAll";
+    questions?: {
+      labelQuestion?: string;
+      labelAnwser?: string;
+      contentQuestion?: string;
+      contentAnwser?: string;
+    }[];
+  };
+}
+
+export interface RandomQuestionFormData extends BaseQuestionFormData {
+  content?: any;
+}
+
+export interface SqlQuestionFormData extends BaseQuestionFormData {
+  content?: {
+    explainAnswer?: string;
+    schemaSql?: string;
+    expectedOutput?: string;
+  };
+}

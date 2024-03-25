@@ -3,10 +3,10 @@ import MBreadcrumb from "@/app/components/config/MBreadcrumb";
 import MButton from "@/app/components/config/MButton";
 import { errorToast } from "@/app/components/toast/customToast";
 import HomeLayout from "@/app/layouts/HomeLayout";
-import { ExamData, ExamGroupData } from "@/data/exam";
+import { ExamData, ExamGroupData, QuestionGroupData } from "@/data/exam";
 import { getExamById } from "@/services/api_services/examination_api";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CodingQuestion from "./questions_components/CodingQuestion";
 import SqlQuestion from "./questions_components/SqlQuestion";
@@ -17,10 +17,14 @@ import ConnectQuestion from "./questions_components/ConnectQuestion";
 import FillBlankQuestion from "./questions_components/FillBlankQuestion";
 import RandomQuestion from "./questions_components/RandomQuestion";
 import { APIResults } from "@/data/api_results";
-import { getExamGroupTest } from "@/services/api_services/exam_api";
+import {
+  getExamGroupTest,
+  getQuestionGroups,
+} from "@/services/api_services/exam_api";
 import {
   fetchDataExamGroup,
   setExamGroupLoading,
+  setquestionGroupLoading,
 } from "@/redux/exam_group/examGroupSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
@@ -31,7 +35,7 @@ function CreateQuestionPage({ params }: any) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state: RootState) => state?.user?.user);
-  const examGroups = useAppSelector(
+  const questionGroups = useAppSelector(
     (state: RootState) => state?.examGroup?.list,
   );
   var search = useSearchParams();
@@ -49,36 +53,27 @@ function CreateQuestionPage({ params }: any) {
     console.log("exam", exam);
   };
 
-  const loadExamGroupList = async (init?: boolean) => {
+  const loadQuestionGroupList = async (init?: boolean) => {
     if (init) {
-      dispatch(setExamGroupLoading(true));
+      dispatch(setquestionGroupLoading(true));
     }
 
-    var dataResults: APIResults = await getExamGroupTest({
-      text: "",
-      studioId: user?.studio?._id,
-    });
+    var dataResults: APIResults = await getQuestionGroups(
+      "",
+      user?.studio?._id,
+    );
 
     if (dataResults.code != 0) {
       return [];
     } else {
-      var data = dataResults?.data as ExamGroupData[];
-      var levelOne = data?.filter((v: ExamGroupData) => v.level === 0);
-      var levelTwo = data?.filter((v: ExamGroupData) => v.level === 1);
-
-      var list = levelOne.map((e: ExamGroupData) => {
-        var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id,
-        );
-        return { ...e, childs };
-      });
-      return list;
+      var data = dataResults?.data as QuestionGroupData[];
+      return data;
     }
   };
 
   useEffect(() => {
     if (user?.studio?._id) {
-      dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
+      dispatch(fetchDataExamGroup(async () => loadQuestionGroupList(true)));
     }
 
     loadExamById();
@@ -97,6 +92,8 @@ function CreateQuestionPage({ params }: any) {
     "fill_blank",
     "random",
   ];
+
+  const submitRef = useRef(undefined);
   return (
     <HomeLayout>
       <div className="w-full flex mt-4 items-center justify-between">
@@ -125,7 +122,9 @@ function CreateQuestionPage({ params }: any) {
           <MButton
             className="min-w-20"
             h="h-11"
-            onClick={() => {}}
+            onClick={() => {
+              (submitRef.current as any).click();
+            }}
             text={common.t("create_new")}
           />
         </div>
@@ -157,21 +156,61 @@ function CreateQuestionPage({ params }: any) {
       <div className="h-4" />
       {(question == "many_results" ||
         !questionList.some((a: any) => a == question)) && (
-          <ManyResultsQuestion examGroups={examGroups} />
-        )}
+        <ManyResultsQuestion
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          examId={params?.id}
+        />
+      )}
       {question == "true_false" && (
-        <TrueFalseQuestion examGroups={examGroups} />
+        <TrueFalseQuestion
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          examId={params?.id}
+        />
       )}
-      {question == "explain" && <ExplainQuestion examGroups={examGroups} />}
+      {question == "explain" && (
+        <ExplainQuestion
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          examId={params?.id}
+        />
+      )}
       {question == "connect_quest" && (
-        <ConnectQuestion examGroups={examGroups} />
+        <ConnectQuestion
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          examId={params?.id}
+        />
       )}
-      {question == "coding" && <CodingQuestion examGroups={examGroups} />}
-      {question == "sql" && <SqlQuestion examGroups={examGroups} />}
+      {question == "coding" && (
+        <CodingQuestion
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          examId={params?.id}
+        />
+      )}
+      {question == "sql" && (
+        <SqlQuestion
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          examId={params?.id}
+        />
+      )}
       {question == "fill_blank" && (
-        <FillBlankQuestion examGroups={examGroups} />
+        <FillBlankQuestion
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          examId={params?.id}
+        />
       )}
-      {question == "random" && <RandomQuestion examGroups={examGroups} />}
+      {question == "random" && (
+        <RandomQuestion
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          examId={params?.id}
+        />
+      )}
     </HomeLayout>
   );
 }

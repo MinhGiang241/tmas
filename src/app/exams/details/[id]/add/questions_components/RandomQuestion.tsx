@@ -1,37 +1,39 @@
 import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
-import { ExamGroupData } from "@/data/exam";
+import { ExamGroupData, QuestionGroupData } from "@/data/exam";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
 interface Props {
-  examGroups?: ExamGroupData[];
+  questionGroups?: QuestionGroupData[];
+  submitRef?: any;
+  idExam?: string;
 }
 
-function RandomQuestion({ examGroups }: Props) {
+function RandomQuestion({ questionGroups: examGroups, submitRef }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const optionSelect = (examGroups ?? []).map<any>(
-    (v: ExamGroupData, i: number) => ({
-      title: v?.name,
+    (v: QuestionGroupData, i: number) => ({
+      label: v?.name,
       value: v?.id,
-      disabled: true,
-      isLeaf: false,
-      children: [
-        ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
-          title: e?.name,
-          value: e?.id,
-        })),
-      ],
     }),
   );
 
   return (
     <div className="grid grid-cols-12 gap-4 max-lg:px-5">
+      <button
+        className="hidden"
+        onClick={() => {
+          alert("Random");
+        }}
+        ref={submitRef}
+      />
+
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput h="h-9" name="point" id="point" required title={t("point")} />
-        <MTreeSelect
+        <MDropdown
           options={optionSelect}
           h="h-9"
           title={t("question_group")}

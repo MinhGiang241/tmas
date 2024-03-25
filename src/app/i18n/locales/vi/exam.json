@@ -134,7 +134,7 @@
   "transfer_turn": "Lần lượt các phần: ứng viên không thể quay lại làm các phần thi trước",
   "manual_add": "Thêm thủ công",
   "many_results": "Nhiều đáp án",
-  "true_false": "Đúng sai",
+  "true_false": "Đúng/Sai",
   "connect_quest": "Ghép/nối",
   "explain": "Tự luận",
   "coding": "Coding",
@@ -200,5 +200,7 @@
   "group_random_quest": "Câu hỏi ngẫu nhiên của nhóm",
   "guide": "Hướng dẫn",
   "guide_intro": "Đề thi sẽ lấy ngẫu nhiên 1 câu hỏi trong ngân hàng câu hỏi của bạn theo nhóm câu hỏi đã chọn. Khi chấm điểm sẽ lấy theo điểm bạn cài đặt ở đây.",
-  "history_push_approve": "Lịch sử đẩy phê duyệt"
+  "history_push_approve": "Lịch sử đẩy phê duyệt",
+  "name": "Tên",
+  "create": "Tạo"
 }

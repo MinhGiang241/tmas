@@ -20,6 +20,13 @@ export const fetchDataExamGroup = createAsyncThunk(
     return data;
   },
 );
+export const fetchDataQuestionGroup = createAsyncThunk(
+  "questionGroup",
+  async (fetcher: any, _) => {
+    const data = await fetcher();
+    return data;
+  },
+);
 
 export const examGroupSlice = createSlice({
   name: "exam_group",
@@ -44,6 +51,10 @@ export const examGroupSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchDataExamGroup.fulfilled, (state, action) => {
       state.list = action.payload;
+      state.loading = false;
+    });
+    builder.addCase(fetchDataQuestionGroup.fulfilled, (state, action) => {
+      state.questions = action.payload;
       state.loading = false;
     });
   },

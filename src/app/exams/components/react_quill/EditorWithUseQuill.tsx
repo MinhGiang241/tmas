@@ -3,9 +3,11 @@ import { useQuill } from "react-quilljs";
 import BlotFormatter from "quill-blot-formatter";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
+import NoticeIcon from "@/app/components/icons/notice.svg";
 import { FormikErrors } from "formik";
 import { Montserrat } from "next/font/google";
 import dynamic from "next/dynamic";
+import { useTranslation } from "react-i18next";
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 interface Props {
@@ -52,9 +54,11 @@ const Editor = ({
   defaultValue,
   placeholder,
   isCount = true,
+  extend = true,
 }: Props) => {
   var np;
   var er;
+
   if (formik) {
     onChange = formik.handleChange;
     error = formik.errors[name];
@@ -70,6 +74,8 @@ const Editor = ({
     er = error;
     np = namespace;
   }
+
+  const { t } = useTranslation(np);
 
   const { quill, quillRef, Quill } = useQuill({
     modules: { blotFormatter: {} },
@@ -123,14 +129,37 @@ const Editor = ({
         )}
       </div>
       <div
-        className={
+        className={`${
           !isBubble
-            ? "custom-ql-snow"
+            ? "custom-ql-snow "
             : "custom-ql-bubble border rounded-lg p-2"
-        }
+        } ${er && touch ? "ql-error" : ""}  `}
       >
-        <div className={`${montserrat.className}`} ref={quillRef} />
+        <div
+          id={id}
+          className={`${montserrat.className}`}
+          ref={quillRef}
+          onBlur={async () => {
+            if (formik) {
+              await formik.setFieldTouched(name, true);
+            }
+          }}
+        />
       </div>
+
+      {er && touch ? (
+        <div
+          className={` flex items-start ${!extend && "absolute top-[49px]"}`}
+        >
+          <div className="min-w-4 mt-[2px]">
+            <NoticeIcon />
+          </div>
+          <div className=" text-m_error_500 body_regular_14 text-pretty">
+            {t(er)}
+          </div>
+        </div>
+      ) : null}
+      {extend && !(er && touch) && required && <div className="h-[20px]" />}
     </div>
   );
 };

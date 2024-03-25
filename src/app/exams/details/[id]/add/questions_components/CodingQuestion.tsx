@@ -30,10 +30,11 @@ import { StreamLanguage, language } from "@codemirror/language";
 import { csharp } from "@replit/codemirror-lang-csharp";
 import { lua } from "@codemirror/legacy-modes/mode/lua";
 import { dracula } from "@uiw/codemirror-theme-dracula";
-import { ExamGroupData } from "@/data/exam";
+import { ExamGroupData, QuestionGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
+import CreateTestCaseModal, { TestcaseValue } from "./CreateTestCaseModal";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -43,10 +44,12 @@ const EditorHook = dynamic(
 );
 
 interface Props {
-  examGroups?: ExamGroupData[];
+  questionGroups?: QuestionGroupData[];
+  submitRef?: any;
+  idExam?: string;
 }
 
-function CodingQuestion({ examGroups }: Props) {
+function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
 
@@ -78,8 +81,8 @@ function CodingQuestion({ examGroups }: Props) {
       onHeaderCell: (_) => rowStartStyle,
       width: "25%",
       title: <div className="w-1/3 flex justify-center">{t("code")}</div>,
-      dataIndex: "code",
-      key: "code",
+      dataIndex: "name",
+      key: "name",
       render: (text, data) => (
         <p key={text} className="w-full caption_regular_14">
           {text}
@@ -128,7 +131,12 @@ function CodingQuestion({ examGroups }: Props) {
       key: "schema",
       render: (action, data) => (
         <div className="w-full flex justify-center ">
-          <button className="ml-2" onClick={() => {}}>
+          <button
+            className="ml-2"
+            onClick={() => {
+              setTestcases(testcases.filter((e: any) => e.id != data.id));
+            }}
+          >
             <TrashIcon />
           </button>
         </div>
@@ -136,28 +144,34 @@ function CodingQuestion({ examGroups }: Props) {
     },
   ];
 
-  const [testcases, setTestcases] = useState([
-    { code: "1223", input: "hello", output: "world" },
-    { code: "1223", input: "hello", output: "world" },
-  ]);
+  const [testcases, setTestcases] = useState<TestcaseValue[]>([]);
 
   const optionSelect = (examGroups ?? []).map<any>(
-    (v: ExamGroupData, i: number) => ({
-      title: v?.name,
+    (v: QuestionGroupData, i: number) => ({
+      label: v?.name,
       value: v?.id,
-      disabled: true,
-      isLeaf: false,
-      children: [
-        ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
-          title: e?.name,
-          value: e?.id,
-        })),
-      ],
     }),
   );
 
+  const [openCreateTestcase, setOpenCreateTestCase] = useState<boolean>(false);
+
   return (
     <div className="grid grid-cols-12 gap-4 max-lg:px-5">
+      <button
+        className="hidden"
+        onClick={() => {
+          alert("Coding");
+        }}
+        ref={submitRef}
+      />
+      <CreateTestCaseModal
+        onOk={(testCase: TestcaseValue) => {
+          setTestcases([...testcases, testCase]);
+        }}
+        title={t("create_testcase")}
+        open={openCreateTestcase}
+        onCancel={() => setOpenCreateTestCase(false)}
+      />
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput h="h-9" name="point" id="point" required title={t("point")} />
         <Radio.Group
@@ -177,7 +191,7 @@ function CodingQuestion({ examGroups }: Props) {
           </Space>
         </Radio.Group>
         <div className="h-3" />
-        <MTreeSelect
+        <MDropdown
           options={optionSelect}
           h="h-9"
           title={t("question_group")}
@@ -229,7 +243,9 @@ function CodingQuestion({ examGroups }: Props) {
             />
             <div>
               <button
-                onClick={() => {}}
+                onClick={() => {
+                  setOpenCreateTestCase(true);
+                }}
                 className="ml-2 text-m_primary_500 underline body_semibold_14 underline-offset-4"
               >
                 <PlusOutlined /> {t("create_testcase")}
@@ -316,10 +332,13 @@ function CodingQuestion({ examGroups }: Props) {
               <div className="flex-grow" />
               <Select
                 className="min-w-28"
-                options={plainOptions?.map((a: any, i: number) => ({
-                  value: a.value,
-                  label: a.label,
-                }))}
+                options={checkedLang?.map((a: any, i: number) => {
+                  var lan = plainOptions.find((k: any) => k.value == a);
+                  return {
+                    value: lan?.value,
+                    label: lan?.label,
+                  };
+                })}
               />
             </div>
             <CodeMirror
