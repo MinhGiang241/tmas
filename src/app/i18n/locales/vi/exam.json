@@ -203,5 +203,10 @@
   "history_push_approve": "Lịch sử đẩy phê duyệt",
   "name": "Tên",
   "create": "Tạo",
-  "success_add_question": "Thêm câu hỏi thành công"
+  "all_state": "Tất cả trạng thái",
+  "Pending": "Chờ duyệt",
+  "Approved": "Đã duyệt",
+  "Rejected": "Từ chối",
+  "approve_code": "Mã yêu cầu",
+  "reason": "Lý do"
 }

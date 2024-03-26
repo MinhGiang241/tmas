@@ -131,5 +131,11 @@
   "no_limit": "Unlimited",
   "transfer_past": "Chuyển phần",
   "transfer_free": "Chuyển phần tự do: mặc định lựa chọn, ứng viên có thể làm các phần theo thứ tự tùy chọn",
-  "transfer_turn": "Lần lượt các phần: ứng viên không thể quay lại làm các phần thi trước"
+  "transfer_turn": "Lần lượt các phần: ứng viên không thể quay lại làm các phần thi trước",
+  "all_state": "All state",
+  "Pending": "Pending",
+  "Approved": "Approved",
+  "Rejected": "Rejected",
+  "approve_code": "State",
+  "reason": "Reason"
 }
