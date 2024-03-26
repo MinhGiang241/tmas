@@ -14,8 +14,8 @@ interface Props extends BaseModalProps {
 export interface TestcaseValue {
   id?: string;
   name?: string;
-  input?: string;
-  output?: string;
+  inputData?: string;
+  outputData?: string;
 }
 
 function CreateTestCaseModal(props: Props) {
@@ -32,8 +32,8 @@ function CreateTestCaseModal(props: Props) {
 
   const initialValues: TestcaseValue = {
     name: undefined,
-    input: undefined,
-    output: undefined,
+    inputData: undefined,
+    outputData: undefined,
   };
   const formik = useFormik({
     initialValues,
@@ -74,15 +74,15 @@ function CreateTestCaseModal(props: Props) {
         <MTextArea
           formik={formik}
           title={t("input")}
-          id="input"
-          name="input"
+          id="inputData"
+          name="inputData"
           placeholder={t("enter_content")}
         />
         <MTextArea
           formik={formik}
           title={t("output")}
-          id="output"
-          name="output"
+          id="outputData"
+          name="outputData"
           placeholder={t("enter_content")}
         />
         <div className="flex justify-center my-4">

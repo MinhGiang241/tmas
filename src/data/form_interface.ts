@@ -202,6 +202,7 @@ export interface CodingQuestionFormData extends BaseQuestionFormData {
   content?: {
     codingScroringMethod?: "PassAllTestcase" | "EachTestcase";
     codeLanguages:
+      | any
       | "PHP"
       | "Javascrip"
       | "Java"
@@ -216,14 +217,17 @@ export interface CodingQuestionFormData extends BaseQuestionFormData {
     codingTemplate?: {
       nameFunction?: string;
       returnType?: CodingDataType;
-      parameterInputs?: {
-        nameParameter?: string;
-        returnType?: CodingDataType;
-      }[];
+      parameterInputs?: ParameterType[];
       template?: string;
       explainAnswer?: string;
     };
   };
+}
+
+export interface ParameterType {
+  id?: string;
+  nameParameter?: string;
+  returnType?: string;
 }
 
 export interface ExamQuestionPart {
