@@ -202,5 +202,6 @@
   "guide_intro": "Đề thi sẽ lấy ngẫu nhiên 1 câu hỏi trong ngân hàng câu hỏi của bạn theo nhóm câu hỏi đã chọn. Khi chấm điểm sẽ lấy theo điểm bạn cài đặt ở đây.",
   "history_push_approve": "Lịch sử đẩy phê duyệt",
   "name": "Tên",
-  "create": "Tạo"
+  "create": "Tạo",
+  "success_add_question": "Thêm câu hỏi thành công"
 }

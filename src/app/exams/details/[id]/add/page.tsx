@@ -28,6 +28,7 @@ import {
 } from "@/redux/exam_group/examGroupSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
+import { resetMultiAnswer } from "@/redux/questions/questionSlice";
 
 function CreateQuestionPage({ params }: any) {
   const { t } = useTranslation("exam");
@@ -80,7 +81,9 @@ function CreateQuestionPage({ params }: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  const [activeTab, setActiveTab] = useState<string>("many_results");
+  const questionLoading = useAppSelector(
+    (state: RootState) => state.question.loading,
+  );
 
   const questionList = [
     "many_results",
@@ -113,6 +116,7 @@ function CreateQuestionPage({ params }: any) {
             h="h-11"
             className="min-w-20"
             onClick={() => {
+              dispatch(resetMultiAnswer(1));
               router.push(`/exams/details/${params.id}`);
             }}
             type="secondary"
@@ -120,6 +124,7 @@ function CreateQuestionPage({ params }: any) {
           />
           <div className="w-4" />
           <MButton
+            loading={questionLoading}
             className="min-w-20"
             h="h-11"
             onClick={() => {
@@ -159,56 +164,56 @@ function CreateQuestionPage({ params }: any) {
         <ManyResultsQuestion
           questionGroups={questionGroups}
           submitRef={submitRef}
-          examId={params?.id}
+          idExam={params?.id}
         />
       )}
       {question == "true_false" && (
         <TrueFalseQuestion
           questionGroups={questionGroups}
           submitRef={submitRef}
-          examId={params?.id}
+          idExam={params?.id}
         />
       )}
       {question == "explain" && (
         <ExplainQuestion
           questionGroups={questionGroups}
           submitRef={submitRef}
-          examId={params?.id}
+          idExam={params?.id}
         />
       )}
       {question == "connect_quest" && (
         <ConnectQuestion
           questionGroups={questionGroups}
           submitRef={submitRef}
-          examId={params?.id}
+          idExam={params?.id}
         />
       )}
       {question == "coding" && (
         <CodingQuestion
           questionGroups={questionGroups}
           submitRef={submitRef}
-          examId={params?.id}
+          idExam={params?.id}
         />
       )}
       {question == "sql" && (
         <SqlQuestion
           questionGroups={questionGroups}
           submitRef={submitRef}
-          examId={params?.id}
+          idExam={params?.id}
         />
       )}
       {question == "fill_blank" && (
         <FillBlankQuestion
           questionGroups={questionGroups}
           submitRef={submitRef}
-          examId={params?.id}
+          idExam={params?.id}
         />
       )}
       {question == "random" && (
         <RandomQuestion
           questionGroups={questionGroups}
           submitRef={submitRef}
-          examId={params?.id}
+          idExam={params?.id}
         />
       )}
     </HomeLayout>

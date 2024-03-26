@@ -91,6 +91,8 @@ const Editor = ({
   }
 
   useEffect(() => {
+    console.log("quill effect");
+
     if (quill) {
       //quill.clipboard.dangerouslyPasteHTML(formik?.initialValues[name] ?? "");
       quill?.setContents(

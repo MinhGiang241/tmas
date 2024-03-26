@@ -267,6 +267,7 @@ export interface MultiAnswerQuestionFormData extends BaseQuestionFormData {
 
 export interface ConnectQuestionFormData extends BaseQuestionFormData {
   content?: {
+    explainAnswer?: string;
     pairingScroringMethod?: "EachCorrectItem" | "CorrectAll";
     questions?: {
       labelQuestion?: string;

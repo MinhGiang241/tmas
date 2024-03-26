@@ -45,3 +45,76 @@ export const laguageOptions = [
   { value: "java", label: "Java" },
   { value: "css", label: "CSS" },
 ];
+
+export interface SampleCode {
+  params?: { type?: string; name?: string }[];
+  returnType?: string;
+  functionName?: string;
+  lang?: string;
+}
+export const genSampleCode = ({
+  params,
+  functionName,
+  returnType,
+  lang,
+}: SampleCode) => {
+  switch (lang) {
+    case "javascript":
+      return `function ${functionName ?? "sample"} (${
+        params?.map((s: any) => `${s?.name ?? ""}`).join(", ") ?? ""
+      }) {
+  // Write code here
+      
+}`;
+    case "java":
+      return `public class Main {
+    public static ${returnType ?? "void"} ${functionName ?? "main"} (${
+      params
+        ?.map((s: any) => `${s?.type ?? "void"} ${s?.name ?? ""}`)
+        .join(", ") ?? ""
+    }) {
+    // Write code here
+       
+    }
+}`;
+    case "c#":
+      return `using System;
+
+class Program {
+    public static ${returnType ?? "void"} ${functionName ?? "Main"} (${
+      params
+        ?.map((s: any) => `${s?.type ?? "void"} ${s?.name ?? ""}`)
+        .join(", ") ?? ""
+    }  {
+    // Write code here 
+        
+    }
+}`;
+    case "ruby":
+      return `def ${functionName ?? "main"} (${
+        params?.map((s: any) => `${s?.name ?? ""}`).join(", ") ?? ""
+      }) {
+    # Write code here 
+      
+}`;
+    case "php":
+      return `<?php
+function ${functionName ?? "main"}(${
+        params?.map((s: any) => `$${s?.name ?? ""}`).join(", ") ?? ""
+      }) {
+    // Write code here 
+      
+}
+?>`;
+    case "python":
+      return `def ${functionName ?? "main"}(${
+        params?.map((s: any) => `${s?.name ?? ""}`).join(", ") ?? ""
+      }){
+    # Write code here
+
+}
+      `;
+    default:
+      return "";
+  }
+};

@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import _ from "lodash";
+import _, { parseInt } from "lodash";
 import { ExamGroupData, QuestionGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { MultiAnswerQuestionFormData } from "@/data/form_interface";
@@ -16,6 +16,20 @@ import cheerio from "cheerio";
 import EditorCom from "@/app/exams/components/react_quill/Editor";
 import ReactQuill from "react-quill";
 import "quill/dist/quill.bubble.css";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import { v4 as uuidv4 } from "uuid";
+import {
+  addMoreAnswer,
+  deleteMultiAnswer,
+  resetMultiAnswer,
+  setQuestionLoading,
+  updateCheckCorrectAnswer,
+  updateTextMultiAnswer,
+} from "@/redux/questions/questionSlice";
+import { createMultiAnswerQuestion } from "@/services/api_services/question_api";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -38,33 +52,29 @@ function ManyResultsQuestion({
 }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
-  console.log("re render");
 
-  const [results, setResults] = useState<any[]>([
-    { value: undefined },
-    { value: undefined },
-    { value: undefined },
-    { value: undefined },
-  ]);
-
-  // var results = [
-  //   { value: undefined },
-  //   { value: undefined },
-  //   { value: undefined },
-  //   { value: undefined },
-  // ];
   const [checkedResults, setCheckedResults] = useState<number[]>([]);
+  const answers = useAppSelector(
+    (state: RootState) => state.question.multiAnswerQuestions,
+  );
 
+  // const [answers, setAnswer] = useState<MultiAnswer[]>([
+  //   { id: uuidv4(), label: undefined, text: undefined, isCorrectAnswer: false },
+  //   { id: uuidv4(), label: undefined, text: undefined, isCorrectAnswer: false },
+  // ]);
+
+  const [isChangePosition, setIsChangePosition] = useState<boolean>(false);
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const onChangeCheckResult = (v: any) => {
     setCheckedResults(v);
   };
 
   interface MultiAnswerQuestionValue {
-    point?: number;
+    point?: string;
     question_group?: string;
     question?: string;
     explain?: string;
-    items?: { check?: boolean; value?: string }[];
   }
 
   const optionSelect = (examGroups ?? []).map<any>(
@@ -79,12 +89,6 @@ function ManyResultsQuestion({
     question_group: undefined,
     question: undefined,
     explain: undefined,
-    items: [
-      { check: false, value: "" },
-      { check: false, value: "" },
-      { check: false, value: "" },
-      { check: false, value: "" },
-    ],
   };
 
   const validate = async (values: MultiAnswerQuestionValue) => {
@@ -101,13 +105,41 @@ function ManyResultsQuestion({
 
     return errors;
   };
+  const search = useSearchParams();
+  const idExamQuestionPart = search.get("questId");
 
   const formik = useFormik({
     initialValues,
     validate,
     onSubmit: async (values: MultiAnswerQuestionValue) => {
-      console.log(values);
-      console.log("result", results);
+      dispatch(setQuestionLoading);
+      var submitData: MultiAnswerQuestionFormData = {
+        idExam,
+        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        idGroupQuestion: values?.question_group,
+        question: values?.question,
+        questionType: "MutilAnswer",
+        numberPoint: values.point ? parseInt(values.point) : undefined,
+        content: {
+          explainAnswer: values.explain,
+          isChangePosition,
+          answers: answers.map((l: MultiAnswer) => ({
+            text: l.text,
+            label: l.label,
+            isCorrectAnswer: l.isCorrectAnswer,
+          })),
+        },
+      };
+
+      var res = await createMultiAnswerQuestion(submitData);
+      dispatch(setQuestionLoading(false));
+      if (res.code != 0) {
+        errorToast(res.message ?? "");
+        return;
+      }
+      dispatch(resetMultiAnswer(1));
+      successToast(t("success_add_question"));
+      router.push(`/exams/details/${idExam}`);
     },
   });
 
@@ -130,6 +162,11 @@ function ManyResultsQuestion({
 
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
+          onKeyDown={(e) => {
+            if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+              e.preventDefault();
+            }
+          }}
           formik={formik}
           h="h-9"
           name="point"
@@ -147,7 +184,12 @@ function ManyResultsQuestion({
           name="question_group"
         />
         <div className="body_semibold_14 mb-2">{t("relocate_result")}</div>
-        <Switch />
+        <Switch
+          value={isChangePosition}
+          onChange={(p) => {
+            setIsChangePosition(p);
+          }}
+        />
       </div>
       <div className="bg-white rounded-lg lg:col-span-8 col-span-12 p-5 h-fit">
         <EditorHook
@@ -169,33 +211,26 @@ function ManyResultsQuestion({
             rootClassName="flex flex-col"
             onChange={onChangeCheckResult}
           >
-            {(formik.values?.items ?? []).map((a: any, i: number) => (
-              <div key={i} className="w-full flex items-center mb-4">
-                <Checkbox value={i} />
-                <div className="body_semibold_14 ml-2 w-5">
+            {answers.map((a: MultiAnswer, i: number) => (
+              <div key={a.id} className="w-full flex items-center mb-4">
+                <Checkbox
+                  value={i}
+                  onChange={(b) => {
+                    dispatch(
+                      updateCheckCorrectAnswer({
+                        index: i,
+                        value: b.target.value == i,
+                      }),
+                    );
+                  }}
+                />
+                <div className="body_semibold_14 mx-2 w-5">
                   {String.fromCharCode(65 + i)}.
                 </div>
-                {/* <ReactQuill */}
-                {/*   theme="bubble" */}
-                {/*   modules={modules} */}
-                {/*   formats={formats} */}
-                {/*   value={a.value} */}
-                {/*   onChange={(v) => {}} */}
-                {/* /> */}
                 <EditorHook
-                  key={i}
-                  // formik={formik}
+                  value={a.text}
                   setValue={(name: any, e: any) => {
-                    console.log("results", results);
-
-                    var newList = _.cloneDeep(formik.values?.items ?? []);
-                    // newList.splice(i, 1);
-
-                    newList[i].value = e;
-                    console.log("newList", newList);
-                    formik.setFieldValue("items", newList);
-                    // setResults(newList);
-                    //setResults(_.cloneDeep(newList));
+                    dispatch(updateTextMultiAnswer({ index: i, value: e }));
                   }}
                   isCount={false}
                   isBubble={true}
@@ -204,13 +239,9 @@ function ManyResultsQuestion({
                 />
                 <button
                   onClick={async () => {
-                    var newList = _.cloneDeep(formik.values?.items ?? []);
-                    newList.splice(i, 1);
-                    // setResults(newList);
-                    formik.setFieldValue("items", newList);
-                    // setResults(_.cloneDeep(newList));
+                    dispatch(deleteMultiAnswer(i));
                   }}
-                  className=" text-neutral-500 text-2xl mt-[8px] ml-2 "
+                  className=" text-neutral-500 text-2xl mt-[6px] ml-2 "
                 >
                   <CloseCircleOutlined />
                 </button>
@@ -219,12 +250,7 @@ function ManyResultsQuestion({
             <div className="w-full flex justify-end">
               <button
                 onClick={async () => {
-                  await formik.setFieldValue("items", [
-                    ...(formik.values?.items ?? []),
-                    { check: false, value: "" },
-                  ]);
-                  // setResults([...results, { value: "" }]);
-                  // results.push({ value: undefined });
+                  dispatch(addMoreAnswer("1"));
                 }}
                 className="text-m_primary_500 underline body_semibold_14 underline-offset-4"
               >
