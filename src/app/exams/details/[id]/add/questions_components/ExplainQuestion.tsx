@@ -82,12 +82,14 @@ function ExplainQuestion({
     initialValues,
     validate,
     onSubmit: async (values: EssayQuestionValue) => {
+      dispatch(setQuestionLoading(true));
       const submitData: EssayQuestionFormData = {
         idExam,
         question: values?.question,
         numberPoint: values.point ? parseInt(values.point) : undefined,
         idGroupQuestion: values.question_group,
         idExamQuestionPart: idExamQuestionPart ?? undefined,
+        questionType: "Essay",
         content: { requiredFile, gradingNote: values.note },
       };
 

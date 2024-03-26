@@ -1,4 +1,4 @@
-import { ParameterType } from "@/data/form_interface";
+import { CodingDataType, ParameterType } from "@/data/form_interface";
 import { javascript } from "@codemirror/lang-javascript";
 import { LanguageSupport, StreamLanguage } from "@codemirror/language";
 import { loadLanguage, langs } from "@uiw/codemirror-extensions-langs";

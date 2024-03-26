@@ -23,17 +23,12 @@ import {
 import _ from "lodash";
 import MButton from "@/app/components/config/MButton";
 import CodeMirror from "@uiw/react-codemirror";
-import { javascript } from "@codemirror/lang-javascript";
-import { java } from "@codemirror/lang-java";
-import { python } from "@codemirror/lang-python";
-import { StreamLanguage, language } from "@codemirror/language";
-import { csharp } from "@replit/codemirror-lang-csharp";
-import { lua } from "@codemirror/legacy-modes/mode/lua";
+
 import { dracula } from "@uiw/codemirror-theme-dracula";
-import { ExamGroupData, QuestionGroupData } from "@/data/exam";
-import MTreeSelect from "@/app/components/config/MTreeSelect";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { RootState } from "@/redux/store";
+import { QuestionGroupData } from "@/data/exam";
+
+import { useAppDispatch } from "@/redux/hooks";
+
 import CreateTestCaseModal, { TestcaseValue } from "./CreateTestCaseModal";
 import { useRouter, useSearchParams } from "next/navigation";
 import {

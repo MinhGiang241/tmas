@@ -208,5 +208,6 @@
   "Approved": "Đã duyệt",
   "Rejected": "Từ chối",
   "approve_code": "Mã yêu cầu",
-  "reason": "Lý do"
+  "reason": "Lý do",
+  "success_add_question": "Tạo câu hỏi thành công"
 }

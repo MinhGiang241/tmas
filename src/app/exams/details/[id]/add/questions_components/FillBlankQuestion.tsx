@@ -10,7 +10,15 @@ import "quill/dist/quill.bubble.css";
 import "react-quill/dist/quill.core.css";
 import parse from "html-react-parser";
 import { ExamGroupData, QuestionGroupData } from "@/data/exam";
-import MTreeSelect from "@/app/components/config/MTreeSelect";
+import cheerio from "cheerio";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAppDispatch } from "@/redux/hooks";
+import { FormikErrors, useFormik } from "formik";
+import _ from "lodash";
+import { FillBlankQuestionFormData } from "@/data/form_interface";
+import { setQuestionLoading } from "@/redux/questions/questionSlice";
+import { createFillBlankQuestion } from "@/services/api_services/question_api";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -24,13 +32,24 @@ interface Props {
   idExam?: string;
 }
 
-function FillBlankQuestion({ questionGroups: examGroups, submitRef }: Props) {
+function FillBlankQuestion({
+  questionGroups: examGroups,
+  submitRef,
+  idExam,
+}: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
+  const router = useRouter();
+  const search = useSearchParams();
+  const idExamQuestionPart = search.get("questId");
+  const dispatch = useAppDispatch();
 
   const [value, setValue] = useState<string | undefined>();
   const [isSave, setIsSave] = useState<boolean>(false);
   const [results, setResults] = useState<any>([]);
+  const [check, setCheck] = useState<"CorrectAllBlank" | "EachCorrectBlank">(
+    "CorrectAllBlank",
+  );
 
   const optionSelect = (examGroups ?? []).map<any>(
     (v: QuestionGroupData, i: number) => ({
@@ -39,30 +58,126 @@ function FillBlankQuestion({ questionGroups: examGroups, submitRef }: Props) {
     }),
   );
 
+  interface FillBlankQuestionValue {
+    point?: string;
+    question_group?: string;
+    question?: string;
+    explain?: string;
+  }
+
+  const initialValues: FillBlankQuestionValue = {
+    point: undefined,
+    question_group: undefined,
+    question: undefined,
+    explain: undefined,
+  };
+
+  const validate = async (values: FillBlankQuestionValue) => {
+    const errors: FormikErrors<FillBlankQuestionValue> = {};
+    const $ = cheerio.load(values.question ?? "");
+
+    if (!values.question || !$.text()) {
+      errors.question = "common_not_empty";
+    }
+
+    if (!values.point) {
+      errors.point = "common_not_empty";
+    }
+
+    return errors;
+  };
+
+  const formik = useFormik({
+    initialValues,
+    validate,
+    onSubmit: async (values: FillBlankQuestionValue) => {
+      if (!isSave) {
+        const pattern = /_{3,}/g;
+        const matches = values.question?.match(pattern);
+        setResults((matches ?? []).map((o: string) => ""));
+        let count = 0;
+        const replacedText = values.question?.replace(
+          /_{3,}/g,
+          () => `__${++count}__`,
+        );
+        setValue(replacedText);
+        setIsSave(true);
+        return;
+      }
+
+      dispatch(setQuestionLoading(true));
+      const submitData: FillBlankQuestionFormData = {
+        idExam,
+        question: values?.question,
+        numberPoint: values.point ? parseInt(values.point) : undefined,
+        idGroupQuestion: values.question_group,
+        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        questionType: "FillBlank",
+        content: {
+          fillBlankScoringMethod: check,
+          explainAnswer: values.explain,
+          anwserItems: [{ label: "label", anwsers: results }],
+          formatBlank: value,
+        },
+      };
+
+      var res = await createFillBlankQuestion(submitData);
+      dispatch(setQuestionLoading(false));
+      if (res.code != 0) {
+        errorToast(res?.message ?? "");
+        return;
+      }
+      successToast(t("success_add_question"));
+      router.push(`/exams/details/${idExam}`);
+    },
+  });
+
   return (
     <div className="grid grid-cols-12 gap-4 max-lg:px-5">
       <button
         className="hidden"
         onClick={() => {
-          alert("Fill Blank");
+          // if (isSave) {
+          //   formik.handleSubmit();
+          // }
+          formik.handleSubmit();
         }}
         ref={submitRef}
       />
 
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
-        <MInput h="h-9" name="point" id="point" required title={t("point")} />
-        <Radio.Group buttonStyle="solid" onChange={(v) => {}}>
+        <MInput
+          onKeyDown={(e) => {
+            if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+              e.preventDefault();
+            }
+          }}
+          formik={formik}
+          h="h-9"
+          name="point"
+          id="point"
+          required
+          title={t("point")}
+        />
+        <Radio.Group
+          value={check}
+          buttonStyle="solid"
+          onChange={(v) => {
+            setCheck(v.target.value);
+          }}
+        >
           <Space direction="vertical">
-            <Radio className=" caption_regular_14" value={0}>
+            <Radio className=" caption_regular_14" value={"CorrectAllBlank"}>
               {t("all_fill_count")}
             </Radio>
-            <Radio className=" caption_regular_14" value={1}>
+            <Radio className=" caption_regular_14" value={"EachCorrectBlank"}>
               {t("each_fill_count")}
             </Radio>
           </Space>
         </Radio.Group>
         <div className="h-4" />
         <MDropdown
+          formik={formik}
           options={optionSelect}
           h="h-9"
           title={t("question_group")}
@@ -87,10 +202,17 @@ function FillBlankQuestion({ questionGroups: examGroups, submitRef }: Props) {
             <div className="p-4 border rounded-lg mt-3">
               {results?.map((d: any, i: number) => (
                 <div key={i} className="flex mb-3 items-center">
-                  <div className="body_semibold_14 min-w-8">{i + 1}</div>
-                  <EditorHook
-                    isCount={false}
-                    isBubble={true}
+                  <p className="pt-2 body_semibold_14 min-w-8">{i + 1}</p>
+                  <MInput
+                    value={d}
+                    onChange={(d) => {
+                      var newList = _.cloneDeep(results);
+                      newList[i] = d.target.value;
+                      setResults(newList);
+                    }}
+                    isTextRequire={false}
+                    extend={true}
+                    h="h-9"
                     id={`result-${i + 1}`}
                     name={`result-${i + 1}`}
                   />
@@ -101,21 +223,12 @@ function FillBlankQuestion({ questionGroups: examGroups, submitRef }: Props) {
         ) : (
           <>
             <EditorHook
-              value={value}
-              setValue={(field: string, v: string) => {
-                const pattern = /_{3,}/g;
-                const matches = v.match(pattern);
-                setResults(matches);
-                let count = 0;
-                const replacedText = v.replace(
-                  /_{3,}/g,
-                  () => `__${++count}__`,
-                );
-                setValue(replacedText);
-              }}
+              formik={formik}
               action={
                 <MButton
-                  onClick={() => setIsSave(true)}
+                  onClick={() => {
+                    formik.handleSubmit();
+                  }}
                   h="h-9"
                   text={t("save_and_setting_result")}
                 />
