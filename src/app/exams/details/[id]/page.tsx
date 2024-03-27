@@ -26,12 +26,16 @@ import Document from "@/app/components/icons/document.svg";
 import Group from "@/app/components/icons/group.svg";
 import Explain from "./question/Explain";
 import ManyResult from "./question/ManyResult";
-import { createAExamQuestionPart, getExamQuestionPartList, deleteQuestionPartById, deleteQuestionById } from '@/services/api_services/question_api';
+import {
+  createAExamQuestionPart,
+  getExamQuestionPartList,
+  deleteQuestionPartById,
+  deleteQuestionById,
+} from "@/services/api_services/question_api";
 import { deleteExamination } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import { FormattedDate } from "react-intl";
-
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -39,21 +43,22 @@ function ExamDetails({ params }: any) {
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState<boolean>(false);
-  const [deleteExamQuestions, setDeleteExamQuestions] = useState<boolean>(false);
+  const [deleteExamQuestions, setDeleteExamQuestions] =
+    useState<boolean>(false);
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
   //
-  const [data, setData] = useState<any>()
-  const [idDelete, setIdDelete] = useState<any>()
-  const [loadDataQuestion, setLoadDataQuestion] = useState<any>(null)
-  const [addLoading, setAddLoading] = useState(false)
+  const [data, setData] = useState<any>();
+  const [idDelete, setIdDelete] = useState<any>();
+  const [loadDataQuestion, setLoadDataQuestion] = useState<any>(null);
+  const [addLoading, setAddLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const [list, setList] = useState<ExamData[]>([]);
-  // 
-  const [name, setName] = React.useState<string>('');
-  const [note, setNote] = React.useState<string>('');
-  // 
+  //
+  const [name, setName] = React.useState<string>("");
+  const [note, setNote] = React.useState<string>("");
+  //
   const router = useRouter();
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,11 +112,15 @@ function ExamDetails({ params }: any) {
       <button className="text-left pb-1">In</button>
       <button
         onClick={() => {
-          setDeleteExamQuestions(true)
+          setDeleteExamQuestions(true);
         }}
-        className="text-left pb-1">Xóa
+        className="text-left pb-1"
+      >
+        Xóa
         <ConfirmModal
-          onOk={() => { handleDeleteExam() }}
+          onOk={() => {
+            handleDeleteExam();
+          }}
           onCancel={() => {
             setDeleteExamQuestions(false);
           }}
@@ -132,43 +141,50 @@ function ExamDetails({ params }: any) {
   };
   //
   const handleAddPart = async () => {
-    setAddLoading(true)
-    const res: any = await createAExamQuestionPart({ idExam: params.id, name: name, description: note });
+    setAddLoading(true);
+    const res: any = await createAExamQuestionPart({
+      idExam: params.id,
+      name: name,
+      description: note,
+    });
     console.log(res);
 
-    setAddLoading(false)
+    setAddLoading(false);
     if (res && res.code !== 0) {
       errorToast(res.message || "");
       return;
     }
     // console.log(res, "res");
-    getData()
-    setLoadDataQuestion(res)
-    setOpen(false)
+    getData();
+    setLoadDataQuestion(res);
+    setOpen(false);
   };
 
   const handleDelete = async () => {
     // console.log(idDelete)
-    const res = await deleteQuestionPartById(idDelete)
+    const res = await deleteQuestionPartById(idDelete);
     if (res && res.code !== 0) {
       errorToast(res.message || "");
       return;
     }
     setOpenDelete(false);
-    getData()
-  }
+    getData();
+  };
 
   const getData = async () => {
-    const res = await getExamQuestionPartList({ paging: { startIndex: 0, recordPerPage: 100 }, sorters: [{ name: "Name", isAsc: true }] })
-    const data = res.data
+    const res = await getExamQuestionPartList({
+      paging: { startIndex: 0, recordPerPage: 100 },
+      sorters: [{ name: "Name", isAsc: true }],
+    });
+    const data = res.data;
     if (data) {
-      setData(data)
+      setData(data);
     }
-  }
+  };
 
   useEffect(() => {
     setLoadDataQuestion([]);
-    getData()
+    getData();
   }, []);
 
   return (
@@ -307,10 +323,15 @@ function ExamDetails({ params }: any) {
         </div>
         <div>
           {data?.records?.map((x: any, key: any) => (
-            <Collapse key={key} ghost expandIconPosition="end" className="mb-5 rounded-lg bg-white overflow-hidden">
+            <Collapse
+              key={key}
+              ghost
+              expandIconPosition="end"
+              className="mb-5 rounded-lg bg-white overflow-hidden"
+            >
               <Collapse.Panel
                 header={
-                  < div className="my-3 flex justify-between items-center">
+                  <div className="my-3 flex justify-between items-center">
                     <div>
                       <div className="text-base font-semibold">{x.name}</div>
                       <div className="text-sm text-m_neutral_500">
@@ -325,7 +346,9 @@ function ExamDetails({ params }: any) {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                router.push(`/exams/details/${params.id}/add?partId=${x?.id}`);
+                                router.push(
+                                  `/exams/details/${params.id}/add?partId=${x?.id}`,
+                                );
                               }}
                               className="text-left mb-2 pb-1 border-b"
                             >
@@ -418,12 +441,12 @@ function ExamDetails({ params }: any) {
                         <DeleteRedIcon
                           onClick={() => {
                             setOpenDelete(true);
-                            setIdDelete(x.id)
+                            setIdDelete(x.id);
                           }}
                         />
                         <ConfirmModal
                           onOk={() => {
-                            handleDelete()
+                            handleDelete();
                           }}
                           onCancel={() => {
                             setOpenDelete(false);
@@ -436,7 +459,8 @@ function ExamDetails({ params }: any) {
                     </div>
                   </div>
                 }
-                key={""}>
+                key={""}
+              >
                 {/* <Explain examId={params.id} /> */}
                 {x?.examQuestions?.map((e: any, key: any) => (
                   <Collapse
@@ -449,17 +473,31 @@ function ExamDetails({ params }: any) {
                       header={
                         <div className="my-3 flex justify-between items-center">
                           <div className="flex ">
-                            <span className="body_semibold_14">Câu {key + 1}: <span className="body_regular_14">{e?.question}</span></span>
+                            <span className="body_semibold_14">
+                              Câu {key + 1}:{" "}
+                              <span className="body_regular_14">
+                                {e?.question}
+                              </span>
+                            </span>
                           </div>
                           <div className="min-w-28">
-                            <button onClick={(e) => {
-                              e.stopPropagation()
-                            }}><EditIcon onClick={() => {
-                              router.push(`/exams/details/${params.id}/edit?questId=${x?.id}`);
-                            }} />
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              <EditIcon
+                                onClick={() => {
+                                  router.push(
+                                    `/exams/details/${params.id}/edit?questId=${e?.id}`,
+                                  );
+                                }}
+                              />
                               <BaseModal
                                 width={564}
-                                onCancel={() => { setOpenEditQuestion(false) }}
+                                onCancel={() => {
+                                  setOpenEditQuestion(false);
+                                }}
                                 title={t("edit_question")}
                                 open={openEditQuestion}
                               >
@@ -481,7 +519,9 @@ function ExamDetails({ params }: any) {
                                     className="w-36"
                                     type="secondary"
                                     text={t("cancel")}
-                                    onClick={() => { setOpenEditQuestion(false) }}
+                                    onClick={() => {
+                                      setOpenEditQuestion(false);
+                                    }}
                                   />
                                   <div className="w-5" />
                                   <MButton
@@ -493,31 +533,46 @@ function ExamDetails({ params }: any) {
                                 </div>
                               </BaseModal>
                             </button>
-                            <button className="px-2" onClick={(e) => {
-                              e.stopPropagation()
-                            }}><CopyIcon onClick={() => {
-                              setOpenCopyQuestion(true)
-                            }} />
+                            <button
+                              className="px-2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              <CopyIcon
+                                onClick={() => {
+                                  setOpenCopyQuestion(true);
+                                }}
+                              />
                               <ConfirmModal
-                                onOk={() => { }}
-                                onCancel={() => { setOpenCopyQuestion(false) }}
+                                onOk={() => {}}
+                                onCancel={() => {
+                                  setOpenCopyQuestion(false);
+                                }}
                                 action={t("copy")}
                                 text={t("confirm_copy")}
                                 open={openCopyQuestion}
                               />
                             </button>
-                            <button onClick={(e) => {
-                              e.stopPropagation()
-                            }}><DeleteRedIcon onClick={() => {
-                              setOpenDeleteQuestion(true)
-                            }} />
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              <DeleteRedIcon
+                                onClick={() => {
+                                  setOpenDeleteQuestion(true);
+                                }}
+                              />
                               <ConfirmModal
                                 onOk={async () => {
-                                  await deleteQuestionById(e.id)
-                                  setOpenDeleteQuestion(false)
-                                  getData()
+                                  await deleteQuestionById(e.id);
+                                  setOpenDeleteQuestion(false);
+                                  getData();
                                 }}
-                                onCancel={() => { setOpenDeleteQuestion(false) }}
+                                onCancel={() => {
+                                  setOpenDeleteQuestion(false);
+                                }}
                                 action={t("delete_question")}
                                 text={t("confirm_delete_question")}
                                 open={openDeleteQuestion}
@@ -526,15 +581,22 @@ function ExamDetails({ params }: any) {
                           </div>
                         </div>
                       }
-                      key={""}>
+                      key={""}
+                    >
                       <div className="h-[1px] bg-m_primary_200 mb-3" />
-                      <div className="text-m_primary_500 text-sm font-semibold mb-2">Thông tin câu hỏi</div>
+                      <div className="text-m_primary_500 text-sm font-semibold mb-2">
+                        Thông tin câu hỏi
+                      </div>
                       <div className="flex">
-                        <div className="body_semibold_14 pr-2">Nhóm câu hỏi: </div>
+                        <div className="body_semibold_14 pr-2">
+                          Nhóm câu hỏi:{" "}
+                        </div>
                         <span>Toán học</span>
                       </div>
                       <div className="flex">
-                        <div className="body_semibold_14 pr-2">Kiểu câu hỏi: </div>
+                        <div className="body_semibold_14 pr-2">
+                          Kiểu câu hỏi:{" "}
+                        </div>
                         <span>{e.questionType}</span>
                       </div>
                       <div className="flex">
@@ -550,7 +612,6 @@ function ExamDetails({ params }: any) {
                           month="2-digit"
                           year="numeric"
                         />
-
                       </div>
                     </Collapse.Panel>
                   </Collapse>
@@ -561,7 +622,7 @@ function ExamDetails({ params }: any) {
         </div>
         {/* <ManyResult /> */}
       </div>
-    </HomeLayout >
+    </HomeLayout>
   );
 }
 
