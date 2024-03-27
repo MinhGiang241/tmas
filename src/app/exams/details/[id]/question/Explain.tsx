@@ -17,7 +17,6 @@ export default function Explain({ examId }: { examId: any }) {
     const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
     const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
     const [data, setData] = useState<any>()
-    const [createdTime, setCreatedTime] = useState<any>()
 
     const { t } = useTranslation('question')
 
@@ -26,7 +25,6 @@ export default function Explain({ examId }: { examId: any }) {
         // console.log("res", res);
         var data = res.data.records[0]
         console.log(data);
-
         if (data) {
             setData(data)
         }
@@ -141,7 +139,7 @@ export default function Explain({ examId }: { examId: any }) {
                         </div>
                         <div className="flex">
                             <div className="body_semibold_14 pr-2">Ngày tạo: </div>
-                            <span>08/02/2024  20:20:09</span>
+                            <span>{x.createdTime}</span>
                         </div>
                     </Collapse.Panel>
                 </Collapse>

@@ -209,7 +209,7 @@ function ExamDetails({ params }: any) {
           // { text: exam?.name, href: `/exams/details/${exam?.id}` },
           {
             // href: `/exams/details/${exam?.id}/add`,
-            text: t("Tuyển Fresher digital MKT"),
+            text: t("Chi tiết đề thi"),
             href: "/",
             active: true,
           },
@@ -218,7 +218,7 @@ function ExamDetails({ params }: any) {
       <div className="h-2" />
       <div className="w-full max-lg:px-3">
         <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
-          <div className="">{t("Tuyển Fresher digital MKT")}</div>
+          <div className="">{t(`Chi tiết đề thi`)}</div>
           <div className="flex">
             {/* <MButton
               h="h-11"
@@ -248,12 +248,12 @@ function ExamDetails({ params }: any) {
             </Popover>
           </div>
         </div>
-        <div className="text-sm text-m_neutral_500 pt-1">
+        {/* <div className="text-sm text-m_neutral_500 pt-1">
           Chúng tôi đang tìm kiếm một Fresher digital MKT để tham gia đội ngũ
           của chúng tôi. Ứng viên sẽ được đào tạo và hướng dẫn bởi các chuyên
           gia trong ngành để phát triển các kỹ năng và kiến thức cần thiết để
           trở thành một chuyên gia
-        </div>
+        </div> */}
         <div className="h-[1px] bg-m_neutral_200 mt-10" />
         <div className="flex justify-between items-center mt-6 mb-6">
           <div className="text-sm text-m_neutral_900 flex">
