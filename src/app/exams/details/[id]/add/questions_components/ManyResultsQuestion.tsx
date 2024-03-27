@@ -3,13 +3,16 @@ import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import { Checkbox, Switch } from "antd";
 import dynamic from "next/dynamic";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import _, { parseInt } from "lodash";
 import { ExamGroupData, QuestionGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
-import { MultiAnswerQuestionFormData } from "@/data/form_interface";
+import {
+  BaseQuestionFormData,
+  MultiAnswerQuestionFormData,
+} from "@/data/form_interface";
 import { FormikErrors, useFormik } from "formik";
 import { useQuill } from "react-quilljs";
 import cheerio from "cheerio";
@@ -23,6 +26,7 @@ import {
   addMoreAnswer,
   deleteMultiAnswer,
   resetMultiAnswer,
+  setMultiAnswer,
   setQuestionLoading,
   updateCheckCorrectAnswer,
   updateTextMultiAnswer,
@@ -30,11 +34,12 @@ import {
 import { createMultiAnswerQuestion } from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
-    ssr: true,
+    ssr: false,
   },
 );
 const CheckboxGroup = Checkbox.Group;
@@ -43,25 +48,40 @@ interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
   idExam?: string;
+  question?: BaseQuestionFormData;
 }
 
 function ManyResultsQuestion({
   questionGroups: examGroups,
   submitRef,
   idExam,
+  question,
 }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
-
-  const [checkedResults, setCheckedResults] = useState<number[]>([]);
   const answers = useAppSelector(
     (state: RootState) => state.question.multiAnswerQuestions,
   );
+  const [loadAs, setLoadAs] = useState<boolean>(false);
+  useOnMountUnsafe(() => {
+    if (existedQuest) {
+      setIsChangePosition(existedQuest?.content?.isChangePosition);
+      var as: MultiAnswer[] = (existedQuest?.content?.answers ?? []).map(
+        (w) => ({
+          ...w,
+          id: uuidv4(),
+        }),
+      );
+      console.log("as", as);
 
-  // const [answers, setAnswer] = useState<MultiAnswer[]>([
-  //   { id: uuidv4(), label: undefined, text: undefined, isCorrectAnswer: false },
-  //   { id: uuidv4(), label: undefined, text: undefined, isCorrectAnswer: false },
-  // ]);
+      dispatch(setMultiAnswer(as));
+      setLoadAs(true);
+    }
+  });
+  const [checkedResults, setCheckedResults] = useState<number[]>([]);
+
+  const existedQuest: MultiAnswerQuestionFormData | undefined =
+    question?.questionType == "MutilAnswer" ? question : null;
 
   const [isChangePosition, setIsChangePosition] = useState<boolean>(false);
   const router = useRouter();
@@ -85,10 +105,10 @@ function ManyResultsQuestion({
   );
 
   const initialValues: MultiAnswerQuestionValue = {
-    point: undefined,
-    question_group: undefined,
-    question: undefined,
-    explain: undefined,
+    point: question?.point?.toString() ?? undefined,
+    question_group: question?.idGroupQuestion ?? undefined,
+    question: question?.question ?? undefined,
+    explain: question?.explain ?? undefined,
   };
 
   const validate = async (values: MultiAnswerQuestionValue) => {
@@ -112,10 +132,11 @@ function ManyResultsQuestion({
     initialValues,
     validate,
     onSubmit: async (values: MultiAnswerQuestionValue) => {
-      dispatch(setQuestionLoading);
+      dispatch(setQuestionLoading(true));
       var submitData: MultiAnswerQuestionFormData = {
-        idExam,
-        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        idExam: question?.idExam ?? idExam,
+        idExamQuestionPart:
+          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         idGroupQuestion: values?.question_group,
         question: values?.question,
         questionType: "MutilAnswer",
@@ -130,7 +151,8 @@ function ManyResultsQuestion({
           })),
         },
       };
-
+      // console.log("sss", submitData);
+      // return;
       var res = await createMultiAnswerQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
@@ -206,58 +228,64 @@ function ManyResultsQuestion({
         </div>
         <div className="mb-3 body_regular_14">{t("many_result_intro")}</div>
         <div className="border rounded-lg p-4">
-          <CheckboxGroup
-            value={checkedResults}
-            rootClassName="flex flex-col"
-            onChange={onChangeCheckResult}
-          >
-            {answers.map((a: MultiAnswer, i: number) => (
-              <div key={a.id} className="w-full flex items-center mb-4">
-                <Checkbox
-                  value={i}
-                  onChange={(b) => {
-                    dispatch(
-                      updateCheckCorrectAnswer({
-                        index: i,
-                        value: b.target.value == i,
-                      }),
-                    );
-                  }}
-                />
-                <div className="body_semibold_14 mx-2 w-5">
-                  {String.fromCharCode(65 + i)}.
+          {((loadAs && question) || !question) && (
+            <CheckboxGroup
+              defaultValue={answers
+                .filter((s) => s.isCorrectAnswer)
+                .map((r) => r.id)}
+              rootClassName="flex flex-col"
+              onChange={onChangeCheckResult}
+            >
+              {answers.map((a: MultiAnswer, i: number) => (
+                <div key={a.id} className="w-full flex items-center mb-4">
+                  {/* {a.isCorrectAnswer?.toString()} */}
+                  <Checkbox
+                    checked={true}
+                    value={a.id}
+                    onChange={(b) => {
+                      dispatch(
+                        updateCheckCorrectAnswer({
+                          index: i,
+                          value: b.target.value == i,
+                        }),
+                      );
+                    }}
+                  />
+                  <div className="body_semibold_14 mx-2 w-5">
+                    {String.fromCharCode(65 + i)}.
+                  </div>
+                  <EditorHook
+                    value={a.text}
+                    setValue={(name: any, e: any) => {
+                      dispatch(updateTextMultiAnswer({ index: i, value: e }));
+                    }}
+                    isCount={false}
+                    isBubble={true}
+                    id={`result-${String.fromCharCode(65 + i)}`}
+                    name={`result-${String.fromCharCode(65 + i)}`}
+                  />
+                  <button
+                    onClick={async () => {
+                      dispatch(deleteMultiAnswer(i));
+                    }}
+                    className=" text-neutral-500 text-2xl mt-[6px] ml-2 "
+                  >
+                    <CloseCircleOutlined />
+                  </button>
                 </div>
-                <EditorHook
-                  value={a.text}
-                  setValue={(name: any, e: any) => {
-                    dispatch(updateTextMultiAnswer({ index: i, value: e }));
-                  }}
-                  isCount={false}
-                  isBubble={true}
-                  id={`result-${String.fromCharCode(65 + i)}`}
-                  name={`result-${String.fromCharCode(65 + i)}`}
-                />
+              ))}
+              <div className="w-full flex justify-end">
                 <button
                   onClick={async () => {
-                    dispatch(deleteMultiAnswer(i));
+                    dispatch(addMoreAnswer("1"));
                   }}
-                  className=" text-neutral-500 text-2xl mt-[6px] ml-2 "
+                  className="text-m_primary_500 underline body_semibold_14 underline-offset-4"
                 >
-                  <CloseCircleOutlined />
+                  <PlusOutlined /> {t("add_result")}
                 </button>
               </div>
-            ))}
-            <div className="w-full flex justify-end">
-              <button
-                onClick={async () => {
-                  dispatch(addMoreAnswer("1"));
-                }}
-                className="text-m_primary_500 underline body_semibold_14 underline-offset-4"
-              >
-                <PlusOutlined /> {t("add_result")}
-              </button>
-            </div>
-          </CheckboxGroup>
+            </CheckboxGroup>
+          )}
         </div>
         <div className="h-4" />
         <EditorHook

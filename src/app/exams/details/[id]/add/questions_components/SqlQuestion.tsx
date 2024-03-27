@@ -14,7 +14,10 @@ import { useAppDispatch } from "@/redux/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import cheerio from "cheerio";
 import { FormikErrors, useFormik } from "formik";
-import { SqlQuestionFormData } from "@/data/form_interface";
+import {
+  BaseQuestionFormData,
+  SqlQuestionFormData,
+} from "@/data/form_interface";
 import { createSqlQuestion } from "@/services/api_services/question_api";
 import { setQuestionLoading } from "@/redux/questions/questionSlice";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
@@ -30,6 +33,7 @@ interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
   idExam?: string;
+  question?: BaseQuestionFormData;
 }
 
 function SqlQuestion({ questionGroups: examGroups, submitRef, idExam }: Props) {

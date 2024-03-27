@@ -33,8 +33,9 @@ import {
   resetMultiAnswer,
 } from "@/redux/questions/questionSlice";
 import { getQuestionById } from "@/services/api_services/question_api";
+import { renderQuestTypeRoute } from "@/services/ui/navigate";
 
-function CreateQuestionPage({ params }: any) {
+function CreateQuestionPage({ params, question }: any) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const router = useRouter();
@@ -44,7 +45,7 @@ function CreateQuestionPage({ params }: any) {
     (state: RootState) => state?.examGroup?.list,
   );
   var search = useSearchParams();
-  var question = search.get("question");
+  var questionType = search.get("question");
   var partId = search.get("partId");
   var questId = search.get("questId");
 
@@ -111,8 +112,8 @@ function CreateQuestionPage({ params }: any) {
             { text: t("exam_list"), href: "/exams" },
             { text: exam?.name, href: `/exams/details/${exam?.id}` },
             {
-              text: t("manual_add"),
-              href: `/exams/details/${exam?.id}/add`,
+              text: question ? common.t("edit") : t("manual_add"),
+              href: question ? `` : `/exams/details/${exam?.id}/add`,
               active: true,
             },
           ]}
@@ -123,6 +124,7 @@ function CreateQuestionPage({ params }: any) {
             className="min-w-20"
             onClick={() => {
               dispatch(resetMultiAnswer(1));
+
               router.push(`/exams/details/${params.id}`);
             }}
             type="secondary"
@@ -136,7 +138,7 @@ function CreateQuestionPage({ params }: any) {
             onClick={() => {
               (submitRef.current as any).click();
             }}
-            text={common.t("create_new")}
+            text={question ? common.t("edit") : common.t("create_new")}
           />
         </div>
       </div>
@@ -145,7 +147,12 @@ function CreateQuestionPage({ params }: any) {
         {questionList.map((a: any, i: number) => (
           <button
             onClick={() => {
-              // setActiveTab(a);
+              if (question) {
+                router.push(
+                  `?partId=${partId}&questId=${questId}&question=${a}`,
+                );
+                return;
+              }
               if (a != "many_results") {
                 dispatch(resetMultiAnswer(1));
               }
@@ -158,9 +165,9 @@ function CreateQuestionPage({ params }: any) {
             }}
             className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${
               a == "many_results" &&
-              !questionList.some((a: any) => a == question)
+              !questionList.some((a: any) => a == questionType)
                 ? "bg-m_primary_100"
-                : a == question
+                : a == questionType
                   ? "bg-m_primary_100"
                   : "bg-white "
             }`}
@@ -171,58 +178,66 @@ function CreateQuestionPage({ params }: any) {
         ))}
       </div>
       <div className="h-4" />
-      {(question == "many_results" ||
-        !questionList.some((a: any) => a == question)) && (
+      {(questionType == "many_results" ||
+        !questionList.some((a: any) => a == questionType)) && (
         <ManyResultsQuestion
+          question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
           idExam={params?.id}
         />
       )}
-      {question == "true_false" && (
+      {questionType == "true_false" && (
         <TrueFalseQuestion
+          question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
           idExam={params?.id}
         />
       )}
-      {question == "explain" && (
+      {questionType == "explain" && (
         <ExplainQuestion
+          question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
           idExam={params?.id}
         />
       )}
-      {question == "connect_quest" && (
+      {questionType == "connect_quest" && (
         <ConnectQuestion
+          question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
           idExam={params?.id}
         />
       )}
-      {question == "coding" && (
+      {questionType == "coding" && (
         <CodingQuestion
+          question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
           idExam={params?.id}
         />
       )}
-      {question == "sql" && (
+      {questionType == "sql" && (
         <SqlQuestion
+          question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
           idExam={params?.id}
         />
       )}
-      {question == "fill_blank" && (
+      {questionType == "fill_blank" && (
         <FillBlankQuestion
+          question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
           idExam={params?.id}
         />
       )}
-      {question == "random" && (
+      {questionType == "random" && (
         <RandomQuestion
+          question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
           idExam={params?.id}

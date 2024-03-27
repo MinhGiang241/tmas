@@ -24,7 +24,10 @@ import {
 } from "@/redux/questions/questionSlice";
 import { FormikErrors, useFormik } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ConnectQuestionFormData } from "@/data/form_interface";
+import {
+  BaseQuestionFormData,
+  ConnectQuestionFormData,
+} from "@/data/form_interface";
 import { createConnectQuestion } from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 const EditorHook = dynamic(
@@ -38,6 +41,7 @@ interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
   idExam?: string;
+  question?: BaseQuestionFormData;
 }
 
 const CheckboxGroup = Checkbox.Group;

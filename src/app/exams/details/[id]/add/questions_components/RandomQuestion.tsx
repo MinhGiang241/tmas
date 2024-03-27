@@ -10,13 +10,17 @@ import cheerio from "cheerio";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch } from "@/redux/hooks";
 import { FormikErrors, useFormik } from "formik";
-import { RandomQuestionFormData } from "@/data/form_interface";
+import {
+  BaseQuestionFormData,
+  RandomQuestionFormData,
+} from "@/data/form_interface";
 import { createRandomQuestion } from "@/services/api_services/question_api";
 
 interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
   idExam?: string;
+  question?: BaseQuestionFormData;
 }
 
 function RandomQuestion({
