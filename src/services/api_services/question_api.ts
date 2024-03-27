@@ -182,7 +182,7 @@ export const deleteManyQuestion = async (data: { ids?: string[] }) => {
 
 export const getExamQuestionPartList = async (data?: PagingGetData) => {
   const results = await callStudioAPI.post(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/GetPaging`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/GetPagingDetail`,
     data,
   );
 
