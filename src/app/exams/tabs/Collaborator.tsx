@@ -216,7 +216,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                   <div className="my-3 w-full flex flex-grow justify-between items-center">
                     <div>
                       <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg  text-ellipsis">
-                        {v?.examId} - {v?.version} - {v?.name}
+                        {v?.code} - {v?.version} - {v?.name}
                       </div>
                       <div className="w-full my-3 flex max-lg:flex-wrap gap-8">
                         <div className="flex body_regular_14">
@@ -256,7 +256,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                           <div>
                             <span className="ml-2 body_regular_14">
                               <FormattedDate
-                                value={examData?.createdTime}
+                                value={examData?.updatedTime}
                                 day="2-digit"
                                 month="2-digit"
                                 year="numeric"
@@ -267,8 +267,13 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                       </div>
 
                       {v.state === ExaminationVersionState.Rejected && (
-                        <div className="">
+                        <div className="flex gap-2">
                           <span className="font-semibold">{t("reason")}:</span>
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: v.reject_message,
+                            }}
+                          />
                         </div>
                       )}
                     </div>
@@ -277,7 +282,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(`/exams/${v?.id}`);
+                          router.push(`/exams/details/${v?.examId}`);
                         }}
                       >
                         <ExportOutlined className="text-2xl" />
