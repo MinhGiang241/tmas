@@ -87,6 +87,9 @@ export const questionSlice = createSlice({
     setQuestionLoading: (state, action) => {
       return { ...state, loading: action.payload };
     },
+    setMultiAnswer: (state, action) => {
+      return { ...state, multiAnswerQuestions: [...action.payload] };
+    },
     resetMultiAnswer: (state, action) => {
       return {
         ...state,
@@ -298,6 +301,7 @@ export const {
   updateAnswerToQuestion,
   updateTextConnectAnswer,
   updateTextConnectQuestion,
+  setMultiAnswer,
 } = questionSlice.actions;
 
 export default questionSlice.reducer;

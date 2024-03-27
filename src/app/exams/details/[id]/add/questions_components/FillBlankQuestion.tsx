@@ -15,7 +15,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch } from "@/redux/hooks";
 import { FormikErrors, useFormik } from "formik";
 import _ from "lodash";
-import { FillBlankQuestionFormData } from "@/data/form_interface";
+import {
+  BaseQuestionFormData,
+  FillBlankQuestionFormData,
+} from "@/data/form_interface";
 import { setQuestionLoading } from "@/redux/questions/questionSlice";
 import { createFillBlankQuestion } from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
@@ -30,6 +33,7 @@ interface Props {
   questionGroups?: ExamGroupData[];
   submitRef?: any;
   idExam?: string;
+  question?: BaseQuestionFormData;
 }
 
 function FillBlankQuestion({

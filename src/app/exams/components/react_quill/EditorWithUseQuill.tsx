@@ -96,7 +96,9 @@ const Editor = ({
     if (quill) {
       //quill.clipboard.dangerouslyPasteHTML(formik?.initialValues[name] ?? "");
       quill?.setContents(
-        quill.clipboard.convert(formik?.initialValues[name] ?? ""),
+        quill.clipboard.convert(
+          formik?.initialValues[name] ?? defaultValue ?? value ?? "",
+        ),
       );
       quill.on("text-change", (delta, oldContents) => {
         if (quill.getLength() > maxLength) {

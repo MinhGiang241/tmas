@@ -149,6 +149,7 @@ function CreatePage({ exam, isEdit }: any) {
       ];
       console.log("submitDocs", submitDocs);
       // var tagUpdate = await createTag(values?.tag ?? []);
+      var studio = user.studios?.find((r) => r.ownerId === user.studio?._id);
 
       const dataSubmit: ExamFormData = {
         id: exam?.id,
@@ -166,7 +167,7 @@ function CreatePage({ exam, isEdit }: any) {
           ? parseInt(values?.test_time)
           : undefined,
         playAudio: audio as "OnlyOneTime" | "MultipleTimes",
-        studioId: user?.studio?._id,
+        studioId: studio?._id,
         language: lang as "Vietnamese" | "English",
         idExamGroup: values?.exam_group,
         idDocuments: submitDocs,

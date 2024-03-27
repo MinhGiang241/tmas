@@ -40,6 +40,7 @@ import {
 import { FormikErrors, useFormik } from "formik";
 import cheerio from "cheerio";
 import {
+  BaseQuestionFormData,
   CodingDataType,
   CodingQuestionFormData,
   ParameterType,
@@ -60,6 +61,7 @@ interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
   idExam?: string;
+  question?: BaseQuestionFormData;
 }
 
 function CodingQuestion({

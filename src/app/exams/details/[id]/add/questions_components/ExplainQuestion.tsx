@@ -11,7 +11,10 @@ import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormikErrors, useFormik } from "formik";
 import cheerio from "cheerio";
-import { EssayQuestionFormData } from "@/data/form_interface";
+import {
+  BaseQuestionFormData,
+  EssayQuestionFormData,
+} from "@/data/form_interface";
 import { useAppDispatch } from "@/redux/hooks";
 import { setQuestionLoading } from "@/redux/questions/questionSlice";
 import { createEssayQuestion } from "@/services/api_services/question_api";
@@ -28,6 +31,7 @@ interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
   idExam?: string;
+  question?: BaseQuestionFormData;
 }
 
 function ExplainQuestion({
