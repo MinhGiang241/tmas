@@ -26,10 +26,11 @@ import Document from "@/app/components/icons/document.svg";
 import Group from "@/app/components/icons/group.svg";
 import Explain from "./question/Explain";
 import ManyResult from "./question/ManyResult";
-import { createAExamQuestionPart, getExamQuestionPartList, deleteQuestionPartById } from '@/services/api_services/question_api';
+import { createAExamQuestionPart, getExamQuestionPartList, deleteQuestionPartById, deleteQuestionById } from '@/services/api_services/question_api';
 import { deleteExamination } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
+import { FormattedDate } from "react-intl";
 
 
 function ExamDetails({ params }: any) {
@@ -122,40 +123,9 @@ function ExamDetails({ params }: any) {
     </div>
   );
 
-  const actionAddNew = (
-    <div className="flex flex-col px-1">
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          router.push(`/exams/details/${params.id}/add?partId=`);
-        }}
-        className="text-left mb-2 pb-1 border-b"
-      >
-        Thêm thủ công
-      </button>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        className="text-left mb-2 pb-1 border-b"
-      >
-        Thêm từ ngân hàng câu hỏi của tôi
-      </button>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        className="text-left mb-2 pb-1 border-b"
-      >
-        Thêm từ ngân hàng câu hỏi của TMAS
-      </button>
-    </div>
-  );
-
   // const { TextArea } = Input;
   // xóa phần
   const handleDeleteExam = async () => {
-
     router.push("/exams");
     // loadExamList(false);
     successToast(t("delete_success"));
@@ -209,7 +179,7 @@ function ExamDetails({ params }: any) {
           // { text: exam?.name, href: `/exams/details/${exam?.id}` },
           {
             // href: `/exams/details/${exam?.id}/add`,
-            text: t("Tuyển Fresher digital MKT"),
+            text: t("Chi tiết đề thi"),
             href: "/",
             active: true,
           },
@@ -218,7 +188,7 @@ function ExamDetails({ params }: any) {
       <div className="h-2" />
       <div className="w-full max-lg:px-3">
         <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
-          <div className="">{t("Tuyển Fresher digital MKT")}</div>
+          <div className="">{t(`Chi tiết đề thi`)}</div>
           <div className="flex">
             {/* <MButton
               h="h-11"
@@ -248,12 +218,12 @@ function ExamDetails({ params }: any) {
             </Popover>
           </div>
         </div>
-        <div className="text-sm text-m_neutral_500 pt-1">
+        {/* <div className="text-sm text-m_neutral_500 pt-1">
           Chúng tôi đang tìm kiếm một Fresher digital MKT để tham gia đội ngũ
           của chúng tôi. Ứng viên sẽ được đào tạo và hướng dẫn bởi các chuyên
           gia trong ngành để phát triển các kỹ năng và kiến thức cần thiết để
           trở thành một chuyên gia
-        </div>
+        </div> */}
         <div className="h-[1px] bg-m_neutral_200 mt-10" />
         <div className="flex justify-between items-center mt-6 mb-6">
           <div className="text-sm text-m_neutral_900 flex">
@@ -467,7 +437,124 @@ function ExamDetails({ params }: any) {
                   </div>
                 }
                 key={""}>
-                <Explain examId={params.id} />
+                {/* <Explain examId={params.id} /> */}
+                {x?.examQuestions?.map((e: any, key: any) => (
+                  <Collapse
+                    key={key}
+                    ghost
+                    expandIconPosition="end"
+                    className="mb-3 rounded-lg bg-m_question overflow-hidden"
+                  >
+                    <Collapse.Panel
+                      header={
+                        <div className="my-3 flex justify-between items-center">
+                          <div className="flex ">
+                            <span className="body_semibold_14">Câu {key + 1}: <span className="body_regular_14">{e?.question}</span></span>
+                          </div>
+                          <div className="min-w-28">
+                            <button onClick={(e) => {
+                              e.stopPropagation()
+                            }}><EditIcon onClick={() => {
+                              router.push(`/exams/details/${params.id}/edit?questId=${x?.id}`);
+                            }} />
+                              <BaseModal
+                                width={564}
+                                onCancel={() => { setOpenEditQuestion(false) }}
+                                title={t("edit_question")}
+                                open={openEditQuestion}
+                              >
+                                <MInput
+                                  // formik={formik}
+                                  id="name"
+                                  name="name"
+                                  title={t("name")}
+                                  required
+                                />
+                                <MTextArea
+                                  // formik={formik}
+                                  id="note"
+                                  name="note"
+                                  title={t("note")}
+                                />
+                                <div className="w-full flex justify-center mt-7">
+                                  <MButton
+                                    className="w-36"
+                                    type="secondary"
+                                    text={t("cancel")}
+                                    onClick={() => { setOpenEditQuestion(false) }}
+                                  />
+                                  <div className="w-5" />
+                                  <MButton
+                                    // loading={loading}
+                                    htmlType="submit"
+                                    className="w-36"
+                                    text={t("update")}
+                                  />
+                                </div>
+                              </BaseModal>
+                            </button>
+                            <button className="px-2" onClick={(e) => {
+                              e.stopPropagation()
+                            }}><CopyIcon onClick={() => {
+                              setOpenCopyQuestion(true)
+                            }} />
+                              <ConfirmModal
+                                onOk={() => { }}
+                                onCancel={() => { setOpenCopyQuestion(false) }}
+                                action={t("copy")}
+                                text={t("confirm_copy")}
+                                open={openCopyQuestion}
+                              />
+                            </button>
+                            <button onClick={(e) => {
+                              e.stopPropagation()
+                            }}><DeleteRedIcon onClick={() => {
+                              setOpenDeleteQuestion(true)
+                            }} />
+                              <ConfirmModal
+                                onOk={async () => {
+                                  await deleteQuestionById(e.id)
+                                  setOpenDeleteQuestion(false)
+                                  getData()
+                                }}
+                                onCancel={() => { setOpenDeleteQuestion(false) }}
+                                action={t("delete_question")}
+                                text={t("confirm_delete_question")}
+                                open={openDeleteQuestion}
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      }
+                      key={""}>
+                      <div className="h-[1px] bg-m_primary_200 mb-3" />
+                      <div className="text-m_primary_500 text-sm font-semibold mb-2">Thông tin câu hỏi</div>
+                      <div className="flex">
+                        <div className="body_semibold_14 pr-2">Nhóm câu hỏi: </div>
+                        <span>Toán học</span>
+                      </div>
+                      <div className="flex">
+                        <div className="body_semibold_14 pr-2">Kiểu câu hỏi: </div>
+                        <span>{e.questionType}</span>
+                      </div>
+                      <div className="flex">
+                        <div className="body_semibold_14 pr-2">Điểm: </div>
+                        <span>{e.numberPoint}</span>
+                      </div>
+                      <div className="flex">
+                        <div className="body_semibold_14 pr-2">Ngày tạo: </div>
+
+                        <FormattedDate
+                          value={e?.createdTime}
+                          day="2-digit"
+                          month="2-digit"
+                          year="numeric"
+                        />
+
+                      </div>
+                    </Collapse.Panel>
+                  </Collapse>
+                ))}
               </Collapse.Panel>
             </Collapse>
           ))}
