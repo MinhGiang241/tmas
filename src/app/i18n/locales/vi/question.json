@@ -12,5 +12,7 @@
     "copy": "Copy",
     "confirm_copy": "Bạn có muốn copy câu hỏi?",
     "confirm_delete_question": "Bạn có chắc chắn muốn xóa câu hỏi này không?",
-    "delete_question": "Xóa"
+    "delete_question": "Xóa",
+    "delete_exam_questions": "Bạn có muốn xóa đề thi này không?",
+    "delete_success": "Xóa thành công đề thi"
 }

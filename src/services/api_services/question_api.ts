@@ -147,7 +147,7 @@ export const updateSqlQuestion = async (data: SqlQuestionFormData) => {
 };
 
 export const getQuestionList = async (data: PagingGetData) => {
-  const results = await callStudioAPI.put(
+  const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/Paging`,
     data,
   );
@@ -247,6 +247,14 @@ export const deleteQuestionPartById = async (id?: string) => {
   const results = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${id}`,
   );
-  console.log(results)
+  // console.log(results)
+  return results;
+};
+
+export const ExamQuestionPartById = async (data?: PagingGetData) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/GetPagingDetail`,
+    data
+  );
   return results;
 };

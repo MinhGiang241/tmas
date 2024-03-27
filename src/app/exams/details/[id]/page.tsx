@@ -27,10 +27,9 @@ import Group from "@/app/components/icons/group.svg";
 import Explain from "./question/Explain";
 import ManyResult from "./question/ManyResult";
 import { createAExamQuestionPart, getExamQuestionPartList, deleteQuestionPartById } from '@/services/api_services/question_api';
+import { deleteExamination } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
-import {
-  ExaminationData,
-} from "@/data/exam";
+import { APIResults } from "@/data/api_results";
 
 
 function ExamDetails({ params }: any) {
@@ -39,6 +38,7 @@ function ExamDetails({ params }: any) {
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [deleteExamQuestions, setDeleteExamQuestions] = useState<boolean>(false);
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
@@ -104,7 +104,21 @@ function ExamDetails({ params }: any) {
     <div className="flex flex-col px-1">
       <button className="text-left pb-1">Nhân bản</button>
       <button className="text-left pb-1">In</button>
-      <button className="text-left pb-1">Xóa</button>
+      <button
+        onClick={() => {
+          setDeleteExamQuestions(true)
+        }}
+        className="text-left pb-1">Xóa
+        <ConfirmModal
+          onOk={() => { handleDeleteExam() }}
+          onCancel={() => {
+            setDeleteExamQuestions(false);
+          }}
+          action={t("delete")}
+          text={t("delete_exam_questions")}
+          open={deleteExamQuestions}
+        />
+      </button>
     </div>
   );
 
@@ -113,7 +127,7 @@ function ExamDetails({ params }: any) {
       <button
         onClick={(e) => {
           e.stopPropagation();
-          router.push(`/exams/details/${params.id}/add`);
+          router.push(`/exams/details/${params.id}/add?partId=`);
         }}
         className="text-left mb-2 pb-1 border-b"
       >
@@ -139,7 +153,14 @@ function ExamDetails({ params }: any) {
   );
 
   // const { TextArea } = Input;
+  // xóa phần
+  const handleDeleteExam = async () => {
 
+    router.push("/exams");
+    // loadExamList(false);
+    successToast(t("delete_success"));
+  };
+  //
   const handleAddPart = async () => {
     setAddLoading(true)
     const res: any = await createAExamQuestionPart({ name: name, description: note });
@@ -328,7 +349,35 @@ function ExamDetails({ params }: any) {
                     <div>
                       <Popover
                         placement="bottomRight"
-                        content={actionAddNew}
+                        content={
+                          <div className="flex flex-col px-1">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(`/exams/details/${params.id}/add?partId=${x?.id}`);
+                              }}
+                              className="text-left mb-2 pb-1 border-b"
+                            >
+                              Thêm thủ công
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                              className="text-left mb-2 pb-1 border-b"
+                            >
+                              Thêm từ ngân hàng câu hỏi của tôi
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                              className="text-left mb-2 pb-1 border-b"
+                            >
+                              Thêm từ ngân hàng câu hỏi của TMAS
+                            </button>
+                          </div>
+                        }
                         arrow={mergedArrow}
                       >
                         <button
@@ -417,12 +466,12 @@ function ExamDetails({ params }: any) {
                   </div>
                 }
                 key={""}>
+                <Explain examId={params.id} />
               </Collapse.Panel>
             </Collapse>
           ))}
         </div>
-        {/* <Explain />
-        <ManyResult /> */}
+        {/* <ManyResult /> */}
       </div>
     </HomeLayout >
   );
