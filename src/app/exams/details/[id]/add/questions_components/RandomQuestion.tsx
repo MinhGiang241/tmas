@@ -68,6 +68,7 @@ function RandomQuestion({
     onSubmit: async (values: RandomQuestionValue) => {
       dispatch(setQuestionLoading(true));
       const submitData: RandomQuestionFormData = {
+        content: {},
         idExam,
         numberPoint: values.point ? parseInt(values.point) : undefined,
         idGroupQuestion: values.question_group,

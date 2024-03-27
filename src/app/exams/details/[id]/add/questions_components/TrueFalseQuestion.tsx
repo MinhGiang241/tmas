@@ -15,7 +15,10 @@ import {
   BaseQuestionFormData,
   MultiAnswerQuestionFormData,
 } from "@/data/form_interface";
-import { createMultiAnswerQuestion } from "@/services/api_services/question_api";
+import {
+  createMultiAnswerQuestion,
+  createTrueFalseQuestion,
+} from "@/services/api_services/question_api";
 import { setQuestionLoading } from "@/redux/questions/questionSlice";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { useAppDispatch } from "@/redux/hooks";
@@ -116,7 +119,7 @@ function TrueFalseQuestion({
           ],
         },
       };
-      var res = await createMultiAnswerQuestion(submitData);
+      var res = await createTrueFalseQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
         errorToast(res.message ?? "");
