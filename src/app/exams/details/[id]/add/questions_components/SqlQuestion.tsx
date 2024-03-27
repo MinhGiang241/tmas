@@ -38,7 +38,7 @@ function SqlQuestion({ questionGroups: examGroups, submitRef, idExam }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const search = useSearchParams();
-  const idExamQuestionPart = search.get("questId");
+  const idExamQuestionPart = search.get("partId");
 
   const optionSelect = (examGroups ?? []).map<any>(
     (v: QuestionGroupData, i: number) => ({

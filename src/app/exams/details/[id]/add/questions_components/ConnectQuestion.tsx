@@ -65,7 +65,7 @@ function ConnectQuestion({
   );
   const router = useRouter();
   const search = useSearchParams();
-  const idExamQuestionPart = search.get("questId");
+  const idExamQuestionPart = search.get("partId");
   const [pairingScroringMethod, setPairingScroringMethod] = useState<
     "CorrectAll" | "EachCorrectItem"
   >("CorrectAll");

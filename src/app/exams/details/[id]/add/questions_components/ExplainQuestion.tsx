@@ -39,7 +39,7 @@ function ExplainQuestion({
   const common = useTranslation();
   const router = useRouter();
   const search = useSearchParams();
-  const idExamQuestionPart = search.get("questId");
+  const idExamQuestionPart = search.get("partId");
   const [requiredFile, setRequiredFile] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 

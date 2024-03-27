@@ -28,7 +28,11 @@ import {
 } from "@/redux/exam_group/examGroupSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import { resetMultiAnswer } from "@/redux/questions/questionSlice";
+import {
+  resetConnectAnswer,
+  resetMultiAnswer,
+} from "@/redux/questions/questionSlice";
+import { getQuestionById } from "@/services/api_services/question_api";
 
 function CreateQuestionPage({ params }: any) {
   const { t } = useTranslation("exam");
@@ -41,6 +45,8 @@ function CreateQuestionPage({ params }: any) {
   );
   var search = useSearchParams();
   var question = search.get("question");
+  var partId = search.get("partId");
+  var questId = search.get("questId");
 
   const [exam, setExam] = useState<ExamData | undefined>();
 
@@ -140,6 +146,12 @@ function CreateQuestionPage({ params }: any) {
           <button
             onClick={() => {
               // setActiveTab(a);
+              if (a != "many_results") {
+                dispatch(resetMultiAnswer(1));
+              }
+              if (a != "connect_quest") {
+                dispatch(resetConnectAnswer(0));
+              }
               router.push(`/exams/details/${params.id}/add?question=${a}`, {
                 scroll: false,
               });

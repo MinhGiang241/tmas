@@ -80,7 +80,7 @@ function TrueFalseQuestion({
     return errors;
   };
   const search = useSearchParams();
-  const idExamQuestionPart = search.get("questId");
+  const idExamQuestionPart = search.get("partId");
   const [correctAnswer, setCorrectAnswer] = useState(undefined);
 
   const formik = useFormik({

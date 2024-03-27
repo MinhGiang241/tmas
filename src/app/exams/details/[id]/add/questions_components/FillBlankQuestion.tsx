@@ -41,7 +41,7 @@ function FillBlankQuestion({
   const common = useTranslation();
   const router = useRouter();
   const search = useSearchParams();
-  const idExamQuestionPart = search.get("questId");
+  const idExamQuestionPart = search.get("partId");
   const dispatch = useAppDispatch();
 
   const [value, setValue] = useState<string | undefined>();
