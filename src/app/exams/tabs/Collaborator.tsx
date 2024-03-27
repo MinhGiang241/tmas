@@ -11,7 +11,7 @@ import {
   ExaminationVersionState,
   getExaminationVersionList,
 } from "@/services/api_services/examination_bc_api";
-import { safeParseJson } from "@/utils/utils";
+import { pad, safeParseJson } from "@/utils/utils";
 import { ExportOutlined, SearchOutlined } from "@ant-design/icons";
 import { Divider, Pagination, Select, Spin } from "antd";
 import { useRouter } from "next/navigation";
@@ -216,7 +216,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                   <div className="my-3 w-full flex flex-grow justify-between items-center">
                     <div className="flex-1">
                       <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg  text-ellipsis">
-                        {v?.code} - {v?.version} - {v?.name}
+                        {v?.name} - {pad(v?.version)}
                       </div>
                       <div className="w-full my-3 flex max-lg:flex-wrap gap-8">
                         <div className="flex body_regular_14">
@@ -250,8 +250,9 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                           <span className="font-semibold">
                             {t("approve_code")}
                           </span>{" "}
-                          : {renderStatus(v.state)}
+                          : {v?.code}
                         </div>
+                        <div>{renderStatus(v.state)}</div>
                         {v.state !== ExaminationVersionState.Pending && (
                           <div>
                             <span className="ml-2 body_regular_14">
