@@ -1,3 +1,4 @@
+import { CodingDataType, ParameterType } from "@/data/form_interface";
 import { javascript } from "@codemirror/lang-javascript";
 import { LanguageSupport, StreamLanguage } from "@codemirror/language";
 import { loadLanguage, langs } from "@uiw/codemirror-extensions-langs";
@@ -33,6 +34,25 @@ export const renderExtension: (
   }
 };
 
+export const mapLanguage = (lang?: string) => {
+  switch (lang) {
+    case "php":
+      return "PHP";
+    case "javascript":
+      return "Javascrip";
+    case "java":
+      return "Java";
+    case "python":
+      return "Python";
+    case "ruby":
+      return "Ruby";
+    case "c#":
+      return "CShape";
+    default:
+      return "";
+  }
+};
+
 export const laguageOptions = [
   { value: "javascript", label: "javascript" },
   { value: "csharp", label: "C#" },
@@ -44,4 +64,106 @@ export const laguageOptions = [
   { value: "php", label: "PHP" },
   { value: "java", label: "Java" },
   { value: "css", label: "CSS" },
+];
+
+export interface SampleCode {
+  params?: ParameterType[];
+  returnType?: string;
+  functionName?: string;
+  lang?: string;
+}
+export const genSampleCode = ({
+  params,
+  functionName,
+  returnType,
+  lang,
+}: SampleCode) => {
+  switch (lang) {
+    case "javascript":
+      return `function ${functionName ?? "sample"} (${
+        params?.map((s: any) => `${s?.nameParameter ?? ""}`).join(", ") ?? ""
+      }) {
+  // Write code here
+      
+}`;
+    case "java":
+      return `public class Main {
+    public static ${returnType ?? "void"} ${functionName ?? "main"} (${
+      params
+        ?.map(
+          (s: any) => `${s?.returnType ?? "void"} ${s?.nameParameter ?? ""}`,
+        )
+        .join(", ") ?? ""
+    }) {
+    // Write code here
+       
+    }
+}`;
+    case "c#":
+      return `using System;
+
+class Program {
+    public static ${returnType ?? "void"} ${functionName ?? "Main"} (${
+      params
+        ?.map(
+          (s: any) => `${s?.returnType ?? "void"} ${s?.nameParameter ?? ""}`,
+        )
+        .join(", ") ?? ""
+    }  {
+    // Write code here 
+        
+    }
+}`;
+    case "ruby":
+      return `def ${functionName ?? "main"} (${
+        params?.map((s: any) => `${s?.nameParameter ?? ""}`).join(", ") ?? ""
+      }) {
+    # Write code here 
+      
+}`;
+    case "php":
+      return `<?php
+function ${functionName ?? "main"}(${
+        params?.map((s: any) => `$${s?.nameParameter ?? ""}`).join(", ") ?? ""
+      }) {
+    // Write code here 
+      
+}
+?>`;
+    case "python":
+      return `def ${functionName ?? "main"}(${
+        params?.map((s: any) => `${s?.nameParameter ?? ""}`).join(", ") ?? ""
+      }){
+    # Write code here
+
+}
+      `;
+    default:
+      return "";
+  }
+};
+
+export const serverLanguageList: CodingDataType[] = [
+  "String",
+  "Integer",
+  "LongInteger",
+  "Float",
+  "Boolean",
+  "Double",
+  "Character",
+  "IntegerArray",
+  "StringArray",
+  "LongIntegerArray",
+  "FloatArray",
+  "DoubleArray",
+  "CharacterArray",
+  "BooleanArray",
+  "Integer2DArray",
+  "String2DArray",
+  "LongInteger2DArray",
+  "Float2DArray",
+  "Double2DArray",
+  "Character2DArray",
+  "Boolean2DArray",
+  "Void",
 ];

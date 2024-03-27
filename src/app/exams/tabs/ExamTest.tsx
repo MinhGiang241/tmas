@@ -43,6 +43,8 @@ import { FormattedDate } from "react-intl";
 import ConfirmModal from "../../components/modals/ConfirmModal";
 import copy from "copy-text-to-clipboard";
 import toast from "react-hot-toast";
+import { createExaminationVersion } from "@/services/api_services/examination_bc_api";
+import { UploadOutlined } from "@ant-design/icons";
 
 function ExamTestTab({ hidden }: { hidden: boolean }) {
   const { t } = useTranslation("exam");
@@ -118,7 +120,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id,
+          (ch: ExamGroupData) => ch.idParent === e.id
         );
         return { ...e, childs };
       });
@@ -138,7 +140,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
           value: e?.id,
         })),
       ],
-    }),
+    })
   );
   optionSelect.push({
     title: t("all_category"),
@@ -156,7 +158,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
         return;
       }
       var examinationIndex = list.findIndex(
-        (g: ExaminationData) => g?.id == c[0],
+        (g: ExaminationData) => g?.id == c[0]
       );
       var newValue = {
         ...list[examinationIndex],
@@ -187,6 +189,25 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
     setOpenDelete(false);
     loadExamList(false);
     successToast(common.t("delete_success"));
+  };
+
+  const handlePublishExam = async (v: any) => {
+    const childsList = (examGroup ?? []).reduce(
+      (acc: any, va) => [...acc, ...(va?.childs ?? [])],
+      []
+    );
+    const group = (childsList ?? []).find((g: any) => g?.id === v?.idExamGroup);
+    const result = await createExaminationVersion({
+      data: v,
+      examId: v.id,
+      name: v.name,
+      group_name: group?.name || "",
+    });
+    if (result.code === 0) {
+      successToast(common.t("success"));
+    } else {
+      errorToast(common.t("fail"));
+    }
   };
 
   return (
@@ -298,10 +319,10 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
             list.map((v: ExamData, i: number) => {
               var childsList = (examGroup ?? []).reduce(
                 (acc: any, va) => [...acc, ...(va?.childs ?? [])],
-                [],
+                []
               );
               var group = (childsList ?? []).find(
-                (g: any) => g?.id === v?.idExamGroup,
+                (g: any) => g?.id === v?.idExamGroup
               );
 
               return (
@@ -342,15 +363,15 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                             </div>
                             <div className="flex">
                               <LinkIcon />
-                              <span className="ml-2 body_regular_14">{`${v?.numberOfTests} ${t(
-                                "examination",
-                              ).toLowerCase()}`}</span>
+                              <span className="ml-2 body_regular_14">{`${
+                                v?.numberOfTests
+                              } ${t("examination").toLowerCase()}`}</span>
                             </div>
                             <div className="flex mx-8">
                               <MessIcon />
                               <span className="ml-2 body_regular_14">
                                 {`${v?.numberOfQuestions} ${t(
-                                  "question",
+                                  "question"
                                 )?.toLowerCase()}`}
                               </span>
                             </div>
@@ -363,7 +384,16 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                           </div>
                         </div>
 
-                        <div className="flex ">
+                        <div className="flex">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePublishExam(v);
+                            }}
+                          >
+                            <UploadOutlined className="text-2xl" />
+                          </button>
+                          <div className="w-3" />
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -377,7 +407,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                             onClick={(e) => {
                               e.stopPropagation();
                               router.push(
-                                `/examination/create?examId=${v?.id}`,
+                                `/examination/create?examId=${v?.id}`
                               );
                             }}
                           >
@@ -459,7 +489,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                               </div>
                             </div>
                           );
-                        },
+                        }
                       )
                     )}
                   </Collapse.Panel>
@@ -471,7 +501,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
         {list.length != 0 && (
           <div className="w-full flex items-center justify-center">
             <span className="body_regular_14 mr-2">{`${total} ${t(
-              "result",
+              "result"
             )}`}</span>
 
             <Pagination
@@ -497,7 +527,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                     value: i,
                     label: (
                       <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                        "page",
+                        "page"
                       )}`}</span>
                     ),
                   })),

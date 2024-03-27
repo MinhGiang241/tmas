@@ -23,18 +23,31 @@ import {
 import _ from "lodash";
 import MButton from "@/app/components/config/MButton";
 import CodeMirror from "@uiw/react-codemirror";
-import { javascript } from "@codemirror/lang-javascript";
-import { java } from "@codemirror/lang-java";
-import { python } from "@codemirror/lang-python";
-import { StreamLanguage, language } from "@codemirror/language";
-import { csharp } from "@replit/codemirror-lang-csharp";
-import { lua } from "@codemirror/legacy-modes/mode/lua";
+
 import { dracula } from "@uiw/codemirror-theme-dracula";
-import { ExamGroupData, QuestionGroupData } from "@/data/exam";
-import MTreeSelect from "@/app/components/config/MTreeSelect";
-import { useAppSelector } from "@/redux/hooks";
-import { RootState } from "@/redux/store";
+import { QuestionGroupData } from "@/data/exam";
+
+import { useAppDispatch } from "@/redux/hooks";
+
 import CreateTestCaseModal, { TestcaseValue } from "./CreateTestCaseModal";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  genSampleCode,
+  mapLanguage,
+  renderExtension,
+  serverLanguageList,
+} from "@/services/ui/coding_services";
+import { FormikErrors, useFormik } from "formik";
+import cheerio from "cheerio";
+import {
+  CodingDataType,
+  CodingQuestionFormData,
+  ParameterType,
+} from "@/data/form_interface";
+import { v4 as uuidv4 } from "uuid";
+import { setQuestionLoading } from "@/redux/questions/questionSlice";
+import { createCodingQuestion } from "@/services/api_services/question_api";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -49,13 +62,34 @@ interface Props {
   idExam?: string;
 }
 
-function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
+function CodingQuestion({
+  questionGroups: examGroups,
+  submitRef,
+  idExam,
+}: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
 
-  const [point, setPoint] = useState(0);
+  const [codingScroringMethod, setCodingScroringMethod] = useState<
+    "PassAllTestcase" | "EachTestcase"
+  >("PassAllTestcase");
   const [checkedLang, setCheckedLang] = useState<any[]>([]);
-  const [parameterList, setParameterList] = useState<any>([0, 1]);
+  const [parameterList, setParameterList] = useState<ParameterType[]>([
+    {
+      id: uuidv4(),
+      returnType: undefined,
+      nameParameter: undefined,
+    },
+    {
+      id: uuidv4(),
+      returnType: undefined,
+      nameParameter: undefined,
+    },
+  ]);
+  const router = useRouter();
+  const search = useSearchParams();
+  const idExamQuestionPart = search.get("partId");
+  const dispatch = useAppDispatch();
 
   type CheckboxValueType = GetProp<typeof Checkbox.Group, "value">[number];
 
@@ -93,8 +127,8 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
       onHeaderCell: (_) => rowStyle,
       width: "25%",
       title: <div className="w-full flex justify-center">{t("input")}</div>,
-      dataIndex: "input",
-      key: "input",
+      dataIndex: "inputData",
+      key: "inputData",
       render: (text) => (
         <p
           key={text}
@@ -109,8 +143,8 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
       onHeaderCell: (_) => rowStyle,
       width: "25%",
       title: <div className="w-full flex justify-center">{t("output")}</div>,
-      dataIndex: "output",
-      key: "output",
+      dataIndex: "outputData",
+      key: "outputData",
       render: (text) => (
         <p
           key={text}
@@ -145,6 +179,8 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
   ];
 
   const [testcases, setTestcases] = useState<TestcaseValue[]>([]);
+  const [code, setCode] = useState<string | undefined>();
+  const [lang, setLang] = useState<string | undefined>();
 
   const optionSelect = (examGroups ?? []).map<any>(
     (v: QuestionGroupData, i: number) => ({
@@ -154,13 +190,85 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
   );
 
   const [openCreateTestcase, setOpenCreateTestCase] = useState<boolean>(false);
+  interface CodingQuestionValue {
+    point?: string;
+    question_group?: string;
+    question?: string;
+    explain?: string;
+    function_name?: string;
+    return_type?: string;
+  }
+
+  const initialValues: CodingQuestionValue = {
+    point: undefined,
+    question_group: undefined,
+    question: undefined,
+    explain: undefined,
+  };
+  const validate = async (values: CodingQuestionValue) => {
+    const errors: FormikErrors<CodingQuestionValue> = {};
+    const $ = cheerio.load(values.question ?? "");
+
+    if (!values.question || !$.text()) {
+      errors.question = "common_not_empty";
+    }
+
+    if (!values.point) {
+      errors.point = "common_not_empty";
+    }
+    return errors;
+  };
+  const formik = useFormik({
+    initialValues,
+    validate,
+    onSubmit: async (values: CodingQuestionValue) => {
+      dispatch(setQuestionLoading(true));
+      const submitData: CodingQuestionFormData = {
+        idExam,
+        question: values.question,
+        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        idGroupQuestion: values.question_group,
+        numberPoint: values.point ? parseInt(values.point) : undefined,
+        questionType: "Coding",
+        content: {
+          codeLanguages: [
+            ...plainOptions.map((la: any) => mapLanguage(la?.value ?? "")),
+          ] as any,
+          testcases: testcases.map((q) => ({
+            name: q.name,
+            inputData: q.inputData,
+            outputData: q.outputData,
+          })),
+          codingScroringMethod,
+          codingTemplate: {
+            nameFunction: values.function_name,
+            returnType: values.return_type as CodingDataType,
+            explainAnswer: values.explain,
+            parameterInputs: parameterList?.map((l) => ({
+              nameParameter: l.nameParameter,
+              returnType: l.returnType,
+            })),
+            template: code,
+          },
+        },
+      };
+      var res = await createCodingQuestion(submitData);
+      dispatch(setQuestionLoading(false));
+      if (res.code != 0) {
+        errorToast(res?.message ?? "");
+        return;
+      }
+      successToast(t("success_add_question"));
+      router.push(`/exams/details/${idExam}`);
+    },
+  });
 
   return (
     <div className="grid grid-cols-12 gap-4 max-lg:px-5">
       <button
         className="hidden"
         onClick={() => {
-          alert("Coding");
+          formik.handleSubmit();
         }}
         ref={submitRef}
       />
@@ -173,25 +281,38 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
         onCancel={() => setOpenCreateTestCase(false)}
       />
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
-        <MInput h="h-9" name="point" id="point" required title={t("point")} />
+        <MInput
+          onKeyDown={(e) => {
+            if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+              e.preventDefault();
+            }
+          }}
+          formik={formik}
+          h="h-9"
+          name="point"
+          id="point"
+          required
+          title={t("point")}
+        />
         <Radio.Group
           buttonStyle="solid"
           onChange={(v) => {
-            setPoint(v.target.value);
+            setCodingScroringMethod(v.target.value);
           }}
-          value={point}
+          value={codingScroringMethod}
         >
           <Space direction="vertical">
-            <Radio className=" caption_regular_14" value={0}>
+            <Radio className=" caption_regular_14" value={"PassAllTestcase"}>
               {t("point_all_question")}
             </Radio>
-            <Radio className=" caption_regular_14" value={1}>
+            <Radio className=" caption_regular_14" value={"EachTestcase"}>
               {t("point_a_question")}
             </Radio>
           </Space>
         </Radio.Group>
         <div className="h-3" />
         <MDropdown
+          formik={formik}
           options={optionSelect}
           h="h-9"
           title={t("question_group")}
@@ -215,6 +336,7 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
       </div>
       <div className="bg-white p-5 rounded-lg lg:col-span-8 col-span-12">
         <EditorHook
+          formik={formik}
           placeholder={t("enter_content")}
           isCount={false}
           required
@@ -275,12 +397,18 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
         <div className="body_semibold_14 my-3">{t("sample_code")}</div>
         <div className="w-full border rounded-lg p-4">
           <MInput
-            id="func_name"
-            name="func_name"
+            formik={formik}
+            id="function_name"
+            name="function_name"
             title={t("func_name")}
             h="h-9"
           />
-          <MInput
+          <MDropdown
+            options={serverLanguageList.map((r: CodingDataType) => ({
+              value: r,
+              label: r,
+            }))}
+            formik={formik}
             id="return_type"
             name="return_type"
             title={t("return_type")}
@@ -289,10 +417,26 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
           <div className="body_regular_14">{t("parameter")}</div>
           {parameterList.map((l: any, i: number) => {
             return (
-              <div key={i} className=" w-full  flex items-start">
-                <Select className="w-2/5 mt-1 h-9" />
+              <div key={l.id} className=" w-full  flex items-start">
+                <Select
+                  onChange={(t) => {
+                    var newList = _.cloneDeep(parameterList);
+                    newList[i].returnType = t;
+                    setParameterList(newList);
+                  }}
+                  options={serverLanguageList.map((r: CodingDataType) => ({
+                    value: r,
+                    label: r,
+                  }))}
+                  className="w-2/5 mt-1 h-9"
+                />
                 <div className="w-3" />
                 <MInput
+                  onChange={(val) => {
+                    var newList = _.cloneDeep(parameterList);
+                    newList[i].nameParameter = val.target.value;
+                    setParameterList(newList);
+                  }}
                   placeholder={`Parameter ${i + 1}`}
                   h="h-9"
                   id={`pram-${i}`}
@@ -315,7 +459,14 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
           <div className="w-full flex justify-end">
             <button
               onClick={() => {
-                setParameterList([...parameterList, 1]);
+                setParameterList([
+                  ...parameterList,
+                  {
+                    id: uuidv4(),
+                    nameParameter: undefined,
+                    returnType: undefined,
+                  },
+                ]);
               }}
               className="ml-2  underline body_regular_14 underline-offset-4"
             >
@@ -323,7 +474,19 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
             </button>
           </div>
           <div className="mt-3 flex justify-center w-full">
-            <MButton h="h-11" text={t("create_sample_code")} />
+            <MButton
+              onClick={() => {
+                var sampleCode = genSampleCode({
+                  lang,
+                  params: parameterList as any,
+                  functionName: formik.values?.function_name,
+                  returnType: formik.values?.return_type,
+                });
+                setCode(sampleCode);
+              }}
+              h="h-11"
+              text={t("create_sample_code")}
+            />
           </div>
           <Divider />
           <div className="w-full rounded-lg bg-m_neutral_100">
@@ -331,6 +494,9 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
               <div className="body_semibold_14"> {t("sample_code")}</div>
               <div className="flex-grow" />
               <Select
+                onChange={(f) => {
+                  setLang(f);
+                }}
                 className="min-w-28"
                 options={checkedLang?.map((a: any, i: number) => {
                   var lan = plainOptions.find((k: any) => k.value == a);
@@ -342,16 +508,20 @@ function CodingQuestion({ questionGroups: examGroups, submitRef }: Props) {
               />
             </div>
             <CodeMirror
-              lang="lua"
+              value={code}
+              lang={lang}
               theme={dracula}
               height="300px"
-              extensions={[javascript({ jsx: true })]}
-              onChange={(v) => {}}
+              extensions={[renderExtension(lang ?? "") as any]}
+              onChange={(v) => {
+                setCode(v);
+              }}
             />
           </div>
         </div>
         <div className="h-4" />
         <EditorHook
+          formik={formik}
           placeholder={t("enter_content")}
           isCount={false}
           id="explain"

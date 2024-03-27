@@ -45,8 +45,12 @@ function ExamsPage() {
         </button>
       </div>
       <div className="h-3 " />
-      <ExamTestTab hidden={index != "0"} />
-      <Collaborator hidden={index != "1"} />
+      {index === "0" ? (
+        <ExamTestTab hidden={index != "0"} />
+      ) : (
+        <Collaborator hidden={index != "1"} />
+      )}
+
       <div className="h-3" />
     </HomeLayout>
   );
