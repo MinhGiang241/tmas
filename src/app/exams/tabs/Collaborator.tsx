@@ -214,7 +214,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                   className="mb-5 rounded-lg bg-white overflow-hidden p-4"
                 >
                   <div className="my-3 w-full flex flex-grow justify-between items-center">
-                    <div>
+                    <div className="flex-1">
                       <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg  text-ellipsis">
                         {v?.code} - {v?.version} - {v?.name}
                       </div>
@@ -267,9 +267,15 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                       </div>
 
                       {v.state === ExaminationVersionState.Rejected && (
-                        <div className="flex gap-2">
-                          <span className="font-semibold">{t("reason")}:</span>
+                        <div className="w-full space-y-1">
+                          <div>
+                            <span className="font-semibold mr-2">
+                              {t("reason")}:
+                            </span>
+                            <span>{v?.reject_reason_name}</span>
+                          </div>
                           <div
+                            className="w-full"
                             dangerouslySetInnerHTML={{
                               __html: v.reject_message,
                             }}
