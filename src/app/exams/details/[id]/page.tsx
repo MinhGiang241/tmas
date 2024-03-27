@@ -1,7 +1,6 @@
 "use client";
 import MBreadcrumb from "@/app/components/config/MBreadcrumb";
 import MButton from "@/app/components/config/MButton";
-import { errorToast } from "@/app/components/toast/customToast";
 import HomeLayout from "@/app/layouts/HomeLayout";
 import { ExamData } from "@/data/exam";
 import { getExamById } from "@/services/api_services/examination_api";
@@ -27,6 +26,12 @@ import Document from "@/app/components/icons/document.svg";
 import Group from "@/app/components/icons/group.svg";
 import Explain from "./question/Explain";
 import ManyResult from "./question/ManyResult";
+import { createAExamQuestionPart, getExamQuestionPartList, deleteQuestionPartById } from '@/services/api_services/question_api';
+import { errorToast, successToast } from "@/app/components/toast/customToast";
+import {
+  ExaminationData,
+} from "@/data/exam";
+
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -37,10 +42,29 @@ function ExamDetails({ params }: any) {
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
+  //
+  const [data, setData] = useState<any>()
+  const [idDelete, setIdDelete] = useState<any>()
+  const [loadDataQuestion, setLoadDataQuestion] = useState<any>(null)
+  const [addLoading, setAddLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [list, setList] = useState<ExamData[]>([]);
+  // 
+  const [name, setName] = React.useState<string>('');
+  const [note, setNote] = React.useState<string>('');
+  // 
   const router = useRouter();
 
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
+  const handleNoteChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNote(event.target.value);
+  };
+
   const { t } = useTranslation("question");
-  const common = useTranslation();
+  // const common = useTranslation();
   const loadExamById = async () => {
     var res = await getExamById(params?.id);
     if (res?.code != 0) {
@@ -114,7 +138,47 @@ function ExamDetails({ params }: any) {
     </div>
   );
 
-  const { TextArea } = Input;
+  // const { TextArea } = Input;
+
+  const handleAddPart = async () => {
+    setAddLoading(true)
+    const res: any = await createAExamQuestionPart({ name: name, description: note });
+    setAddLoading(false)
+    if (res && res.code !== 0) {
+      errorToast(res.message || "");
+      return;
+    }
+    // console.log(res, "res");
+
+    getData()
+    setLoadDataQuestion(res)
+    setOpen(false)
+  };
+
+  const handleDelete = async () => {
+    // console.log(idDelete)
+    const res = await deleteQuestionPartById(idDelete)
+    if (res && res.code !== 0) {
+      errorToast(res.message || "");
+      return;
+    }
+    setOpenDelete(false);
+    getData()
+  }
+
+  const getData = async () => {
+    const res = await getExamQuestionPartList({ paging: { startIndex: 0, recordPerPage: 100 }, sorters: [{ name: "Name", isAsc: true }] })
+    const data = res.data
+    if (data) {
+      setData(data)
+    }
+  }
+
+  useEffect(() => {
+    setLoadDataQuestion([]);
+    getData()
+  }, []);
+
   return (
     <HomeLayout>
       <MBreadcrumb
@@ -205,7 +269,7 @@ function ExamDetails({ params }: any) {
             // icon={<AddIcon />}
             type="secondary"
             // text={common.t("create_new")}
-            text={t("Thêm phần")}
+            text={t("add_part")}
           />
           <BaseModal
             width={564}
@@ -216,17 +280,19 @@ function ExamDetails({ params }: any) {
             open={open}
           >
             <MInput
-              // formik={formik}
               id="name"
               name="name"
               title={t("name")}
               required
+              onChange={handleNameChange}
+              value={name}
             />
             <MTextArea
-              // formik={formik}
               id="note"
               name="note"
               title={t("note")}
+              onChange={handleNoteChange}
+              value={note}
             />
             <div className="w-full flex justify-center mt-7">
               <MButton
@@ -241,150 +307,56 @@ function ExamDetails({ params }: any) {
                 htmlType="submit"
                 className="w-36"
                 text={t("update")}
+                onClick={handleAddPart}
+                loading={addLoading}
               />
             </div>
           </BaseModal>
         </div>
-        <Collapse
-          // key={v?.id}
-          ghost
-          expandIconPosition="end"
-          className="mb-5  rounded-lg bg-white overflow-hidden"
-        >
-          <Collapse.Panel
-            header={
-              <div className="my-3 flex justify-between items-center">
-                <div>
-                  <div className="text-base font-semibold">Phần tổng hợp</div>
-                  <div className="text-sm text-m_neutral_500">
-                    Câu dễ làm trước, khó làm sau
-                  </div>
-                </div>
-                <div>
-                  <Popover
-                    placement="bottomRight"
-                    content={actionAddNew}
-                    arrow={mergedArrow}
-                  >
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      <NewIcon />
-                    </button>
-                  </Popover>
-                  <button
-                    className="px-2"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <EditIcon
-                      onClick={() => {
-                        setOpenEdit(true);
-                      }}
-                    />
-                    <BaseModal
-                      width={564}
-                      onCancel={() => {
-                        setOpenEdit(false);
-                      }}
-                      title={t("edit_add_new")}
-                      open={openEdit}
-                    >
-                      <MInput
-                        // formik={formik}
-                        id="name"
-                        name="name"
-                        title={t("name")}
-                        required
-                      />
-                      <MTextArea
-                        // formik={formik}
-                        id="note"
-                        name="note"
-                        title={t("note")}
-                      />
-                      <div className="w-full flex justify-center mt-7">
-                        <MButton
-                          className="w-36"
-                          type="secondary"
-                          text={t("cancel")}
-                          onClick={() => {
-                            setOpenEdit(false);
-                          }}
-                        />
-                        <div className="w-5" />
-                        <MButton
-                          // loading={loading}
-                          htmlType="submit"
-                          className="w-36"
-                          text={t("update")}
-                        />
-                      </div>
-                    </BaseModal>
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <DeleteRedIcon
-                      onClick={() => {
-                        setOpenDelete(true);
-                      }}
-                    />
-                    <ConfirmModal
-                      onOk={() => {}}
-                      onCancel={() => {
-                        setOpenDelete(false);
-                      }}
-                      action={t("delete")}
-                      text={t("confirm_delete")}
-                      open={openDelete}
-                    />
-                  </button>
-                </div>
-              </div>
-            }
-            key={""}
-          >
-            <Collapse
-              // key={v?.id}
-              ghost
-              expandIconPosition="end"
-              className="mb-5  rounded-lg bg-m_question overflow-hidden"
-            >
+        <div>
+          {data?.records?.map((x: any, key: any) => (
+            <Collapse key={key} ghost expandIconPosition="end" className="mb-5 rounded-lg bg-white overflow-hidden">
               <Collapse.Panel
                 header={
-                  <div className="my-3 flex justify-between items-center">
+                  < div className="my-3 flex justify-between items-center">
                     <div>
-                      <div className="text-base font-semibold">
-                        Phần hình học
-                      </div>
+                      <div className="text-base font-semibold">{x.name}</div>
                       <div className="text-sm text-m_neutral_500">
-                        Câu dễ làm trước, khó làm sau
+                        {x.description}
                       </div>
                     </div>
                     <div>
+                      <Popover
+                        placement="bottomRight"
+                        content={actionAddNew}
+                        arrow={mergedArrow}
+                      >
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <NewIcon />
+                        </button>
+                      </Popover>
                       <button
+                        className="px-2"
                         onClick={(e) => {
                           e.stopPropagation();
                         }}
                       >
                         <EditIcon
                           onClick={() => {
-                            setOpenEditQuestion(true);
+                            setOpenEdit(true);
                           }}
                         />
                         <BaseModal
                           width={564}
                           onCancel={() => {
-                            setOpenEditQuestion(false);
+                            setOpenEdit(false);
                           }}
-                          title={t("edit_question")}
-                          open={openEditQuestion}
+                          title={t("edit_add_new")}
+                          open={openEdit}
                         >
                           <MInput
                             // formik={formik}
@@ -405,7 +377,7 @@ function ExamDetails({ params }: any) {
                               type="secondary"
                               text={t("cancel")}
                               onClick={() => {
-                                setOpenEditQuestion(false);
+                                setOpenEdit(false);
                               }}
                             />
                             <div className="w-5" />
@@ -419,72 +391,40 @@ function ExamDetails({ params }: any) {
                         </BaseModal>
                       </button>
                       <button
-                        className="px-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <CopyIcon
-                          onClick={() => {
-                            setOpenCopyQuestion(true);
-                          }}
-                        />
-                        <ConfirmModal
-                          onOk={() => {}}
-                          onCancel={() => {
-                            setOpenCopyQuestion(false);
-                          }}
-                          action={t("copy")}
-                          text={t("confirm_copy")}
-                          open={openCopyQuestion}
-                        />
-                      </button>
-                      <button
                         onClick={(e) => {
                           e.stopPropagation();
                         }}
                       >
                         <DeleteRedIcon
                           onClick={() => {
-                            setOpenDeleteQuestion(true);
+                            setOpenDelete(true);
+                            setIdDelete(x.id)
                           }}
                         />
                         <ConfirmModal
-                          onOk={() => {}}
-                          onCancel={() => {
-                            setOpenDeleteQuestion(false);
+                          onOk={() => {
+                            handleDelete()
                           }}
-                          action={t("delete_question")}
-                          text={t("confirm_delete_question")}
-                          open={openDeleteQuestion}
+                          onCancel={() => {
+                            setOpenDelete(false);
+                          }}
+                          action={t("delete")}
+                          text={t("confirm_delete")}
+                          open={openDelete}
                         />
                       </button>
                     </div>
                   </div>
                 }
-                key={""}
-              >
-                <span>
-                  <span>Câu hỏi 1: </span>
-                  Cho hình bát diện đều ABCDEF. Chứng minh rằng các đoạn thẳng
-                  AD, BD và CE đôi một vuông góc với nhau và cắt nhau tại trung
-                  điểm mỗi đường thẳng
-                </span>
-                <div className="h-[1px] bg-m_primary_200 mt-10 mb-3" />
-                <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                  Thông tin câu hỏi
-                </div>
-                <div>
-                  Nhóm câu hỏi: <span>Toán học</span>
-                </div>
+                key={""}>
               </Collapse.Panel>
             </Collapse>
-          </Collapse.Panel>
-        </Collapse>
-        <Explain />
-        <ManyResult />
+          ))}
+        </div>
+        {/* <Explain />
+        <ManyResult /> */}
       </div>
-    </HomeLayout>
+    </HomeLayout >
   );
 }
 

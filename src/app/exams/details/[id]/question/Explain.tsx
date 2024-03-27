@@ -52,7 +52,7 @@ export default function Explain() {
                 // key={v?.id}
                 ghost
                 expandIconPosition="end"
-                className="mb-5  rounded-lg bg-white overflow-hidden"
+                className="mb-5 rounded-lg bg-white overflow-hidden"
             >
                 <Collapse.Panel
                     header={
