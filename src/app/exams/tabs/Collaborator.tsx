@@ -120,7 +120,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
       <div className="w-full max-lg:px-3">
         <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
           <div className="">{t("history_push_approve")}</div>
-          <MButton
+          {/* <MButton
             h="h-11"
             onClick={() => {
               router.push("/exams/create");
@@ -129,7 +129,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
             icon={<AddIcon />}
             type="secondary"
             text={common.t("create_new")}
-          />
+          /> */}
         </div>
         <div className="w-full mt-3 flex justify-around max-lg:flex-col items-start gap-4">
           <form
