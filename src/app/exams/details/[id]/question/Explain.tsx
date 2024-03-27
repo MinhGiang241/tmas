@@ -17,6 +17,7 @@ export default function Explain({ examId }: { examId: any }) {
     const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
     const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
     const [data, setData] = useState<any>()
+    const [createdTime, setCreatedTime] = useState<any>()
 
     const { t } = useTranslation('question')
 
@@ -44,7 +45,7 @@ export default function Explain({ examId }: { examId: any }) {
                     key={key}
                     ghost
                     expandIconPosition="end"
-                    className="rounded-lg bg-m_question overflow-hidden"
+                    className="mb-3 rounded-lg bg-m_question overflow-hidden"
                 >
                     <Collapse.Panel
                         header={
@@ -132,11 +133,11 @@ export default function Explain({ examId }: { examId: any }) {
                         </div>
                         <div className="flex">
                             <div className="body_semibold_14 pr-2">Kiểu câu hỏi: </div>
-                            <span>Tự luận</span>
+                            <span>{x.questionType}</span>
                         </div>
                         <div className="flex">
                             <div className="body_semibold_14 pr-2">Điểm: </div>
-                            <span>1</span>
+                            <span>{x.numberPoint}</span>
                         </div>
                         <div className="flex">
                             <div className="body_semibold_14 pr-2">Ngày tạo: </div>

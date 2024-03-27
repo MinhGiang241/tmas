@@ -163,14 +163,15 @@ function ExamDetails({ params }: any) {
   //
   const handleAddPart = async () => {
     setAddLoading(true)
-    const res: any = await createAExamQuestionPart({ name: name, description: note });
+    const res: any = await createAExamQuestionPart({ idExam: params.id, name: name, description: note });
+    console.log(res);
+
     setAddLoading(false)
     if (res && res.code !== 0) {
       errorToast(res.message || "");
       return;
     }
     // console.log(res, "res");
-
     getData()
     setLoadDataQuestion(res)
     setOpen(false)
