@@ -10,12 +10,13 @@ import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import Tick from "@/app/components/icons/tick-circle.svg";
+import { useRouter } from "next/navigation";
 
-export default function FillBlank() {
+export default function FillBlank({ examId, question }: { examId: any, question: any }) {
     const [openEditQuestion, setOpenEditQuestion] = useState(false)
     const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
     const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-
+    const router = useRouter()
     const { t } = useTranslation('question')
     return (
         <Collapse
@@ -40,7 +41,7 @@ export default function FillBlank() {
                             <button onClick={(e) => {
                                 e.stopPropagation()
                             }}><EditIcon onClick={() => {
-                                setOpenEditQuestion(true)
+                                router.push(`/exams/details/${examId}/edit?questId=${question.id}`);
                             }} />
                                 <BaseModal
                                     width={564}

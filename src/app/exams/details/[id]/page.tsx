@@ -43,8 +43,7 @@ function ExamDetails({ params }: any) {
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState<boolean>(false);
-  const [deleteExamQuestions, setDeleteExamQuestions] =
-    useState<boolean>(false);
+  const [deleteExamQuestions, setDeleteExamQuestions] = useState<boolean>(false);
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
@@ -163,6 +162,8 @@ function ExamDetails({ params }: any) {
     getData();
     setLoadDataQuestion(res);
     setOpen(false);
+    setName("");
+    setNote("");
   };
 
   const handleDelete = async () => {
@@ -476,32 +477,32 @@ function ExamDetails({ params }: any) {
                 {x?.examQuestions?.map((e: any, key: any) => {
                   if (e.questionType == "Coding") {
                     return (
-                      <Coding />
+                      <Coding examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "Connect") {
                     return (
-                      <Connect />
+                      <Connect examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "Explain") {
                     return (
-                      <Explain examId={params.id} />
+                      <Explain examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "FillBlank") {
                     return (
-                      <FillBlank />
+                      <FillBlank examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "ManyResult") {
                     return (
-                      <ManyResult />
+                      <ManyResult examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "Sql") {
                     return (
-                      <Sql />
+                      <Sql examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "TrueFalse") {
