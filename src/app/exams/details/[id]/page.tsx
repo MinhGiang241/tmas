@@ -465,37 +465,37 @@ function ExamDetails({ params }: any) {
                 {x?.examQuestions?.map((e: any, key: any) => {
                   if (e.questionType == "Coding") {
                     return (
-                      <Coding examId={params.id} question={e} />
+                      <Coding key={e.id} examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "Connect") {
                     return (
-                      <Connect examId={params.id} question={e} />
+                      <Connect key={e.id} examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "Explain") {
                     return (
-                      <Explain examId={params.id} question={e} />
+                      <Explain key={e.id} examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "FillBlank") {
                     return (
-                      <FillBlank examId={params.id} question={e} />
+                      <FillBlank key={e.id} examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "ManyResult") {
                     return (
-                      <ManyResult examId={params.id} question={e} />
+                      <ManyResult key={e.id} examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "Sql") {
                     return (
-                      <Sql examId={params.id} question={e} />
+                      <Sql key={e.id} examId={params.id} question={e} />
                     )
                   }
                   if (e.questionType == "TrueFalse") {
                     return (
-                      <TrueFalse />
+                      <TrueFalse key={e.id} examId={params.id} question={e} />
                     )
                   }
                   return (
