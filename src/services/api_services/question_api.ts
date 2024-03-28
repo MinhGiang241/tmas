@@ -281,3 +281,9 @@ export const ExamQuestionPartById = async (data?: PagingGetData) => {
   return results;
 };
 
+export const CopyQuestion = async (id?: string) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Copy/${id}`, {}, { params: { Id: id } }
+  );
+  return results;
+};

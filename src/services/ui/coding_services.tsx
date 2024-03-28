@@ -53,6 +53,25 @@ export const mapLanguage = (lang?: string) => {
   }
 };
 
+export const revertLanguage = (lang?: string) => {
+  switch (lang) {
+    case "PHP":
+      return "php";
+    case "Javascrip":
+      return "javascript";
+    case "Java":
+      return "java";
+    case "Python":
+      return "python";
+    case "Ruby":
+      return "ruby";
+    case "CShape":
+      return "c#";
+    default:
+      return undefined;
+  }
+};
+
 export const laguageOptions = [
   { value: "javascript", label: "javascript" },
   { value: "csharp", label: "C#" },

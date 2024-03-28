@@ -35,6 +35,7 @@ import {
   genSampleCode,
   mapLanguage,
   renderExtension,
+  revertLanguage,
   serverLanguageList,
 } from "@/services/ui/coding_services";
 import { FormikErrors, useFormik } from "formik";
@@ -47,8 +48,12 @@ import {
 } from "@/data/form_interface";
 import { v4 as uuidv4 } from "uuid";
 import { setQuestionLoading } from "@/redux/questions/questionSlice";
-import { createCodingQuestion } from "@/services/api_services/question_api";
+import {
+  createCodingQuestion,
+  updateCodingQuestion,
+} from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -68,9 +73,45 @@ function CodingQuestion({
   questionGroups: examGroups,
   submitRef,
   idExam,
+  question,
 }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
+
+  const existedQuest =
+    question && question?.questionType === "Coding"
+      ? (question as CodingQuestionFormData)
+      : undefined;
+
+  useOnMountUnsafe(() => {
+    if (existedQuest) {
+      setCheckedLang(
+        existedQuest?.content?.codeLanguages?.map((e: string) =>
+          revertLanguage(e),
+        ),
+      );
+      setCodingScroringMethod(
+        existedQuest?.content?.codingScroringMethod ?? "PassAllTestcase",
+      );
+      setCode(existedQuest?.content?.codingTemplate?.template ?? undefined);
+      var parameters =
+        existedQuest?.content?.codingTemplate?.parameterInputs?.map<ParameterType>(
+          (q) => ({
+            nameParameter: q.nameParameter,
+            returnType: q.returnType,
+            id: uuidv4(),
+          }),
+        );
+      setParameterList(parameters ?? []);
+      var tests = existedQuest?.content?.testcases?.map((t) => ({
+        id: uuidv4(),
+        name: t.name,
+        inputData: t.inputData,
+        outputData: t.outputData,
+      }));
+      setTestcases(tests ?? []);
+    }
+  });
 
   const [codingScroringMethod, setCodingScroringMethod] = useState<
     "PassAllTestcase" | "EachTestcase"
@@ -202,10 +243,13 @@ function CodingQuestion({
   }
 
   const initialValues: CodingQuestionValue = {
-    point: undefined,
-    question_group: undefined,
-    question: undefined,
-    explain: undefined,
+    point: question?.numberPoint?.toString() ?? undefined,
+    question_group: question?.idGroupQuestion ?? undefined,
+    question: question?.question ?? undefined,
+    explain: existedQuest?.content?.codingTemplate?.explainAnswer ?? undefined,
+    function_name:
+      existedQuest?.content?.codingTemplate?.nameFunction ?? undefined,
+    return_type: existedQuest?.content?.codingTemplate?.returnType ?? undefined,
   };
   const validate = async (values: CodingQuestionValue) => {
     const errors: FormikErrors<CodingQuestionValue> = {};
@@ -226,15 +270,17 @@ function CodingQuestion({
     onSubmit: async (values: CodingQuestionValue) => {
       dispatch(setQuestionLoading(true));
       const submitData: CodingQuestionFormData = {
-        idExam,
+        id: question?.id,
+        idExam: question?.idExam ?? idExam,
         question: values.question,
-        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        idExamQuestionPart:
+          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         idGroupQuestion: values.question_group,
         numberPoint: values.point ? parseInt(values.point) : undefined,
         questionType: "Coding",
         content: {
           codeLanguages: [
-            ...plainOptions.map((la: any) => mapLanguage(la?.value ?? "")),
+            ...checkedLang.map((la: any) => mapLanguage(la)),
           ] as any,
           testcases: testcases.map((q) => ({
             name: q.name,
@@ -254,13 +300,17 @@ function CodingQuestion({
           },
         },
       };
-      var res = await createCodingQuestion(submitData);
+      var res = question
+        ? await updateCodingQuestion(submitData)
+        : await createCodingQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
         errorToast(res?.message ?? "");
         return;
       }
-      successToast(t("success_add_question"));
+      successToast(
+        question ? t("success_update_question") : t("success_add_question"),
+      );
       router.push(`/exams/details/${idExam}`);
     },
   });
@@ -417,10 +467,11 @@ function CodingQuestion({
             h="h-9"
           />
           <div className="body_regular_14">{t("parameter")}</div>
-          {parameterList.map((l: any, i: number) => {
+          {parameterList.map((l: ParameterType, i: number) => {
             return (
               <div key={l.id} className=" w-full  flex items-start">
                 <Select
+                  value={l.returnType}
                   onChange={(t) => {
                     var newList = _.cloneDeep(parameterList);
                     newList[i].returnType = t;
@@ -434,6 +485,7 @@ function CodingQuestion({
                 />
                 <div className="w-3" />
                 <MInput
+                  value={l.nameParameter}
                   onChange={(val) => {
                     var newList = _.cloneDeep(parameterList);
                     newList[i].nameParameter = val.target.value;

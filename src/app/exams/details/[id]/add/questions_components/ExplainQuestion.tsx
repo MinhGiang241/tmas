@@ -17,8 +17,12 @@ import {
 } from "@/data/form_interface";
 import { useAppDispatch } from "@/redux/hooks";
 import { setQuestionLoading } from "@/redux/questions/questionSlice";
-import { createEssayQuestion } from "@/services/api_services/question_api";
+import {
+  createEssayQuestion,
+  updateEssayQuestion,
+} from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -38,6 +42,7 @@ function ExplainQuestion({
   questionGroups: examGroups,
   submitRef,
   idExam,
+  question,
 }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
@@ -46,6 +51,17 @@ function ExplainQuestion({
   const idExamQuestionPart = search.get("partId");
   const [requiredFile, setRequiredFile] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+
+  const existedQuest =
+    question && question?.questionType === "Essay"
+      ? (question as EssayQuestionFormData)
+      : undefined;
+
+  useOnMountUnsafe(() => {
+    if (existedQuest) {
+      setRequiredFile(existedQuest?.content?.requiredFile ?? false);
+    }
+  });
 
   const optionSelect = (examGroups ?? []).map<any>(
     (v: QuestionGroupData, i: number) => ({
@@ -62,10 +78,10 @@ function ExplainQuestion({
   }
 
   const initialValues: EssayQuestionValue = {
-    point: undefined,
-    question_group: undefined,
-    question: undefined,
-    note: undefined,
+    point: question?.numberPoint?.toString() ?? undefined,
+    question_group: question?.idGroupQuestion ?? undefined,
+    question: question?.question ?? undefined,
+    note: existedQuest?.content?.gradingNote ?? undefined,
   };
 
   const validate = async (values: EssayQuestionValue) => {
@@ -88,22 +104,28 @@ function ExplainQuestion({
     onSubmit: async (values: EssayQuestionValue) => {
       dispatch(setQuestionLoading(true));
       const submitData: EssayQuestionFormData = {
-        idExam,
+        id: question?.id ?? undefined,
+        idExam: question?.idExam ?? idExam,
         question: values?.question,
         numberPoint: values.point ? parseInt(values.point) : undefined,
         idGroupQuestion: values.question_group,
-        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        idExamQuestionPart:
+          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         questionType: "Essay",
         content: { requiredFile, gradingNote: values.note },
       };
 
-      var res = await createEssayQuestion(submitData);
+      var res = question
+        ? await updateEssayQuestion(submitData)
+        : await createEssayQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
         errorToast(res.message ?? "");
         return;
       }
-      successToast(t("success_add_question"));
+      successToast(
+        question ? t("success_update_question") : t("success_add_question"),
+      );
       router.push(`/exams/details/${idExam}`);
     },
   });
