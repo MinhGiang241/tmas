@@ -128,12 +128,15 @@ function FillBlankQuestion({
           return {
             label: e.replace(/[^0-9]+/g, ""),
             text:
-              cloneAns?.length >= i + 1 ? cloneAns[i]?.anwsers?.join(";") : "", //cloneAns[i].anwsers?.join(";"),
+              cloneAns?.length ?? 0 >= i + 1
+                ? cloneAns![i]?.anwsers?.join(";")
+                : "", //cloneAns[i].anwsers?.join(";"),
           };
         });
-        setResults(
-          newResults.sort((a, b) => parseInt(a?.label) - parseInt(b?.label)),
-        );
+        newResults.sort(
+          (a: any, b: any) => parseInt(a?.label) - parseInt(b?.label),
+        ),
+          setResults(newResults as any);
         let count = 0;
         const replacedText = values.question?.replace(/\[%\d+%\]/g, (s) => {
           console.log("ssss", s);
