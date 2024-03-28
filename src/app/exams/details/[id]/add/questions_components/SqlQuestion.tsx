@@ -112,6 +112,7 @@ function SqlQuestion({
         question: values?.question,
         numberPoint: values.point ? parseInt(values.point) : undefined,
         idGroupQuestion: values.question_group,
+        questionType: "SQL",
         idExamQuestionPart:
           question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         content: {

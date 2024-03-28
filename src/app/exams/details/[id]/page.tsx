@@ -613,10 +613,7 @@ function ExamDetails({ params }: any) {
         </div>
         {/* <ManyResult /> */}
       </div>
-    </HomeLayout >
-    // <div>
-    //   {type["MutilAnswer"] ? <div>đây là form nhiều câu hỏi</div> : type["Test"] ? <div>đây là form test mẫu câu hỏi khác</div> : null}
-    // </div>
+    </HomeLayout>
   );
 }
 

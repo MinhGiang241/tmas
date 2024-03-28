@@ -20,8 +20,12 @@ import {
   FillBlankQuestionFormData,
 } from "@/data/form_interface";
 import { setQuestionLoading } from "@/redux/questions/questionSlice";
-import { createFillBlankQuestion } from "@/services/api_services/question_api";
+import {
+  createFillBlankQuestion,
+  updateFillBlankQuestion,
+} from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -40,6 +44,7 @@ function FillBlankQuestion({
   questionGroups: examGroups,
   submitRef,
   idExam,
+  question,
 }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
@@ -54,6 +59,25 @@ function FillBlankQuestion({
   const [check, setCheck] = useState<"CorrectAllBlank" | "EachCorrectBlank">(
     "CorrectAllBlank",
   );
+
+  const existedQuest =
+    question && question?.questionType === "FillBlank"
+      ? (question as FillBlankQuestionFormData)
+      : undefined;
+
+  useOnMountUnsafe(() => {
+    if (existedQuest) {
+      setCheck(
+        existedQuest?.content?.fillBlankScoringMethod ?? "CorrectAllBlank",
+      );
+      setResults(
+        (existedQuest?.content?.anwserItems &&
+        existedQuest?.content?.anwserItems.length >= 0
+          ? existedQuest?.content?.anwserItems[0].anwsers
+          : []) as any,
+      );
+    }
+  });
 
   const optionSelect = (examGroups ?? []).map<any>(
     (v: QuestionGroupData, i: number) => ({
@@ -70,10 +94,10 @@ function FillBlankQuestion({
   }
 
   const initialValues: FillBlankQuestionValue = {
-    point: undefined,
-    question_group: undefined,
-    question: undefined,
-    explain: undefined,
+    point: question?.numberPoint?.toString() ?? undefined,
+    question_group: question?.idGroupQuestion ?? undefined,
+    question: question?.question ?? undefined,
+    explain: existedQuest?.content?.explainAnswer ?? undefined,
   };
 
   const validate = async (values: FillBlankQuestionValue) => {
@@ -98,12 +122,17 @@ function FillBlankQuestion({
       if (!isSave) {
         const pattern = /_{3,}/g;
         const matches = values.question?.match(pattern);
-        setResults((matches ?? []).map((o: string) => ""));
+        var newResults = (matches ?? []).map((o: string, i: number) => {
+          return results[i];
+        });
+
+        setResults(newResults);
         let count = 0;
         const replacedText = values.question?.replace(
           /_{3,}/g,
           () => `__${++count}__`,
         );
+
         setValue(replacedText);
         setIsSave(true);
         return;
@@ -111,11 +140,13 @@ function FillBlankQuestion({
 
       dispatch(setQuestionLoading(true));
       const submitData: FillBlankQuestionFormData = {
-        idExam,
+        id: question?.id,
+        idExam: question?.idExam ?? idExam,
         question: values?.question,
         numberPoint: values.point ? parseInt(values.point) : undefined,
         idGroupQuestion: values.question_group,
-        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        idExamQuestionPart:
+          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         questionType: "FillBlank",
         content: {
           fillBlankScoringMethod: check,
@@ -125,13 +156,17 @@ function FillBlankQuestion({
         },
       };
 
-      var res = await createFillBlankQuestion(submitData);
+      var res = question
+        ? await updateFillBlankQuestion(submitData)
+        : await createFillBlankQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
         errorToast(res?.message ?? "");
         return;
       }
-      successToast(t("success_add_question"));
+      successToast(
+        question ? t("success_update_question") : t("success_add_question"),
+      );
       router.push(`/exams/details/${idExam}`);
     },
   });
@@ -207,6 +242,7 @@ function FillBlankQuestion({
               {results?.map((d: any, i: number) => (
                 <div key={i} className="flex mb-3 items-center">
                   <p className="pt-2 body_semibold_14 min-w-8">{i + 1}</p>
+
                   <MInput
                     value={d}
                     onChange={(d) => {
@@ -261,6 +297,7 @@ function FillBlankQuestion({
 
             <div className="h-4" />
             <EditorHook
+              formik={formik}
               placeholder={t("enter_content")}
               isCount={false}
               id="explain"
