@@ -15,10 +15,19 @@ import {
   BaseQuestionFormData,
   MultiAnswerQuestionFormData,
 } from "@/data/form_interface";
-import { createMultiAnswerQuestion } from "@/services/api_services/question_api";
-import { setQuestionLoading } from "@/redux/questions/questionSlice";
+import {
+  createMultiAnswerQuestion,
+  createTrueFalseQuestion,
+  updateTrueFalseQuestion,
+} from "@/services/api_services/question_api";
+import {
+  setMultiAnswer,
+  setQuestionLoading,
+} from "@/redux/questions/questionSlice";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { useAppDispatch } from "@/redux/hooks";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import { v4 as uuidv4 } from "uuid";
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -37,13 +46,54 @@ function TrueFalseQuestion({
   questionGroups: examGroups,
   submitRef,
   idExam,
+  question,
 }: Props) {
+  const [loadAs, setLoadAs] = useState<boolean>(false);
+  const existedQuest =
+    question && question?.questionType === "YesNoQuestion"
+      ? (question as MultiAnswerQuestionFormData)
+      : undefined;
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const [results, setResults] = useState<number[]>([65, 66]);
   const [isChangePosition, setIsChangePosition] = useState<boolean>(false);
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  useOnMountUnsafe(() => {
+    if (existedQuest) {
+      setIsChangePosition(existedQuest?.content?.isChangePosition ?? false);
+      var a =
+        existedQuest?.content?.answers &&
+        existedQuest?.content?.answers.length != 0
+          ? existedQuest?.content?.answers[0]
+          : {};
+      var b =
+        existedQuest?.content?.answers &&
+        existedQuest?.content?.answers.length >= 2
+          ? existedQuest?.content?.answers[1]
+          : {};
+
+      setAResult(a);
+      setBResult(b);
+      setCorrectAnswer(
+        a?.isCorrectAnswer ? 0 : b?.isCorrectAnswer ? 1 : undefined,
+      );
+      setLoadAs(true);
+    }
+  });
+
+  const [aResult, setAResult] = useState<MultiAnswer>({
+    isCorrectAnswer: false,
+    text: undefined,
+    label: undefined,
+  });
+  const [bResult, setBResult] = useState<MultiAnswer>({
+    isCorrectAnswer: false,
+    text: undefined,
+    label: undefined,
+  });
+
   const optionSelect = (examGroups ?? []).map<any>(
     (v: QuestionGroupData, i: number) => ({
       label: v?.name,
@@ -61,10 +111,10 @@ function TrueFalseQuestion({
   }
 
   const initialValues: TrueFalseQuestionValue = {
-    point: undefined,
-    question_group: undefined,
-    question: undefined,
-    explain: undefined,
+    point: question?.numberPoint?.toString() ?? undefined,
+    question_group: question?.idGroupQuestion ?? undefined,
+    question: question?.question ?? undefined,
+    explain: existedQuest?.content?.explainAnswer ?? undefined,
     a: undefined,
     b: undefined,
   };
@@ -85,14 +135,15 @@ function TrueFalseQuestion({
   };
   const search = useSearchParams();
   const idExamQuestionPart = search.get("partId");
-  const [correctAnswer, setCorrectAnswer] = useState(undefined);
+  const [correctAnswer, setCorrectAnswer] = useState<any>(undefined);
 
   const formik = useFormik({
     initialValues,
     validate,
     onSubmit: async (values: TrueFalseQuestionValue) => {
-      console.log("values", values);
+      dispatch(setQuestionLoading(true));
       const submitData: MultiAnswerQuestionFormData = {
+        id: question?.id,
         idExam,
         idExamQuestionPart: idExamQuestionPart ?? undefined,
         idGroupQuestion: values?.question_group,
@@ -104,25 +155,31 @@ function TrueFalseQuestion({
           isChangePosition,
           answers: [
             {
-              text: values.a,
-              label: values.a,
+              text: aResult.text,
+              label: aResult.label,
               isCorrectAnswer: correctAnswer === 0 ? true : false,
             },
             {
-              text: values.b,
-              label: values.b,
+              text: bResult.text,
+              label: bResult.text,
               isCorrectAnswer: correctAnswer === 1 ? true : false,
             },
           ],
         },
       };
-      var res = await createMultiAnswerQuestion(submitData);
+      console.log("values", submitData);
+
+      var res = question
+        ? await updateTrueFalseQuestion(submitData)
+        : await createTrueFalseQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
         errorToast(res.message ?? "");
         return;
       }
-      successToast(t("success_add_question"));
+      successToast(
+        question ? t("success_update_question") : t("success_add_question"),
+      );
       router.push(`/exams/details/${idExam}`);
     },
   });
@@ -189,35 +246,65 @@ function TrueFalseQuestion({
             buttonStyle="solid"
             onChange={(v) => {
               setCorrectAnswer(v.target.value);
+              if (v.target.value === 0) {
+                setAResult({ ...aResult, isCorrectAnswer: true });
+                setBResult({ ...bResult, isCorrectAnswer: false });
+              }
+              if (v.target.value === 1) {
+                setAResult({ ...aResult, isCorrectAnswer: false });
+                setBResult({ ...aResult, isCorrectAnswer: true });
+              }
             }}
           >
             <Space className="w-full" direction="vertical">
-              {results?.map((a: any, i: number) => (
-                <div key={i} className="w-full flex items-center mb-4">
-                  <Radio value={i} />
-                  <div className="body_semibold_14 mr-2 ">
-                    {String.fromCharCode(65 + i)}.
-                  </div>
-                  <EditorHook
-                    formik={formik}
-                    isCount={false}
-                    isBubble={true}
-                    id={`${i == 0 ? "a" : "b"}`}
-                    name={`${i == 0 ? "a" : "b"}`}
-                  />
-                  <button
-                    onClick={() => {}}
-                    className=" text-neutral-500 text-2xl  ml-2 "
-                  >
-                    <CloseCircleOutlined />
-                  </button>
-                </div>
-              ))}
+              <div className="w-full flex items-center mb-4">
+                <Radio value={0} />
+                <div className="body_semibold_14 mr-2 ">A.</div>
+                <EditorHook
+                  value={aResult?.text}
+                  setValue={(na: any, val: any) => {
+                    setAResult({
+                      ...aResult,
+                      text: val,
+                      label: cheerio.load(val).text(),
+                    });
+                  }}
+                  isCount={false}
+                  isBubble={true}
+                  id={`a`}
+                  name={`b`}
+                />
+              </div>
+              <div className="w-full flex items-center mb-4">
+                <Radio value={1} />
+                <div className="body_semibold_14 mr-2 ">B.</div>
+                <EditorHook
+                  value={bResult?.text}
+                  setValue={(na: any, val: any) => {
+                    setBResult({
+                      ...bResult,
+                      text: val,
+                      label: cheerio.load(val).text(),
+                    });
+                  }}
+                  isCount={false}
+                  isBubble={true}
+                  id={`a`}
+                  name={`b`}
+                />
+                {/* <button */}
+                {/*   onClick={() => {}} */}
+                {/*   className=" text-neutral-500 text-2xl  ml-2 " */}
+                {/* > */}
+                {/*   <CloseCircleOutlined /> */}
+                {/* </button> */}
+              </div>
             </Space>
           </Radio.Group>
         </div>
         <div className="h-4" />
         <EditorHook
+          formik={formik}
           placeholder={t("enter_content")}
           isCount={false}
           id="explain"

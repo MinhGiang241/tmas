@@ -37,28 +37,28 @@ import FillBlank from "./question/FillBlank";
 import Sql from "./question/Sql";
 import TrueFalse from "./question/TrueFalse";
 
-
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
   const [arrow, setArrow] = useState("Show");
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState<boolean>(false);
-  const [deleteExamQuestions, setDeleteExamQuestions] = useState<boolean>(false);
+  const [deleteExamQuestions, setDeleteExamQuestions] =
+    useState<boolean>(false);
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
   //
-  const [data, setData] = useState<any>()
-  const [idDelete, setIdDelete] = useState<any>()
-  const [loadDataQuestion, setLoadDataQuestion] = useState<any>(null)
-  const [addLoading, setAddLoading] = useState(false)
+  const [data, setData] = useState<any>();
+  const [idDelete, setIdDelete] = useState<any>();
+  const [loadDataQuestion, setLoadDataQuestion] = useState<any>(null);
+  const [addLoading, setAddLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const [list, setList] = useState<ExamData[]>([]);
-  // 
-  const [name, setName] = React.useState<string>('');
-  const [note, setNote] = React.useState<string>('');
-  // 
+  //
+  const [name, setName] = React.useState<string>("");
+  const [note, setNote] = React.useState<string>("");
+  //
   const router = useRouter();
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,9 +112,11 @@ function ExamDetails({ params }: any) {
       <button className="text-left pb-1">In</button>
       <button
         onClick={() => {
-          setDeleteExamQuestions(true)
+          setDeleteExamQuestions(true);
         }}
-        className="text-left pb-1">Xóa
+        className="text-left pb-1"
+      >
+        Xóa
         <ConfirmModal
           onOk={async () => {
             await deleteQuestionById(params.id)
@@ -144,31 +146,35 @@ function ExamDetails({ params }: any) {
   // }
 
   const handleAddPart = async () => {
-    setAddLoading(true)
-    const res: any = await createAExamQuestionPart({ idExam: params.id, name: name, description: note });
+    setAddLoading(true);
+    const res: any = await createAExamQuestionPart({
+      idExam: params.id,
+      name: name,
+      description: note,
+    });
     console.log(res);
 
-    setAddLoading(false)
+    setAddLoading(false);
     if (res && res.code !== 0) {
       errorToast(res.message || "");
       return;
     }
     // console.log(res, "res");
-    getData()
-    setLoadDataQuestion(res)
-    setOpen(false)
+    getData();
+    setLoadDataQuestion(res);
+    setOpen(false);
   };
 
   const handleDelete = async () => {
     // console.log(idDelete)
-    const res = await deleteQuestionPartById(idDelete)
+    const res = await deleteQuestionPartById(idDelete);
     if (res && res.code !== 0) {
       errorToast(res.message || "");
       return;
     }
     setOpenDelete(false);
-    getData()
-  }
+    getData();
+  };
 
   const getData = async () => {
     const res = await getExamQuestionPartList({ paging: { startIndex: 0, recordPerPage: 100 }, sorters: [{ name: "Name", isAsc: true }] })
@@ -176,13 +182,13 @@ function ExamDetails({ params }: any) {
     console.log(data);
 
     if (data) {
-      setData(data)
+      setData(data);
     }
-  }
+  };
 
   useEffect(() => {
     setLoadDataQuestion([]);
-    getData()
+    getData();
   }, []);
 
   interface Type {
@@ -330,10 +336,15 @@ function ExamDetails({ params }: any) {
         </div>
         <div>
           {data?.records?.map((x: any, key: any) => (
-            <Collapse key={key} ghost expandIconPosition="end" className="mb-5 rounded-lg bg-white overflow-hidden">
+            <Collapse
+              key={key}
+              ghost
+              expandIconPosition="end"
+              className="mb-5 rounded-lg bg-white overflow-hidden"
+            >
               <Collapse.Panel
                 header={
-                  < div className="my-3 flex justify-between items-center">
+                  <div className="my-3 flex justify-between items-center">
                     <div>
                       <div className="text-base font-semibold">{x.name}</div>
                       <div className="text-sm text-m_neutral_500">
@@ -348,7 +359,9 @@ function ExamDetails({ params }: any) {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                router.push(`/exams/details/${params.id}/add?partId=${x?.id}`);
+                                router.push(
+                                  `/exams/details/${params.id}/add?partId=${x?.id}`,
+                                );
                               }}
                               className="text-left mb-2 pb-1 border-b"
                             >
@@ -441,12 +454,12 @@ function ExamDetails({ params }: any) {
                         <DeleteRedIcon
                           onClick={() => {
                             setOpenDelete(true);
-                            setIdDelete(x.id)
+                            setIdDelete(x.id);
                           }}
                         />
                         <ConfirmModal
                           onOk={() => {
-                            handleDelete()
+                            handleDelete();
                           }}
                           onCancel={() => {
                             setOpenDelete(false);
@@ -506,7 +519,12 @@ function ExamDetails({ params }: any) {
                       <Collapse.Panel
                         header={<div className="my-3 flex justify-between items-center">
                           <div className="flex ">
-                            <span className="body_semibold_14">Câu {key + 1}: <span className="body_regular_14">{e?.question}</span></span>
+                            <span className="body_semibold_14">
+                              Câu {key + 1}:{" "}
+                              <span className="body_regular_14">
+                                {e?.question}
+                              </span>
+                            </span>
                           </div>
                           <div className="min-w-28">
                             <button onClick={(e) => {
@@ -613,10 +631,7 @@ function ExamDetails({ params }: any) {
         </div>
         {/* <ManyResult /> */}
       </div>
-    </HomeLayout >
-    // <div>
-    //   {type["MutilAnswer"] ? <div>đây là form nhiều câu hỏi</div> : type["Test"] ? <div>đây là form test mẫu câu hỏi khác</div> : null}
-    // </div>
+    </HomeLayout>
   );
 }
 

@@ -31,7 +31,10 @@ import {
   updateCheckCorrectAnswer,
   updateTextMultiAnswer,
 } from "@/redux/questions/questionSlice";
-import { createMultiAnswerQuestion } from "@/services/api_services/question_api";
+import {
+  createMultiAnswerQuestion,
+  updateMultiAnswerQuestion,
+} from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
@@ -63,25 +66,24 @@ function ManyResultsQuestion({
     (state: RootState) => state.question.multiAnswerQuestions,
   );
   const [loadAs, setLoadAs] = useState<boolean>(false);
+  const existedQuest =
+    question && question?.questionType === "MutilAnswer"
+      ? (question as MultiAnswerQuestionFormData)
+      : undefined;
+  console.log("existedQuest", existedQuest);
+
   useOnMountUnsafe(() => {
     if (existedQuest) {
-      setIsChangePosition(existedQuest?.content?.isChangePosition);
-      var as: MultiAnswer[] = (existedQuest?.content?.answers ?? []).map(
-        (w) => ({
-          ...w,
-          id: uuidv4(),
-        }),
-      );
-      console.log("as", as);
-
+      setIsChangePosition(existedQuest?.content?.isChangePosition ?? false);
+      var as = (existedQuest?.content?.answers ?? []).map((w) => ({
+        ...w,
+        id: uuidv4(),
+      }));
       dispatch(setMultiAnswer(as));
       setLoadAs(true);
     }
   });
   const [checkedResults, setCheckedResults] = useState<number[]>([]);
-
-  const existedQuest: MultiAnswerQuestionFormData | undefined =
-    question?.questionType == "MutilAnswer" ? question : null;
 
   const [isChangePosition, setIsChangePosition] = useState<boolean>(false);
   const router = useRouter();
@@ -105,10 +107,10 @@ function ManyResultsQuestion({
   );
 
   const initialValues: MultiAnswerQuestionValue = {
-    point: question?.point?.toString() ?? undefined,
+    point: question?.numberPoint?.toString() ?? undefined,
     question_group: question?.idGroupQuestion ?? undefined,
     question: question?.question ?? undefined,
-    explain: question?.explain ?? undefined,
+    explain: existedQuest?.content?.explainAnswer ?? undefined,
   };
 
   const validate = async (values: MultiAnswerQuestionValue) => {
@@ -134,6 +136,7 @@ function ManyResultsQuestion({
     onSubmit: async (values: MultiAnswerQuestionValue) => {
       dispatch(setQuestionLoading(true));
       var submitData: MultiAnswerQuestionFormData = {
+        id: question?.id ?? undefined,
         idExam: question?.idExam ?? idExam,
         idExamQuestionPart:
           question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
@@ -153,14 +156,18 @@ function ManyResultsQuestion({
       };
       // console.log("sss", submitData);
       // return;
-      var res = await createMultiAnswerQuestion(submitData);
+      var res = question
+        ? await updateMultiAnswerQuestion(submitData)
+        : await createMultiAnswerQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
         errorToast(res.message ?? "");
         return;
       }
       dispatch(resetMultiAnswer(1));
-      successToast(t("success_add_question"));
+      question
+        ? successToast(t("success_update_question"))
+        : successToast(t("success_add_question"));
       router.push(`/exams/details/${idExam}`);
     },
   });
@@ -232,7 +239,7 @@ function ManyResultsQuestion({
             <CheckboxGroup
               defaultValue={answers
                 .filter((s) => s.isCorrectAnswer)
-                .map((r) => r.id)}
+                .map((r) => r.id as string)}
               rootClassName="flex flex-col"
               onChange={onChangeCheckResult}
             >
@@ -240,17 +247,19 @@ function ManyResultsQuestion({
                 <div key={a.id} className="w-full flex items-center mb-4">
                   {/* {a.isCorrectAnswer?.toString()} */}
                   <Checkbox
-                    checked={true}
+                    checked={a.isCorrectAnswer ?? false}
                     value={a.id}
                     onChange={(b) => {
+                      console.log(b);
                       dispatch(
                         updateCheckCorrectAnswer({
                           index: i,
-                          value: b.target.value == i,
+                          value: b.target.checked,
                         }),
                       );
                     }}
                   />
+
                   <div className="body_semibold_14 mx-2 w-5">
                     {String.fromCharCode(65 + i)}.
                   </div>

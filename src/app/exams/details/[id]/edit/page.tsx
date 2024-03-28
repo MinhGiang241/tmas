@@ -28,17 +28,15 @@ function EditQuestionPage({ params }: any) {
       return;
     }
     if (results?.data?.records && results?.data?.records?.length != 0) {
-      setQuestionDetails(results?.data?.records[0], () => {
-        alert("ALLLLLLOOOOOOOOO");
-      });
+      setQuestionDetails(results?.data?.records[0]);
     }
 
     const type = await renderQuestTypeRoute(
       results?.data?.records[0]?.questionType, //results?.data?.records[0]?.questionType,
     );
 
-    router.push(
-      `?partId=${
+    router.replace(
+      `/exams/details/${params.id}/edit/?partId=${
         results?.data?.records[0]?.idExamQuestionPart ?? partId
       }&questId=${results?.data?.records[0]?.id}&question=${type}`,
     );

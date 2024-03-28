@@ -81,6 +81,28 @@ export const createMultiAnswerQuestion = async (
   return results;
 };
 
+export const createTrueFalseQuestion = async (
+  data: MultiAnswerQuestionFormData,
+) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionYesNo`,
+    data,
+  );
+
+  return results;
+};
+
+export const updateTrueFalseQuestion = async (
+  data: MultiAnswerQuestionFormData,
+) => {
+  const results = await callStudioAPI.put(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionYesNo`,
+    data,
+  );
+
+  return results;
+};
+
 export const updateMultiAnswerQuestion = async (
   data: MultiAnswerQuestionFormData,
 ) => {
@@ -167,7 +189,7 @@ export const deleteQuestionById = async (questId?: string) => {
   const results = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/${questId}`,
   );
-  console.log(results)
+  console.log(results);
   return results;
 };
 
@@ -254,7 +276,7 @@ export const deleteQuestionPartById = async (id?: string) => {
 export const ExamQuestionPartById = async (data?: PagingGetData) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/GetPagingDetail`,
-    data
+    data,
   );
   return results;
 };

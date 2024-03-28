@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
+import cheerio from "cheerio";
 
 interface Question {
   loading: boolean;
@@ -18,6 +19,7 @@ const initialState: Question = {
       contentAnwser: undefined,
       contentQuestion: undefined,
       labelQuestion: undefined,
+      idAns: undefined,
     },
     {
       type: "Quest",
@@ -25,6 +27,7 @@ const initialState: Question = {
       contentAnwser: undefined,
       contentQuestion: undefined,
       labelQuestion: undefined,
+      idAns: undefined,
     },
     {
       type: "Quest",
@@ -32,6 +35,7 @@ const initialState: Question = {
       contentAnwser: undefined,
       contentQuestion: undefined,
       labelQuestion: undefined,
+      idAns: undefined,
     },
     {
       type: "Quest",
@@ -39,6 +43,7 @@ const initialState: Question = {
       contentAnwser: undefined,
       contentQuestion: undefined,
       labelQuestion: undefined,
+      idAns: undefined,
     },
   ],
 
@@ -135,6 +140,9 @@ export const questionSlice = createSlice({
         ],
       };
     },
+    setConnectQuestion: (state, action) => {
+      return { ...state, connectQuestions: action.payload };
+    },
     addMoreConnectQuestion: (state, action) => {
       return {
         ...state,
@@ -150,6 +158,10 @@ export const questionSlice = createSlice({
         ],
       };
     },
+    setConnectAnswer: (state, action) => {
+      return { ...state, connectAnswers: action.payload };
+    },
+
     addMoreConnectAnswer: (state, action) => {
       return {
         ...state,
@@ -175,7 +187,7 @@ export const questionSlice = createSlice({
       var newList = _.cloneDeep(state.multiAnswerQuestions);
       var answerIndex = action.payload.index as number;
       newList[answerIndex].text = action.payload.value;
-      newList[answerIndex].label = action.payload.value;
+      newList[answerIndex].label = cheerio.load(action.payload.value).text();
       return { ...state, multiAnswerQuestions: newList };
     },
     updateCheckCorrectAnswer: (state, action) => {
@@ -199,21 +211,28 @@ export const questionSlice = createSlice({
     updateTextConnectQuestion: (state, action) => {
       var newList = _.cloneDeep(state.connectQuestions);
       var questionIndex = action.payload.index as number;
-      newList[questionIndex].labelQuestion = action.payload.value;
+      newList[questionIndex].labelQuestion = cheerio
+        .load(action.payload.value)
+        .text();
       newList[questionIndex].contentQuestion = action.payload.value;
       return { ...state, connectQuestions: newList };
     },
     updateTextConnectAnswer: (state, action) => {
       var newList = _.cloneDeep(state.connectAnswers);
       var answerIndex = action.payload.index as number;
-      newList[answerIndex].labelAnwser = action.payload.value;
+      newList[answerIndex].labelAnwser = cheerio
+        .load(action.payload.value)
+        .text();
       newList[answerIndex].contentAnwser = action.payload.value;
       return { ...state, connectAnswers: newList };
     },
     updateAnswerToQuestion: (state, action) => {
       var newList = _.cloneDeep(state.connectQuestions);
-      var questionIndex = action.payload.index as number;
+
+      var questionIndex = action.payload.index;
+      console.log("newList", newList, questionIndex);
       newList[questionIndex].idAns = action.payload.value;
+      console.log("newList2", newList, questionIndex);
       return { ...state, connectQuestions: newList };
     },
 
@@ -227,6 +246,7 @@ export const questionSlice = createSlice({
             contentAnwser: undefined,
             contentQuestion: undefined,
             labelQuestion: undefined,
+            idAns: undefined,
           },
           {
             type: "Quest",
@@ -234,6 +254,7 @@ export const questionSlice = createSlice({
             contentAnwser: undefined,
             contentQuestion: undefined,
             labelQuestion: undefined,
+            idAns: undefined,
           },
           {
             type: "Quest",
@@ -241,6 +262,7 @@ export const questionSlice = createSlice({
             contentAnwser: undefined,
             contentQuestion: undefined,
             labelQuestion: undefined,
+            idAns: undefined,
           },
           {
             type: "Quest",
@@ -248,6 +270,7 @@ export const questionSlice = createSlice({
             contentAnwser: undefined,
             contentQuestion: undefined,
             labelQuestion: undefined,
+            idAns: undefined,
           },
         ],
 
@@ -287,6 +310,8 @@ export const questionSlice = createSlice({
 });
 
 export const {
+  setConnectQuestion,
+  setConnectAnswer,
   addMoreConnectQuestion,
   addMoreConnectAnswer,
   resetMultiAnswer,

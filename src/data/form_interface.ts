@@ -190,6 +190,7 @@ export type QuestionType =
   | "Random";
 
 export interface BaseQuestionFormData {
+  id?: string;
   question?: string;
   numberPoint?: number;
   idGroupQuestion?: string;
@@ -202,13 +203,13 @@ export interface CodingQuestionFormData extends BaseQuestionFormData {
   content?: {
     codingScroringMethod?: "PassAllTestcase" | "EachTestcase";
     codeLanguages:
-    | any
-    | "PHP"
-    | "Javascrip"
-    | "Java"
-    | "Python"
-    | "Ruby"
-    | "CShape"[];
+      | any
+      | "PHP"
+      | "Javascrip"
+      | "Java"
+      | "Python"
+      | "Ruby"
+      | "CShape"[];
     testcases: {
       name?: string;
       inputData?: string;
@@ -234,7 +235,7 @@ export interface ExamQuestionPart {
   _id?: string;
   name?: string;
   description?: string;
-  idExam?: string
+  idExam?: string;
 }
 
 export interface PagingGetData {
