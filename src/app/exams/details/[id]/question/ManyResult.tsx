@@ -11,18 +11,15 @@ import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import NewIcon from "@/app/components/icons/export.svg";
 import Tick from "@/app/components/icons/tick-circle.svg";
-import Connect from "./Connect";
-import Sql from "./Sql";
-import Coding from "./Coding";
-import FillBlank from "./FillBlank";
-import TrueFalse from "./TrueFalse";
+import { useRouter } from "next/navigation";
 
-export default function ManyResult() {
+export default function ManyResult({ examId, question }: { examId: any, question: any }) {
     const [openEditQuestion, setOpenEditQuestion] = useState(false)
     const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
     const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
     const [arrow, setArrow] = useState('Show');
 
+    const router = useRouter()
     const { t } = useTranslation('question')
 
     const mergedArrow = useMemo(() => {
@@ -155,7 +152,7 @@ export default function ManyResult() {
                                         <button onClick={(e) => {
                                             e.stopPropagation()
                                         }}><EditIcon onClick={() => {
-                                            setOpenEditQuestion(true)
+                                            router.push(`/exams/details/${examId}/edit?questId=${question.id}`);
                                         }} />
                                             <BaseModal
                                                 width={564}
@@ -254,11 +251,10 @@ export default function ManyResult() {
                             </div>
                         </Collapse.Panel>
                     </Collapse>
-                    <Connect />
+                    {/* <Connect />
                     <Sql />
                     <Coding />
-                    <FillBlank />
-                    <TrueFalse />
+                    <TrueFalse /> */}
                 </Collapse.Panel>
             </Collapse >
             {/* </Collapse.Panel> */}

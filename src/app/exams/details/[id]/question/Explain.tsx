@@ -12,7 +12,7 @@ import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import { ExamQuestionPartById } from '@/services/api_services/question_api';
 import { useRouter } from "next/navigation";
 
-export default function Explain({ examId }: { examId: any }) {
+export default function Explain({ examId, question }: { examId: any, question: any }) {
     const [openEditQuestion, setOpenEditQuestion] = useState(false)
     const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
     const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
@@ -55,7 +55,7 @@ export default function Explain({ examId }: { examId: any }) {
                                     <button onClick={(e) => {
                                         e.stopPropagation()
                                     }}><EditIcon onClick={() => {
-                                        router.push(`/exams/details/${examId}/edit?questId=${x?.id}`);
+                                        router.push(`/exams/details/${examId}/edit?questId=${question.id}`);
                                     }} />
                                         <BaseModal
                                             width={564}

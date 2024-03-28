@@ -9,12 +9,13 @@ import BaseModal from "@/app/components/config/BaseModal";
 import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
+import { useRouter } from "next/navigation";
 
-export default function Coding() {
+export default function Coding({ examId, question }: { examId: any, question: any }) {
     const [openEditQuestion, setOpenEditQuestion] = useState(false)
     const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
     const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-
+    const router = useRouter()
     const { t } = useTranslation('question')
     return (
         <div>
@@ -35,7 +36,7 @@ export default function Coding() {
                                 <button onClick={(e) => {
                                     e.stopPropagation()
                                 }}><EditIcon onClick={() => {
-                                    setOpenEditQuestion(true)
+                                    router.push(`/exams/details/${examId}/edit?questId=${question.id}`);
                                 }} />
                                     <BaseModal
                                         width={564}
