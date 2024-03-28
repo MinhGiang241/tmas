@@ -96,7 +96,6 @@ function ExamDetails({ params }: any) {
       return;
     }
     setExam(res?.data?.records[0]);
-
   }, [params]);
 
   useEffect(() => {
@@ -386,7 +385,7 @@ function ExamDetails({ params }: any) {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 router.push(
-                                  `/exams/details/${params.id}/add?partId=${x?.id}`
+                                  `/exams/details/${params.id}/add?partId=${x?.id}`,
                                 );
                               }}
                               className="text-left mb-2 pb-1 border-b"
@@ -502,25 +501,37 @@ function ExamDetails({ params }: any) {
               >
                 {x?.examQuestions?.map((e: any, key: any) => {
                   if (e.questionType == "Coding") {
-                    return <Coding examId={params.id} question={e} />;
+                    return (
+                      <Coding key={e.id} examId={params.id} question={e} />
+                    );
                   }
                   if (e.questionType == "Connect") {
-                    return <Connect examId={params.id} question={e} />;
+                    return (
+                      <Connect key={e.id} examId={params.id} question={e} />
+                    );
                   }
                   if (e.questionType == "Explain") {
-                    return <Explain examId={params.id} question={e} />;
+                    return (
+                      <Explain key={e.id} examId={params.id} question={e} />
+                    );
                   }
                   if (e.questionType == "FillBlank") {
-                    return <FillBlank examId={params.id} question={e} />;
+                    return (
+                      <FillBlank key={e.id} examId={params.id} question={e} />
+                    );
                   }
                   if (e.questionType == "ManyResult") {
-                    return <ManyResult examId={params.id} question={e} />;
+                    return (
+                      <ManyResult key={e.id} examId={params.id} question={e} />
+                    );
                   }
                   if (e.questionType == "Sql") {
-                    return <Sql examId={params.id} question={e} />;
+                    return <Sql key={e.id} examId={params.id} question={e} />;
                   }
                   if (e.questionType == "TrueFalse") {
-                    return <TrueFalse />;
+                    return (
+                      <TrueFalse key={e.id} examId={params.id} question={e} />
+                    );
                   }
                   return (
                     <Collapse
@@ -549,7 +560,7 @@ function ExamDetails({ params }: any) {
                                 <EditIcon
                                   onClick={() => {
                                     router.push(
-                                      `/exams/details/${params.id}/edit?questId=${e?.id}`
+                                      `/exams/details/${params.id}/edit?questId=${e?.id}`,
                                     );
                                   }}
                                 />

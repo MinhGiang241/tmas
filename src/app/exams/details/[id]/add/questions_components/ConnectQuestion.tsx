@@ -39,6 +39,7 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import { v4 as uuidv4 } from "uuid";
+import { ConnectQuestAns } from "@/data/question";
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {

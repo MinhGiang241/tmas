@@ -1,16 +1,16 @@
-interface MultiAnswer {
+export interface MultiAnswer {
   id?: string;
   label?: string;
   text?: string;
   isCorrectAnswer?: boolean;
 }
 
-interface ConnectQuestAns {
+export interface ConnectQuestAns {
   id?: string;
   label?: string;
   content?: string;
 }
-interface ConnectPairing {
+export interface ConnectPairing {
   idQuestion?: string;
   idAnswer?: string;
 }
