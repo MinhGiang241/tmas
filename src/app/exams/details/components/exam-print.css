@@ -1,0 +1,19 @@
+@page {
+  size: A4;
+  margin: 2cm;
+}
+@media print {
+  .page {
+    margin: 0;
+    border: initial;
+    border-radius: initial;
+    width: initial;
+    min-height: initial;
+    box-shadow: initial;
+    background: initial;
+    page-break-after: always;
+    a {
+      @apply text-blue-500 underline !important;
+    }
+  }
+}

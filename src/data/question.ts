@@ -15,3 +15,8 @@ interface ConnectAnswer {
   idQuest?: undefined;
   idAns?: undefined;
 }
+
+export enum QuestionType {
+  MutilAnswer = "MutilAnswer",
+  YesNoQuestion = "YesNoQuestion",
+}
