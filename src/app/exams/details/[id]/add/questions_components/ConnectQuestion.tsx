@@ -125,8 +125,11 @@ function ConnectQuestion({
     const errors: FormikErrors<ConnectQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
-    if (!values.question || !$.text()) {
+    if (!values.question) {
       errors.question = "common_not_empty";
+    }
+    if (!values.question_group) {
+      errors.question_group = "common_not_empty";
     }
 
     if (!values.point) {
@@ -143,7 +146,7 @@ function ConnectQuestion({
 
       const dataSubmit: ConnectQuestionFormData = {
         id: question?.id ?? undefined,
-        idExam,
+        idExam: question?.idExam ?? idExam,
         numberPoint: values.point ? parseInt(values.point) : undefined,
         idGroupQuestion: values.question_group,
         question: values?.question,
@@ -224,7 +227,8 @@ function ConnectQuestion({
           </Space>
         </Radio.Group>
         <div className="h-3" />
-        <MTreeSelect
+        <MDropdown
+          required
           formik={formik}
           options={optionSelect}
           h="h-9"

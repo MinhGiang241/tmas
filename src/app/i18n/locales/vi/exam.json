@@ -211,5 +211,6 @@
   "reason": "Lý do",
   "success_add_question": "Tạo câu hỏi thành công",
   "success_update_question": "Chỉnh sửa câu hỏi thành công",
-  "edit_testcase": "Sửa testcase"
+  "edit_testcase": "Sửa testcase",
+  "func_name_not_less_than_3": "Tên hàm không nhỏ hơn 3 ký tự"
 }

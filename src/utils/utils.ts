@@ -9,3 +9,7 @@ export const safeParseJson = (data: string) => {
 export function pad(d: number) {
   return d < 10 ? "0" + d.toString() : d.toString();
 }
+
+export const indexToAlphabet = (index: number) => {
+  return (index + 9).toString(36).toUpperCase();
+};

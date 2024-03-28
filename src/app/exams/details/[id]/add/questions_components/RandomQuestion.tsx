@@ -72,6 +72,9 @@ function RandomQuestion({
     if (!values.point) {
       errors.point = "common_not_empty";
     }
+    if (!values.question_group) {
+      errors.question_group = "common_not_empty";
+    }
 
     return errors;
   };
@@ -132,6 +135,7 @@ function RandomQuestion({
           title={t("point")}
         />
         <MDropdown
+          required
           formik={formik}
           options={optionSelect}
           h="h-9"

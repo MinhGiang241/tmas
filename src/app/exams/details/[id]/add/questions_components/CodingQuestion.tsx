@@ -117,7 +117,15 @@ function CodingQuestion({
   const [codingScroringMethod, setCodingScroringMethod] = useState<
     "PassAllTestcase" | "EachTestcase"
   >("PassAllTestcase");
-  const [checkedLang, setCheckedLang] = useState<any[]>([]);
+  const [checkedLang, setCheckedLang] = useState<any[]>([
+    "php",
+    "javascript",
+    "java",
+    "python",
+    "python",
+    "ruby",
+    "c#",
+  ]);
   const [parameterList, setParameterList] = useState<ParameterType[]>([
     {
       id: uuidv4(),
@@ -266,8 +274,16 @@ function CodingQuestion({
     const errors: FormikErrors<CodingQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
-    if (!values.question || !$.text()) {
+    if (!values.question) {
       errors.question = "common_not_empty";
+    }
+    if (!values.question_group) {
+      errors.question_group = "common_not_empty";
+    }
+    if (!values.function_name) {
+      errors.function_name = "common_not_empty";
+    } else if (values.function_name?.length <= 3) {
+      errors.function_name = "func_name_not_less_than_3";
     }
 
     if (!values.point) {
@@ -387,6 +403,7 @@ function CodingQuestion({
         </Radio.Group>
         <div className="h-3" />
         <MDropdown
+          required
           formik={formik}
           options={optionSelect}
           h="h-9"
@@ -473,6 +490,14 @@ function CodingQuestion({
         <div className="body_semibold_14 my-3">{t("sample_code")}</div>
         <div className="w-full border rounded-lg p-4">
           <MInput
+            required
+            namespace="exam"
+            maxLength={50}
+            onKeyDown={(e) => {
+              if (e.code === "Space" || !e.key.match(/[a-zA-Z0-9\s]/g)) {
+                e.preventDefault();
+              }
+            }}
             formik={formik}
             id="function_name"
             name="function_name"

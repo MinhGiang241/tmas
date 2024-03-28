@@ -123,8 +123,11 @@ function TrueFalseQuestion({
     const errors: FormikErrors<TrueFalseQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
-    if (!values.question || !$.text()) {
+    if (!values.question) {
       errors.question = "common_not_empty";
+    }
+    if (!values.question_group) {
+      errors.question_group = "common_not_empty";
     }
 
     if (!values.point) {
@@ -210,6 +213,7 @@ function TrueFalseQuestion({
           title={t("point")}
         />
         <MDropdown
+          required
           options={optionSelect}
           formik={formik}
           h="h-9"

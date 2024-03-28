@@ -105,8 +105,11 @@ function FillBlankQuestion({
     const errors: FormikErrors<FillBlankQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
-    if (!values.question || !$.text()) {
+    if (!values.question) {
       errors.question = "common_not_empty";
+    }
+    if (!values.question_group) {
+      errors.question_group = "common_not_empty";
     }
 
     if (!values.point) {
@@ -232,6 +235,7 @@ function FillBlankQuestion({
         </Radio.Group>
         <div className="h-4" />
         <MDropdown
+          required
           formik={formik}
           options={optionSelect}
           h="h-9"

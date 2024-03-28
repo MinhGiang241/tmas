@@ -14,3 +14,8 @@ interface ConnectPairing {
   idQuestion?: string;
   idAnswer?: string;
 }
+
+export enum QuestionType {
+  MutilAnswer = "MutilAnswer",
+  YesNoQuestion = "YesNoQuestion",
+}

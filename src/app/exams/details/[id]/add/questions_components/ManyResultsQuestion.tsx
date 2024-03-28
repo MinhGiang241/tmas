@@ -81,6 +81,9 @@ function ManyResultsQuestion({
       }));
       dispatch(setMultiAnswer(as));
       setLoadAs(true);
+    } else {
+      dispatch(resetMultiAnswer(0));
+      setLoadAs(true);
     }
   });
   const [checkedResults, setCheckedResults] = useState<number[]>([]);
@@ -235,7 +238,7 @@ function ManyResultsQuestion({
         </div>
         <div className="mb-3 body_regular_14">{t("many_result_intro")}</div>
         <div className="border rounded-lg p-4">
-          {((loadAs && question) || !question) && (
+          {loadAs && (
             <CheckboxGroup
               defaultValue={answers
                 .filter((s) => s.isCorrectAnswer)
