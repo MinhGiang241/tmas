@@ -178,13 +178,13 @@
   "note_when_marking": "Ghi chú khi chấm bài thi",
   "request_submit_file": "Yêu cầu nộp file",
   "request_user_submit": "Yêu cầu ứng viên nộp file khi làm câu hỏi này",
-  "connect_count_all": "Tính toàn bộ câu hỏi (điểm tính khi đúng toàn bộ matching trong câu hỏi)",
+  "connect_count_all": "Tính toàn bộ câu hỏi (điểm tính khi làm đúng toàn bộ match trong câu hỏi)",
   "connect_count_each": "Tính từng match (điểm câu hỏi chia số match)",
   "select_result": "Chọn đáp án",
   "select_result_intro": "Bạn hãy chọn đáp án tương ứng để hệ thống tự động chấm điểm cho ứng viên",
   "result0": "Đáp án",
   "all_fill_count": "Tính toàn bộ câu hỏi (điểm tính khi đúng toàn bộ c trong câu hỏi)",
-  "each_fill_count": "Tính từng ch (điểm câu hỏi chia số match)",
+  "each_fill_count": "Tính từng match (điểm câu hỏi chia số match)",
   "save_and_setting_result": "Lưu và cài đặt đáp án",
   "fill_instruct": "Hướng dẫn: Để tạo chỗ trống tại vị trí con trỏ chuột của bạn, hãy nhập theo định dạng sau",
   "blank_name": "%Tên_chỗ_trống%",
@@ -210,5 +210,6 @@
   "approve_code": "Mã yêu cầu",
   "reason": "Lý do",
   "success_add_question": "Tạo câu hỏi thành công",
-  "success_update_question": "Chỉnh sửa câu hỏi thành công"
+  "success_update_question": "Chỉnh sửa câu hỏi thành công",
+  "edit_testcase": "Sửa testcase"
 }

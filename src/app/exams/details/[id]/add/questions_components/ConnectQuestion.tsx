@@ -18,9 +18,11 @@ import questionSlice, {
   deleteConnectQuestion,
   resetConnectAnswer,
   setConnectAnswer,
+  setConnectPairing,
   setConnectQuestion,
   setQuestionLoading,
   updateAnswerToQuestion,
+  updateCheckConnectPairing,
   updateTextConnectAnswer,
   updateTextConnectQuestion,
 } from "@/redux/questions/questionSlice";
@@ -68,32 +70,19 @@ function ConnectQuestion({
       ? (question as ConnectQuestionFormData)
       : undefined;
   useOnMountUnsafe(() => {
+    console.log("re load");
     if (existedQuest) {
-      console.log("re load");
       setPairingScroringMethod(
         existedQuest?.content?.pairingScroringMethod ?? undefined,
       );
-      var answers = existedQuest?.content?.questions
-        ?.filter((u) => u.contentAnwser)
-        ?.map((w) => ({ ...w, type: "Answ", id: uuidv4() }));
 
-      var checkedQuestions = answers
-        ?.filter((u) => u.contentQuestion && u.contentAnwser)
-        ?.map((w) => ({ ...w, type: "Quest", id: uuidv4(), idAns: w.id }));
-
-      var unCheckedQuestions = existedQuest?.content?.questions
-        ?.filter((u) => u.contentQuestion && !u.contentAnwser)
-        ?.map((w) => ({ ...w, type: "Quest", id: uuidv4() }));
-
-      var questions = [
-        ...(checkedQuestions ?? []),
-        ...(unCheckedQuestions ?? []),
-      ];
-
-      dispatch(setConnectQuestion(questions));
-      dispatch(setConnectAnswer(answers));
+      dispatch(setConnectQuestion(existedQuest?.content?.questions ?? []));
+      dispatch(setConnectAnswer(existedQuest?.content?.answers ?? []));
+      dispatch(setConnectPairing(existedQuest?.content?.pairings ?? []));
       setLoadAs(true);
       console.log("existedQuest", existedQuest);
+    } else {
+      dispatch(resetConnectAnswer(0));
     }
   });
   const questionList = useAppSelector(
@@ -101,6 +90,9 @@ function ConnectQuestion({
   );
   const answerList = useAppSelector(
     (state: RootState) => state.question.connectAnswers,
+  );
+  const pairingList = useAppSelector(
+    (state: RootState) => state.question.connectPairing,
   );
   const dispatch = useAppDispatch();
   const optionSelect = (examGroups ?? []).map<any>(
@@ -147,34 +139,8 @@ function ConnectQuestion({
     initialValues,
     validate,
     onSubmit: async (values: ConnectQuestionValue) => {
-      console.log("answerList", answerList);
+      dispatch(setQuestionLoading(true));
 
-      // dispatch(setQuestionLoading(true));
-      var ansIds = questionList
-        .filter((p: ConnectAnswer) => p.idAns)
-        .map((y: ConnectAnswer) => y.idAns);
-      console.log("ansIds", ansIds);
-
-      var q = questionList.map((t: ConnectAnswer) => {
-        const ans = answerList.find((g: ConnectAnswer) => g.id === t.idAns);
-        return {
-          labelQuestion: t.labelQuestion,
-          labelAnwser: ans?.labelAnwser,
-          contentQuestion: t.contentQuestion,
-          contentAnwser: ans?.contentAnwser,
-        };
-      });
-      console.log("q", q);
-      var a = answerList
-        .filter((z: ConnectAnswer) => !ansIds.includes(z.id as any))
-        .map((o: ConnectAnswer) => ({
-          labelQuestion: undefined,
-          labelAnwser: o.labelAnwser,
-          contentQuestion: undefined,
-          contentAnwser: o?.contentAnwser,
-        }));
-
-      console.log("a", a);
       const dataSubmit: ConnectQuestionFormData = {
         id: question?.id ?? undefined,
         idExam,
@@ -187,14 +153,20 @@ function ConnectQuestion({
         content: {
           pairingScroringMethod,
           explainAnswer: values.explain,
-          questions: [...q, ...a],
+          questions: questionList.map((s, i: number) => ({
+            ...s,
+            label: `${++i}`,
+          })),
+          answers: answerList.map((s, i: number) => ({
+            ...s,
+            label: `${String.fromCharCode(65 + i)}`,
+          })),
+          pairings: pairingList,
         },
       };
-      console.log("dataSubmit", dataSubmit);
-
-      return;
 
       console.log("dataSubmit", dataSubmit);
+
       var res = question
         ? await updateConnectQuestion(dataSubmit)
         : await createConnectQuestion(dataSubmit);
@@ -281,7 +253,7 @@ function ConnectQuestion({
           <div className="border rounded-lg p-4">
             <div className="w-full flex relative z-10">
               <div className="w-1/2">
-                {questionList?.map((s: ConnectAnswer, i: number) => (
+                {questionList?.map((s: ConnectQuestAns, i: number) => (
                   <div
                     key={s.id}
                     className="flex items-center body_semibold_14 mb-2"
@@ -293,7 +265,7 @@ function ConnectQuestion({
                           updateTextConnectQuestion({ index: i, value: val }),
                         );
                       }}
-                      value={s.contentQuestion}
+                      value={s.content}
                       isCount={false}
                       isBubble={true}
                       id={`result-${i + 1}`}
@@ -323,7 +295,7 @@ function ConnectQuestion({
               </div>
               <div className="w-6" />
               <div className="w-1/2">
-                {answerList?.map((s: ConnectAnswer, i: number) => (
+                {answerList?.map((s: ConnectQuestAns, i: number) => (
                   <div
                     key={s.id}
                     className="flex items-center body_semibold_14 mb-2"
@@ -335,7 +307,7 @@ function ConnectQuestion({
                           updateTextConnectAnswer({ index: i, value: val }),
                         );
                       }}
-                      value={s.contentAnwser}
+                      value={s.content}
                       isCount={false}
                       isBubble={true}
                       id={`result-${i + 1}`}
@@ -368,15 +340,14 @@ function ConnectQuestion({
             <div className="body_regular_14 mb-2">
               {t("select_result_intro")}
             </div>
-            {questionList?.map((a: ConnectAnswer, i: number) => (
+            {questionList?.map((a: ConnectQuestAns, i: number) => (
               <div className="flex" key={a.id}>
                 <p className="w-14 body_semibold_14 mr-3 ">{i + 1}.</p>
                 <CheckboxGroup
                   value={
-                    (answerList
-                      ?.filter((m) => !!m.id && a.idAns === m.id)
-
-                      ?.map((o) => o.id) ?? []) as any
+                    (pairingList
+                      ?.filter((q) => q.idQuestion === a.id)
+                      ?.map((s) => s.idAnswer) ?? []) as any
                   }
                   rootClassName="flex items-center "
                   onChange={(va) => {
@@ -384,7 +355,7 @@ function ConnectQuestion({
                     console.log("questionList", questionList);
                   }}
                 >
-                  {answerList.map((b: ConnectAnswer, ind: number) => (
+                  {answerList.map((b: ConnectQuestAns, ind: number) => (
                     <>
                       <p className="body_semibold_14 relative z-0">
                         {String.fromCharCode(65 + ind)}.
@@ -392,11 +363,10 @@ function ConnectQuestion({
                       <Checkbox
                         onChange={(val) => {
                           dispatch(
-                            updateAnswerToQuestion({
-                              index: i,
-                              value: val.target.checked
-                                ? val.target.value
-                                : undefined,
+                            updateCheckConnectPairing({
+                              check: val.target.checked,
+                              idAnswer: b.id,
+                              idQuestion: a.id,
                             }),
                           );
                         }}

@@ -144,8 +144,9 @@ function TrueFalseQuestion({
       dispatch(setQuestionLoading(true));
       const submitData: MultiAnswerQuestionFormData = {
         id: question?.id,
-        idExam,
-        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        idExam: question?.idExam ?? idExam,
+        idExamQuestionPart:
+          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         idGroupQuestion: values?.question_group,
         question: values?.question,
         questionType: "YesNoQuestion",
@@ -156,12 +157,12 @@ function TrueFalseQuestion({
           answers: [
             {
               text: aResult.text,
-              label: aResult.label,
+              label: "A",
               isCorrectAnswer: correctAnswer === 0 ? true : false,
             },
             {
               text: bResult.text,
-              label: bResult.text,
+              label: "B",
               isCorrectAnswer: correctAnswer === 1 ? true : false,
             },
           ],

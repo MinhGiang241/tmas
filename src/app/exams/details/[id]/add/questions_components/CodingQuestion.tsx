@@ -14,13 +14,14 @@ import React, { HTMLAttributes, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import TrashIcon from "@/app/components/icons/trash.svg";
+import EditIcon from "@/app/components/icons/edit.svg";
 import Table, { ColumnsType } from "antd/es/table";
 import {
   rowEndStyle,
   rowStartStyle,
   rowStyle,
 } from "@/app/account/account-info/AccountInfo";
-import _ from "lodash";
+import _, { findIndex } from "lodash";
 import MButton from "@/app/components/config/MButton";
 import CodeMirror from "@uiw/react-codemirror";
 
@@ -211,6 +212,16 @@ function CodingQuestion({
           <button
             className="ml-2"
             onClick={() => {
+              setActive(data);
+              setOpenCreateTestCase(true);
+            }}
+          >
+            <EditIcon />
+          </button>
+
+          <button
+            className="ml-2"
+            onClick={() => {
               setTestcases(testcases.filter((e: any) => e.id != data.id));
             }}
           >
@@ -314,6 +325,7 @@ function CodingQuestion({
       router.push(`/exams/details/${idExam}`);
     },
   });
+  const [active, setActive] = useState<TestcaseValue | undefined>();
 
   return (
     <div className="grid grid-cols-12 gap-4 max-lg:px-5">
@@ -325,12 +337,23 @@ function CodingQuestion({
         ref={submitRef}
       />
       <CreateTestCaseModal
-        onOk={(testCase: TestcaseValue) => {
-          setTestcases([...testcases, testCase]);
+        testcase={active}
+        onOk={(testCase: TestcaseValue, isEdit: boolean) => {
+          if (isEdit) {
+            var testIndex = testcases.findIndex((e) => e.id === testCase.id);
+            var newList = _.cloneDeep(testcases);
+            newList[testIndex] = testCase;
+            setTestcases(newList);
+          } else {
+            setTestcases([...testcases, testCase]);
+          }
+          setActive(undefined);
         }}
-        title={t("create_testcase")}
         open={openCreateTestcase}
-        onCancel={() => setOpenCreateTestCase(false)}
+        onCancel={() => {
+          setActive(undefined);
+          setOpenCreateTestCase(false);
+        }}
       />
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
@@ -403,21 +426,22 @@ function CodingQuestion({
           </div>
 
           <div className="flex items-center">
-            <Select
-              className="min-w-40"
-              placeholder={t("op")}
-              options={[
-                common.t("delete"),
-                t("hide_testcase"),
-                t("normal_testcase"),
-              ].map((a: any, i: number) => ({
-                value: i,
-                label: a,
-              }))}
-            />
+            {/* <Select */}
+            {/*   className="min-w-40" */}
+            {/*   placeholder={t("op")} */}
+            {/*   options={[ */}
+            {/*     common.t("delete"), */}
+            {/*     t("hide_testcase"), */}
+            {/*     t("normal_testcase"), */}
+            {/*   ].map((a: any, i: number) => ({ */}
+            {/*     value: i, */}
+            {/*     label: a, */}
+            {/*   }))} */}
+            {/* /> */}
             <div>
               <button
                 onClick={() => {
+                  setActive(undefined);
                   setOpenCreateTestCase(true);
                 }}
                 className="ml-2 text-m_primary_500 underline body_semibold_14 underline-offset-4"
@@ -548,6 +572,7 @@ function CodingQuestion({
               <div className="body_semibold_14"> {t("sample_code")}</div>
               <div className="flex-grow" />
               <Select
+                placeholder={common.t("language")}
                 onChange={(f) => {
                   setLang(f);
                 }}

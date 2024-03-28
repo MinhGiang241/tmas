@@ -5,13 +5,12 @@ interface MultiAnswer {
   isCorrectAnswer?: boolean;
 }
 
-interface ConnectAnswer {
-  type: "Quest" | "Answ";
+interface ConnectQuestAns {
   id?: string;
-  labelQuestion?: string;
-  labelAnwser?: string;
-  contentQuestion?: string;
-  contentAnwser?: string;
-  idQuest?: undefined;
-  idAns?: undefined;
+  label?: string;
+  content?: string;
+}
+interface ConnectPairing {
+  idQuestion?: string;
+  idAnswer?: string;
 }

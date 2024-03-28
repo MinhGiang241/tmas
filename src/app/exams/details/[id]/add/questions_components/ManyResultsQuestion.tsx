@@ -147,9 +147,9 @@ function ManyResultsQuestion({
         content: {
           explainAnswer: values.explain,
           isChangePosition,
-          answers: answers.map((l: MultiAnswer) => ({
+          answers: answers.map((l: MultiAnswer, i: number) => ({
             text: l.text,
-            label: l.label,
+            label: `${String.fromCharCode(65 + i)}`,
             isCorrectAnswer: l.isCorrectAnswer,
           })),
         },

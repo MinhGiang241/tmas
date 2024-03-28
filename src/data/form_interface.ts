@@ -275,11 +275,11 @@ export interface ConnectQuestionFormData extends BaseQuestionFormData {
   content?: {
     explainAnswer?: string;
     pairingScroringMethod?: "EachCorrectItem" | "CorrectAll";
-    questions?: {
-      labelQuestion?: string;
-      labelAnwser?: string;
-      contentQuestion?: string;
-      contentAnwser?: string;
+    questions?: ConnectQuestAns[];
+    answers?: ConnectQuestAns[];
+    pairings: {
+      idQuestion?: string;
+      idAnswer?: string;
     }[];
   };
 }

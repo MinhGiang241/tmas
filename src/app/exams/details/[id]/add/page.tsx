@@ -138,7 +138,7 @@ function CreateQuestionPage({ params, question }: any) {
             onClick={() => {
               (submitRef.current as any).click();
             }}
-            text={question ? common.t("edit") : common.t("create_new")}
+            text={question ? common.t("update") : common.t("create_new")}
           />
         </div>
       </div>

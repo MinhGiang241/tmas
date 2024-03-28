@@ -6,75 +6,57 @@ import cheerio from "cheerio";
 interface Question {
   loading: boolean;
   multiAnswerQuestions: MultiAnswer[];
-  connectQuestions: ConnectAnswer[];
-  connectAnswers: ConnectAnswer[];
+  connectQuestions: ConnectQuestAns[];
+  connectAnswers: ConnectQuestAns[];
+  connectPairing: ConnectPairing[];
 }
 
 const initialState: Question = {
   loading: false,
+  connectPairing: [],
   connectQuestions: [
     {
-      type: "Quest",
       id: uuidv4(),
-      contentAnwser: undefined,
-      contentQuestion: undefined,
-      labelQuestion: undefined,
-      idAns: undefined,
+      label: undefined,
+      content: undefined,
     },
     {
-      type: "Quest",
       id: uuidv4(),
-      contentAnwser: undefined,
-      contentQuestion: undefined,
-      labelQuestion: undefined,
-      idAns: undefined,
+      label: undefined,
+      content: undefined,
     },
     {
-      type: "Quest",
       id: uuidv4(),
-      contentAnwser: undefined,
-      contentQuestion: undefined,
-      labelQuestion: undefined,
-      idAns: undefined,
+      label: undefined,
+      content: undefined,
     },
     {
-      type: "Quest",
       id: uuidv4(),
-      contentAnwser: undefined,
-      contentQuestion: undefined,
-      labelQuestion: undefined,
-      idAns: undefined,
+      label: undefined,
+      content: undefined,
     },
   ],
 
   connectAnswers: [
     {
-      type: "Answ",
       id: uuidv4(),
-      contentAnwser: undefined,
-      contentQuestion: undefined,
-      labelQuestion: undefined,
+      label: undefined,
+      content: undefined,
     },
     {
-      type: "Answ",
       id: uuidv4(),
-      contentAnwser: undefined,
-      contentQuestion: undefined,
-      labelQuestion: undefined,
+      label: undefined,
+      content: undefined,
     },
     {
-      type: "Answ",
       id: uuidv4(),
-      contentAnwser: undefined,
-      contentQuestion: undefined,
-      labelQuestion: undefined,
+      label: undefined,
+      content: undefined,
     },
     {
-      type: "Answ",
       id: uuidv4(),
-      contentAnwser: undefined,
-      contentQuestion: undefined,
-      labelQuestion: undefined,
+      label: undefined,
+      content: undefined,
     },
   ],
   multiAnswerQuestions: [
@@ -149,11 +131,9 @@ export const questionSlice = createSlice({
         connectQuestions: [
           ...state.connectQuestions,
           {
-            type: "Quest",
             id: uuidv4(),
-            contentAnwser: undefined,
-            contentQuestion: undefined,
-            labelQuestion: undefined,
+            label: undefined,
+            content: undefined,
           },
         ],
       };
@@ -168,11 +148,9 @@ export const questionSlice = createSlice({
         connectAnswers: [
           ...state.connectAnswers,
           {
-            type: "Answ",
             id: uuidv4(),
-            contentAnwser: undefined,
-            contentQuestion: undefined,
-            labelQuestion: undefined,
+            label: undefined,
+            content: undefined,
           },
         ],
       };
@@ -197,111 +175,118 @@ export const questionSlice = createSlice({
       return { ...state, multiAnswerQuestions: newList };
     },
     deleteConnectQuestion: (state, action) => {
-      var answerIndex = action.payload;
+      var questionIndex = action.payload;
       var newList = _.cloneDeep(state.connectQuestions);
-      newList.splice(answerIndex, 1);
-      return { ...state, connectQuestions: newList };
+      var pairings = _.cloneDeep(state.connectPairing).filter(
+        (e) => !(newList[questionIndex].id === e.idQuestion),
+      );
+
+      newList.splice(questionIndex, 1);
+
+      return { ...state, connectQuestions: newList, connectPairing: pairings };
     },
     deleteConnectAnswer: (state, action) => {
       var answerIndex = action.payload;
       var newList = _.cloneDeep(state.connectAnswers);
+      var pairings = _.cloneDeep(state.connectPairing).filter(
+        (e) => !(newList[answerIndex].id === e.idQuestion),
+      );
+
       newList.splice(answerIndex, 1);
-      return { ...state, connectAnswers: newList };
+
+      return { ...state, connectAnswers: newList, connectPairing: pairings };
     },
     updateTextConnectQuestion: (state, action) => {
       var newList = _.cloneDeep(state.connectQuestions);
       var questionIndex = action.payload.index as number;
-      newList[questionIndex].labelQuestion = cheerio
-        .load(action.payload.value)
-        .text();
-      newList[questionIndex].contentQuestion = action.payload.value;
+      newList[questionIndex].label = cheerio.load(action.payload.value).text();
+      newList[questionIndex].content = action.payload.value;
       return { ...state, connectQuestions: newList };
     },
     updateTextConnectAnswer: (state, action) => {
       var newList = _.cloneDeep(state.connectAnswers);
       var answerIndex = action.payload.index as number;
-      newList[answerIndex].labelAnwser = cheerio
-        .load(action.payload.value)
-        .text();
-      newList[answerIndex].contentAnwser = action.payload.value;
+      newList[answerIndex].label = cheerio.load(action.payload.value).text();
+      newList[answerIndex].content = action.payload.value;
       return { ...state, connectAnswers: newList };
     },
     updateAnswerToQuestion: (state, action) => {
       var newList = _.cloneDeep(state.connectQuestions);
-
       var questionIndex = action.payload.index;
       console.log("newList", newList, questionIndex);
-      newList[questionIndex].idAns = action.payload.value;
       console.log("newList2", newList, questionIndex);
       return { ...state, connectQuestions: newList };
+    },
+    setConnectPairing: (state, action) => {
+      return { ...state, connectPairing: action.payload };
+    },
+    updateCheckConnectPairing: (state, action) => {
+      const pairings = _.cloneDeep(state.connectPairing);
+      if (action.payload.check) {
+        pairings.push({
+          idAnswer: action.payload.idAnswer,
+          idQuestion: action.payload.idQuestion,
+        });
+        return { ...state, connectPairing: pairings };
+      } else {
+        var newList = pairings.filter((f) => {
+          return (
+            f.idAnswer === action.payload.idAnswer &&
+            f.idQuestion === action.payload.idQuestion
+          );
+        });
+      }
+
+      return { ...state, connectPairing: action.payload };
     },
 
     resetConnectAnswer: (state, action) => {
       return {
         ...state,
+        connectPairing: [],
         connectCharAnswerQuestions: [
           {
-            type: "Quest",
             id: uuidv4(),
-            contentAnwser: undefined,
-            contentQuestion: undefined,
-            labelQuestion: undefined,
-            idAns: undefined,
+            label: undefined,
+            content: undefined,
           },
           {
-            type: "Quest",
             id: uuidv4(),
-            contentAnwser: undefined,
-            contentQuestion: undefined,
-            labelQuestion: undefined,
-            idAns: undefined,
+            label: undefined,
+            content: undefined,
           },
           {
-            type: "Quest",
             id: uuidv4(),
-            contentAnwser: undefined,
-            contentQuestion: undefined,
-            labelQuestion: undefined,
-            idAns: undefined,
+            label: undefined,
+            content: undefined,
           },
           {
-            type: "Quest",
             id: uuidv4(),
-            contentAnwser: undefined,
-            contentQuestion: undefined,
-            labelQuestion: undefined,
-            idAns: undefined,
+            label: undefined,
+            content: undefined,
           },
         ],
 
         connectNumAnswerQuestions: [
           {
-            type: "Answ",
             id: uuidv4(),
-            contentAnwser: undefined,
-            contentQuestion: undefined,
-            labelQuestion: undefined,
+            label: undefined,
+            content: undefined,
           },
           {
-            type: "Answ",
             id: uuidv4(),
-            contentAnwser: undefined,
-            contentQuestion: undefined,
-            labelQuestion: undefined,
+            label: undefined,
+            content: undefined,
           },
           {
-            type: "Answ",
             id: uuidv4(),
-            contentAnwser: undefined,
-            contentQuestion: undefined,
-            labelQuestion: undefined,
+            label: undefined,
+            content: undefined,
           },
           {
-            type: "Answ",
             id: uuidv4(),
-            contentAnwser: undefined,
-            contentQuestion: undefined,
-            labelQuestion: undefined,
+            label: undefined,
+            content: undefined,
           },
         ],
       };
@@ -310,6 +295,8 @@ export const questionSlice = createSlice({
 });
 
 export const {
+  setConnectPairing,
+  updateCheckConnectPairing,
   setConnectQuestion,
   setConnectAnswer,
   addMoreConnectQuestion,
