@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import { ConnectQuestAns } from "./question";
 
 export interface RegisterFormValues {
   full_name?: string;

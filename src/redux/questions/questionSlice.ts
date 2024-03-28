@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import cheerio from "cheerio";
+import { ConnectPairing, ConnectQuestAns, MultiAnswer } from "@/data/question";
 
 interface Question {
   loading: boolean;

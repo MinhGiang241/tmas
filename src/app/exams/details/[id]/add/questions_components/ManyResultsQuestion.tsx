@@ -38,6 +38,7 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import { MultiAnswer } from "@/data/question";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
