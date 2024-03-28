@@ -24,13 +24,18 @@ import Cup from "@/app/components/icons/cup.svg";
 import Time from "@/app/components/icons/timer.svg";
 import Document from "@/app/components/icons/document.svg";
 import Group from "@/app/components/icons/group.svg";
-import Explain from "./question/Explain";
 import ManyResult from "./question/ManyResult";
-import { createAExamQuestionPart, getExamQuestionPartList, deleteQuestionPartById, deleteQuestionById } from '@/services/api_services/question_api';
+import { createAExamQuestionPart, getExamQuestionPartList, deleteQuestionPartById, deleteQuestionById, CopyQuestion } from '@/services/api_services/question_api';
 import { deleteExamination } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import { FormattedDate } from "react-intl";
+import Coding from "./question/Coding";
+import Connect from "./question/Connect";
+import Explain from "./question/Explain";
+import FillBlank from "./question/FillBlank";
+import Sql from "./question/Sql";
+import TrueFalse from "./question/TrueFalse";
 
 
 function ExamDetails({ params }: any) {
@@ -111,7 +116,9 @@ function ExamDetails({ params }: any) {
         }}
         className="text-left pb-1">Xóa
         <ConfirmModal
-          onOk={() => { handleDeleteExam() }}
+          onOk={async () => {
+            await deleteQuestionById(params.id)
+          }}
           onCancel={() => {
             setDeleteExamQuestions(false);
           }}
@@ -125,12 +132,17 @@ function ExamDetails({ params }: any) {
 
   // const { TextArea } = Input;
   // xóa phần
-  const handleDeleteExam = async () => {
-    router.push("/exams");
-    // loadExamList(false);
-    successToast(t("delete_success"));
-  };
+  // const handleDeleteExam = async () => {
+  //   router.push("/exams");
+  //   // loadExamList(false);
+  //   successToast(t("delete_success"));
+  // };
   //
+
+  // const handleCopy = async () => {
+  //   const res = await CopyQuestion()
+  // }
+
   const handleAddPart = async () => {
     setAddLoading(true)
     const res: any = await createAExamQuestionPart({ idExam: params.id, name: name, description: note });
@@ -161,6 +173,8 @@ function ExamDetails({ params }: any) {
   const getData = async () => {
     const res = await getExamQuestionPartList({ paging: { startIndex: 0, recordPerPage: 100 }, sorters: [{ name: "Name", isAsc: true }] })
     const data = res.data
+    console.log(data);
+
     if (data) {
       setData(data)
     }
@@ -170,6 +184,15 @@ function ExamDetails({ params }: any) {
     setLoadDataQuestion([]);
     getData()
   }, []);
+
+  interface Type {
+    [key: string]: string;
+  }
+
+  const type: Type = {
+    "MutilAnswer": "Nhiều câu hỏi",
+    "Test": "Test câu hỏi"
+  };
 
   return (
     <HomeLayout>
@@ -437,29 +460,63 @@ function ExamDetails({ params }: any) {
                   </div>
                 }
                 key={""}>
-                {/* <Explain examId={params.id} /> */}
-                {x?.examQuestions?.map((e: any, key: any) => (
-                  <Collapse
-                    key={key}
-                    ghost
-                    expandIconPosition="end"
-                    className="mb-3 rounded-lg bg-m_question overflow-hidden"
-                  >
-                    <Collapse.Panel
-                      header={
-                        <div className="my-3 flex justify-between items-center">
+                {x?.examQuestions?.map((e: any, key: any) => {
+                  if (e.questionType == "Coding") {
+                    return (
+                      <Coding />
+                    )
+                  }
+                  if (e.questionType == "Connect") {
+                    return (
+                      <Connect />
+                    )
+                  }
+                  if (e.questionType == "Explain") {
+                    return (
+                      <Explain examId={params.id} />
+                    )
+                  }
+                  if (e.questionType == "FillBlank") {
+                    return (
+                      <FillBlank />
+                    )
+                  }
+                  if (e.questionType == "ManyResult") {
+                    return (
+                      <ManyResult />
+                    )
+                  }
+                  if (e.questionType == "Sql") {
+                    return (
+                      <Sql />
+                    )
+                  }
+                  if (e.questionType == "TrueFalse") {
+                    return (
+                      <TrueFalse />
+                    )
+                  }
+                  return (
+                    <Collapse
+                      key={key}
+                      ghost
+                      expandIconPosition="end"
+                      className="mb-3 rounded-lg bg-m_question overflow-hidden"
+                    >
+                      <Collapse.Panel
+                        header={<div className="my-3 flex justify-between items-center">
                           <div className="flex ">
                             <span className="body_semibold_14">Câu {key + 1}: <span className="body_regular_14">{e?.question}</span></span>
                           </div>
                           <div className="min-w-28">
                             <button onClick={(e) => {
-                              e.stopPropagation()
+                              e.stopPropagation();
                             }}><EditIcon onClick={() => {
-                              router.push(`/exams/details/${params.id}/edit?questId=${x?.id}`);
+                              router.push(`/exams/details/${params.id}/edit?questId=${e?.id}`);
                             }} />
                               <BaseModal
                                 width={564}
-                                onCancel={() => { setOpenEditQuestion(false) }}
+                                onCancel={() => { setOpenEditQuestion(false); }}
                                 title={t("edit_question")}
                                 open={openEditQuestion}
                               >
@@ -468,93 +525,88 @@ function ExamDetails({ params }: any) {
                                   id="name"
                                   name="name"
                                   title={t("name")}
-                                  required
-                                />
+                                  required />
                                 <MTextArea
                                   // formik={formik}
                                   id="note"
                                   name="note"
-                                  title={t("note")}
-                                />
+                                  title={t("note")} />
                                 <div className="w-full flex justify-center mt-7">
                                   <MButton
                                     className="w-36"
                                     type="secondary"
                                     text={t("cancel")}
-                                    onClick={() => { setOpenEditQuestion(false) }}
-                                  />
+                                    onClick={() => { setOpenEditQuestion(false); }} />
                                   <div className="w-5" />
                                   <MButton
                                     // loading={loading}
                                     htmlType="submit"
                                     className="w-36"
-                                    text={t("update")}
-                                  />
+                                    text={t("update")} />
                                 </div>
                               </BaseModal>
                             </button>
                             <button className="px-2" onClick={(e) => {
-                              e.stopPropagation()
+                              e.stopPropagation();
                             }}><CopyIcon onClick={() => {
-                              setOpenCopyQuestion(true)
-                            }} />
-                              <ConfirmModal
-                                onOk={() => { }}
-                                onCancel={() => { setOpenCopyQuestion(false) }}
-                                action={t("copy")}
-                                text={t("confirm_copy")}
-                                open={openCopyQuestion}
-                              />
-                            </button>
-                            <button onClick={(e) => {
-                              e.stopPropagation()
-                            }}><DeleteRedIcon onClick={() => {
-                              setOpenDeleteQuestion(true)
+                              setOpenCopyQuestion(true);
                             }} />
                               <ConfirmModal
                                 onOk={async () => {
-                                  await deleteQuestionById(e.id)
-                                  setOpenDeleteQuestion(false)
-                                  getData()
+                                  await CopyQuestion(e.id);
+                                  setOpenCopyQuestion(false);
+                                  getData();
                                 }}
-                                onCancel={() => { setOpenDeleteQuestion(false) }}
+                                onCancel={() => { setOpenCopyQuestion(false); }}
+                                action={t("copy")}
+                                text={t("confirm_copy")}
+                                open={openCopyQuestion} />
+                            </button>
+                            <button onClick={(e) => {
+                              e.stopPropagation();
+                            }}><DeleteRedIcon onClick={() => {
+                              setOpenDeleteQuestion(true);
+                            }} />
+                              <ConfirmModal
+                                onOk={async () => {
+                                  await deleteQuestionById(e.id);
+                                  setOpenDeleteQuestion(false);
+                                  getData();
+                                }}
+                                onCancel={() => { setOpenDeleteQuestion(false); }}
                                 action={t("delete_question")}
                                 text={t("confirm_delete_question")}
-                                open={openDeleteQuestion}
-                              />
+                                open={openDeleteQuestion} />
                             </button>
                           </div>
+                        </div>}
+                        key={""}>
+                        <div className="h-[1px] bg-m_primary_200 mb-3" />
+                        <div className="text-m_primary_500 text-sm font-semibold mb-2">Thông tin câu hỏi</div>
+                        <div className="flex">
+                          <div className="body_semibold_14 pr-2">Nhóm câu hỏi: </div>
+                          <span>Toán học</span>
                         </div>
-                      }
-                      key={""}>
-                      <div className="h-[1px] bg-m_primary_200 mb-3" />
-                      <div className="text-m_primary_500 text-sm font-semibold mb-2">Thông tin câu hỏi</div>
-                      <div className="flex">
-                        <div className="body_semibold_14 pr-2">Nhóm câu hỏi: </div>
-                        <span>Toán học</span>
-                      </div>
-                      <div className="flex">
-                        <div className="body_semibold_14 pr-2">Kiểu câu hỏi: </div>
-                        <span>{e.questionType}</span>
-                      </div>
-                      <div className="flex">
-                        <div className="body_semibold_14 pr-2">Điểm: </div>
-                        <span>{e.numberPoint}</span>
-                      </div>
-                      <div className="flex">
-                        <div className="body_semibold_14 pr-2">Ngày tạo: </div>
-
-                        <FormattedDate
-                          value={e?.createdTime}
-                          day="2-digit"
-                          month="2-digit"
-                          year="numeric"
-                        />
-
-                      </div>
-                    </Collapse.Panel>
-                  </Collapse>
-                ))}
+                        <div className="flex">
+                          <div className="body_semibold_14 pr-2">Kiểu câu hỏi: </div>
+                          <span>{e.questionType}</span>
+                        </div>
+                        <div className="flex">
+                          <div className="body_semibold_14 pr-2">Điểm: </div>
+                          <span>{e.numberPoint}</span>
+                        </div>
+                        <div className="flex">
+                          <div className="body_semibold_14 pr-2">Ngày tạo: </div>
+                          <FormattedDate
+                            value={e?.createdTime}
+                            day="2-digit"
+                            month="2-digit"
+                            year="numeric" />
+                        </div>
+                      </Collapse.Panel>
+                    </Collapse>
+                  );
+                })}
               </Collapse.Panel>
             </Collapse>
           ))}
@@ -562,6 +614,9 @@ function ExamDetails({ params }: any) {
         {/* <ManyResult /> */}
       </div>
     </HomeLayout >
+    // <div>
+    //   {type["MutilAnswer"] ? <div>đây là form nhiều câu hỏi</div> : type["Test"] ? <div>đây là form test mẫu câu hỏi khác</div> : null}
+    // </div>
   );
 }
 
