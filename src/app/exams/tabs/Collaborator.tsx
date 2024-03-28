@@ -115,6 +115,16 @@ function Collaborator({ hidden }: { hidden: boolean }) {
     }
   };
 
+  const renderExamCode = (exam: any) => {
+    if (exam.state !== ExaminationVersionState.Approved) {
+      return null;
+    }
+    if (!exam.exam_code) {
+      return null;
+    }
+    return `${exam.exam_code} - `;
+  };
+
   return (
     <div className={`${hidden ? "hidden" : ""}`}>
       <div className="w-full max-lg:px-3">
@@ -216,6 +226,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                   <div className="my-3 w-full flex flex-grow justify-between items-center">
                     <div className="flex-1">
                       <div className="body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg  text-ellipsis">
+                        {renderExamCode(v)}
                         {v?.name} - {pad(v?.version)}
                       </div>
                       <div className="w-full my-3 flex max-lg:flex-wrap gap-8">
