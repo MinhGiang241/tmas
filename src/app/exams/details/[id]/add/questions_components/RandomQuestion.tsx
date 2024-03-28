@@ -14,7 +14,11 @@ import {
   BaseQuestionFormData,
   RandomQuestionFormData,
 } from "@/data/form_interface";
-import { createRandomQuestion } from "@/services/api_services/question_api";
+import {
+  createRandomQuestion,
+  updateRandomQuestion,
+} from "@/services/api_services/question_api";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 
 interface Props {
   questionGroups?: QuestionGroupData[];
@@ -27,6 +31,7 @@ function RandomQuestion({
   questionGroups: examGroups,
   submitRef,
   idExam,
+  question,
 }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
@@ -48,9 +53,18 @@ function RandomQuestion({
   }
 
   const initialValues: RandomQuestionValue = {
-    point: undefined,
-    question_group: undefined,
+    point: question?.numberPoint?.toString() ?? undefined,
+    question_group: question?.idGroupQuestion ?? undefined,
   };
+
+  const existedQuest =
+    question && question?.questionType === "Random"
+      ? (question as RandomQuestionFormData)
+      : undefined;
+  useOnMountUnsafe(() => {
+    if (existedQuest) {
+    }
+  });
 
   const validate = async (values: RandomQuestionValue) => {
     const errors: FormikErrors<RandomQuestionValue> = {};
@@ -68,21 +82,27 @@ function RandomQuestion({
     onSubmit: async (values: RandomQuestionValue) => {
       dispatch(setQuestionLoading(true));
       const submitData: RandomQuestionFormData = {
-        content: {},
-        idExam,
+        id: question?.id ?? undefined,
+        idExam: question?.idExam ?? idExam,
         numberPoint: values.point ? parseInt(values.point) : undefined,
         idGroupQuestion: values.question_group,
-        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        idExamQuestionPart:
+          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         questionType: "Random",
+        content: {},
       };
 
-      var res = await createRandomQuestion(submitData);
+      var res = question
+        ? await updateRandomQuestion(submitData)
+        : await createRandomQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
         errorToast(res?.message ?? "");
         return;
       }
-      successToast(t("success_add_question"));
+      successToast(
+        question ? t("success_update_question") : t("success_add_question"),
+      );
       router.push(`/exams/details/${idExam}`);
     },
   });
