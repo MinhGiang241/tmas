@@ -15,5 +15,12 @@
   "delete_question": "Xóa",
   "delete_exam_questions": "Bạn có muốn xóa đề thi này không?",
   "delete_success": "Xóa thành công đề thi",
-  "question": "Question"
+  "question": "Question",
+  "MutilAnswer": "Multiple Answer",
+  "YesNoQuestion": "Yes or No",
+  "SQL": "SQL",
+  "FillBlank": "Fill Blank",
+  "Pairing": "Pairing",
+  "Coding": "Coding",
+  "Essay": "Essay"
 }

@@ -128,7 +128,7 @@ class Program {
           (s: any) => `${s?.returnType ?? "void"} ${s?.nameParameter ?? ""}`,
         )
         .join(", ") ?? ""
-    }  {
+    })  {
     // Write code here 
         
     }

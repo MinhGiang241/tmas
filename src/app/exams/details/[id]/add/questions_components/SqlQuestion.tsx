@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import CodeMirror from "@uiw/react-codemirror";
-import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 import { ExamGroupData, QuestionGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
@@ -25,6 +24,7 @@ import {
 import { setQuestionLoading } from "@/redux/questions/questionSlice";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import NoticeIcon from "@/app/components/icons/notice.svg";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -76,6 +76,8 @@ function SqlQuestion({
     question_group?: string;
     question?: string;
     explain?: string;
+    schema_sql?: string;
+    expected_output?: string;
   }
 
   const initialValues: SqlQuestionValue = {
@@ -89,6 +91,13 @@ function SqlQuestion({
     const errors: FormikErrors<SqlQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
+    if (!schemaSql) {
+      errors.schema_sql = common.t("not_empty");
+    }
+    if (!expectedOutput) {
+      errors.expected_output = common.t("not_empty");
+    }
+
     if (!values.question) {
       errors.question = "common_not_empty";
     }
@@ -99,6 +108,10 @@ function SqlQuestion({
 
     if (!values.point) {
       errors.point = "common_not_empty";
+    } else if (values.point?.match(/\.\d{3,}/g)) {
+      errors.point = "2_digit_behind_dot";
+    } else if (values.point?.match(/(.*\.){2,}/g)) {
+      errors.point = "invalid_number";
     }
     return errors;
   };
@@ -114,7 +127,7 @@ function SqlQuestion({
         id: question?.id ?? undefined,
         idExam: question?.idExam ?? idExam,
         question: values?.question,
-        numberPoint: values.point ? parseInt(values.point) : undefined,
+        numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
         questionType: "SQL",
         idExamQuestionPart:
@@ -147,14 +160,18 @@ function SqlQuestion({
         className="hidden"
         onClick={() => {
           formik.handleSubmit();
+          Object.keys(formik.errors).map(async (v) => {
+            await formik.setFieldTouched(v, true);
+          });
         }}
         ref={submitRef}
       />
 
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
+          namespace="exam"
           onKeyDown={(e) => {
-            if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+            if (!e.key.match(/[0-9.]/g) && e.key != "Backspace") {
               e.preventDefault();
             }
           }}
@@ -199,6 +216,9 @@ function SqlQuestion({
           <div className="bg-m_neutral_100 rounded-lg">
             <div className="p-4 flex body_semibold_14 ">{t("mysql")}</div>
             <CodeMirror
+              onBlur={async () => {
+                await formik.setFieldTouched("schema_sql", true);
+              }}
               value={schemaSql}
               lang="sql"
               theme={dracula}
@@ -206,9 +226,20 @@ function SqlQuestion({
               extensions={[sql()]}
               onChange={(v) => {
                 setSchemaSql(v);
+                formik.validateForm();
               }}
             />
           </div>
+          {formik.errors.schema_sql && formik.touched.schema_sql && (
+            <div className={`flex items-center `}>
+              <div className="min-w-4">
+                <NoticeIcon />
+              </div>
+              <div className={`text-m_error_500 body_regular_14`}>
+                {(formik.errors?.schema_sql ?? "") as string}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="body_semibold_14 mt-4">{t("expected_output")}</div>
@@ -217,6 +248,9 @@ function SqlQuestion({
           <div className="bg-m_neutral_100 rounded-lg">
             <div className="p-4 flex body_semibold_14 ">{t("mysql")}</div>
             <CodeMirror
+              onBlur={async () => {
+                await formik.setFieldTouched("expected_output", true);
+              }}
               value={expectedOutput}
               lang="sql"
               theme={dracula}
@@ -224,9 +258,20 @@ function SqlQuestion({
               extensions={[sql()]}
               onChange={(v) => {
                 setExpectedOutput(v);
+                formik.validateForm();
               }}
             />
           </div>
+          {formik.errors.expected_output && formik.touched.expected_output && (
+            <div className={`flex items-center `}>
+              <div className="min-w-4">
+                <NoticeIcon />
+              </div>
+              <div className={`text-m_error_500 body_regular_14`}>
+                {(formik.errors?.expected_output ?? "") as string}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="h-4" />

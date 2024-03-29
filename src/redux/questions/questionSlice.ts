@@ -231,14 +231,13 @@ export const questionSlice = createSlice({
         return { ...state, connectPairing: pairings };
       } else {
         var newList = pairings.filter((f) => {
-          return (
+          return !(
             f.idAnswer === action.payload.idAnswer &&
             f.idQuestion === action.payload.idQuestion
           );
         });
+        return { ...state, connectPairing: newList };
       }
-
-      return { ...state, connectPairing: action.payload };
     },
 
     resetConnectAnswer: (state, action) => {

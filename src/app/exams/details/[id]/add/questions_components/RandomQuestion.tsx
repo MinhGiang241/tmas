@@ -71,6 +71,10 @@ function RandomQuestion({
 
     if (!values.point) {
       errors.point = "common_not_empty";
+    } else if (values.point?.match(/\.\d{3,}/g)) {
+      errors.point = "2_digit_behind_dot";
+    } else if (values.point?.match(/(.*\.){2,}/g)) {
+      errors.point = "invalid_number";
     }
     if (!values.question_group) {
       errors.question_group = "common_not_empty";
@@ -87,7 +91,7 @@ function RandomQuestion({
       const submitData: RandomQuestionFormData = {
         id: question?.id ?? undefined,
         idExam: question?.idExam ?? idExam,
-        numberPoint: values.point ? parseInt(values.point) : undefined,
+        numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
         idExamQuestionPart:
           question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
@@ -116,6 +120,9 @@ function RandomQuestion({
         className="hidden"
         onClick={() => {
           formik.handleSubmit();
+          Object.keys(formik.errors).map(async (v) => {
+            await formik.setFieldTouched(v, true);
+          });
         }}
         ref={submitRef}
       />
@@ -123,10 +130,11 @@ function RandomQuestion({
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
           onKeyDown={(e) => {
-            if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+            if (!e.key.match(/[0-9.]/g) && e.key != "Backspace") {
               e.preventDefault();
             }
           }}
+          namespace="namespace"
           formik={formik}
           h="h-9"
           name="point"

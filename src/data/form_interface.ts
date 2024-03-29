@@ -198,6 +198,7 @@ export interface BaseQuestionFormData {
   questionType?: QuestionType;
   idExam?: string;
   idExamQuestionPart?: string;
+  [key: string]: any;
 }
 
 export interface CodingQuestionFormData extends BaseQuestionFormData {

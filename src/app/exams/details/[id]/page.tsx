@@ -726,7 +726,7 @@ function ExamDetails({ params }: any) {
         {/* <ManyResult /> */}
       </div>
       <div className="hidden">
-        <ExamPrint exam={data?.records} ref={printRef} />
+        <ExamPrint exam={data?.records} ref={printRef} name={exam?.name} />
       </div>
     </HomeLayout>
   );

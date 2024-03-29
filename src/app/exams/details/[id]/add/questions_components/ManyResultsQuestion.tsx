@@ -101,6 +101,7 @@ function ManyResultsQuestion({
     question_group?: string;
     question?: string;
     explain?: string;
+    [key: string]: any;
   }
 
   const optionSelect = (examGroups ?? []).map<any>(
@@ -121,12 +122,28 @@ function ManyResultsQuestion({
     const errors: FormikErrors<MultiAnswerQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
-    if (!values.question || !$.text()) {
+    if (answers?.length != 0) {
+      answers.map(async (o) => {
+        if (!o.text) {
+          errors[`ans-${o?.id}`] = "common_not_empty";
+        }
+      });
+    }
+
+    if (!values.question) {
       errors.question = "common_not_empty";
+    }
+
+    if (!values.question_group) {
+      errors.question_group = "common_not_empty";
     }
 
     if (!values.point) {
       errors.point = "common_not_empty";
+    } else if (values.point?.match(/\.\d{3,}/g)) {
+      errors.point = "2_digit_behind_dot";
+    } else if (values.point?.match(/(.*\.){2,}/g)) {
+      errors.point = "invalid_number";
     }
 
     return errors;
@@ -138,6 +155,14 @@ function ManyResultsQuestion({
     initialValues,
     validate,
     onSubmit: async (values: MultiAnswerQuestionValue) => {
+      if (answers.length === 0) {
+        errorToast(t("at_least_1_answer"));
+        return;
+      }
+      if (answers.every((r) => !r.isCorrectAnswer)) {
+        errorToast(t("at_least_1_true_answer"));
+        return;
+      }
       dispatch(setQuestionLoading(true));
       var submitData: MultiAnswerQuestionFormData = {
         id: question?.id ?? undefined,
@@ -147,7 +172,7 @@ function ManyResultsQuestion({
         idGroupQuestion: values?.question_group,
         question: values?.question,
         questionType: "MutilAnswer",
-        numberPoint: values.point ? parseInt(values.point) : undefined,
+        numberPoint: values.point ? parseFloat(values.point) : undefined,
         content: {
           explainAnswer: values.explain,
           isChangePosition,
@@ -178,25 +203,29 @@ function ManyResultsQuestion({
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Object.keys(initialValues).map(async (v) => {
-    //   await formik.setFieldTouched(v, true);
-    // });
+    Object.keys(initialValues).map(async (v) => {
+      await formik.setFieldTouched(v, true);
+    });
   };
 
   return (
     <div className="grid grid-cols-12 gap-4 max-lg:px-5">
       <button
         className="hidden"
-        onClick={() => {
+        onClick={async () => {
           formik.handleSubmit();
+          Object.keys(formik.errors).map(async (v) => {
+            await formik.setFieldTouched(v, true);
+          });
         }}
         ref={submitRef}
       />
 
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
+          namespace="exam"
           onKeyDown={(e) => {
-            if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+            if (!e.key.match(/[0-9.]/g) && e.key != "Backspace") {
               e.preventDefault();
             }
           }}
@@ -208,6 +237,7 @@ function ManyResultsQuestion({
           title={t("point")}
         />
         <MDropdown
+          required
           formik={formik}
           options={optionSelect}
           h="h-9"
@@ -248,9 +278,10 @@ function ManyResultsQuestion({
               onChange={onChangeCheckResult}
             >
               {answers.map((a: MultiAnswer, i: number) => (
-                <div key={a.id} className="w-full flex items-center mb-4">
+                <div key={a.id} className="w-full flex items-start mb-4">
                   {/* {a.isCorrectAnswer?.toString()} */}
                   <Checkbox
+                    className="mt-2"
                     checked={a.isCorrectAnswer ?? false}
                     value={a.id}
                     onChange={(b) => {
@@ -264,13 +295,16 @@ function ManyResultsQuestion({
                     }}
                   />
 
-                  <div className="body_semibold_14 mx-2 w-5">
+                  <div className="mt-2 body_semibold_14 mx-2 w-5">
                     {String.fromCharCode(65 + i)}.
                   </div>
                   <EditorHook
+                    touch={formik.touched[`ans-${a?.id}`]}
+                    error={formik.errors[`ans-${a?.id}`]}
                     value={a.text}
                     setValue={(name: any, e: any) => {
                       dispatch(updateTextMultiAnswer({ index: i, value: e }));
+                      formik.validateForm();
                     }}
                     isCount={false}
                     isBubble={true}

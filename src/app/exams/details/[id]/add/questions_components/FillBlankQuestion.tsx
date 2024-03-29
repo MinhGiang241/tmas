@@ -56,7 +56,9 @@ function FillBlankQuestion({
 
   const [value, setValue] = useState<string | undefined>();
   const [isSave, setIsSave] = useState<boolean>(false);
-  const [results, setResults] = useState<{ label: string; text: string }[]>([]);
+  const [results, setResults] = useState<
+    { touch: false; error: undefined; label: string; text: string }[]
+  >([]);
   const [check, setCheck] = useState<"CorrectAllBlank" | "EachCorrectBlank">(
     "CorrectAllBlank",
   );
@@ -92,6 +94,7 @@ function FillBlankQuestion({
     question_group?: string;
     question?: string;
     explain?: string;
+    [key: string]: any;
   }
 
   const initialValues: FillBlankQuestionValue = {
@@ -105,6 +108,14 @@ function FillBlankQuestion({
     const errors: FormikErrors<FillBlankQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
+    if (isSave && results?.length != 0) {
+      results.map((a: any, i: number) => {
+        if (!a.text) {
+          errors[`result-${i + 1}`] = "common_not_empty";
+        }
+      });
+    }
+
     if (!values.question) {
       errors.question = "common_not_empty";
     }
@@ -114,6 +125,10 @@ function FillBlankQuestion({
 
     if (!values.point) {
       errors.point = "common_not_empty";
+    } else if (values.point?.match(/\.\d{3,}/g)) {
+      errors.point = "2_digit_behind_dot";
+    } else if (values.point?.match(/(.*\.){2,}/g)) {
+      errors.point = "invalid_number";
     }
 
     return errors;
@@ -126,6 +141,10 @@ function FillBlankQuestion({
       if (!isSave) {
         const pattern = /\[%\d+%\]/g;
         const matches = values.question?.match(pattern);
+        if (!matches || matches.length === 0) {
+          errorToast(t("at_least_a_blank"));
+          return;
+        }
         var cloneAns = _.cloneDeep(existedQuest?.content?.anwserItems);
         var newResults = (matches ?? []).map((e: string, i: number) => {
           return {
@@ -154,11 +173,12 @@ function FillBlankQuestion({
       }
 
       dispatch(setQuestionLoading(true));
+
       const submitData: FillBlankQuestionFormData = {
         id: question?.id,
         idExam: question?.idExam ?? idExam,
         question: values?.question,
-        numberPoint: values.point ? parseInt(values.point) : undefined,
+        numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
         idExamQuestionPart:
           question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
@@ -199,14 +219,18 @@ function FillBlankQuestion({
           //   formik.handleSubmit();
           // }
           formik.handleSubmit();
+          Object.keys(formik.errors).map(async (v) => {
+            await formik.setFieldTouched(v, true);
+          });
         }}
         ref={submitRef}
       />
 
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
+          namespace="exam"
           onKeyDown={(e) => {
-            if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+            if (!e.key.match(/[0-9.]/g) && e.key != "Backspace") {
               e.preventDefault();
             }
           }}
@@ -273,8 +297,14 @@ function FillBlankQuestion({
                   <p className="pt-2 body_semibold_14 min-w-8">{d.label}</p>
 
                   <MInput
+                    // formik={formik}
+                    onBlur={async () => {
+                      await formik.setFieldTouched(`result-${i + 1}`);
+                    }}
+                    touch={formik.errors[`result-${i + 1}`]}
+                    error={formik.errors[`result-${i + 1}`]}
                     value={d.text}
-                    onChange={(f) => {
+                    onChange={async (f) => {
                       var newList = _.cloneDeep(results);
 
                       newList[i] = {
@@ -283,6 +313,8 @@ function FillBlankQuestion({
                       };
 
                       setResults(newList);
+
+                      await formik.validateForm();
                     }}
                     isTextRequire={false}
                     extend={true}
