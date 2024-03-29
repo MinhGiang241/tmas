@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import { ConnectQuestAns } from "./question";
 
 export interface RegisterFormValues {
   full_name?: string;
@@ -244,7 +245,8 @@ export interface PagingGetData {
     recordPerPage?: number;
   };
   ids?: string[];
-  sorters?: { name?: string; isAsc?: boolean }[];
+  // sorters?: { name?: string; isAsc?: boolean }[];
+  SortByCreateTime?: { name?: string; isAsc?: boolean };
 }
 
 export interface EssayQuestionFormData extends BaseQuestionFormData {
@@ -275,11 +277,11 @@ export interface ConnectQuestionFormData extends BaseQuestionFormData {
   content?: {
     explainAnswer?: string;
     pairingScroringMethod?: "EachCorrectItem" | "CorrectAll";
-    questions?: {
-      labelQuestion?: string;
-      labelAnwser?: string;
-      contentQuestion?: string;
-      contentAnwser?: string;
+    questions?: ConnectQuestAns[];
+    answers?: ConnectQuestAns[];
+    pairings: {
+      idQuestion?: string;
+      idAnswer?: string;
     }[];
   };
 }

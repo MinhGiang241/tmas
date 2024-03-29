@@ -176,18 +176,29 @@ function ExamDetails({ params }: any) {
       name: name,
       description: note,
     });
-    console.log(res);
+    // console.log(res);
     setAddLoading(false);
     if (res && res.code !== 0) {
       errorToast(res.message || "");
       return;
     }
-    // setLoadDataQuestion(res);
+    // console.log(res);
+    // const newObjectId = res.data;
     successToast(t("success_add_question"));
+    // setLoadDataQuestion(res);
     setOpen(false);
     setName("");
     setNote("");
-    getData();
+    await getData();
+    // const newData = { idExam: newObjectId, name: name, description: note };
+    // setData((prevData: any) => {
+    //   if (!prevData || !prevData.records) {
+    //     return [newData];
+    //   } else {
+    //     const newRecords = [newData, ...prevData.records];
+    //     return { ...prevData, records: newRecords };
+    //   }
+    // });
   };
 
 
@@ -203,13 +214,19 @@ function ExamDetails({ params }: any) {
   };
 
   const getData = async () => {
-    const res = await getExamQuestionPartList({ paging: { startIndex: 0, recordPerPage: 100 }, sorters: [{ name: "Name", isAsc: true }, { name: "updateTime", isAsc: true }] })
+    const res = await getExamQuestionPartList({
+      paging: { startIndex: 0, recordPerPage: 100 },
+      SortByCreateTime: { name: "string", isAsc: true }
+    });
     const data = res.data
     console.log(data);
-
     if (data) {
       setData(data);
     }
+    // if (data && data.records) {
+    //   const filteredData = data.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id));
+    //   console.log(filteredData, "filteredData");
+    // }
   };
 
   const openEditModal = (id: string) => {
@@ -225,8 +242,9 @@ function ExamDetails({ params }: any) {
     setLoadDataQuestion([]);
     getData();
   }, []);
-
-
+  // const filteredData = data.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id));
+  // const filteredData = data?.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id)
+  // console.log(filteredData, "filteredData");
   return (
     <HomeLayout>
       <div className="h-5" />
@@ -265,20 +283,20 @@ function ExamDetails({ params }: any) {
         open={openDeleteQuestion} />
       <MBreadcrumb
         items={[
-          { text: t("Danh sách đề thi"), href: "/" },
+          { text: t("Danh sách đề thi"), href: "/exams" },
           // { text: exam?.name, href: `/exams/details/${exam?.id}` },
           {
             // href: `/exams/details/${exam?.id}/add`,
-            text: t("Chi tiết đề thi"),
+            text: t("Tuyển Fresher digital MKT"),
             href: "/",
             active: true,
           },
         ]}
       />
       <div className="h-2" />
-      <div className="w-full max-lg:px-3">
+      <div className="w-full max-lg:px-3 mb-5">
         <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
-          <div className="">{t(`Chi tiết đề thi`)}</div>
+          <div className="">{t(`Tuyển Fresher digital MKT`)}</div>
           <div className="flex">
             {/* <MButton
               h="h-11"
@@ -309,12 +327,12 @@ function ExamDetails({ params }: any) {
             </Popover>
           </div>
         </div>
-        {/* <div className="text-sm text-m_neutral_500 pt-1">
+        <div className="text-sm text-m_neutral_500 pt-1">
           Chúng tôi đang tìm kiếm một Fresher digital MKT để tham gia đội ngũ
           của chúng tôi. Ứng viên sẽ được đào tạo và hướng dẫn bởi các chuyên
           gia trong ngành để phát triển các kỹ năng và kiến thức cần thiết để
           trở thành một chuyên gia
-        </div> */}
+        </div>
         <div className="h-[1px] bg-m_neutral_200 mt-10" />
         <div className="flex justify-between items-center mt-6 mb-6">
           <div className="text-sm text-m_neutral_900 flex">
@@ -402,7 +420,7 @@ function ExamDetails({ params }: any) {
           </BaseModal>
         </div>
         <div>
-          {data?.records?.sort((a: any, b: any) => (b.createdTime?.localeCompare(a?.createdTime)))?.map((x: any, key: any) => (
+          {data && data.records?.map((x: any, key: any) => (
             <Collapse
               key={key}
               ghost
@@ -521,26 +539,12 @@ function ExamDetails({ params }: any) {
                               className="w-36"
                               text={t("update")}
                               onClick={async () => {
-                                const res = await updateAExamQuestionPart({ idExam: x.id, name: customName, description: customNote });
-                                if (res && res.code === 0) {
-                                  setOpenEdit(false);
-                                  const updatedRecords = [...data.records];
-                                  const index = updatedRecords.findIndex(item => item.id === x.id);
-                                  if (index !== -1) {
-                                    updatedRecords[index] = { ...updatedRecords[index], name: customName, description: customNote };
-                                    updatedRecords.unshift(updatedRecords.splice(index, 1)[0]);
-                                    setData({ ...data, records: updatedRecords });
-                                    setCustomName("");
-                                    setCustomNote("");
-                                    successToast(t("success_edit_question"));
-                                  }
-                                }
-                                // await updateAExamQuestionPart({ idExam: x.id, name: customName, description: customNote })
-                                // setOpenEdit(false);
-                                // getData();
-                                // setCustomNote("")
-                                // setCustomName("")
-                                // toast.success('Sửa thành công!');
+                                await updateAExamQuestionPart({ idExam: x.id, name: customName, description: customNote })
+                                setOpenEdit(false);
+                                getData();
+                                setCustomNote("")
+                                setCustomName("")
+                                successToast(t("success_edit_question"));
                               }}
                             />
                           </div>

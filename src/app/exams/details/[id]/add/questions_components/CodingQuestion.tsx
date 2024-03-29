@@ -14,13 +14,14 @@ import React, { HTMLAttributes, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import TrashIcon from "@/app/components/icons/trash.svg";
+import EditIcon from "@/app/components/icons/edit.svg";
 import Table, { ColumnsType } from "antd/es/table";
 import {
   rowEndStyle,
   rowStartStyle,
   rowStyle,
 } from "@/app/account/account-info/AccountInfo";
-import _ from "lodash";
+import _, { findIndex } from "lodash";
 import MButton from "@/app/components/config/MButton";
 import CodeMirror from "@uiw/react-codemirror";
 
@@ -35,6 +36,7 @@ import {
   genSampleCode,
   mapLanguage,
   renderExtension,
+  revertLanguage,
   serverLanguageList,
 } from "@/services/ui/coding_services";
 import { FormikErrors, useFormik } from "formik";
@@ -47,8 +49,12 @@ import {
 } from "@/data/form_interface";
 import { v4 as uuidv4 } from "uuid";
 import { setQuestionLoading } from "@/redux/questions/questionSlice";
-import { createCodingQuestion } from "@/services/api_services/question_api";
+import {
+  createCodingQuestion,
+  updateCodingQuestion,
+} from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -68,14 +74,58 @@ function CodingQuestion({
   questionGroups: examGroups,
   submitRef,
   idExam,
+  question,
 }: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
 
+  const existedQuest =
+    question && question?.questionType === "Coding"
+      ? (question as CodingQuestionFormData)
+      : undefined;
+
+  useOnMountUnsafe(() => {
+    if (existedQuest) {
+      setCheckedLang(
+        existedQuest?.content?.codeLanguages?.map((e: string) =>
+          revertLanguage(e),
+        ),
+      );
+      setCodingScroringMethod(
+        existedQuest?.content?.codingScroringMethod ?? "PassAllTestcase",
+      );
+      setCode(existedQuest?.content?.codingTemplate?.template ?? undefined);
+      var parameters =
+        existedQuest?.content?.codingTemplate?.parameterInputs?.map<ParameterType>(
+          (q) => ({
+            nameParameter: q.nameParameter,
+            returnType: q.returnType,
+            id: uuidv4(),
+          }),
+        );
+      setParameterList(parameters ?? []);
+      var tests = existedQuest?.content?.testcases?.map((t) => ({
+        id: uuidv4(),
+        name: t.name,
+        inputData: t.inputData,
+        outputData: t.outputData,
+      }));
+      setTestcases(tests ?? []);
+    }
+  });
+
   const [codingScroringMethod, setCodingScroringMethod] = useState<
     "PassAllTestcase" | "EachTestcase"
   >("PassAllTestcase");
-  const [checkedLang, setCheckedLang] = useState<any[]>([]);
+  const [checkedLang, setCheckedLang] = useState<any[]>([
+    "php",
+    "javascript",
+    "java",
+    "python",
+    "python",
+    "ruby",
+    "c#",
+  ]);
   const [parameterList, setParameterList] = useState<ParameterType[]>([
     {
       id: uuidv4(),
@@ -170,6 +220,16 @@ function CodingQuestion({
           <button
             className="ml-2"
             onClick={() => {
+              setActive(data);
+              setOpenCreateTestCase(true);
+            }}
+          >
+            <EditIcon />
+          </button>
+
+          <button
+            className="ml-2"
+            onClick={() => {
               setTestcases(testcases.filter((e: any) => e.id != data.id));
             }}
           >
@@ -202,17 +262,28 @@ function CodingQuestion({
   }
 
   const initialValues: CodingQuestionValue = {
-    point: undefined,
-    question_group: undefined,
-    question: undefined,
-    explain: undefined,
+    point: question?.numberPoint?.toString() ?? undefined,
+    question_group: question?.idGroupQuestion ?? undefined,
+    question: question?.question ?? undefined,
+    explain: existedQuest?.content?.codingTemplate?.explainAnswer ?? undefined,
+    function_name:
+      existedQuest?.content?.codingTemplate?.nameFunction ?? undefined,
+    return_type: existedQuest?.content?.codingTemplate?.returnType ?? undefined,
   };
   const validate = async (values: CodingQuestionValue) => {
     const errors: FormikErrors<CodingQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
-    if (!values.question || !$.text()) {
+    if (!values.question) {
       errors.question = "common_not_empty";
+    }
+    if (!values.question_group) {
+      errors.question_group = "common_not_empty";
+    }
+    if (!values.function_name) {
+      errors.function_name = "common_not_empty";
+    } else if (values.function_name?.length <= 3) {
+      errors.function_name = "func_name_not_less_than_3";
     }
 
     if (!values.point) {
@@ -226,15 +297,17 @@ function CodingQuestion({
     onSubmit: async (values: CodingQuestionValue) => {
       dispatch(setQuestionLoading(true));
       const submitData: CodingQuestionFormData = {
-        idExam,
+        id: question?.id,
+        idExam: question?.idExam ?? idExam,
         question: values.question,
-        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        idExamQuestionPart:
+          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         idGroupQuestion: values.question_group,
         numberPoint: values.point ? parseInt(values.point) : undefined,
         questionType: "Coding",
         content: {
           codeLanguages: [
-            ...plainOptions.map((la: any) => mapLanguage(la?.value ?? "")),
+            ...checkedLang.map((la: any) => mapLanguage(la)),
           ] as any,
           testcases: testcases.map((q) => ({
             name: q.name,
@@ -254,16 +327,21 @@ function CodingQuestion({
           },
         },
       };
-      var res = await createCodingQuestion(submitData);
+      var res = question
+        ? await updateCodingQuestion(submitData)
+        : await createCodingQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
         errorToast(res?.message ?? "");
         return;
       }
-      successToast(t("success_add_question"));
+      successToast(
+        question ? t("success_update_question") : t("success_add_question"),
+      );
       router.push(`/exams/details/${idExam}`);
     },
   });
+  const [active, setActive] = useState<TestcaseValue | undefined>();
 
   return (
     <div className="grid grid-cols-12 gap-4 max-lg:px-5">
@@ -275,12 +353,23 @@ function CodingQuestion({
         ref={submitRef}
       />
       <CreateTestCaseModal
-        onOk={(testCase: TestcaseValue) => {
-          setTestcases([...testcases, testCase]);
+        testcase={active}
+        onOk={(testCase: TestcaseValue, isEdit: boolean) => {
+          if (isEdit) {
+            var testIndex = testcases.findIndex((e) => e.id === testCase.id);
+            var newList = _.cloneDeep(testcases);
+            newList[testIndex] = testCase;
+            setTestcases(newList);
+          } else {
+            setTestcases([...testcases, testCase]);
+          }
+          setActive(undefined);
         }}
-        title={t("create_testcase")}
         open={openCreateTestcase}
-        onCancel={() => setOpenCreateTestCase(false)}
+        onCancel={() => {
+          setActive(undefined);
+          setOpenCreateTestCase(false);
+        }}
       />
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
@@ -314,6 +403,7 @@ function CodingQuestion({
         </Radio.Group>
         <div className="h-3" />
         <MDropdown
+          required
           formik={formik}
           options={optionSelect}
           h="h-9"
@@ -353,21 +443,22 @@ function CodingQuestion({
           </div>
 
           <div className="flex items-center">
-            <Select
-              className="min-w-40"
-              placeholder={t("op")}
-              options={[
-                common.t("delete"),
-                t("hide_testcase"),
-                t("normal_testcase"),
-              ].map((a: any, i: number) => ({
-                value: i,
-                label: a,
-              }))}
-            />
+            {/* <Select */}
+            {/*   className="min-w-40" */}
+            {/*   placeholder={t("op")} */}
+            {/*   options={[ */}
+            {/*     common.t("delete"), */}
+            {/*     t("hide_testcase"), */}
+            {/*     t("normal_testcase"), */}
+            {/*   ].map((a: any, i: number) => ({ */}
+            {/*     value: i, */}
+            {/*     label: a, */}
+            {/*   }))} */}
+            {/* /> */}
             <div>
               <button
                 onClick={() => {
+                  setActive(undefined);
                   setOpenCreateTestCase(true);
                 }}
                 className="ml-2 text-m_primary_500 underline body_semibold_14 underline-offset-4"
@@ -399,6 +490,14 @@ function CodingQuestion({
         <div className="body_semibold_14 my-3">{t("sample_code")}</div>
         <div className="w-full border rounded-lg p-4">
           <MInput
+            required
+            namespace="exam"
+            maxLength={50}
+            onKeyDown={(e) => {
+              if (e.code === "Space" || !e.key.match(/[a-zA-Z0-9\s]/g)) {
+                e.preventDefault();
+              }
+            }}
             formik={formik}
             id="function_name"
             name="function_name"
@@ -417,10 +516,11 @@ function CodingQuestion({
             h="h-9"
           />
           <div className="body_regular_14">{t("parameter")}</div>
-          {parameterList.map((l: any, i: number) => {
+          {parameterList.map((l: ParameterType, i: number) => {
             return (
               <div key={l.id} className=" w-full  flex items-start">
                 <Select
+                  value={l.returnType}
                   onChange={(t) => {
                     var newList = _.cloneDeep(parameterList);
                     newList[i].returnType = t;
@@ -434,6 +534,7 @@ function CodingQuestion({
                 />
                 <div className="w-3" />
                 <MInput
+                  value={l.nameParameter}
                   onChange={(val) => {
                     var newList = _.cloneDeep(parameterList);
                     newList[i].nameParameter = val.target.value;
@@ -496,6 +597,7 @@ function CodingQuestion({
               <div className="body_semibold_14"> {t("sample_code")}</div>
               <div className="flex-grow" />
               <Select
+                placeholder={common.t("language")}
                 onChange={(f) => {
                   setLang(f);
                 }}

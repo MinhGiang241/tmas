@@ -28,6 +28,7 @@ import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { useAppDispatch } from "@/redux/hooks";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import { v4 as uuidv4 } from "uuid";
+import { MultiAnswer } from "@/data/question";
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -123,8 +124,11 @@ function TrueFalseQuestion({
     const errors: FormikErrors<TrueFalseQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
-    if (!values.question || !$.text()) {
+    if (!values.question) {
       errors.question = "common_not_empty";
+    }
+    if (!values.question_group) {
+      errors.question_group = "common_not_empty";
     }
 
     if (!values.point) {
@@ -144,8 +148,9 @@ function TrueFalseQuestion({
       dispatch(setQuestionLoading(true));
       const submitData: MultiAnswerQuestionFormData = {
         id: question?.id,
-        idExam,
-        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        idExam: question?.idExam ?? idExam,
+        idExamQuestionPart:
+          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         idGroupQuestion: values?.question_group,
         question: values?.question,
         questionType: "YesNoQuestion",
@@ -156,12 +161,12 @@ function TrueFalseQuestion({
           answers: [
             {
               text: aResult.text,
-              label: aResult.label,
+              label: "A",
               isCorrectAnswer: correctAnswer === 0 ? true : false,
             },
             {
               text: bResult.text,
-              label: bResult.text,
+              label: "B",
               isCorrectAnswer: correctAnswer === 1 ? true : false,
             },
           ],
@@ -209,6 +214,7 @@ function TrueFalseQuestion({
           title={t("point")}
         />
         <MDropdown
+          required
           options={optionSelect}
           formik={formik}
           h="h-9"

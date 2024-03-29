@@ -18,9 +18,13 @@ import {
   BaseQuestionFormData,
   SqlQuestionFormData,
 } from "@/data/form_interface";
-import { createSqlQuestion } from "@/services/api_services/question_api";
+import {
+  createSqlQuestion,
+  updateSqlQuestion,
+} from "@/services/api_services/question_api";
 import { setQuestionLoading } from "@/redux/questions/questionSlice";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -36,7 +40,12 @@ interface Props {
   question?: BaseQuestionFormData;
 }
 
-function SqlQuestion({ questionGroups: examGroups, submitRef, idExam }: Props) {
+function SqlQuestion({
+  questionGroups: examGroups,
+  submitRef,
+  idExam,
+  question,
+}: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const dispatch = useAppDispatch();
@@ -44,6 +53,17 @@ function SqlQuestion({ questionGroups: examGroups, submitRef, idExam }: Props) {
   const search = useSearchParams();
   const idExamQuestionPart = search.get("partId");
 
+  const existedQuest =
+    question && question?.questionType === "SQL"
+      ? (question as SqlQuestionFormData)
+      : undefined;
+
+  useOnMountUnsafe(() => {
+    if (existedQuest) {
+      setSchemaSql(existedQuest?.content?.schemaSql ?? undefined);
+      setExpectedOutput(existedQuest?.content?.expectedOutput ?? undefined);
+    }
+  });
   const optionSelect = (examGroups ?? []).map<any>(
     (v: QuestionGroupData, i: number) => ({
       label: v?.name,
@@ -59,18 +79,22 @@ function SqlQuestion({ questionGroups: examGroups, submitRef, idExam }: Props) {
   }
 
   const initialValues: SqlQuestionValue = {
-    point: undefined,
-    question_group: undefined,
-    question: undefined,
-    explain: undefined,
+    point: question?.numberPoint?.toString() ?? undefined,
+    question_group: question?.idGroupQuestion ?? undefined,
+    question: question?.question ?? undefined,
+    explain: existedQuest?.content?.explainAnswer ?? undefined,
   };
 
   const validate = async (values: SqlQuestionValue) => {
     const errors: FormikErrors<SqlQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
-    if (!values.question || !$.text()) {
+    if (!values.question) {
       errors.question = "common_not_empty";
+    }
+
+    if (!values.question_group) {
+      errors.question_group = "common_not_empty";
     }
 
     if (!values.point) {
@@ -87,11 +111,14 @@ function SqlQuestion({ questionGroups: examGroups, submitRef, idExam }: Props) {
     onSubmit: async (values: SqlQuestionValue) => {
       dispatch(setQuestionLoading(true));
       const submitData: SqlQuestionFormData = {
-        idExam,
+        id: question?.id ?? undefined,
+        idExam: question?.idExam ?? idExam,
         question: values?.question,
         numberPoint: values.point ? parseInt(values.point) : undefined,
         idGroupQuestion: values.question_group,
-        idExamQuestionPart: idExamQuestionPart ?? undefined,
+        questionType: "SQL",
+        idExamQuestionPart:
+          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         content: {
           schemaSql,
           expectedOutput,
@@ -99,13 +126,17 @@ function SqlQuestion({ questionGroups: examGroups, submitRef, idExam }: Props) {
         },
       };
 
-      var res = await createSqlQuestion(submitData);
+      var res = question
+        ? await updateSqlQuestion(submitData)
+        : await createSqlQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
         errorToast(res?.message ?? "");
         return;
       }
-      successToast(t("success_add_question"));
+      successToast(
+        question ? t("success_update_question") : t("success_add_question"),
+      );
       router.push(`/exams/details/${idExam}`);
     },
   });
@@ -135,6 +166,7 @@ function SqlQuestion({ questionGroups: examGroups, submitRef, idExam }: Props) {
           title={t("point")}
         />
         <MDropdown
+          required
           formik={formik}
           options={optionSelect}
           h="h-9"

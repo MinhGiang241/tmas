@@ -20,9 +20,7 @@ function UpdateExamination({ params }: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <>
-      <CreateExaminationPage examination={examination} />
-    </>
+    <>{examination && <CreateExaminationPage examination={examination} />}</>
   );
 }
 

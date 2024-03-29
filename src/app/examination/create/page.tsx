@@ -451,7 +451,7 @@ function CreateExaminationPage({ examination }: any) {
             <MButton
               h="h-11"
               onClick={() => {
-                router.back();
+                router.push("/examination");
               }}
               type="secondary"
               text={t("reject")}

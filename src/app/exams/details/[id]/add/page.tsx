@@ -138,7 +138,7 @@ function CreateQuestionPage({ params, question }: any) {
             onClick={() => {
               (submitRef.current as any).click();
             }}
-            text={question ? common.t("edit") : common.t("create_new")}
+            text={question ? common.t("update") : common.t("create_new")}
           />
         </div>
       </div>
@@ -148,7 +148,7 @@ function CreateQuestionPage({ params, question }: any) {
           <button
             onClick={() => {
               if (question) {
-                router.push(
+                router.replace(
                   `?partId=${partId}&questId=${questId}&question=${a}`,
                 );
                 return;
@@ -159,7 +159,7 @@ function CreateQuestionPage({ params, question }: any) {
               if (a != "connect_quest") {
                 dispatch(resetConnectAnswer(0));
               }
-              router.push(
+              router.replace(
                 `/exams/details/${params.id}/add?partId=${partId}&question=${a}`,
                 {
                   scroll: false,

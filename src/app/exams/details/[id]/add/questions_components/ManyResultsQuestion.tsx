@@ -38,6 +38,7 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import { MultiAnswer } from "@/data/question";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -80,6 +81,9 @@ function ManyResultsQuestion({
         id: uuidv4(),
       }));
       dispatch(setMultiAnswer(as));
+      setLoadAs(true);
+    } else {
+      dispatch(resetMultiAnswer(0));
       setLoadAs(true);
     }
   });
@@ -147,9 +151,9 @@ function ManyResultsQuestion({
         content: {
           explainAnswer: values.explain,
           isChangePosition,
-          answers: answers.map((l: MultiAnswer) => ({
+          answers: answers.map((l: MultiAnswer, i: number) => ({
             text: l.text,
-            label: l.label,
+            label: `${String.fromCharCode(65 + i)}`,
             isCorrectAnswer: l.isCorrectAnswer,
           })),
         },
@@ -235,7 +239,7 @@ function ManyResultsQuestion({
         </div>
         <div className="mb-3 body_regular_14">{t("many_result_intro")}</div>
         <div className="border rounded-lg p-4">
-          {((loadAs && question) || !question) && (
+          {loadAs && (
             <CheckboxGroup
               defaultValue={answers
                 .filter((s) => s.isCorrectAnswer)

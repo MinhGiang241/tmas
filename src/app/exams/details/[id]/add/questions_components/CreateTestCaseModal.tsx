@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 
 interface Props extends BaseModalProps {
   loading?: boolean;
+  testcase?: TestcaseValue;
 }
 
 export interface TestcaseValue {
@@ -31,16 +32,17 @@ function CreateTestCaseModal(props: Props) {
   };
 
   const initialValues: TestcaseValue = {
-    name: undefined,
-    inputData: undefined,
-    outputData: undefined,
+    name: props?.testcase?.name ?? undefined,
+    inputData: props?.testcase?.inputData ?? undefined,
+    outputData: props?.testcase?.outputData ?? undefined,
   };
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues,
     validate,
     onSubmit: async (values: TestcaseValue) => {
-      values.id = uuidv4();
-      props.onOk(values);
+      values.id = props.testcase ? props.testcase?.id : uuidv4();
+      props.onOk(values, !!props.testcase);
       props.onCancel();
       formik.resetForm();
     },
@@ -57,6 +59,7 @@ function CreateTestCaseModal(props: Props) {
   return (
     <BaseModal
       {...props}
+      title={props.testcase ? t("edit_testcase") : t("create_testcase")}
       onCancel={() => {
         formik.resetForm();
         props.onCancel();
