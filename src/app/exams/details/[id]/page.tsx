@@ -1,34 +1,7 @@
 "use client";
-import BaseModal from "@/app/components/config/BaseModal";
-import MBreadcrumb from "@/app/components/config/MBreadcrumb";
-import MButton from "@/app/components/config/MButton";
-import MInput from "@/app/components/config/MInput";
-import MTextArea from "@/app/components/config/MTextArea";
-import Cup from "@/app/components/icons/cup.svg";
-import Document from "@/app/components/icons/document.svg";
-import EditIcon from "@/app/components/icons/edit-black.svg";
-import NewIcon from "@/app/components/icons/export.svg";
-import Group from "@/app/components/icons/group.svg";
-import Menu from "@/app/components/icons/menu.svg";
-import MessageQuestion from "@/app/components/icons/message-question.svg";
-import MoreIcon from "@/app/components/icons/more-circle.svg";
-import Play from "@/app/components/icons/play-cricle.svg";
-import CopyIcon from "@/app/components/icons/size.svg";
-import Time from "@/app/components/icons/timer.svg";
-import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
-import ConfirmModal from "@/app/components/modals/ConfirmModal";
-import { errorToast } from "@/app/components/toast/customToast";
 import HomeLayout from "@/app/layouts/HomeLayout";
 import { ExamData } from "@/data/exam";
 import { getExamById } from "@/services/api_services/examination_api";
-import {
-  CopyQuestion,
-  createAExamQuestionPart,
-  deleteQuestionById,
-  deleteQuestionPartById,
-  getExamQuestionPartList,
-} from "@/services/api_services/question_api";
-import { Collapse, Popover } from "antd";
 import { useRouter } from "next/navigation";
 import { Collapse, Input, Popover, Tooltip } from "antd";
 import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
@@ -47,7 +20,6 @@ import Cup from "@/app/components/icons/cup.svg";
 import Time from "@/app/components/icons/timer.svg";
 import Document from "@/app/components/icons/document.svg";
 import Group from "@/app/components/icons/group.svg";
-import ManyResult from "./question/ManyResult";
 import {
   createAExamQuestionPart,
   getExamQuestionPartList,
@@ -71,6 +43,11 @@ import toast from "react-hot-toast";
 
 import ReactToPrint from "react-to-print";
 import { ExamPrint } from "../components/ExamPrint";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import MBreadcrumb from "@/app/components/config/MBreadcrumb";
+import MButton from "@/app/components/config/MButton";
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -645,6 +622,7 @@ function ExamDetails({ params }: any) {
                                   e.stopPropagation();
                                 }}
                               >
+                              <BaseModal open={false} onCancel={()=>{}}>
                                 <MInput
                                   // formik={formik}
                                   id="name"
