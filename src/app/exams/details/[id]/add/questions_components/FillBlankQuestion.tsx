@@ -25,7 +25,11 @@ import {
   createFillBlankQuestion,
   updateFillBlankQuestion,
 } from "@/services/api_services/question_api";
-import { errorToast, successToast } from "@/app/components/toast/customToast";
+import {
+  errorToast,
+  notifyToast,
+  successToast,
+} from "@/app/components/toast/customToast";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -142,7 +146,7 @@ function FillBlankQuestion({
         const pattern = /\[%\d+%\]/g;
         const matches = values.question?.match(pattern);
         if (!matches || matches.length === 0) {
-          errorToast(t("at_least_a_blank"));
+          notifyToast(t("at_least_a_blank"));
           return;
         }
         var cloneAns = _.cloneDeep(existedQuest?.content?.anwserItems);

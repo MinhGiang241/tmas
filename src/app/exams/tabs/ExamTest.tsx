@@ -3,7 +3,7 @@ import MInput from "../../components/config/MInput";
 import { SearchOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import MDropdown from "../../components/config/MDropdown";
-import { Collapse, Divider, Pagination, Select, Spin } from "antd";
+import { Collapse, Divider, Pagination, Select, Spin, Tooltip } from "antd";
 import EditBlackIcon from "../../components/icons/edit-black.svg";
 import DeleteRedIcon from "../../components/icons/trash-red.svg";
 import CopyIcon from "../../components/icons/export.svg";
@@ -44,7 +44,7 @@ import ConfirmModal from "../../components/modals/ConfirmModal";
 import copy from "copy-text-to-clipboard";
 import toast from "react-hot-toast";
 import { createExaminationVersion } from "@/services/api_services/examination_bc_api";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, ProfileOutlined } from "@ant-design/icons";
 
 function ExamTestTab({ hidden }: { hidden: boolean }) {
   const { t } = useTranslation("exam");
@@ -120,7 +120,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id
+          (ch: ExamGroupData) => ch.idParent === e.id,
         );
         return { ...e, childs };
       });
@@ -140,7 +140,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
           value: e?.id,
         })),
       ],
-    })
+    }),
   );
   optionSelect.push({
     title: t("all_category"),
@@ -158,7 +158,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
         return;
       }
       var examinationIndex = list.findIndex(
-        (g: ExaminationData) => g?.id == c[0]
+        (g: ExaminationData) => g?.id == c[0],
       );
       var newValue = {
         ...list[examinationIndex],
@@ -194,7 +194,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
   const handlePublishExam = async (v: any) => {
     const childsList = (examGroup ?? []).reduce(
       (acc: any, va) => [...acc, ...(va?.childs ?? [])],
-      []
+      [],
     );
     const group = (childsList ?? []).find((g: any) => g?.id === v?.idExamGroup);
     const result = await createExaminationVersion({
@@ -319,10 +319,10 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
             list.map((v: ExamData, i: number) => {
               var childsList = (examGroup ?? []).reduce(
                 (acc: any, va) => [...acc, ...(va?.childs ?? [])],
-                []
+                [],
               );
               var group = (childsList ?? []).find(
-                (g: any) => g?.id === v?.idExamGroup
+                (g: any) => g?.id === v?.idExamGroup,
               );
 
               return (
@@ -363,15 +363,15 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                             </div>
                             <div className="flex">
                               <LinkIcon />
-                              <span className="ml-2 body_regular_14">{`${
-                                v?.numberOfTests
-                              } ${t("examination").toLowerCase()}`}</span>
+                              <span className="ml-2 body_regular_14">{`${v?.numberOfTests} ${t(
+                                "examination",
+                              ).toLowerCase()}`}</span>
                             </div>
                             <div className="flex mx-8">
                               <MessIcon />
                               <span className="ml-2 body_regular_14">
                                 {`${v?.numberOfQuestions} ${t(
-                                  "question"
+                                  "question",
                                 )?.toLowerCase()}`}
                               </span>
                             </div>
@@ -391,7 +391,23 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                               handlePublishExam(v);
                             }}
                           >
-                            <UploadOutlined className="text-2xl" />
+                            <Tooltip
+                              placement="top"
+                              title={t("push_to_market")}
+                            >
+                              <UploadOutlined className="text-2xl" />
+                            </Tooltip>
+                          </button>
+                          <div className="w-3" />
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/exams/details/${v.id}`);
+                            }}
+                          >
+                            <Tooltip placement="top" title={t("detail")}>
+                              <ProfileOutlined className="text-2xl" />
+                            </Tooltip>
                           </button>
                           <div className="w-3" />
                           <button
@@ -400,18 +416,26 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                               router.push(`/exams/${v?.id}`);
                             }}
                           >
-                            <EditBlackIcon />
+                            {" "}
+                            <Tooltip placement="top" title={common.t("edit")}>
+                              <EditBlackIcon />
+                            </Tooltip>{" "}
                           </button>
                           <div className="w-3" />
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               router.push(
-                                `/examination/create?examId=${v?.id}`
+                                `/examination/create?examId=${v?.id}`,
                               );
                             }}
                           >
-                            <CopyIcon />
+                            <Tooltip
+                              placement="top"
+                              title={common.t("duplicate")}
+                            >
+                              <CopyIcon />
+                            </Tooltip>{" "}
                           </button>
                           <div className="w-3" />
 
@@ -422,7 +446,10 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                               setOpenDelete(true);
                             }}
                           >
-                            <DeleteRedIcon />
+                            {" "}
+                            <Tooltip placement="top" title={common.t("delete")}>
+                              <DeleteRedIcon />
+                            </Tooltip>
                           </button>
                         </div>
                       </div>
@@ -489,7 +516,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                               </div>
                             </div>
                           );
-                        }
+                        },
                       )
                     )}
                   </Collapse.Panel>
@@ -501,7 +528,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
         {list.length != 0 && (
           <div className="w-full flex items-center justify-center">
             <span className="body_regular_14 mr-2">{`${total} ${t(
-              "result"
+              "result",
             )}`}</span>
 
             <Pagination
@@ -527,7 +554,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                     value: i,
                     label: (
                       <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                        "page"
+                        "page",
                       )}`}</span>
                     ),
                   })),

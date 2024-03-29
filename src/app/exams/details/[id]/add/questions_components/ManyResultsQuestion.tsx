@@ -299,6 +299,10 @@ function ManyResultsQuestion({
                     {String.fromCharCode(65 + i)}.
                   </div>
                   <EditorHook
+                    onBlur={async () => {
+                      await formik.setFieldTouched(`ans-${a?.id}`, true);
+                      formik.validateForm();
+                    }}
                     touch={formik.touched[`ans-${a?.id}`] as any}
                     error={formik.errors[`ans-${a?.id}`] as any}
                     value={a.text}

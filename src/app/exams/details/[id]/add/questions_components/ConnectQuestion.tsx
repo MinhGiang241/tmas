@@ -114,6 +114,7 @@ function ConnectQuestion({
     question_group?: string;
     question?: string;
     explain?: string;
+    [key: string]: any;
   }
 
   const initialValues: ConnectQuestionValue = {
@@ -125,6 +126,22 @@ function ConnectQuestion({
   const validate = async (values: ConnectQuestionValue) => {
     const errors: FormikErrors<ConnectQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
+
+    if (questionList?.length != 0) {
+      questionList.map(async (o) => {
+        if (!o.content) {
+          errors[`ques-${o?.id}`] = "common_not_empty";
+        }
+      });
+    }
+
+    if (answerList?.length != 0) {
+      answerList.map(async (o) => {
+        if (!o.content) {
+          errors[`ans-${o?.id}`] = "common_not_empty";
+        }
+      });
+    }
 
     if (!values.question) {
       errors.question = "common_not_empty";
@@ -292,10 +309,17 @@ function ConnectQuestion({
                   >
                     <p className="min-w-4">{i + 1}.</p>
                     <EditorHook
+                      onBlur={async () => {
+                        await formik.setFieldTouched(`ques-${s?.id}`, true);
+                        formik.validateForm();
+                      }}
+                      touch={formik.touched[`ques-${s?.id}`] as any}
+                      error={formik.errors[`ques-${s?.id}`] as any}
                       setValue={(name: any, val: any) => {
                         dispatch(
                           updateTextConnectQuestion({ index: i, value: val }),
                         );
+                        formik.validateForm();
                       }}
                       value={s.content}
                       isCount={false}
@@ -334,10 +358,17 @@ function ConnectQuestion({
                   >
                     <p className="min-w-4">{String.fromCharCode(65 + i)}.</p>
                     <EditorHook
+                      onBlur={async () => {
+                        await formik.setFieldTouched(`ans-${s?.id}`, true);
+                        formik.validateForm();
+                      }}
+                      touch={formik.touched[`ans-${s?.id}`] as any}
+                      error={formik.errors[`ans-${s?.id}`] as any}
                       setValue={(name: any, val: any) => {
                         dispatch(
                           updateTextConnectAnswer({ index: i, value: val }),
                         );
+                        formik.validateForm();
                       }}
                       value={s.content}
                       isCount={false}

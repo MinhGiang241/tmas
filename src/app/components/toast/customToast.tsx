@@ -3,6 +3,7 @@ import {
   CloseOutlined,
   CloseCircleFilled,
   CheckCircleFilled,
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 import MButton from "../config/MButton";
 import { useTranslation } from "react-i18next";
@@ -10,6 +11,7 @@ import { useTranslation } from "react-i18next";
 enum ToastType {
   SUCCESS,
   ERROR,
+  INFORM,
 }
 
 const CustomToast = ({
@@ -56,10 +58,17 @@ const CustomToast = ({
               {type == ToastType.ERROR && (
                 <CloseCircleFilled className="text-[5rem] text-m_error_500" />
               )}
+              {type == ToastType.INFORM && (
+                <ExclamationCircleFilled className="text-[5rem] text-m_danger_500" />
+              )}
             </div>
             <div className="flex flex-col text-center">
               <h4 className="body_semibold_20 mb-2">
-                {type == ToastType.SUCCESS ? t("success") : t("fail")}
+                {type == ToastType.SUCCESS
+                  ? t("success")
+                  : type === ToastType.ERROR
+                    ? t("fail")
+                    : t("notify")}
               </h4>
               <p>{content}</p>
             </div>
@@ -94,5 +103,11 @@ export const successToast = (content: string) => {
 export const errorToast = (content: string) => {
   toast.custom((e) => (
     <CustomToast type={ToastType.ERROR} content={content} c={e} />
+  ));
+};
+
+export const notifyToast = (content: string) => {
+  toast.custom((e) => (
+    <CustomToast type={ToastType.INFORM} content={content} c={e} />
   ));
 };

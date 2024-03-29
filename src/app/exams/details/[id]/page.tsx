@@ -4,7 +4,7 @@ import MButton from "@/app/components/config/MButton";
 import HomeLayout from "@/app/layouts/HomeLayout";
 import { ExamData } from "@/data/exam";
 import { getExamById } from "@/services/api_services/examination_api";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { Collapse, Input, Popover, Tooltip } from "antd";
@@ -44,6 +44,8 @@ import Sql from "./question/Sql";
 import TrueFalse from "./question/TrueFalse";
 import toast from "react-hot-toast";
 import ManyResult from "./question/ManyResult";
+import ReactToPrint from "react-to-print";
+import { ExamPrint } from "../components/ExamPrint";
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -74,6 +76,7 @@ function ExamDetails({ params }: any) {
   //
   const [active, setActive] = useState("");
   const router = useRouter();
+  const printRef = useRef(null);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -130,7 +133,11 @@ function ExamDetails({ params }: any) {
       >
         Nhân bản
       </button>
-      <button className="text-left pb-1">In</button>
+      <ReactToPrint
+        trigger={() => <button className="text-left pb-1">In</button>}
+        content={() => printRef.current}
+      />
+      {/* <button className="text-left pb-1">In</button> */}
       <button
         onClick={() => {
           setDeleteExamQuestions(true);
@@ -769,6 +776,9 @@ function ExamDetails({ params }: any) {
             ))}
         </div>
         {/* <ManyResult /> */}
+      </div>
+      <div className="hidden">
+        <ExamPrint exam={data?.records} ref={printRef} name={exam?.name} />
       </div>
     </HomeLayout>
   );
