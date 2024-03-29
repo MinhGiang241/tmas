@@ -301,13 +301,14 @@ function FillBlankQuestion({
                     onBlur={async () => {
                       await formik.setFieldTouched(`result-${i + 1}`);
                     }}
-                    touch={formik.errors[`result-${i + 1}`]}
-                    error={formik.errors[`result-${i + 1}`]}
+                    touch={formik.errors[`result-${i + 1}`] as any}
+                    error={formik.errors[`result-${i + 1}`] as any}
                     value={d.text}
                     onChange={async (f) => {
                       var newList = _.cloneDeep(results);
 
                       newList[i] = {
+                        ...newList[i],
                         label: newList[i]?.label,
                         text: f.target.value,
                       };

@@ -207,7 +207,7 @@ export const getExamQuestionPartList = async (data?: PagingGetData) => {
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/GetPagingDetail`,
     data,
   );
-
+  console.log("data results", results);
   return results;
 };
 

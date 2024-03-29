@@ -299,8 +299,8 @@ function ManyResultsQuestion({
                     {String.fromCharCode(65 + i)}.
                   </div>
                   <EditorHook
-                    touch={formik.touched[`ans-${a?.id}`]}
-                    error={formik.errors[`ans-${a?.id}`]}
+                    touch={formik.touched[`ans-${a?.id}`] as any}
+                    error={formik.errors[`ans-${a?.id}`] as any}
                     value={a.text}
                     setValue={(name: any, e: any) => {
                       dispatch(updateTextMultiAnswer({ index: i, value: e }));
