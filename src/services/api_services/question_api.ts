@@ -232,11 +232,11 @@ export const createManyExamQuestionPart = async (data?: {
 };
 
 export const updateAExamQuestionPart = async (data?: ExamQuestionPart) => {
-  const results = await callStudioAPI.post(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${data?._id}`,
+  // console.log("dat", data)
+  const results = await callStudioAPI.put(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${data?.idExam}`,
     data,
   );
-
   return results;
 };
 
@@ -245,7 +245,7 @@ export const updateManyExamQuestionPart = async (data?: ExamQuestionPart[]) => {
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/UpdateList`,
     {
       items: (data ?? []).map((d: ExamQuestionPart) => ({
-        id: d?._id,
+        id: d?.id,
         content: {
           name: d?.name,
           description: d?.description,
@@ -287,5 +287,13 @@ export const CopyQuestion = async (id?: string) => {
     {},
     { params: { Id: id } },
   );
+  return results;
+};
+
+export const deleteQuestionPart = async (id?: string) => {
+  const results = await callStudioAPI.delete(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${id}`,
+  );
+  // console.log(results)
   return results;
 };

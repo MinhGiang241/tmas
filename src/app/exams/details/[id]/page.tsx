@@ -30,14 +30,35 @@ import {
 } from "@/services/api_services/question_api";
 import { Collapse, Popover } from "antd";
 import { useRouter } from "next/navigation";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { useTranslation } from "react-i18next";
+import { Collapse, Input, Popover, Tooltip } from "antd";
+import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
+import EditIcon from "@/app/components/icons/edit-black.svg";
+import NewIcon from "@/app/components/icons/export.svg";
+import MoreIcon from "@/app/components/icons/more-circle.svg";
+import CopyIcon from "@/app/components/icons/size.svg";
+import BaseModal from "@/app/components/config/BaseModal";
+import MInput from "@/app/components/config/MInput";
+import MTextArea from "@/app/components/config/MTextArea";
+import ConfirmModal from "@/app/components/modals/ConfirmModal";
+import Menu from "@/app/components/icons/menu.svg";
+import Play from "@/app/components/icons/play-cricle.svg";
+import MessageQuestion from "@/app/components/icons/message-question.svg";
+import Cup from "@/app/components/icons/cup.svg";
+import Time from "@/app/components/icons/timer.svg";
+import Document from "@/app/components/icons/document.svg";
+import Group from "@/app/components/icons/group.svg";
+import ManyResult from "./question/ManyResult";
+import {
+  createAExamQuestionPart,
+  getExamQuestionPartList,
+  deleteQuestionPartById,
+  deleteQuestionById,
+  CopyQuestion,
+  updateAExamQuestionPart,
+  deleteQuestionPart
+} from '@/services/api_services/question_api';
+import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { APIResults } from "@/data/api_results";
 import { FormattedDate } from "react-intl";
 import Coding from "./question/Coding";
 import Connect from "./question/Connect";
@@ -46,6 +67,7 @@ import FillBlank from "./question/FillBlank";
 import ManyResult from "./question/ManyResult";
 import Sql from "./question/Sql";
 import TrueFalse from "./question/TrueFalse";
+import toast from "react-hot-toast";
 
 import ReactToPrint from "react-to-print";
 import { ExamPrint } from "../components/ExamPrint";
@@ -53,17 +75,19 @@ import { ExamPrint } from "../components/ExamPrint";
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
   const [arrow, setArrow] = useState("Show");
+  // dùng cho phần câu hỏi
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState<boolean>(false);
-  const [deleteExamQuestions, setDeleteExamQuestions] =
-    useState<boolean>(false);
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
-  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
+  // Dùng cho phần đề thi
+  const [deleteExamQuestions, setDeleteExamQuestions] = useState<boolean>(false);
+  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   //
   const [data, setData] = useState<any>();
   const [idDelete, setIdDelete] = useState<any>();
+  const [idUpdate, setIdUpdate] = useState<any>();
   const [loadDataQuestion, setLoadDataQuestion] = useState<any>(null);
   const [addLoading, setAddLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
@@ -71,7 +95,10 @@ function ExamDetails({ params }: any) {
   //
   const [name, setName] = React.useState<string>("");
   const [note, setNote] = React.useState<string>("");
+  const [customName, setCustomName] = useState("");
+  const [customNote, setCustomNote] = useState("");
   //
+  const [active, setActive] = useState("");
   const router = useRouter();
   const printRef = useRef(null);
 
@@ -118,18 +145,14 @@ function ExamDetails({ params }: any) {
 
   const action = (
     <div className="flex flex-col px-1">
-      <button className="text-left pb-1">Nhân bản</button>
-      <ReactToPrint
-        trigger={() => <button className="text-left pb-1">In</button>}
-        content={() => printRef.current}
-      />
-      {/* <button className="text-left pb-1">In</button> */}
-      <button className="text-left pb-1">Xóa</button>
-    </div>
-  );
+      <button
+        onClick={() => {
+          setOpenCopyQuestion(true);
+        }}
+        className="text-left pb-1">Nhân bản
 
-  const actionAddNew = (
-    <div className="flex flex-col px-1">
+      </button>
+      <button className="text-left pb-1">In</button>
       <button
         onClick={() => {
           setDeleteExamQuestions(true);
@@ -139,7 +162,9 @@ function ExamDetails({ params }: any) {
         Xóa
         <ConfirmModal
           onOk={async () => {
-            await deleteQuestionById(params.id);
+            await deleteQuestionPart(params.id)
+            setDeleteExamQuestions(false);
+            router.push("/exams");
           }}
           onCancel={() => {
             setDeleteExamQuestions(false);
@@ -152,17 +177,20 @@ function ExamDetails({ params }: any) {
     </div>
   );
 
-  // const { TextArea } = Input;
-  // xóa phần
-  // const handleDeleteExam = async () => {
-  //   router.push("/exams");
-  //   // loadExamList(false);
-  //   successToast(t("delete_success"));
-  // };
-  //
+  // const handleUpdate = async () => {
+  //   console.log(idUpdate);
 
-  // const handleCopy = async () => {
-  //   const res = await CopyQuestion()
+  //   const res = await updateAExamQuestionPart({
+  //     idExam: params.id,
+  //     name: customName,
+  //     description: customNote,
+  //   })
+  //   console.log("res", res);
+  //   if (res && res.code !== 0) {
+  //     errorToast(res.message || "");
+  //     return;
+  //   }
+  //   getData();
   // }
 
   const handleAddPart = async () => {
@@ -173,19 +201,19 @@ function ExamDetails({ params }: any) {
       description: note,
     });
     console.log(res);
-
     setAddLoading(false);
     if (res && res.code !== 0) {
       errorToast(res.message || "");
       return;
     }
-    // console.log(res, "res");
-    getData();
-    setLoadDataQuestion(res);
+    // setLoadDataQuestion(res);
+    successToast(t("success_add_question"));
     setOpen(false);
     setName("");
     setNote("");
+    getData();
   };
+
 
   const handleDelete = async () => {
     // console.log(idDelete)
@@ -199,15 +227,21 @@ function ExamDetails({ params }: any) {
   };
 
   const getData = async () => {
-    const res = await getExamQuestionPartList({
-      paging: { startIndex: 0, recordPerPage: 100 },
-      sorters: [{ name: "Name", isAsc: true }],
-    });
-    const data = res.data;
+    const res = await getExamQuestionPartList({ paging: { startIndex: 0, recordPerPage: 100 }, sorters: [{ name: "Name", isAsc: true }, { name: "updateTime", isAsc: true }] })
+    const data = res.data
     console.log(data);
 
     if (data) {
       setData(data);
+    }
+  };
+
+  const openEditModal = (id: string) => {
+    const partToEdit = data?.records.find((part: any) => part.id === id);
+    if (partToEdit) {
+      setCustomName(partToEdit.name);
+      setCustomNote(partToEdit.description);
+      setOpenEdit(true);
     }
   };
 
@@ -216,17 +250,43 @@ function ExamDetails({ params }: any) {
     getData();
   }, []);
 
-  interface Type {
-    [key: string]: string;
-  }
-
-  const type: Type = {
-    MutilAnswer: "Nhiều câu hỏi",
-    Test: "Test câu hỏi",
-  };
 
   return (
     <HomeLayout>
+      <div className="h-5" />
+      {/* Copy phần câu hỏi */}
+      <ConfirmModal
+        onOk={async () => {
+          await CopyQuestion(params.id)
+          setOpenCopyQuestion(false);
+        }}
+        onCancel={() => { setOpenCopyQuestion(false); }}
+        action={t("copy")}
+        text={t("confirm_copy")}
+        open={openCopyQuestion} />
+      {/* Xóa phần câu hỏi */}
+      <ConfirmModal
+        onOk={() => {
+          handleDelete();
+        }}
+        onCancel={() => {
+          setOpenDelete(false);
+        }}
+        action={t("delete")}
+        text={t("confirm_delete")}
+        open={openDelete}
+      />
+      {/* Xóa câu hỏi */}
+      <ConfirmModal
+        onOk={async () => {
+          await deleteQuestionById(active);
+          setOpenDeleteQuestion(false);
+          getData();
+        }}
+        onCancel={() => { setOpenDeleteQuestion(false); }}
+        action={t("delete_question")}
+        text={t("confirm_delete_question")}
+        open={openDeleteQuestion} />
       <MBreadcrumb
         items={[
           { text: t("Danh sách đề thi"), href: "/" },
@@ -262,6 +322,7 @@ function ExamDetails({ params }: any) {
               <MoreIcon />
             </button> */}
             <Popover
+              trigger={"click"}
               placement="bottomRight"
               content={action}
               arrow={mergedArrow}
@@ -288,11 +349,11 @@ function ExamDetails({ params }: any) {
             Chuyển phần tự do
           </div>
           <div className="text-sm text-m_neutral_900 flex">
-            <MessageQuestion className="mr-1" />
+            <MessageQuestion className="mr-1 scale-75" />
             10 câu hỏi
           </div>
           <div className="text-sm text-m_neutral_900 flex">
-            <Cup className="mr-1" />
+            <Cup className="mr-1 scale-75" />
             10 điểm
           </div>
           <div className="text-sm text-m_neutral_900 flex">
@@ -312,9 +373,7 @@ function ExamDetails({ params }: any) {
               setOpen(true);
             }}
             className="flex items-center"
-            // icon={<AddIcon />}
             type="secondary"
-            // text={common.t("create_new")}
             text={t("add_part")}
           />
           <BaseModal
@@ -332,6 +391,8 @@ function ExamDetails({ params }: any) {
               required
               onChange={handleNameChange}
               value={name}
+              placeholder="Nhập nội dung"
+              maxLength={255}
             />
             <MTextArea
               id="note"
@@ -339,10 +400,15 @@ function ExamDetails({ params }: any) {
               title={t("note")}
               onChange={handleNoteChange}
               value={note}
+              placeholder="Nhập nội dung"
+              maxLength={500}
             />
             <div className="w-full flex justify-center mt-7">
               <MButton
                 // onClick={onCancel}
+                onClick={() => {
+                  setOpen(false);
+                }}
                 className="w-36"
                 type="secondary"
                 text={t("cancel")}
@@ -360,7 +426,7 @@ function ExamDetails({ params }: any) {
           </BaseModal>
         </div>
         <div>
-          {data?.records?.map((x: any, key: any) => (
+          {data?.records?.sort((a: any, b: any) => (b.createdTime?.localeCompare(a?.createdTime)))?.map((x: any, key: any) => (
             <Collapse
               key={key}
               ghost
@@ -378,9 +444,10 @@ function ExamDetails({ params }: any) {
                     </div>
                     <div>
                       <Popover
+                        trigger={"click"}
                         placement="bottomRight"
                         content={
-                          <div className="flex flex-col px-1">
+                          <div className="flex flex-col px-1 rounded-md">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -388,7 +455,7 @@ function ExamDetails({ params }: any) {
                                   `/exams/details/${params.id}/add?partId=${x?.id}`,
                                 );
                               }}
-                              className="text-left mb-2 pb-1 border-b"
+                              className="text-left mb-2 pb-1"
                             >
                               Thêm thủ công
                             </button>
@@ -396,7 +463,7 @@ function ExamDetails({ params }: any) {
                               onClick={(e) => {
                                 e.stopPropagation();
                               }}
-                              className="text-left mb-2 pb-1 border-b"
+                              className="text-left mb-2 pb-1 "
                             >
                               Thêm từ ngân hàng câu hỏi của tôi
                             </button>
@@ -404,7 +471,7 @@ function ExamDetails({ params }: any) {
                               onClick={(e) => {
                                 e.stopPropagation();
                               }}
-                              className="text-left mb-2 pb-1 border-b"
+                              className="text-left mb-2 pb-1 "
                             >
                               Thêm từ ngân hàng câu hỏi của TMAS
                             </button>
@@ -412,13 +479,14 @@ function ExamDetails({ params }: any) {
                         }
                         arrow={mergedArrow}
                       >
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          <NewIcon />
-                        </button>
+                        <Tooltip placement="bottom" title={"Thêm câu hỏi"} arrow={mergedArrow}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            <NewIcon />
+                          </button></Tooltip>
                       </Popover>
                       <button
                         className="px-2"
@@ -428,7 +496,8 @@ function ExamDetails({ params }: any) {
                       >
                         <EditIcon
                           onClick={() => {
-                            setOpenEdit(true);
+                            // setOpenEdit(true);
+                            openEditModal(x.id)
                           }}
                         />
                         <BaseModal
@@ -441,16 +510,24 @@ function ExamDetails({ params }: any) {
                         >
                           <MInput
                             // formik={formik}
-                            id="name"
-                            name="name"
+                            id="customName"
+                            name="customName"
                             title={t("name")}
                             required
+                            placeholder="Nhập nội dung"
+                            maxLength={255}
+                            value={customName}
+                            onChange={(event) => setCustomName(event.target.value)}
                           />
                           <MTextArea
                             // formik={formik}
-                            id="note"
-                            name="note"
+                            id="customNote"
+                            name="customNote"
                             title={t("note")}
+                            placeholder="Nhập nội dung"
+                            maxLength={500}
+                            value={customNote}
+                            onChange={(event) => setCustomNote(event.target.value)}
                           />
                           <div className="w-full flex justify-center mt-7">
                             <MButton
@@ -467,6 +544,28 @@ function ExamDetails({ params }: any) {
                               htmlType="submit"
                               className="w-36"
                               text={t("update")}
+                              onClick={async () => {
+                                const res = await updateAExamQuestionPart({ idExam: x.id, name: customName, description: customNote });
+                                if (res && res.code === 0) {
+                                  setOpenEdit(false);
+                                  const updatedRecords = [...data.records];
+                                  const index = updatedRecords.findIndex(item => item.id === x.id);
+                                  if (index !== -1) {
+                                    updatedRecords[index] = { ...updatedRecords[index], name: customName, description: customNote };
+                                    updatedRecords.unshift(updatedRecords.splice(index, 1)[0]);
+                                    setData({ ...data, records: updatedRecords });
+                                    setCustomName("");
+                                    setCustomNote("");
+                                    successToast(t("success_edit_question"));
+                                  }
+                                }
+                                // await updateAExamQuestionPart({ idExam: x.id, name: customName, description: customNote })
+                                // setOpenEdit(false);
+                                // getData();
+                                // setCustomNote("")
+                                // setCustomName("")
+                                // toast.success('Sửa thành công!');
+                              }}
                             />
                           </div>
                         </BaseModal>
@@ -481,17 +580,6 @@ function ExamDetails({ params }: any) {
                             setOpenDelete(true);
                             setIdDelete(x.id);
                           }}
-                        />
-                        <ConfirmModal
-                          onOk={() => {
-                            handleDelete();
-                          }}
-                          onCancel={() => {
-                            setOpenDelete(false);
-                          }}
-                          action={t("delete")}
-                          text={t("confirm_delete")}
-                          open={openDelete}
                         />
                       </button>
                     </div>
@@ -557,103 +645,47 @@ function ExamDetails({ params }: any) {
                                   e.stopPropagation();
                                 }}
                               >
-                                <EditIcon
-                                  onClick={() => {
-                                    router.push(
-                                      `/exams/details/${params.id}/edit?questId=${e?.id}`,
-                                    );
-                                  }}
-                                />
-                                <BaseModal
-                                  width={564}
-                                  onCancel={() => {
-                                    setOpenEditQuestion(false);
-                                  }}
-                                  title={t("edit_question")}
-                                  open={openEditQuestion}
-                                >
-                                  <MInput
-                                    // formik={formik}
-                                    id="name"
-                                    name="name"
-                                    title={t("name")}
-                                    required
-                                  />
-                                  <MTextArea
-                                    // formik={formik}
-                                    id="note"
-                                    name="note"
-                                    title={t("note")}
-                                  />
-                                  <div className="w-full flex justify-center mt-7">
-                                    <MButton
-                                      className="w-36"
-                                      type="secondary"
-                                      text={t("cancel")}
-                                      onClick={() => {
-                                        setOpenEditQuestion(false);
-                                      }}
-                                    />
-                                    <div className="w-5" />
-                                    <MButton
-                                      // loading={loading}
-                                      htmlType="submit"
-                                      className="w-36"
-                                      text={t("update")}
-                                    />
-                                  </div>
-                                </BaseModal>
-                              </button>
-                              <button
-                                className="px-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                }}
-                              >
-                                <CopyIcon
-                                  onClick={() => {
-                                    setOpenCopyQuestion(true);
-                                  }}
-                                />
-                                <ConfirmModal
-                                  onOk={async () => {
-                                    await CopyQuestion(e.id);
-                                    setOpenCopyQuestion(false);
-                                    getData();
-                                  }}
-                                  onCancel={() => {
-                                    setOpenCopyQuestion(false);
-                                  }}
-                                  action={t("copy")}
-                                  text={t("confirm_copy")}
-                                  open={openCopyQuestion}
-                                />
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                }}
-                              >
-                                <DeleteRedIcon
-                                  onClick={() => {
-                                    setOpenDeleteQuestion(true);
-                                  }}
-                                />
-                                <ConfirmModal
-                                  onOk={async () => {
-                                    await deleteQuestionById(e.id);
-                                    setOpenDeleteQuestion(false);
-                                    getData();
-                                  }}
-                                  onCancel={() => {
-                                    setOpenDeleteQuestion(false);
-                                  }}
-                                  action={t("delete_question")}
-                                  text={t("confirm_delete_question")}
-                                  open={openDeleteQuestion}
-                                />
-                              </button>
-                            </div>
+                                <MInput
+                                  // formik={formik}
+                                  id="name"
+                                  name="name"
+                                  title={t("name")}
+                                  required />
+                                <MTextArea
+                                  // formik={formik}
+                                  id="note"
+                                  name="note"
+                                  title={t("note")} />
+                                <div className="w-full flex justify-center mt-7">
+                                  <MButton
+                                    className="w-36"
+                                    type="secondary"
+                                    text={t("cancel")}
+                                    onClick={() => { setOpenEditQuestion(false); }} />
+                                  <div className="w-5" />
+                                  <MButton
+                                    // loading={loading}
+                                    htmlType="submit"
+                                    className="w-36"
+                                    text={t("update")} />
+                                </div>
+                              </BaseModal>
+                            </button>
+                            <button className="px-2" onClick={(e) => {
+                              e.stopPropagation();
+                            }}><CopyIcon onClick={() => {
+                              setOpenCopyQuestion(true);
+                            }} />
+                            </button>
+                            <button onClick={(e) => {
+                              e.stopPropagation();
+                            }}><DeleteRedIcon onClick={() => {
+                              setOpenDeleteQuestion(true);
+                              setActive(e.id);
+                              // console.log(e);
+                            }} />
+
+                            </button>
                           </div>
                         }
                         key={""}
@@ -663,25 +695,19 @@ function ExamDetails({ params }: any) {
                           Thông tin câu hỏi
                         </div>
                         <div className="flex">
-                          <div className="body_semibold_14 pr-2">
-                            Nhóm câu hỏi:{" "}
-                          </div>
+                          <div className="text-sm pr-2 font-semibold">Nhóm câu hỏi: </div>
                           <span>Toán học</span>
                         </div>
                         <div className="flex">
-                          <div className="body_semibold_14 pr-2">
-                            Kiểu câu hỏi:{" "}
-                          </div>
+                          <div className="text-sm pr-2 font-semibold">Kiểu câu hỏi: </div>
                           <span>{e.questionType}</span>
                         </div>
                         <div className="flex">
-                          <div className="body_semibold_14 pr-2">Điểm: </div>
+                          <div className="text-sm pr-2 font-semibold">Điểm: </div>
                           <span>{e.numberPoint}</span>
                         </div>
                         <div className="flex">
-                          <div className="body_semibold_14 pr-2">
-                            Ngày tạo:{" "}
-                          </div>
+                          <div className="text-sm pr-2 font-semibold">Ngày tạo: </div>
                           <FormattedDate
                             value={e?.createdTime}
                             day="2-digit"
