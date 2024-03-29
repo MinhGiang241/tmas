@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useTransition } from "react";
 import "./exam-print.css";
 import { useTranslation } from "react-i18next";
@@ -7,6 +8,7 @@ import { QuestionType } from "@/data/question";
 
 type Props = {
   exam: any;
+  name?: string;
 };
 
 const ResultSkeleton = ({ numOfLine = 5 }) => {
@@ -15,7 +17,7 @@ const ResultSkeleton = ({ numOfLine = 5 }) => {
       {Array.from(Array(numOfLine).keys()).map((line, index) => (
         <div
           key={index}
-          className="border-b border-dotted h-7 border-black"
+          className="border-b-[0.5px] border-dotted h-7 border-black"
         />
       ))}
     </div>
@@ -39,9 +41,6 @@ const ExamQuestion = ({
         const sufferAnswers = isChangePosition ? shuffle(answers) : answers;
         return (
           <div className="flex flex-col gap-2 p-4">
-            {explainAnswer && (
-              <div dangerouslySetInnerHTML={{ __html: explainAnswer }} />
-            )}
             {sufferAnswers.map((ans: any, index: number) => (
               <p key={index} className="inline-flex gap-1">
                 <span className="font-semibold mr-2">
@@ -57,19 +56,81 @@ const ExamQuestion = ({
           </div>
         );
       }
+      case QuestionType.SQL: {
+        const { explainAnswer } = ques.content;
+        return (
+          <div className="flex flex-col gap-1 p-4">
+            <ResultSkeleton numOfLine={3} />
+          </div>
+        );
+      }
+      case QuestionType.FillBlank: {
+        const { explainAnswer } = ques.content;
+        return <div className="flex flex-col gap-2 p-4"></div>;
+      }
+      case QuestionType.Pairing: {
+        const { explainAnswer, answers, questions } = ques.content;
+        return (
+          <div className="flex flex-col gap-2 p-4">
+            <div className="grid grid-cols-2">
+              <div className="flex flex-col space-y-2">
+                {answers.map((ans: any, index: number) => (
+                  <p key={index} className="inline-flex gap-1">
+                    <span
+                      className="font-semibold"
+                      dangerouslySetInnerHTML={{ __html: ans.label }}
+                    />
+                    <span dangerouslySetInnerHTML={{ __html: ans.text }} />
+                  </p>
+                ))}
+              </div>
+              <div className="flex flex-col space-y-2">
+                {questions.map((ans: any, index: number) => (
+                  <p key={index} className="inline-flex gap-1">
+                    <span
+                      className="font-semibold"
+                      dangerouslySetInnerHTML={{ __html: ans.label }}
+                    />
+                    <span dangerouslySetInnerHTML={{ __html: ans.text }} />
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
+      case QuestionType.Coding: {
+        const { template } = ques.content;
+        return (
+          <div className="flex flex-col gap-1 p-4">
+            <div dangerouslySetInnerHTML={{ __html: template }} />
+            <ResultSkeleton numOfLine={10} />
+          </div>
+        );
+      }
       default:
         return (
           <div className="flex flex-col gap-1 p-4">
-            <ResultSkeleton />
+            <ResultSkeleton numOfLine={6} />
           </div>
         );
     }
   };
 
+  const renderSubTitleQuestionType = (ques: any) => {
+    return <span>({t(ques.questionType)})</span>;
+  };
+
   return (
     <div className="p-2 space-y-2">
       <h2 className="flex flex-row gap-2 font-semibold">
-        {t("question")} {index}:{" "}
+        <span className="uppercase">
+          {t("question")} {index}:{" "}
+        </span>
+
+        <span className="font-normal">
+          {renderSubTitleQuestionType(question)}
+        </span>
       </h2>
       <div dangerouslySetInnerHTML={{ __html: question.question }} />
       <hr />
@@ -94,10 +155,10 @@ const ExamSection = ({ section }: { section: any }) => {
 };
 
 const ExamPrint = React.forwardRef<HTMLDivElement, any>(
-  ({ exam }: Props, ref) => {
+  ({ exam, name }: Props, ref) => {
     return (
       <div className="page text-black" ref={ref}>
-        <h1 className="text-3xl font-bold">Đề thi: {exam?.name}</h1>
+        <h1 className="text-3xl font-bold">Đề thi: {name}</h1>
         <h1 className="text-2xl">
           Họ và tên: ...........................................................
         </h1>
@@ -106,6 +167,13 @@ const ExamPrint = React.forwardRef<HTMLDivElement, any>(
         {exam?.map((ex: any, key: number) => {
           return <ExamSection key={key} section={ex} />;
         })}
+        <br />
+        <br />
+        <div className="flex justify-end px-5">
+          <img alt="logo" src="/images/logo.png" className="w-5/12" />
+        </div>
+        <br />
+        <br />
       </div>
     );
   }

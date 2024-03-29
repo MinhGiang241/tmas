@@ -18,4 +18,10 @@ export interface ConnectPairing {
 export enum QuestionType {
   MutilAnswer = "MutilAnswer",
   YesNoQuestion = "YesNoQuestion",
+  SQL = "SQL",
+  FillBlank = "FillBlank",
+  Pairing = "Pairing",
+  Coding = "Coding",
+  Essay = "Essay",
+  // Random = "Random",
 }
