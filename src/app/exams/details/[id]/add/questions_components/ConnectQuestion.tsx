@@ -135,6 +135,10 @@ function ConnectQuestion({
 
     if (!values.point) {
       errors.point = "common_not_empty";
+    } else if (values.point?.match(/\.\d{3,}/g)) {
+      errors.point = "2_digit_behind_dot";
+    } else if (values.point?.match(/(.*\.){2,}/g)) {
+      errors.point = "invalid_number";
     }
     return errors;
   };
@@ -143,12 +147,31 @@ function ConnectQuestion({
     initialValues,
     validate,
     onSubmit: async (values: ConnectQuestionValue) => {
+      if (questionList.length === 0) {
+        errorToast(t("at_least_1_question"));
+      }
+      if (answerList.length === 0) {
+        errorToast(t("at_least_1_answer"));
+      }
+
+      var s = false;
+      for (let d of questionList) {
+        if (pairingList.some((s) => s.idQuestion === d.id)) {
+          s = true;
+        }
+      }
+
+      if (!s) {
+        errorToast(t("each_quest_has_answer"));
+        return;
+      }
+
       dispatch(setQuestionLoading(true));
 
       const dataSubmit: ConnectQuestionFormData = {
         id: question?.id ?? undefined,
         idExam: question?.idExam ?? idExam,
-        numberPoint: values.point ? parseInt(values.point) : undefined,
+        numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
         question: values?.question,
         questionType: "Pairing",
@@ -193,14 +216,18 @@ function ConnectQuestion({
         className="hidden"
         onClick={() => {
           formik.handleSubmit();
+          Object.keys(formik.errors).map(async (v) => {
+            await formik.setFieldTouched(v, true);
+          });
         }}
         ref={submitRef}
       />
 
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
+          namespace="exam"
           onKeyDown={(e) => {
-            if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+            if (!e.key.match(/[0-9.]/g) && e.key != "Backspace") {
               e.preventDefault();
             }
           }}
@@ -358,6 +385,7 @@ function ConnectQuestion({
                   onChange={(va) => {
                     console.log("va", va);
                     console.log("questionList", questionList);
+                    console.log("parinng", pairingList);
                   }}
                 >
                   {answerList.map((b: ConnectQuestAns, ind: number) => (

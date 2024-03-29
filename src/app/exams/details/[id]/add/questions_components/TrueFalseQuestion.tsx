@@ -127,13 +127,26 @@ function TrueFalseQuestion({
     if (!values.question) {
       errors.question = "common_not_empty";
     }
+    if (!aResult.text) {
+      errors.a = "common_not_empty";
+    }
+    if (!bResult.text) {
+      errors.b = "common_not_empty";
+    }
+
     if (!values.question_group) {
       errors.question_group = "common_not_empty";
     }
 
     if (!values.point) {
       errors.point = "common_not_empty";
+    } else if (values.point?.match(/\.\d{3,}/g)) {
+      errors.point = "2_digit_behind_dot";
+    } else if (values.point?.match(/(.*\.){2,}/g)) {
+      errors.point = "invalid_number";
     }
+    console.log("error", errors);
+    console.log("touched", formik);
 
     return errors;
   };
@@ -145,6 +158,14 @@ function TrueFalseQuestion({
     initialValues,
     validate,
     onSubmit: async (values: TrueFalseQuestionValue) => {
+      // console.log(aResult);
+      // console.log(bResult);
+      // return;
+      if (!correctAnswer) {
+        errorToast(t("at_least_1_true_answer"));
+        return;
+      }
+
       dispatch(setQuestionLoading(true));
       const submitData: MultiAnswerQuestionFormData = {
         id: question?.id,
@@ -154,7 +175,7 @@ function TrueFalseQuestion({
         idGroupQuestion: values?.question_group,
         question: values?.question,
         questionType: "YesNoQuestion",
-        numberPoint: values.point ? parseInt(values.point) : undefined,
+        numberPoint: values.point ? parseFloat(values.point) : undefined,
         content: {
           explainAnswer: values.explain,
           isChangePosition,
@@ -195,14 +216,18 @@ function TrueFalseQuestion({
         className="hidden"
         onClick={() => {
           formik.handleSubmit();
+          Object.keys(formik.errors).map(async (v) => {
+            await formik.setFieldTouched(v, true);
+          });
         }}
         ref={submitRef}
       />
 
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
+          namespace="exam"
           onKeyDown={(e) => {
-            if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+            if (!e.key.match(/[0-9.]/g) && e.key != "Backspace") {
               e.preventDefault();
             }
           }}
@@ -252,6 +277,8 @@ function TrueFalseQuestion({
             buttonStyle="solid"
             onChange={(v) => {
               setCorrectAnswer(v.target.value);
+              console.log(v);
+
               if (v.target.value === 0) {
                 setAResult({ ...aResult, isCorrectAnswer: true });
                 setBResult({ ...bResult, isCorrectAnswer: false });
@@ -267,6 +294,11 @@ function TrueFalseQuestion({
                 <Radio value={0} />
                 <div className="body_semibold_14 mr-2 ">A.</div>
                 <EditorHook
+                  onBlur={async () => {
+                    await formik.setFieldTouched("a", true);
+                  }}
+                  touch={formik.touched.a}
+                  error={formik.errors.a}
                   value={aResult?.text}
                   setValue={(na: any, val: any) => {
                     setAResult({
@@ -274,6 +306,7 @@ function TrueFalseQuestion({
                       text: val,
                       label: cheerio.load(val).text(),
                     });
+                    formik.validateForm();
                   }}
                   isCount={false}
                   isBubble={true}
@@ -285,6 +318,11 @@ function TrueFalseQuestion({
                 <Radio value={1} />
                 <div className="body_semibold_14 mr-2 ">B.</div>
                 <EditorHook
+                  onBlur={async () => {
+                    await formik.setFieldTouched("b", true);
+                  }}
+                  touch={formik.touched.b}
+                  error={formik.errors.b}
                   value={bResult?.text}
                   setValue={(na: any, val: any) => {
                     setBResult({
@@ -292,6 +330,7 @@ function TrueFalseQuestion({
                       text: val,
                       label: cheerio.load(val).text(),
                     });
+                    formik.validateForm();
                   }}
                   isCount={false}
                   isBubble={true}

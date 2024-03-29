@@ -197,6 +197,10 @@ body {
   border-color: #ea3434 !important;
 }
 
+.custom-ql-bubble.ql-error {
+  border-color: #ea3434 !important;
+}
+
 .custom-ql-bubble .ql-toolbar {
   border-top-right-radius: 6px 6px;
   border-top-left-radius: 6px 6px;

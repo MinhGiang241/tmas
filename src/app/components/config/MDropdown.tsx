@@ -41,6 +41,7 @@ interface Props {
   defaultValue?: string;
   fetching?: boolean;
   onSearch?: any;
+  isTextRequire?: boolean;
   dropdownRender?:
     | ((
         menu: React.ReactElement<
@@ -82,6 +83,7 @@ function MDropdown({
   defaultValue,
   fetching = false,
   onSearch,
+  isTextRequire = true,
   dropdownRender,
 }: Props) {
   var np;
@@ -176,6 +178,7 @@ function MDropdown({
           }}
           placeholder={placeholder}
         />
+
         {successText && touch ? (
           <div
             className={`flex items-center  text-m_warning_500 ${
@@ -214,7 +217,9 @@ function MDropdown({
             <div className={`text-m_error_500 body_regular_14`}>{t(er)}</div>
           </div>
         ) : null}
-        {extend && !(er && touch) && <div className="h-[20px]" />}
+        {extend && !(er && touch) && isTextRequire && (
+          <div className="h-[20px]" />
+        )}
       </div>
     </div>
   );

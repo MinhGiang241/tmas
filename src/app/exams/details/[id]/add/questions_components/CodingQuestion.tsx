@@ -10,7 +10,7 @@ import {
   Space,
 } from "antd";
 import dynamic from "next/dynamic";
-import React, { HTMLAttributes, useState } from "react";
+import React, { HTMLAttributes, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import TrashIcon from "@/app/components/icons/trash.svg";
@@ -55,6 +55,8 @@ import {
 } from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import ConfirmModal from "@/app/components/modals/ConfirmModal";
+import NoticeIcon from "@/app/components/icons/notice.svg";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -122,7 +124,6 @@ function CodingQuestion({
     "javascript",
     "java",
     "python",
-    "python",
     "ruby",
     "c#",
   ]);
@@ -166,7 +167,7 @@ function CodingQuestion({
     {
       onHeaderCell: (_) => rowStartStyle,
       width: "25%",
-      title: <div className="w-1/3 flex justify-center">{t("code")}</div>,
+      title: <div className="w-1/3 flex justify-center">{t("testcase")}</div>,
       dataIndex: "name",
       key: "name",
       render: (text, data) => (
@@ -230,7 +231,8 @@ function CodingQuestion({
           <button
             className="ml-2"
             onClick={() => {
-              setTestcases(testcases.filter((e: any) => e.id != data.id));
+              setActive(data);
+              setOpenDelete(true);
             }}
           >
             <TrashIcon />
@@ -259,6 +261,7 @@ function CodingQuestion({
     explain?: string;
     function_name?: string;
     return_type?: string;
+    [key: string]: any;
   }
 
   const initialValues: CodingQuestionValue = {
@@ -274,27 +277,61 @@ function CodingQuestion({
     const errors: FormikErrors<CodingQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
+    console.log("validating", parameterList);
+    if (parameterList.length != 0) {
+      parameterList.map(async (p: ParameterType, i: number) => {
+        // await formik.setFieldValue(`param_name_${i + 1}`, p.nameParameter);
+        // await formik.setFieldValue(`param_type_${i + 1}`, p.returnType);
+        if (!p.nameParameter) {
+          errors[`param_name_${p.id}`] = "common_not_empty";
+        }
+        if (!p.returnType) {
+          errors[`param_type_${p.id}`] = "common_not_empty";
+        }
+      });
+    }
+    //  /[\\/|"`?<>;!@#$%^&*().,\-\+ ]+/g
+    if (!code) {
+      errors.code = common.t("not_empty");
+    }
     if (!values.question) {
       errors.question = "common_not_empty";
+    }
+    if (!values.explain) {
+      errors.explain = "common_not_empty";
     }
     if (!values.question_group) {
       errors.question_group = "common_not_empty";
     }
     if (!values.function_name) {
       errors.function_name = "common_not_empty";
-    } else if (values.function_name?.length <= 3) {
+    } else if (values.function_name?.length < 3) {
       errors.function_name = "func_name_not_less_than_3";
+    } else if (values.function_name.match(/[^a-zA-Z0-9-_]/g)) {
+      errors.function_name = "func_name_invalid";
     }
-
+    if (!values.return_type) {
+      errors.return_type = "common_not_empty";
+    }
     if (!values.point) {
       errors.point = "common_not_empty";
+    } else if (values.point?.match(/\.\d{3,}/g)) {
+      errors.point = "2_digit_behind_dot";
+    } else if (values.point?.match(/(.*\.){2,}/g)) {
+      errors.point = "invalid_number";
     }
+    console.log("error", errors);
+
     return errors;
   };
   const formik = useFormik({
     initialValues,
     validate,
     onSubmit: async (values: CodingQuestionValue) => {
+      if (checkedLang.length === 0) {
+        errorToast(t("at_least_1_language"));
+        return;
+      }
       dispatch(setQuestionLoading(true));
       const submitData: CodingQuestionFormData = {
         id: question?.id,
@@ -303,7 +340,7 @@ function CodingQuestion({
         idExamQuestionPart:
           question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
         idGroupQuestion: values.question_group,
-        numberPoint: values.point ? parseInt(values.point) : undefined,
+        numberPoint: values.point ? parseFloat(values.point) : undefined,
         questionType: "Coding",
         content: {
           codeLanguages: [
@@ -342,13 +379,31 @@ function CodingQuestion({
     },
   });
   const [active, setActive] = useState<TestcaseValue | undefined>();
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
 
   return (
     <div className="grid grid-cols-12 gap-4 max-lg:px-5">
+      <ConfirmModal
+        text={t("confirm_delete_testcase")}
+        open={openDelete}
+        onCancel={() => {
+          setOpenDelete(false);
+        }}
+        onOk={() => {
+          setTestcases(testcases.filter((e: any) => e.id != active?.id));
+          successToast(t("success_delete_testcase"));
+          setOpenDelete(false);
+          setActive(undefined);
+        }}
+      />
       <button
         className="hidden"
-        onClick={() => {
-          formik.handleSubmit();
+        onClick={async () => {
+          await formik.handleSubmit();
+          Object.keys(formik.errors).map(async (v) => {
+            await formik.setFieldTouched(v, true);
+          });
+          console.log("touched", formik.errors);
         }}
         ref={submitRef}
       />
@@ -374,10 +429,11 @@ function CodingQuestion({
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
           onKeyDown={(e) => {
-            if (!e.key.match(/[0-9]/g) && e.key != "Backspace") {
+            if (!e.key.match(/[0-9.]/g) && e.key != "Backspace") {
               e.preventDefault();
             }
           }}
+          namespace="exam"
           formik={formik}
           h="h-9"
           name="point"
@@ -493,11 +549,6 @@ function CodingQuestion({
             required
             namespace="exam"
             maxLength={50}
-            onKeyDown={(e) => {
-              if (e.code === "Space" || !e.key.match(/[a-zA-Z0-9\s]/g)) {
-                e.preventDefault();
-              }
-            }}
             formik={formik}
             id="function_name"
             name="function_name"
@@ -505,6 +556,7 @@ function CodingQuestion({
             h="h-9"
           />
           <MDropdown
+            required
             options={serverLanguageList.map((r: CodingDataType) => ({
               value: r,
               label: r,
@@ -519,38 +571,62 @@ function CodingQuestion({
           {parameterList.map((l: ParameterType, i: number) => {
             return (
               <div key={l.id} className=" w-full  flex items-start">
-                <Select
-                  value={l.returnType}
-                  onChange={(t) => {
-                    var newList = _.cloneDeep(parameterList);
-                    newList[i].returnType = t;
-                    setParameterList(newList);
-                  }}
-                  options={serverLanguageList.map((r: CodingDataType) => ({
-                    value: r,
-                    label: r,
-                  }))}
-                  className="w-2/5 mt-1 h-9"
-                />
+                <div className="w-2/5">
+                  <MDropdown
+                    touch={formik.touched[`param_type_${l?.id}`] as boolean}
+                    error={formik.errors[`param_type_${l?.id}`] as string}
+                    onBlur={async (_) => {
+                      await formik.setFieldTouched(`param_type_${l?.id}`, true);
+                      formik.validateForm();
+                    }}
+                    h="h-9"
+                    id={`pram_type_${l?.id}`}
+                    name={`param_type_${l?.id}`}
+                    value={l.returnType}
+                    setValue={(na: any, val: any) => {
+                      var newList = _.cloneDeep(parameterList);
+                      newList[i].returnType = val;
+                      setParameterList(newList);
+                    }}
+                    options={serverLanguageList.map((r: CodingDataType) => ({
+                      value: r,
+                      label: r,
+                    }))}
+                    className=" h-9"
+                  />
+                </div>
                 <div className="w-3" />
-                <MInput
-                  value={l.nameParameter}
-                  onChange={(val) => {
-                    var newList = _.cloneDeep(parameterList);
-                    newList[i].nameParameter = val.target.value;
-                    setParameterList(newList);
-                  }}
-                  placeholder={`Parameter ${i + 1}`}
-                  h="h-9"
-                  id={`pram-${i}`}
-                  name={`param-${i}`}
-                />
+                {/* {formik.errors[`param_name_${i + 1}`]?.toString()} */}
+                <div className="w-3/5">
+                  <MInput
+                    extend
+                    isTextRequire={false}
+                    onBlur={async (s) => {
+                      await formik.setFieldTouched(`param_name_${l?.id}`, true);
+                      formik.validateForm();
+                    }}
+                    error={formik.errors[`param_name_${l?.id}`] as string}
+                    touch={formik.touched[`param_name_${l?.id}`] as boolean}
+                    value={l.nameParameter}
+                    onChange={(val) => {
+                      var newList = _.cloneDeep(parameterList);
+                      newList[i].nameParameter = val.target.value;
+                      setParameterList(newList);
+                      formik.validateForm();
+                    }}
+                    placeholder={`Parameter ${i + 1}`}
+                    h="h-9"
+                    id={`pram_name_${l?.id}`}
+                    name={`param_name-${l?.id}`}
+                  />
+                </div>
 
                 <button
                   onClick={() => {
                     var newList = _.cloneDeep(parameterList);
                     newList.splice(i, 1);
                     setParameterList(newList);
+                    formik.validateForm();
                   }}
                   className="text-neutral-500 text-2xl mt-[8px] ml-2"
                 >
@@ -578,7 +654,7 @@ function CodingQuestion({
           </div>
           <div className="mt-3 flex justify-center w-full">
             <MButton
-              onClick={() => {
+              onClick={async () => {
                 var sampleCode = genSampleCode({
                   lang,
                   params: parameterList as any,
@@ -586,6 +662,8 @@ function CodingQuestion({
                   returnType: formik.values?.return_type,
                 });
                 setCode(sampleCode);
+                await formik.setFieldTouched("code", true);
+                formik.validateForm();
               }}
               h="h-11"
               text={t("create_sample_code")}
@@ -612,6 +690,10 @@ function CodingQuestion({
               />
             </div>
             <CodeMirror
+              onBlur={async () => {
+                await formik.setFieldTouched("code", true);
+                formik.validateForm();
+              }}
               value={code}
               lang={lang}
               theme={dracula}
@@ -619,9 +701,26 @@ function CodingQuestion({
               extensions={[renderExtension(lang ?? "") as any]}
               onChange={(v) => {
                 setCode(v);
+                console.log(
+                  "errorcode",
+                  formik.errors.code,
+                  formik.touched.code,
+                );
+
+                formik.validateForm();
               }}
             />
-          </div>
+          </div>{" "}
+          {formik.errors.code && formik.touched.code && (
+            <div className={`flex items-center `}>
+              <div className="min-w-4">
+                <NoticeIcon />
+              </div>
+              <div className={`text-m_error_500 body_regular_14`}>
+                {(formik.errors?.code ?? "") as string}
+              </div>
+            </div>
+          )}
         </div>
         <div className="h-4" />
         <EditorHook
