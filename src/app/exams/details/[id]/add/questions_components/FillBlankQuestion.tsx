@@ -114,7 +114,7 @@ function FillBlankQuestion({
 
     if (isSave && results?.length != 0) {
       results.map((a: any, i: number) => {
-        if (!a.text) {
+        if (!a.text && !values[`result-${i + 1}`]) {
           errors[`result-${i + 1}`] = "common_not_empty";
         }
       });
@@ -305,7 +305,7 @@ function FillBlankQuestion({
                     onBlur={async () => {
                       await formik.setFieldTouched(`result-${i + 1}`);
                     }}
-                    touch={formik.errors[`result-${i + 1}`] as any}
+                    touch={formik.touched[`result-${i + 1}`] as any}
                     error={formik.errors[`result-${i + 1}`] as any}
                     value={d.text}
                     onChange={async (f) => {
@@ -318,6 +318,10 @@ function FillBlankQuestion({
                       };
 
                       setResults(newList);
+                      await formik.setFieldValue(
+                        `result-${i + 1}`,
+                        f.target.value,
+                      );
 
                       await formik.validateForm();
                     }}

@@ -432,7 +432,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                           >
                             <Tooltip
                               placement="top"
-                              title={common.t("duplicate")}
+                              title={t("create_examination")}
                             >
                               <CopyIcon />
                             </Tooltip>{" "}
