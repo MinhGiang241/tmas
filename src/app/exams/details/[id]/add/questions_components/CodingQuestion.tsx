@@ -294,7 +294,7 @@ function CodingQuestion({
     if (!code) {
       errors.code = common.t("not_empty");
     }
-    if (!values.question) {
+    if (!values.question || !$.text()) {
       errors.question = "common_not_empty";
     }
     if (!values.explain) {

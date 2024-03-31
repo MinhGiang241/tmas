@@ -143,7 +143,7 @@ function ConnectQuestion({
       });
     }
 
-    if (!values.question) {
+    if (!values.question || !$.text()) {
       errors.question = "common_not_empty";
     }
     if (!values.question_group) {

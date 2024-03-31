@@ -135,7 +135,7 @@ function TrueFalseQuestion({
     console.log("a", values.a);
     console.log("b", values.b);
 
-    if (!values.question) {
+    if (!values.question || !$.text()) {
       errors.question = "common_not_empty";
     }
     if (!values.a) {

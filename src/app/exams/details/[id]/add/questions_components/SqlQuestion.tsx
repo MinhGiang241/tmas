@@ -98,7 +98,7 @@ function SqlQuestion({
       errors.expected_output = common.t("not_empty");
     }
 
-    if (!values.question) {
+    if (!values.question || !$.text()) {
       errors.question = "common_not_empty";
     }
 
