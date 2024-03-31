@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
 import { Collapse, Popover } from "antd";
@@ -10,120 +10,133 @@ import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import { useRouter } from "next/navigation";
+import {
+    createAExamQuestionPart,
+    getExamQuestionPartList,
+    deleteQuestionPartById,
+    deleteQuestionById,
+    CopyQuestion,
+    updateAExamQuestionPart,
+    deleteQuestionPart,
+} from "@/services/api_services/question_api";
+import { FormattedDate } from "react-intl";
 
 export default function Coding({ examId, question }: { examId: any, question: any }) {
     const [openEditQuestion, setOpenEditQuestion] = useState(false)
     const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
     const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
+    const [active, setActive] = useState("");
+    //
+    const [data, setData] = useState<any>();
+    //
     const router = useRouter()
     const { t } = useTranslation('question')
+
+    const getData = async () => {
+        const res = await getExamQuestionPartList({
+            paging: { startIndex: 0, recordPerPage: 100 },
+            // studioSorters: { name: "createdTime", isAsc: true },
+            // ids: [params.id]
+        });
+        const data = res.data.records[0];
+        console.log(data);
+        if (data) {
+            setData(data);
+        }
+        // if (data && data.records) {
+        //   const filteredData = data.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id));
+        //   console.log(filteredData, "filteredData");
+        // }
+    };
+    useEffect(() => {
+        getData();
+    }, []);
     return (
         <div>
-            <Collapse
-                // key={v?.id}
-                ghost
-                expandIconPosition="end"
-                className="rounded-lg bg-m_question overflow-hidden mb-4"
-            >
-                <Collapse.Panel
-                    header={
-                        <div className="my-3 flex justify-between items-center">
-                            <div className="flex ">
-                                <span className="body_semibold_14 w-11/12">Câu 4: <span className="body_regular_14">Viết một chương trình có 2 chữ số X,Y nhận giá trị từ đầu vào và tạo ra một mảng 2 chiều. Giá trị phần tử trong hàng thứ i và cột thứ j của mảng là gì?</span></span>
-
+            <ConfirmModal
+                onOk={() => { }}
+                onCancel={() => { setOpenCopyQuestion(false) }}
+                action={t("copy")}
+                text={t("confirm_copy")}
+                open={openCopyQuestion}
+            />
+            <ConfirmModal
+                onOk={async () => {
+                    await deleteQuestionById(active);
+                    setOpenDeleteQuestion(false);
+                    getData();
+                }}
+                onCancel={() => { setOpenDeleteQuestion(false) }}
+                action={t("delete_question")}
+                text={t("confirm_delete_question")}
+                open={openDeleteQuestion}
+            />
+            {data?.examQuestions?.map((x: any, key: any) => (
+                <Collapse
+                    key={key}
+                    ghost
+                    expandIconPosition="end"
+                    className="rounded-lg bg-m_question overflow-hidden mb-4"
+                >
+                    <Collapse.Panel
+                        header={
+                            <div className="my-3 flex justify-between items-center">
+                                <div className="flex">
+                                    <span className="body_semibold_14">Câu {key + 1}:<span className="body_regular_14 pl-2" dangerouslySetInnerHTML={{ __html: x?.question }} /></span>
+                                </div>
+                                <div className="min-w-28 pl-4">
+                                    <button onClick={(e) => {
+                                        e.stopPropagation()
+                                    }}><EditIcon onClick={() => {
+                                        router.push(`/exams/details/${examId}/edit?questId=${question.id}`);
+                                    }} />
+                                    </button>
+                                    <button className="px-2" onClick={(e) => {
+                                        e.stopPropagation()
+                                    }}><CopyIcon onClick={() => {
+                                        setOpenCopyQuestion(true)
+                                    }} />
+                                    </button>
+                                    <button onClick={(e) => {
+                                        e.stopPropagation()
+                                    }}><DeleteRedIcon onClick={() => {
+                                        setOpenDeleteQuestion(true)
+                                        setActive(x.id);
+                                        // getData();
+                                    }} />
+                                    </button>
+                                </div>
                             </div>
-                            <div className="min-w-28">
-                                <button onClick={(e) => {
-                                    e.stopPropagation()
-                                }}><EditIcon onClick={() => {
-                                    router.push(`/exams/details/${examId}/edit?questId=${question.id}`);
-                                }} />
-                                    <BaseModal
-                                        width={564}
-                                        onCancel={() => { setOpenEditQuestion(false) }}
-                                        title={t("edit_question")}
-                                        open={openEditQuestion}
-                                    >
-                                        <MInput
-                                            // formik={formik}
-                                            id="name"
-                                            name="name"
-                                            title={t("name")}
-                                            required
-                                        />
-                                        <MTextArea
-                                            // formik={formik}
-                                            id="note"
-                                            name="note"
-                                            title={t("note")}
-                                        />
-                                        <div className="w-full flex justify-center mt-7">
-                                            <MButton
-                                                className="w-36"
-                                                type="secondary"
-                                                text={t("cancel")}
-                                                onClick={() => { setOpenEditQuestion(false) }}
-                                            />
-                                            <div className="w-5" />
-                                            <MButton
-                                                // loading={loading}
-                                                htmlType="submit"
-                                                className="w-36"
-                                                text={t("update")}
-                                            />
-                                        </div>
-                                    </BaseModal>
-                                </button>
-                                <button className="px-2" onClick={(e) => {
-                                    e.stopPropagation()
-                                }}><CopyIcon onClick={() => {
-                                    setOpenCopyQuestion(true)
-                                }} />
-                                    <ConfirmModal
-                                        onOk={() => { }}
-                                        onCancel={() => { setOpenCopyQuestion(false) }}
-                                        action={t("copy")}
-                                        text={t("confirm_copy")}
-                                        open={openCopyQuestion}
-                                    />
-                                </button>
-                                <button onClick={(e) => {
-                                    e.stopPropagation()
-                                }}><DeleteRedIcon onClick={() => {
-                                    setOpenDeleteQuestion(true)
-                                }} />
-                                    <ConfirmModal
-                                        onOk={() => { }}
-                                        onCancel={() => { setOpenDeleteQuestion(false) }}
-                                        action={t("delete_question")}
-                                        text={t("confirm_delete_question")}
-                                        open={openDeleteQuestion}
-                                    />
-                                </button>
-                            </div>
+                        }
+                        key={""}>
+                        <div className="h-[1px] bg-m_primary_200 mb-3" />
+                        <div className="text-m_primary_500 text-sm font-semibold mb-2">Thông tin câu hỏi</div>
+                        <div className="flex">
+                            <div className="body_semibold_14 pr-2">Nhóm câu hỏi: </div>
+                            <span>Toán học</span>
                         </div>
-                    }
-                    key={""}>
-                    <div className="h-[1px] bg-m_primary_200 mb-3" />
-                    <div className="text-m_primary_500 text-sm font-semibold mb-2">Thông tin câu hỏi</div>
-                    <div className="flex">
-                        <div className="body_semibold_14 pr-2">Nhóm câu hỏi: </div>
-                        <span>Toán học</span>
-                    </div>
-                    <div className="flex">
-                        <div className="body_semibold_14 pr-2">Kiểu câu hỏi: </div>
-                        <span>Lập trình</span>
-                    </div>
-                    <div className="flex">
-                        <div className="body_semibold_14 pr-2">Điểm: </div>
-                        <span>1</span>
-                    </div>
-                    <div className="flex">
-                        <div className="body_semibold_14 pr-2">Ngày tạo: </div>
-                        <span>08/02/2024  20:20:09</span>
-                    </div>
-                </Collapse.Panel>
-            </Collapse>
+                        <div className="flex">
+                            <div className="body_semibold_14 pr-2">Kiểu câu hỏi: </div>
+                            <span>{x?.questionType}</span>
+                        </div>
+                        <div className="flex">
+                            <div className="body_semibold_14 pr-2">Điểm: </div>
+                            <span>{x.numberPoint}</span>
+                        </div>
+                        <div className="flex">
+                            <div className="text-sm pr-2 font-semibold">
+                                Ngày tạo:{" "}
+                            </div>
+                            <FormattedDate
+                                value={x?.createdTime}
+                                day="2-digit"
+                                month="2-digit"
+                                year="numeric"
+                            />
+                        </div>
+                    </Collapse.Panel>
+                </Collapse>
+            ))}
         </div >
     )
 }

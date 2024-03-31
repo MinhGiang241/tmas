@@ -46,6 +46,7 @@ import toast from "react-hot-toast";
 import ManyResult from "./question/ManyResult";
 import ReactToPrint from "react-to-print";
 import { ExamPrint } from "../components/ExamPrint";
+import { color } from "@uiw/react-codemirror";
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -70,6 +71,7 @@ function ExamDetails({ params }: any) {
   const [list, setList] = useState<ExamData[]>([]);
   //
   const [name, setName] = React.useState<string>("");
+  const [nameError, setNameError] = useState<string>("");
   const [note, setNote] = React.useState<string>("");
   const [customName, setCustomName] = useState("");
   const [customNote, setCustomNote] = useState("");
@@ -178,8 +180,18 @@ function ExamDetails({ params }: any) {
   //   getData();
   // }
 
+  const handleNameChangeValid = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setName(value);
+  };
+
   const handleAddPart = async () => {
     setAddLoading(true);
+    if (!name) {
+      setNameError("Vui lòng nhập tên phần thi.");
+      setAddLoading(false);
+      return;
+    }
     const res: any = await createAExamQuestionPart({
       idExam: params.id,
       name: name,
@@ -224,7 +236,8 @@ function ExamDetails({ params }: any) {
   const getData = async () => {
     const res = await getExamQuestionPartList({
       paging: { startIndex: 0, recordPerPage: 100 },
-      SortByCreateTime: { name: "string", isAsc: true },
+      // studioSorters: { name: "createdTime", isAsc: true },
+      // ids: [params.id]
     });
     const data = res.data;
     console.log(data);
@@ -259,8 +272,8 @@ function ExamDetails({ params }: any) {
       {/* Copy phần câu hỏi */}
       <ConfirmModal
         onOk={async () => {
-          await CopyQuestion(params.id);
-          setOpenCopyQuestion(false);
+          // await CopyQuestion(params.id);
+          // setOpenCopyQuestion(false);
         }}
         onCancel={() => {
           setOpenCopyQuestion(false);
@@ -301,7 +314,7 @@ function ExamDetails({ params }: any) {
           // { text: exam?.name, href: `/exams/details/${exam?.id}` },
           {
             // href: `/exams/details/${exam?.id}/add`,
-            text: t("Tuyển Fresher digital MKT"),
+            text: exam?.name,
             href: "/",
             active: true,
           },
@@ -310,7 +323,7 @@ function ExamDetails({ params }: any) {
       <div className="h-2" />
       <div className="w-full max-lg:px-3 mb-5">
         <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
-          <div className="">{t(`Tuyển Fresher digital MKT`)}</div>
+          <div className="">{exam?.name}</div>
           <div className="flex">
             {/* <MButton
               h="h-11"
@@ -341,12 +354,10 @@ function ExamDetails({ params }: any) {
             </Popover>
           </div>
         </div>
-        <div className="text-sm text-m_neutral_500 pt-1">
-          Chúng tôi đang tìm kiếm một Fresher digital MKT để tham gia đội ngũ
-          của chúng tôi. Ứng viên sẽ được đào tạo và hướng dẫn bởi các chuyên
-          gia trong ngành để phát triển các kỹ năng và kiến thức cần thiết để
-          trở thành một chuyên gia
-        </div>
+        <div className="text-sm text-m_neutral_500 pt-1" dangerouslySetInnerHTML={{ __html: exam?.description || "" }} />
+        {/* <div className="text-sm text-m_neutral_500 pt-1">
+          {exam?.description}
+        </div> */}
         <div className="h-[1px] bg-m_neutral_200 mt-10" />
         <div className="flex justify-between items-center mt-6 mb-6">
           <div className="text-sm text-m_neutral_900 flex">
@@ -392,16 +403,25 @@ function ExamDetails({ params }: any) {
             title={t("add_new")}
             open={open}
           >
-            <MInput
-              id="name"
-              name="name"
-              title={t("name")}
-              required
-              onChange={handleNameChange}
-              value={name}
-              placeholder="Nhập nội dung"
-              maxLength={255}
-            />
+            <div className="w-full mb-5">
+              <MInput
+                id="name"
+                name="name"
+                title={t("name")}
+                required
+                // onChange={handleNameChange, handleNameChangeValid}
+                onChange={(event) => {
+                  handleNameChange(event);
+                  handleNameChangeValid(event);
+                }}
+                value={name}
+                placeholder="Nhập nội dung"
+                maxLength={255}
+                isTextRequire={false}
+                className={nameError ? "border-red-300" : ""}
+              />
+              {nameError && <span className="text-left text-red-500">{nameError}</span>}
+            </div>
             <MTextArea
               id="note"
               name="note"
@@ -451,7 +471,7 @@ function ExamDetails({ params }: any) {
                           {x.description}
                         </div>
                       </div>
-                      <div>
+                      <div className="min-w-28  pl-5">
                         <Popover
                           trigger={"click"}
                           placement="bottomRight"
@@ -531,10 +551,13 @@ function ExamDetails({ params }: any) {
                               placeholder="Nhập nội dung"
                               maxLength={255}
                               value={customName}
-                              onChange={(event) =>
-                                setCustomName(event.target.value)
-                              }
+                              onChange={(event) => {
+                                setCustomName(event.target.value);
+                                handleNameChangeValid(event);
+                              }}
+                              className={`${nameError ? "border-red-300" : ""}`}
                             />
+                            {nameError && <div style={{ color: "red" }}>{nameError}</div>}
                             <MTextArea
                               // formik={formik}
                               id="customNote"
@@ -560,9 +583,13 @@ function ExamDetails({ params }: any) {
                               <MButton
                                 // loading={loading}
                                 htmlType="submit"
-                                className="w-36"
+                                className={`w-36`}
                                 text={t("update")}
                                 onClick={async () => {
+                                  if (!customName) {
+                                    setNameError("Vui lòng nhập tên phần thi.");
+                                    return;
+                                  }
                                   await updateAExamQuestionPart({
                                     idExam: x.id,
                                     name: customName,
@@ -643,15 +670,10 @@ function ExamDetails({ params }: any) {
                         <Collapse.Panel
                           header={
                             <div className="my-3 flex justify-between items-center">
-                              <div className="flex ">
-                                <span className="body_semibold_14">
-                                  Câu {key + 1}:{" "}
-                                  <span className="body_regular_14">
-                                    {e?.question}
-                                  </span>
-                                </span>
+                              <div className="flex">
+                                <span className="body_semibold_14">Câu {key + 1}:<span className="body_regular_14 pl-2" dangerouslySetInnerHTML={{ __html: e?.question }} /></span>
                               </div>
-                              <div className="min-w-28">
+                              <div className="min-w-28 pl-4">
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -664,7 +686,7 @@ function ExamDetails({ params }: any) {
                                       );
                                     }}
                                   />
-                                  <BaseModal
+                                  {/* <BaseModal
                                     width={564}
                                     onCancel={() => {
                                       setOpenEditQuestion(false);
@@ -702,7 +724,7 @@ function ExamDetails({ params }: any) {
                                         text={t("update")}
                                       />
                                     </div>
-                                  </BaseModal>
+                                  </BaseModal> */}
                                 </button>
                                 <button
                                   className="px-2"

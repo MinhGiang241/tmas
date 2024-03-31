@@ -89,7 +89,7 @@ function MInput({
   const [visible, setVisible] = useState(!isPassword);
   const { t } = useTranslation(np);
   const common = useTranslation();
-  useEffect(() => {}, [formik]);
+  useEffect(() => { }, [formik]);
   return (
     <div className="w-full">
       <div
@@ -102,9 +102,8 @@ function MInput({
       </div>
 
       <div
-        className={`w-full flex flex-col ${
-          extend ? "mb-0" : "mb-[22px]"
-        } relative`}
+        className={`w-full flex flex-col ${extend ? "mb-0" : "mb-[22px]"
+          } relative`}
       >
         <Input
           autoComplete="off"
@@ -115,11 +114,9 @@ function MInput({
           onBlur={onBlur}
           status={error && touch ? `error` : ""}
           type={type ?? visible ? "text" : "password"}
-          className={`${disable ? "text-m_neutral_900" : ""} ${
-            successText && touch ? "border-m_success_500" : ""
-          } ${dangerText && touch ? "border-m_warning_500" : ""}  ${
-            h ? h : `h-12`
-          } rounded-lg ${suffix ? "pr-0" : ""} ${className} body_regular_14`} //shadow-inner shadow-gray-300 bg-m_neutral_100
+          className={`${disable ? "text-m_neutral_900" : ""} ${successText && touch ? "border-m_success_500" : ""
+            } ${dangerText && touch ? "border-m_warning_500" : ""}  ${h ? h : `h-12`
+            } rounded-lg ${suffix ? "pr-0" : ""} ${className} body_regular_14`} //shadow-inner shadow-gray-300 bg-m_neutral_100
           name={name}
           id={id}
           allowClear={allowClear ?? true}
@@ -144,9 +141,8 @@ function MInput({
         />
         {successText && touch ? (
           <div
-            className={`flex items-start text-m_success_500 ${
-              !extend && "absolute  top-[49px]"
-            }`}
+            className={`flex items-start text-m_success_500 ${!extend && "absolute  top-[49px]"
+              }`}
           >
             <div className="min-w-4">
               <CheckCircleFilled />
@@ -158,9 +154,8 @@ function MInput({
         ) : null}
         {dangerText && touch ? (
           <div
-            className={`flex items-start  text-m_warning_500 ${
-              !extend && "absolute top-[49px]"
-            }`}
+            className={`flex items-start  text-m_warning_500 ${!extend && "absolute top-[49px]"
+              }`}
           >
             <div className="min-w-4">
               <ExclamationCircleFilled />

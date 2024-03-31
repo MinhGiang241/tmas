@@ -216,7 +216,6 @@ export const createAExamQuestionPart = async (data?: ExamQuestionPart) => {
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart`,
     data,
   );
-
   return results;
 };
 
