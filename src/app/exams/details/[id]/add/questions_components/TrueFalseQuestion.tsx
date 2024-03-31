@@ -78,7 +78,7 @@ function TrueFalseQuestion({
       setAResult(a);
       setBResult(b);
       setCorrectAnswer(
-        a?.isCorrectAnswer ? 0 : b?.isCorrectAnswer ? 1 : undefined,
+        a?.isCorrectAnswer ? "0" : b?.isCorrectAnswer ? "1" : undefined,
       );
       setLoadAs(true);
     }

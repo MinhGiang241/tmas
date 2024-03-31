@@ -408,6 +408,15 @@ function CodingQuestion({
 
             return;
           }
+          if (testcases.length === 0) {
+            await formik.validateForm();
+            Object.keys(formik.errors).map(async (v) => {
+              await formik.setFieldTouched(v, true);
+            });
+            errorToast(t("no_testcase"));
+
+            return;
+          }
           formik.handleSubmit();
           Object.keys(formik.errors).map(async (v) => {
             await formik.setFieldTouched(v, true);
