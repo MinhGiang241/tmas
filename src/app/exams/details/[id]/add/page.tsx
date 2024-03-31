@@ -166,14 +166,13 @@ function CreateQuestionPage({ params, question }: any) {
                 },
               );
             }}
-            className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${
-              a == "many_results" &&
-              !questionList.some((a: any) => a == questionType)
+            className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${a == "many_results" &&
+                !questionList.some((a: any) => a == questionType)
                 ? "bg-m_primary_100"
                 : a == questionType
                   ? "bg-m_primary_100"
                   : "bg-white "
-            }`}
+              }`}
             key={i}
           >
             {t(a)}
@@ -183,13 +182,13 @@ function CreateQuestionPage({ params, question }: any) {
       <div className="h-4" />
       {(questionType == "many_results" ||
         !questionList.some((a: any) => a == questionType)) && (
-        <ManyResultsQuestion
-          question={question}
-          questionGroups={questionGroups}
-          submitRef={submitRef}
-          idExam={params?.id}
-        />
-      )}
+          <ManyResultsQuestion
+            question={question}
+            questionGroups={questionGroups}
+            submitRef={submitRef}
+            idExam={params?.id}
+          />
+        )}
       {questionType == "true_false" && (
         <TrueFalseQuestion
           question={question}
