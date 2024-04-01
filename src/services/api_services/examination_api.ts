@@ -89,9 +89,9 @@ export const deleteAllDocument = async (ids?: string[]) => {
   return results;
 };
 
-export const deleteDocumentById = async (id: string) => {
+export const deleteDocumentById = async (idSession?: string, id?: string) => {
   const results = await callStudioAPI.delete(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/${id}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/${idSession}/${id}`,
   );
 
   return results;

@@ -44,15 +44,19 @@ function DragDropUpload({
   const fileRef = useRef(null);
 
   const handleFileChange = async (fileList: any) => {
+    console.log("fileList", fileList);
     if (fileList) {
       var uploaded = [];
       for (let file of fileList) {
+        console.log("file", file);
+
         var formData = new FormData();
         formData.append("files", file);
         formData.append("name", file?.name);
 
         var idData = await uploadStudioDocument(idSession, formData);
         console.log("id upload", idData);
+        console.log("idSession", idSession);
 
         uploaded.push({
           error: idData.code != 0,
@@ -90,7 +94,13 @@ function DragDropUpload({
         type="file"
         ref={fileRef}
         style={{ display: "none" }}
-        onChange={(e) => handleFileChange(e.target.files)}
+        onClick={(event) => {
+          (event.target as any).value = null;
+        }}
+        onChange={(e) => {
+          console.log("e", e);
+          handleFileChange(e.target.files);
+        }}
       />
       <div className="mt-4 body_semibold_14">{t("pick_file")}</div>
       {files.length == 0 && uploaded.length == 0 && (
@@ -138,7 +148,7 @@ function DragDropUpload({
           deleteDoc={async (e: any) => {
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
-            await deleteDocumentById(u);
+            await deleteDocumentById(idSession, u);
             setUploaded(uploaded.filter((c) => c != u));
           }}
         />
@@ -152,7 +162,7 @@ function DragDropUpload({
           deleteDoc={async (e: any) => {
             console.log(e);
             console.log(files);
-            await deleteDocumentById(v?.id ?? "");
+            await deleteDocumentById(idSession, v?.id ?? "");
             // e.stopPropagation();
             // e.nativeEvent.stopImmediatePropagation();
             setFiles(files.filter((c) => c?.id != v?.id));
