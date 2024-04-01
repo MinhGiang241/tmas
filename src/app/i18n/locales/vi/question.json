@@ -18,11 +18,12 @@
     "delete_exam_questions": "Bạn có muốn xóa đề thi này không?",
     "delete_success": "Xóa thành công đề thi",
     "question": "Câu hỏi",
-    "MutilAnswer": "Chọn một đáp án",
-    "YesNoQuestion": "Đúng sai",
+    "MutilAnswer": "Nhiều đáp án",
+    "YesNoQuestion": "Đúng/sai",
     "SQL": "SQL",
     "FillBlank": "Điền vào chỗ trống",
-    "Pairing": "Ghép cặp",
+    "Pairing": "Ghép/nối",
     "Coding": "Coding",
-    "Essay": "Tự luận"
+    "Essay": "Tự luận",
+    "Random": "Ngẫu nhiên"
 }

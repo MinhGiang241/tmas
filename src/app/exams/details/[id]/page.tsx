@@ -2,7 +2,7 @@
 import MBreadcrumb from "@/app/components/config/MBreadcrumb";
 import MButton from "@/app/components/config/MButton";
 import HomeLayout from "@/app/layouts/HomeLayout";
-import { ExamData } from "@/data/exam";
+import { ExamData, ExamGroupData, QuestionGroupData } from "@/data/exam";
 import { getExamById } from "@/services/api_services/examination_api";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,6 +32,7 @@ import {
   CopyQuestion,
   updateAExamQuestionPart,
   deleteQuestionPart,
+  getQuestionList
 } from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
@@ -47,6 +48,11 @@ import ManyResult from "./question/ManyResult";
 import ReactToPrint from "react-to-print";
 import { ExamPrint } from "../components/ExamPrint";
 import { color } from "@uiw/react-codemirror";
+import { RootState } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { fetchDataExamGroup, setquestionGroupLoading } from "@/redux/exam_group/examGroupSlice";
+import { getQuestionGroups } from "@/services/api_services/exam_api";
+import { UserData } from "@/data/user";
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -88,6 +94,38 @@ function ExamDetails({ params }: any) {
     setNote(event.target.value);
   };
 
+  const user: UserData | undefined = useAppSelector((state: RootState) => state?.user?.user);
+  const dispatchGroup = useAppDispatch()
+  const questionGroups: ExamGroupData[] | undefined
+    = useAppSelector(
+      (state: RootState) => state?.examGroup?.list,
+    );
+  const loadQuestionGroupList = async (init?: boolean) => {
+    if (init) {
+      dispatchGroup(setquestionGroupLoading(true));
+    }
+
+    var dataResults: APIResults = await getQuestionGroups(
+      "",
+      user?.studio?._id,
+    );
+
+    if (dataResults.code != 0) {
+      return [];
+    } else {
+      var data = dataResults?.data as QuestionGroupData[];
+      return data;
+    }
+  };
+
+  useEffect(() => {
+    if (user?.studio?._id) {
+      dispatchGroup(fetchDataExamGroup(async () => loadQuestionGroupList(true)));
+    }
+
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
   const { t } = useTranslation("question");
   // const common = useTranslation();
   const loadExamById = async () => {
@@ -100,6 +138,7 @@ function ExamDetails({ params }: any) {
       errorToast(res?.message ?? "");
       return;
     }
+    // console.log(res, "exam");
 
     setExam(res?.data?.records[0]);
   };
@@ -236,18 +275,16 @@ function ExamDetails({ params }: any) {
   const getData = async () => {
     const res = await getExamQuestionPartList({
       paging: { startIndex: 0, recordPerPage: 100 },
-      // studioSorters: { name: "createdTime", isAsc: true },
-      // ids: [params.id]
+      studioSorters: [{ name: "createdTime", isAsc: true }],
+      // truyền idexam thay vì ids
+      // ids: [params.id],
+      idExams: [params.id]
     });
     const data = res.data;
     console.log(data);
     if (data) {
       setData(data);
     }
-    // if (data && data.records) {
-    //   const filteredData = data.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id));
-    //   console.log(filteredData, "filteredData");
-    // }
   };
 
   const openEditModal = (id: string) => {
@@ -266,14 +303,21 @@ function ExamDetails({ params }: any) {
   // const filteredData = data.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id));
   // const filteredData = data?.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id)
   // console.log(filteredData, "filteredData");
+  // console.log(exam);
+
   return (
     <HomeLayout>
       <div className="h-5" />
       {/* Copy phần câu hỏi */}
       <ConfirmModal
         onOk={async () => {
-          // await CopyQuestion(params.id);
-          // setOpenCopyQuestion(false);
+          var res = await CopyQuestion(params.id);
+          if (res?.code != 0) {
+            errorToast(res.message || "");
+            return;
+          }
+          setOpenCopyQuestion(false);
+          router.push(`/exams/${res?.data}`)
         }}
         onCancel={() => {
           setOpenCopyQuestion(false);
@@ -336,8 +380,15 @@ function ExamDetails({ params }: any) {
               // text={common.t("create_new")}
               text={question.t("Lựa chọn khác")}
             /> */}
-            <button>
-              <EditIcon />
+            <button onClick={() => {
+              router.push(
+                `/exams/${params.id}`,
+              );
+            }
+
+            }>
+              <EditIcon
+              />
             </button>
             {/* <button className="pl-3">
               <MoreIcon />
@@ -623,41 +674,45 @@ function ExamDetails({ params }: any) {
                   key={""}
                 >
                   {x?.examQuestions?.map((e: any, key: any) => {
+                    var questionGroup = questionGroups?.find((v: any) => (v.id === e.idGroupQuestion))
                     if (e.questionType == "Coding") {
                       return (
-                        <Coding key={e.id} examId={params.id} question={e} />
+                        <Coding index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />
                       );
                     }
-                    if (e.questionType == "Connect") {
+                    if (e.questionType == "Pairing") {
                       return (
-                        <Connect key={e.id} examId={params.id} question={e} />
+                        <Connect index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />
                       );
                     }
-                    if (e.questionType == "Explain") {
+                    if (e.questionType == "Essay") {
                       return (
-                        <Explain key={e.id} examId={params.id} question={e} />
+                        <Explain index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />
                       );
                     }
                     if (e.questionType == "FillBlank") {
                       return (
-                        <FillBlank key={e.id} examId={params.id} question={e} />
+                        <FillBlank index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />
                       );
                     }
-                    if (e.questionType == "ManyResult") {
+                    if (e.questionType == "MutilAnswer") {
                       return (
                         <ManyResult
+                          getData={getData}
+                          index={key + 1}
                           key={e.id}
                           examId={params.id}
                           question={e}
+                          questionGroup={questionGroup}
                         />
                       );
                     }
-                    if (e.questionType == "Sql") {
-                      return <Sql key={e.id} examId={params.id} question={e} />;
+                    if (e.questionType == "SQL") {
+                      return <Sql index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />;
                     }
-                    if (e.questionType == "TrueFalse") {
+                    if (e.questionType == "YesNoQuestion") {
                       return (
-                        <TrueFalse key={e.id} examId={params.id} question={e} />
+                        <TrueFalse index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />
                       );
                     }
                     return (
@@ -764,13 +819,13 @@ function ExamDetails({ params }: any) {
                             <div className="text-sm pr-2 font-semibold">
                               Nhóm câu hỏi:{" "}
                             </div>
-                            <span>Toán học</span>
+                            <span>{questionGroup?.name}</span>
                           </div>
                           <div className="flex">
                             <div className="text-sm pr-2 font-semibold">
                               Kiểu câu hỏi:{" "}
                             </div>
-                            <span>{e.questionType}</span>
+                            <span>{t(e?.questionType)}</span>
                           </div>
                           <div className="flex">
                             <div className="text-sm pr-2 font-semibold">
@@ -802,8 +857,12 @@ function ExamDetails({ params }: any) {
       <div className="hidden">
         <ExamPrint exam={data?.records} ref={printRef} name={exam?.name} />
       </div>
-    </HomeLayout>
+    </HomeLayout >
   );
 }
 
 export default ExamDetails;
+function dispatch(arg0: any) {
+  throw new Error("Function not implemented.");
+}
+

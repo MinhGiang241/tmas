@@ -189,7 +189,7 @@ export const deleteQuestionById = async (questId?: string) => {
   const results = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/${questId}`,
   );
-  console.log(results);
+  // console.log(results);
   return results;
 };
 
@@ -207,7 +207,7 @@ export const getExamQuestionPartList = async (data?: PagingGetData) => {
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/GetPagingDetail`,
     data,
   );
-  console.log("data results", results);
+  // console.log("data results", results);
   return results;
 };
 
@@ -284,7 +284,6 @@ export const CopyQuestion = async (id?: string) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Copy/${id}`,
     {},
-    { params: { Id: id } },
   );
   return results;
 };
