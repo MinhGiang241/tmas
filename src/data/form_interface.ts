@@ -248,7 +248,11 @@ export interface PagingGetData {
   };
   ids?: string[];
   sorters?: { name?: string; isAsc?: boolean }[];
-  // studioSorters?: { name?: string; isAsc?: boolean };
+  studioSorters?: { name?: string; isAsc?: boolean }[];
+  idExams?: string[];
+  andIdExamQuestionParts?: string[];
+  andIdGroupQuestions?: string[];
+  andQuestionTypes?: string[];
 }
 
 export interface EssayQuestionFormData extends BaseQuestionFormData {

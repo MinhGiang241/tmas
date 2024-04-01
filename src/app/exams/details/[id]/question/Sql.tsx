@@ -11,15 +11,29 @@ import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import Tick from "@/app/components/icons/tick-circle.svg";
 import { useRouter } from "next/navigation";
+import { FormattedDate } from "react-intl";
+import { deleteQuestionById } from "@/services/api_services/question_api";
 
-export default function Sql({ examId, question }: { examId: any, question: any }) {
+export default function Sql({ examId, question, index, getData, questionGroup }: { examId: any, question: any, index: any, getData: any, questionGroup: any }) {
     const [openEditQuestion, setOpenEditQuestion] = useState(false)
     const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
     const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
+    const [active, setActive] = useState("");
     const router = useRouter()
     const { t } = useTranslation('question')
     return (
         <div>
+            <ConfirmModal
+                onOk={async () => {
+                    await deleteQuestionById(active);
+                    setOpenDeleteQuestion(false);
+                    await getData();
+                }}
+                onCancel={() => { setOpenDeleteQuestion(false) }}
+                action={t("delete_question")}
+                text={t("confirm_delete_question")}
+                open={openDeleteQuestion}
+            />
             <Collapse
                 // key={v?.id}
                 ghost
@@ -29,11 +43,10 @@ export default function Sql({ examId, question }: { examId: any, question: any }
                 <Collapse.Panel
                     header={
                         <div className="my-3 flex justify-between items-center">
-                            <div className="flex ">
-                                <span className="body_semibold_14">Câu 3: <span className="body_regular_14">Viết một câu lệnh tạo database</span></span>
-
+                            <div className="flex">
+                                <span className="body_semibold_14">Câu {index}:<span className="body_regular_14 pl-2" dangerouslySetInnerHTML={{ __html: question?.question }} /></span>
                             </div>
-                            <div className="min-w-28">
+                            <div className="min-w-28 pl-4">
                                 <button onClick={(e) => {
                                     e.stopPropagation()
                                 }}><EditIcon onClick={() => {
@@ -91,49 +104,47 @@ export default function Sql({ examId, question }: { examId: any, question: any }
                                 <button onClick={(e) => {
                                     e.stopPropagation()
                                 }}><DeleteRedIcon onClick={() => {
-                                    setOpenDeleteQuestion(true)
+                                    setOpenDeleteQuestion(true);
+                                    setActive(question.id);
                                 }} />
-                                    <ConfirmModal
-                                        onOk={() => { }}
-                                        onCancel={() => { setOpenDeleteQuestion(false) }}
-                                        action={t("delete_question")}
-                                        text={t("confirm_delete_question")}
-                                        open={openDeleteQuestion}
-                                    />
                                 </button>
                             </div>
                         </div>
                     }
                     key={""}>
                     <div className="h-[1px] bg-m_primary_200 mb-3" />
-                    {/* <div className="flex"> */}
-                    {/* <div className="w-1/2 p-4"> */}
-                    <div className="text-m_primary_500 text-sm font-semibold mb-2">Thông tin câu hỏi</div>
-                    <div className="flex">
-                        <div className="body_semibold_14 pr-2">Nhóm câu hỏi: </div>
-                        <span>Toán học</span>
+                    <div className="text-m_primary_500 text-sm font-semibold mb-2">
+                        Thông tin câu hỏi
                     </div>
                     <div className="flex">
-                        <div className="body_semibold_14 pr-2">Kiểu câu hỏi: </div>
-                        <span>SQL</span>
+                        <div className="text-sm pr-2 font-semibold">
+                            Nhóm câu hỏi:{" "}
+                        </div>
+                        <span>{questionGroup?.name}</span>
                     </div>
                     <div className="flex">
-                        <div className="body_semibold_14 pr-2">Điểm: </div>
-                        <span>1</span>
+                        <div className="text-sm pr-2 font-semibold">
+                            Kiểu câu hỏi:{" "}
+                        </div>
+                        <span>{t(question?.questionType)}</span>
                     </div>
                     <div className="flex">
-                        <div className="body_semibold_14 pr-2">Ngày tạo: </div>
-                        <span>08/02/2024  20:20:09</span>
+                        <div className="text-sm pr-2 font-semibold">
+                            Điểm:{" "}
+                        </div>
+                        <span>{question.numberPoint}</span>
                     </div>
-                    {/* </div> */}
-                    {/* <div className="w-1/2 p-4">
-                            <div className="text-m_primary_500 text-sm font-semibold mb-2">Đáp án</div>
-                            <div className="flex items-center">
-                                <div className="body_semibold_14 pr-2">A:</div><span className="pr-2">6 </span>
-                                <Tick />
-                            </div>
-                        </div> */}
-                    {/* </div> */}
+                    <div className="flex">
+                        <div className="text-sm pr-2 font-semibold">
+                            Ngày tạo:{" "}
+                        </div>
+                        <FormattedDate
+                            value={question?.createdTime}
+                            day="2-digit"
+                            month="2-digit"
+                            year="numeric"
+                        />
+                    </div>
                 </Collapse.Panel>
             </Collapse>
         </div >
