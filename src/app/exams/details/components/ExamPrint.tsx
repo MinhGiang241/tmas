@@ -65,8 +65,12 @@ const ExamQuestion = ({
         );
       }
       case QuestionType.FillBlank: {
-        const { explainAnswer } = ques.content;
-        return <div className="flex flex-col gap-2 p-4"></div>;
+        const { formatBlank } = ques.content;
+        return (
+          <div className="flex flex-col gap-2 p-4">
+            <div dangerouslySetInnerHTML={{ __html: formatBlank }} />
+          </div>
+        );
       }
       case QuestionType.Pairing: {
         const { explainAnswer, answers, questions } = ques.content;
@@ -132,7 +136,9 @@ const ExamQuestion = ({
           {renderSubTitleQuestionType(question)}
         </span>
       </h2>
-      <div dangerouslySetInnerHTML={{ __html: question.question }} />
+      {question.questionType !== QuestionType.FillBlank && (
+        <div dangerouslySetInnerHTML={{ __html: question.question }} />
+      )}
       <hr />
       {renderAnswerContent(question)}
     </div>
