@@ -519,13 +519,17 @@ function ExamDetails({ params }: any) {
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <MessageQuestion className="mr-1 scale-75" />
-            {data?.records?.[0]?.examQuestions?.length ?? 0} câu hỏi
+            {/* {data?.records?.[0]?.examQuestions?.length ?? 0} câu hỏi */}
+            {data?.records?.reduce(function (total: any, question: any) {
+              return total + question?.examQuestions?.length;
+            }, 0)} câu hỏi
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Cup className="mr-1 scale-75" />
-            {data?.records?.[0]?.examQuestions?.reduce(function (total: any, question: any) {
+            {/* {data?.records?.[0]?.examQuestions?.reduce(function (total: any, question: any) {
               return total + question.numberPoint;
-            }, 0)} điểm
+            }, 0)} điểm */}
+            {exam?.totalPoints} điểm
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Time className="mr-1" />
