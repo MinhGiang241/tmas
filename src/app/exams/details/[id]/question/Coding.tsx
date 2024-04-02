@@ -28,11 +28,11 @@ export default function Coding({
   index,
   questionGroup,
 }: {
-  getData: any;
-  examId: any;
-  question: any;
-  index: any;
-  questionGroup: any;
+  getData?: any;
+  examId?: any;
+  question?: any;
+  index?: any;
+  questionGroup?: any;
 }) {
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
@@ -52,14 +52,14 @@ export default function Coding({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
   }, []);
   return (
     <div>
-      { }
+      {}
       <ConfirmModal
-        onOk={() => { }}
+        onOk={() => {}}
         onCancel={() => {
           setOpenCopyQuestion(false);
         }}
@@ -92,8 +92,9 @@ export default function Coding({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   Câu {index}:
                   <div

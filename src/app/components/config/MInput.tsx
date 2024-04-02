@@ -78,7 +78,6 @@ function MInput({
     onBlur = formik.handleBlur;
     value = formik.values[name];
   }
-  console.log("errrorr", error);
 
   if (error && error?.startsWith("common")) {
     er = error.replace("common_", "");

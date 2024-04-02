@@ -1,18 +1,162 @@
+"use client";
 import MButton from "@/app/components/config/MButton";
 import MInput from "@/app/components/config/MInput";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SearchOutlined } from "@ant-design/icons";
-import { Dropdown, Spin } from "antd";
+import { Dropdown, Pagination, Select, Spin } from "antd";
 import MDropdown from "@/app/components/config/MDropdown";
 import { BaseQuestionFormData } from "@/data/form_interface";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import { getQuestionList } from "@/services/api_services/question_api";
+import { errorToast } from "@/app/components/toast/customToast";
+import { BaseQuestionData, QuestionType } from "@/data/question";
+import Coding from "@/app/exams/details/[id]/question/Coding";
+import Sql from "@/app/exams/details/[id]/question/Sql";
+import Connect from "@/app/exams/details/[id]/question/Connect";
+import FillBlank from "@/app/exams/details/[id]/question/FillBlank";
+import Explain from "@/app/exams/details/[id]/question/Explain";
+import TrueFalse from "@/app/exams/details/[id]/question/TrueFalse";
+import ManyResult from "@/app/exams/details/[id]/question/ManyResult";
+import { setquestionGroupLoading } from "@/redux/exam_group/examGroupSlice";
+import { ExamGroupData } from "@/data/exam";
 
 function MyQuestionTab() {
   const { t } = useTranslation("exam");
   const common = useTranslation();
-
+  const user = useAppSelector((state: RootState) => state.user.user);
   const [loadingPage, setLoadingPage] = useState<boolean>(false);
-  const [questionList, setQuestionList] = useState<BaseQuestionFormData>([]);
+  const [questionList, setQuestionList] = useState<BaseQuestionData[]>([]);
+  const [indexPage, setIndexPage] = useState<number>(1);
+  const [recordNum, setRecordNum] = useState<number>(15);
+  const [total, setTotal] = useState<number>(0);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    loadQuestionList(true);
+    loadQuestionGroupList(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, indexPage, recordNum]);
+
+  const loadQuestionList = async (init: boolean) => {
+    if (init) {
+      setLoadingPage(true);
+    }
+    const res = await getQuestionList({
+      paging: {
+        recordPerPage: recordNum,
+        startIndex: indexPage,
+      },
+      // andIdExamQuestionParts: "",
+      // andQuestionTypes: "",
+      // idExams: "",
+      // andIdGroupQuestions: "",
+    });
+
+    if (res.code != 0) {
+      errorToast(res.message ?? "");
+      setQuestionList([]);
+      return;
+    }
+
+    setTotal(res?.data?.totalOfRecords ?? 0);
+    setQuestionList(res.data?.records);
+    setLoadingPage(false);
+    console.log("res", res);
+  };
+  const questionGroups: ExamGroupData[] | undefined = useAppSelector(
+    (state: RootState) => state?.examGroup?.list,
+  );
+  const loadQuestionGroupList = async (init?: boolean) => {
+    if (init) {
+      dispatch(setquestionGroupLoading(true));
+    }
+  };
+
+  const renderQuestion: (
+    e: BaseQuestionData,
+    index: number,
+  ) => React.ReactNode = (e: BaseQuestionData, index: number) => {
+    var group = questionGroups?.find((v: any) => v.id === e.idGroupQuestion);
+    switch (e.questionType) {
+      case QuestionType.MutilAnswer:
+        return (
+          <ManyResult
+            question={e}
+            index={index}
+            questionGroup={group}
+            examId={e?.idExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
+      case QuestionType.YesNoQuestion:
+        return (
+          <TrueFalse
+            question={e}
+            index={index}
+            questionGroup={group}
+            examId={e?.idExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
+      case QuestionType.Essay:
+        return (
+          <Explain
+            question={e}
+            index={index}
+            questionGroup={group}
+            examId={e?.idExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
+      case QuestionType.Coding:
+        return (
+          <Coding
+            question={e}
+            index={index}
+            questionGroup={group}
+            examId={e?.idExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
+      case QuestionType.SQL:
+        return (
+          <Sql
+            question={e}
+            index={index}
+            questionGroup={group}
+            examId={e?.idExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
+      case QuestionType.Pairing:
+        return (
+          <Connect
+            question={e}
+            index={index}
+            questionGroup={group}
+            examId={e?.idExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
+      case QuestionType.FillBlank:
+        return (
+          <FillBlank
+            question={e}
+            index={index}
+            questionGroup={group}
+            examId={e?.idExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
+      case QuestionType.Random:
+        return <div />;
+      default:
+        return <div />;
+    }
+  };
 
   return (
     <>
@@ -91,7 +235,51 @@ function MyQuestionTab() {
           <div className="body_regular_14">{common.t("empty_list")}</div>
         </div>
       ) : (
-        <div className="flex flex-col p-5 rounded-lg bg-white max-lg:mx-5"></div>
+        <div className="flex flex-col p-5 rounded-lg bg-white max-lg:mx-5">
+          {questionList.map((e: BaseQuestionData, i: number) =>
+            renderQuestion(e, i),
+          )}
+        </div>
+      )}
+      <div className="h-9" />
+      {questionList.length != 0 && (
+        <div className="w-full flex items-center justify-center">
+          <span className="body_regular_14 mr-2">{`${total} ${t(
+            "result",
+          )}`}</span>
+
+          <Pagination
+            pageSize={recordNum}
+            onChange={(v) => {
+              setIndexPage(v);
+            }}
+            current={indexPage}
+            total={total}
+            showSizeChanger={false}
+          />
+          <div className="hidden ml-2 lg:flex items-center">
+            <Select
+              optionRender={(oriOption) => (
+                <div className="flex justify-center">{oriOption?.label}</div>
+              )}
+              value={recordNum}
+              onChange={(v) => {
+                setRecordNum(v);
+              }}
+              options={[
+                ...[1, 2, 15, 25, 30, 50, 100].map((i: number) => ({
+                  value: i,
+                  label: (
+                    <span className="pl-3 body_regular_14">{`${i}/${common.t(
+                      "page",
+                    )}`}</span>
+                  ),
+                })),
+              ]}
+              className="select-page min-w-[124px]"
+            />
+          </div>
+        </div>
       )}
     </>
   );

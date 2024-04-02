@@ -4,6 +4,8 @@ import HomeLayout from "../layouts/HomeLayout";
 import { useTranslation } from "react-i18next";
 import { useRouter, useSearchParams } from "next/navigation";
 import MyQuestionTab from "./tabs/MyQuestionTab";
+import ExamTmasTab from "./tabs/ExamTmasTab";
+import QuestionTmasTab from "./tabs/QuestionTmasTab";
 
 function ExamBank() {
   const { t } = useTranslation("exam");
@@ -38,6 +40,8 @@ function ExamBank() {
       </div>
       <div className="h-3 " />
       {index === "0" && <MyQuestionTab />}
+      {index === "1" && <QuestionTmasTab />}
+      {index === "2" && <ExamTmasTab />}
       <div className="h-3" />
     </HomeLayout>
   );
