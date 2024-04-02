@@ -295,3 +295,10 @@ export const deleteQuestionPart = async (id?: string) => {
   // console.log(results)
   return results;
 };
+
+export const getExamById = async (id?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${id}`,
+  );
+  return results;
+};
