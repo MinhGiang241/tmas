@@ -291,12 +291,12 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
                   v.childs ?? [],
                   (c: ExamGroupData, i: number) => (
                     <div
-                      className="rounded-md px-4 text-wrap flex lg:min-h-[60px] min-h-[52px] items-center w-full bg-m_neutral_100 flex-wrap  mt-4 justify-between"
+                      className="rounded-md px-4 flex lg:min-h-[60px] min-h-[52px] items-center w-full bg-m_neutral_100 mt-4 justify-between overflow-hidden"
                       key={c.id}
                     >
-                      <p>{c?.name}</p>
+                      <div className="flex flex-wrap text-wrap">{c?.name}</div>
                       {user?.studio?.role != "Member" && (
-                        <div className="flex body_regular_14">
+                        <div className="min-w-40 flex body_regular_14">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

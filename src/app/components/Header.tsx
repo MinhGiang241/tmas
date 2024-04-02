@@ -233,7 +233,10 @@ function Header({ path }: { path?: string }) {
                 href={
                   !user?.verified
                     ? "#"
-                    : v == "exam_group" || v == "exams" || v == "examination"
+                    : v == "exam_group" ||
+                        v == "exams" ||
+                        v == "examination" ||
+                        v == "exam_bank"
                       ? `/${v}`
                       : "/"
                 }
@@ -312,7 +315,10 @@ function Header({ path }: { path?: string }) {
                 href={
                   !user?.verified
                     ? "#"
-                    : e == "exam_group" || e == "exams" || e == "examination"
+                    : e == "exam_group" ||
+                        e == "exams" ||
+                        e == "examination" ||
+                        e == "exam_bank"
                       ? `/${e}`
                       : "/"
                 }

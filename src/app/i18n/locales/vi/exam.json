@@ -226,5 +226,14 @@
   "at_least_1_question": "Phải có ít nhất 1 đáp án",
   "each_quest_has_answer": "Mỗi câu hỏi phải có 1 đáp án",
   "push_to_market": "Đẩy lên chợ đề thi",
-  "no_testcase": "Phải có ít nhất 1 testcase"
+  "no_testcase": "Phải có ít nhất 1 testcase",
+  "my_question": "Câu hỏi của tôi",
+  "tmas_question": "Câu hỏi của TMAS",
+  "tmas_exam": "Đề thi của TMAS",
+  "create_question": "Tạo câu hỏi",
+  "mutilanswer": "Nhiều đáp án",
+  "yesnoquestion": "Đúng/sai",
+  "fillBlank": "Điền vào chỗ trống",
+  "pairing": "Ghép/nối",
+  "essay": "Tự luận"
 }
