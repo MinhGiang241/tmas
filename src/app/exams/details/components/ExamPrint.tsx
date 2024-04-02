@@ -65,10 +65,23 @@ const ExamQuestion = ({
         );
       }
       case QuestionType.FillBlank: {
-        const { formatBlank } = ques.content;
+        const { formatBlank, anwserItems } = ques.content;
         return (
-          <div className="flex flex-col gap-2 p-4">
-            <div dangerouslySetInnerHTML={{ __html: formatBlank }} />
+          <div className="flex flex-col gap-4 p-4">
+            <div dangerouslySetInnerHTML={{ __html: formatBlank }} className="mb-2" />
+            <div className="flex flex-col gap-4">
+              {anwserItems.map((awn: any, index: number) => {
+                return (
+                  <div key={index} className="flex gap-1">
+                    <span
+                      dangerouslySetInnerHTML={{ __html: awn.label }}
+                      className="font-semibold"
+                    />
+                    <span>__________________________________</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         );
       }
@@ -178,7 +191,6 @@ const ExamPrint = React.forwardRef<HTMLDivElement, any>(
         <div className="flex justify-end px-5">
           <img alt="logo" src="/images/logo.png" className="w-5/12" />
         </div>
-        <br />
         <br />
       </div>
     );
