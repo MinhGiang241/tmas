@@ -225,5 +225,6 @@
   "at_least_1_answer": "Phải có ít nhất 1 đáp án",
   "at_least_1_question": "Phải có ít nhất 1 đáp án",
   "each_quest_has_answer": "Mỗi câu hỏi phải có 1 đáp án",
-  "push_to_market": "Đẩy lên chợ đề thi"
+  "push_to_market": "Đẩy lên chợ đề thi",
+  "no_testcase": "Phải có ít nhất 1 testcase"
 }

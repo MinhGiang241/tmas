@@ -49,7 +49,7 @@ const Editor = ({
   error,
   touch,
   setValue,
-  maxLength = 500,
+  maxLength = 50000,
   isBubble = false,
   defaultValue,
   placeholder,

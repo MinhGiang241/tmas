@@ -114,13 +114,13 @@ function FillBlankQuestion({
 
     if (isSave && results?.length != 0) {
       results.map((a: any, i: number) => {
-        if (!a.text) {
+        if (!a.text && !values[`result-${i + 1}`]) {
           errors[`result-${i + 1}`] = "common_not_empty";
         }
       });
     }
 
-    if (!values.question) {
+    if (!values.question || !$.text()) {
       errors.question = "common_not_empty";
     }
     if (!values.question_group) {
@@ -134,7 +134,8 @@ function FillBlankQuestion({
     } else if (values.point?.match(/(.*\.){2,}/g)) {
       errors.point = "invalid_number";
     }
-
+    console.log("error", errors);
+    console.log("touched", formik.touched);
     return errors;
   };
 
@@ -218,10 +219,19 @@ function FillBlankQuestion({
     <div className="grid grid-cols-12 gap-4 max-lg:px-5">
       <button
         className="hidden"
-        onClick={() => {
-          // if (isSave) {
-          //   formik.handleSubmit();
-          // }
+        onClick={async () => {
+          var newList = _.cloneDeep(results);
+          var newListClone = newList.map((v: any, i: number) => {
+            return { ...v, touch: true };
+          });
+          setResults(newListClone);
+          console.log("new lit", results, newListClone);
+
+          await formik.validateForm();
+          Object.keys(formik.errors).map(async (v) => {
+            await formik.setFieldTouched(v, true);
+          });
+          formik.validateForm();
           formik.handleSubmit();
           Object.keys(formik.errors).map(async (v) => {
             await formik.setFieldTouched(v, true);
@@ -305,7 +315,9 @@ function FillBlankQuestion({
                     onBlur={async () => {
                       await formik.setFieldTouched(`result-${i + 1}`);
                     }}
-                    touch={formik.errors[`result-${i + 1}`] as any}
+                    touch={
+                      (formik.touched[`result-${i + 1}`] as any) || d.touch
+                    }
                     error={formik.errors[`result-${i + 1}`] as any}
                     value={d.text}
                     onChange={async (f) => {
@@ -318,6 +330,10 @@ function FillBlankQuestion({
                       };
 
                       setResults(newList);
+                      await formik.setFieldValue(
+                        `result-${i + 1}`,
+                        f.target.value,
+                      );
 
                       await formik.validateForm();
                     }}

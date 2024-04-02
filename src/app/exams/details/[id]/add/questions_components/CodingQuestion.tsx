@@ -294,7 +294,7 @@ function CodingQuestion({
     if (!code) {
       errors.code = common.t("not_empty");
     }
-    if (!values.question) {
+    if (!values.question || !$.text()) {
       errors.question = "common_not_empty";
     }
     if (!values.explain) {
@@ -399,7 +399,25 @@ function CodingQuestion({
       <button
         className="hidden"
         onClick={async () => {
-          await formik.handleSubmit();
+          if (checkedLang.length === 0) {
+            await formik.validateForm();
+            Object.keys(formik.errors).map(async (v) => {
+              await formik.setFieldTouched(v, true);
+            });
+            errorToast(t("at_least_1_language"));
+
+            return;
+          }
+          if (testcases.length === 0) {
+            await formik.validateForm();
+            Object.keys(formik.errors).map(async (v) => {
+              await formik.setFieldTouched(v, true);
+            });
+            errorToast(t("no_testcase"));
+
+            return;
+          }
+          formik.handleSubmit();
           Object.keys(formik.errors).map(async (v) => {
             await formik.setFieldTouched(v, true);
           });
@@ -583,10 +601,11 @@ function CodingQuestion({
                     id={`pram_type_${l?.id}`}
                     name={`param_type_${l?.id}`}
                     value={l.returnType}
-                    setValue={(na: any, val: any) => {
+                    setValue={async (na: any, val: any) => {
                       var newList = _.cloneDeep(parameterList);
                       newList[i].returnType = val;
-                      setParameterList(newList);
+                      await setParameterList(newList);
+                      formik.validateForm();
                     }}
                     options={serverLanguageList.map((r: CodingDataType) => ({
                       value: r,
@@ -608,10 +627,14 @@ function CodingQuestion({
                     error={formik.errors[`param_name_${l?.id}`] as string}
                     touch={formik.touched[`param_name_${l?.id}`] as boolean}
                     value={l.nameParameter}
-                    onChange={(val) => {
+                    onChange={async (val) => {
                       var newList = _.cloneDeep(parameterList);
                       newList[i].nameParameter = val.target.value;
                       setParameterList(newList);
+                      await formik.setFieldValue(
+                        `param_name_${l?.id}`,
+                        val.target.value,
+                      );
                       formik.validateForm();
                     }}
                     placeholder={`Parameter ${i + 1}`}
@@ -724,6 +747,7 @@ function CodingQuestion({
         </div>
         <div className="h-4" />
         <EditorHook
+          required
           formik={formik}
           placeholder={t("enter_content")}
           isCount={false}

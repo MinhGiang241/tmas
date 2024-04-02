@@ -78,7 +78,7 @@ function TrueFalseQuestion({
       setAResult(a);
       setBResult(b);
       setCorrectAnswer(
-        a?.isCorrectAnswer ? 0 : b?.isCorrectAnswer ? 1 : undefined,
+        a?.isCorrectAnswer ? "0" : b?.isCorrectAnswer ? "1" : undefined,
       );
       setLoadAs(true);
     }
@@ -116,21 +116,32 @@ function TrueFalseQuestion({
     question_group: question?.idGroupQuestion ?? undefined,
     question: question?.question ?? undefined,
     explain: existedQuest?.content?.explainAnswer ?? undefined,
-    a: undefined,
-    b: undefined,
+    a:
+      existedQuest?.content?.answers &&
+      existedQuest?.content?.answers?.length != 0
+        ? existedQuest?.content?.answers[0]?.text
+        : undefined,
+    b:
+      existedQuest?.content?.answers &&
+      existedQuest?.content?.answers?.length >= 2
+        ? existedQuest?.content?.answers[1]?.text
+        : undefined,
   };
 
   const validate = async (values: TrueFalseQuestionValue) => {
     const errors: FormikErrors<TrueFalseQuestionValue> = {};
     const $ = cheerio.load(values.question ?? "");
 
-    if (!values.question) {
+    console.log("a", values.a);
+    console.log("b", values.b);
+
+    if (!values.question || !$.text()) {
       errors.question = "common_not_empty";
     }
-    if (!aResult.text) {
+    if (!values.a) {
       errors.a = "common_not_empty";
     }
-    if (!bResult.text) {
+    if (!values.b) {
       errors.b = "common_not_empty";
     }
 
@@ -181,14 +192,14 @@ function TrueFalseQuestion({
           isChangePosition,
           answers: [
             {
-              text: aResult.text,
+              text: values.a,
               label: "A",
-              isCorrectAnswer: correctAnswer === 0 ? true : false,
+              isCorrectAnswer: correctAnswer === "0" ? true : false,
             },
             {
-              text: bResult.text,
+              text: values.b,
               label: "B",
-              isCorrectAnswer: correctAnswer === 1 ? true : false,
+              isCorrectAnswer: correctAnswer === "1" ? true : false,
             },
           ],
         },
@@ -279,71 +290,88 @@ function TrueFalseQuestion({
               setCorrectAnswer(v.target.value);
               console.log(v);
 
-              if (v.target.value === 0) {
+              if (v.target.value === "0") {
                 setAResult({ ...aResult, isCorrectAnswer: true });
                 setBResult({ ...bResult, isCorrectAnswer: false });
               }
-              if (v.target.value === 1) {
+              if (v.target.value === "1") {
                 setAResult({ ...aResult, isCorrectAnswer: false });
                 setBResult({ ...aResult, isCorrectAnswer: true });
               }
             }}
           >
             <Space className="w-full" direction="vertical">
-              <div className="w-full flex items-center mb-4">
-                <Radio value={0} />
-                <div className="body_semibold_14 mr-2 ">A.</div>
-                <EditorHook
-                  onBlur={async () => {
-                    await formik.setFieldTouched("a", true);
-                  }}
-                  touch={formik.touched.a}
-                  error={formik.errors.a}
-                  value={aResult?.text}
-                  setValue={(na: any, val: any) => {
-                    setAResult({
-                      ...aResult,
-                      text: val,
-                      label: cheerio.load(val).text(),
-                    });
-                    formik.validateForm();
-                  }}
-                  isCount={false}
-                  isBubble={true}
-                  id={`a`}
-                  name={`b`}
-                />
-              </div>
-              <div className="w-full flex items-center mb-4">
-                <Radio value={1} />
-                <div className="body_semibold_14 mr-2 ">B.</div>
-                <EditorHook
-                  onBlur={async () => {
-                    await formik.setFieldTouched("b", true);
-                  }}
-                  touch={formik.touched.b}
-                  error={formik.errors.b}
-                  value={bResult?.text}
-                  setValue={(na: any, val: any) => {
-                    setBResult({
-                      ...bResult,
-                      text: val,
-                      label: cheerio.load(val).text(),
-                    });
-                    formik.validateForm();
-                  }}
-                  isCount={false}
-                  isBubble={true}
-                  id={`a`}
-                  name={`b`}
-                />
-                {/* <button */}
-                {/*   onClick={() => {}} */}
-                {/*   className=" text-neutral-500 text-2xl  ml-2 " */}
-                {/* > */}
-                {/*   <CloseCircleOutlined /> */}
-                {/* </button> */}
-              </div>
+              {["a", "b"].map((w: string) => (
+                <div key={w} className="w-full flex items-center mb-4">
+                  <Radio value={w == "a" ? "0" : "1"} />
+                  <div className="body_semibold_14 mr-2 ">
+                    {w === "a" ? "A." : "B."}
+                  </div>
+                  <EditorHook
+                    formik={formik}
+                    // onBlur={async () => {
+                    //   await formik.setFieldTouched(w, true);
+                    // }}
+                    // touch={formik.touched[w === "a" ? "a" : "b"] as any}
+                    // error={formik.errors[w === "a" ? "a" : "b"] as any}
+                    // value={w === "a" ? aResult?.text : bResult?.text}
+                    setValue={async (na: any, val: any) => {
+                      console.log("val", val);
+
+                      if (w === "a") {
+                        setAResult({
+                          ...aResult,
+                          text: val,
+                          label: cheerio.load(val).text(),
+                        });
+                      } else {
+                        setBResult({
+                          ...bResult,
+                          text: val,
+                          label: cheerio.load(val).text(),
+                        });
+                      }
+                      await formik.setFieldValue(w, val);
+                      formik.validateForm();
+                    }}
+                    isCount={false}
+                    isBubble={true}
+                    id={w}
+                    name={w}
+                  />
+                </div>
+              ))}
+              {/* <div className="w-full flex items-center mb-4"> */}
+              {/*   <Radio value={"1"} /> */}
+              {/*   <div className="body_semibold_14 mr-2 ">B.</div> */}
+              {/*   <EditorHook */}
+              {/*     onBlur={async () => { */}
+              {/*       await formik.setFieldTouched("b", true); */}
+              {/*     }} */}
+              {/*     touch={formik.touched.b} */}
+              {/*     error={formik.errors.b} */}
+              {/*     value={bResult?.text} */}
+              {/*     setValue={async (na: any, val: any) => { */}
+              {/*       setBResult({ */}
+              {/*         ...bResult, */}
+              {/*         text: val, */}
+              {/*         label: cheerio.load(val).text(), */}
+              {/*       }); */}
+              {/*       await formik.setFieldValue("b", val); */}
+              {/*       formik.validateForm(); */}
+              {/*     }} */}
+              {/*     isCount={false} */}
+              {/*     isBubble={true} */}
+              {/*     id={`a`} */}
+              {/*     name={`b`} */}
+              {/*   /> */}
+              {/* <button */}
+              {/*   onClick={() => {}} */}
+              {/*   className=" text-neutral-500 text-2xl  ml-2 " */}
+              {/* > */}
+              {/*   <CloseCircleOutlined /> */}
+              {/* </button> */}
+              {/* </div> */}
             </Space>
           </Radio.Group>
         </div>

@@ -143,7 +143,7 @@ function ConnectQuestion({
       });
     }
 
-    if (!values.question) {
+    if (!values.question || !$.text()) {
       errors.question = "common_not_empty";
     }
     if (!values.question_group) {
@@ -171,10 +171,10 @@ function ConnectQuestion({
         errorToast(t("at_least_1_answer"));
       }
 
-      var s = false;
+      var s = true;
       for (let d of questionList) {
-        if (pairingList.some((s) => s.idQuestion === d.id)) {
-          s = true;
+        if (pairingList.every((s) => s.idQuestion != d.id)) {
+          s = false;
         }
       }
 
@@ -303,11 +303,10 @@ function ConnectQuestion({
             <div className="w-full flex relative z-10">
               <div className="w-1/2">
                 {questionList?.map((s: ConnectQuestAns, i: number) => (
-                  <div
-                    key={s.id}
-                    className="flex items-center body_semibold_14 mb-2"
-                  >
-                    <p className="min-w-4">{i + 1}.</p>
+                  <div key={s.id} className="flex items-start mb-2">
+                    <p className="min-w-4 mt-2 mr-2 body_semibold_14">
+                      {i + 1}.
+                    </p>
                     <EditorHook
                       onBlur={async () => {
                         await formik.setFieldTouched(`ques-${s?.id}`, true);
@@ -331,13 +330,13 @@ function ConnectQuestion({
                       onClick={() => {
                         dispatch(deleteConnectQuestion(i));
                       }}
-                      className=" text-neutral-500 text-2xl mt-[7px] ml-2 "
+                      className=" text-neutral-500 text-2xl mt-1 ml-2 "
                     >
                       <CloseCircleOutlined />
                     </button>
                   </div>
                 ))}
-                <div className="w-full flex justify-end">
+                <div className="w-full flex justify-end ">
                   <button
                     onClick={() => {
                       dispatch(addMoreConnectQuestion(0));
@@ -352,11 +351,10 @@ function ConnectQuestion({
               <div className="w-6" />
               <div className="w-1/2">
                 {answerList?.map((s: ConnectQuestAns, i: number) => (
-                  <div
-                    key={s.id}
-                    className="flex items-center body_semibold_14 mb-2"
-                  >
-                    <p className="min-w-4">{String.fromCharCode(65 + i)}.</p>
+                  <div key={s.id} className="flex items-start mb-2">
+                    <p className="min-w-4 mt-2 mr-2  body_semibold_14">
+                      {String.fromCharCode(65 + i)}.
+                    </p>
                     <EditorHook
                       onBlur={async () => {
                         await formik.setFieldTouched(`ans-${s?.id}`, true);
@@ -364,23 +362,24 @@ function ConnectQuestion({
                       }}
                       touch={formik.touched[`ans-${s?.id}`] as any}
                       error={formik.errors[`ans-${s?.id}`] as any}
-                      setValue={(name: any, val: any) => {
+                      setValue={async (name: any, val: any) => {
                         dispatch(
                           updateTextConnectAnswer({ index: i, value: val }),
                         );
+                        await formik.setFieldValue(`result-${s?.id}`, val);
                         formik.validateForm();
                       }}
                       value={s.content}
                       isCount={false}
                       isBubble={true}
-                      id={`result-${i + 1}`}
-                      name={`result-${i + 1}`}
+                      id={`result-${s?.id}`}
+                      name={`result-${s?.id}`}
                     />
                     <button
                       onClick={() => {
                         dispatch(deleteConnectAnswer(i));
                       }}
-                      className=" text-neutral-500 text-2xl mt-[7px] ml-2 "
+                      className=" text-neutral-500 text-2xl mt-1 ml-2 "
                     >
                       <CloseCircleOutlined />
                     </button>

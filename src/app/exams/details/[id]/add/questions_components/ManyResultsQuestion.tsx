@@ -130,7 +130,7 @@ function ManyResultsQuestion({
       });
     }
 
-    if (!values.question) {
+    if (!values.question || !$.text()) {
       errors.question = "common_not_empty";
     }
 
@@ -306,8 +306,10 @@ function ManyResultsQuestion({
                     touch={formik.touched[`ans-${a?.id}`] as any}
                     error={formik.errors[`ans-${a?.id}`] as any}
                     value={a.text}
-                    setValue={(name: any, e: any) => {
-                      dispatch(updateTextMultiAnswer({ index: i, value: e }));
+                    setValue={async (name: any, e: any) => {
+                      await dispatch(
+                        updateTextMultiAnswer({ index: i, value: e }),
+                      );
                       formik.validateForm();
                     }}
                     isCount={false}

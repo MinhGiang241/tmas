@@ -59,7 +59,7 @@ const CustomToast = ({
                 <CloseCircleFilled className="text-[5rem] text-m_error_500" />
               )}
               {type == ToastType.INFORM && (
-                <ExclamationCircleFilled className="text-[5rem] text-m_danger_500" />
+                <ExclamationCircleFilled className="text-[5rem] text-m_warning_500" />
               )}
             </div>
             <div className="flex flex-col text-center">

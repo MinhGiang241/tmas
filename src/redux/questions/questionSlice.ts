@@ -244,7 +244,7 @@ export const questionSlice = createSlice({
       return {
         ...state,
         connectPairing: [],
-        connectCharAnswerQuestions: [
+        connectAnswers: [
           {
             id: uuidv4(),
             label: undefined,
@@ -267,7 +267,7 @@ export const questionSlice = createSlice({
           },
         ],
 
-        connectNumAnswerQuestions: [
+        connectQuestions: [
           {
             id: uuidv4(),
             label: undefined,
