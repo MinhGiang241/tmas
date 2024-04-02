@@ -233,7 +233,7 @@ export const createManyExamQuestionPart = async (data?: {
 export const updateAExamQuestionPart = async (data?: ExamQuestionPart) => {
   // console.log("dat", data)
   const results = await callStudioAPI.put(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${data?.idExam}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${data?.id}`,
     data,
   );
   return results;
