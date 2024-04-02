@@ -161,8 +161,7 @@ function RandomQuestion({
         <div className="mt-2 border rounded-lg p-3">
           <p className="body_regular_14">
             {t("group_random_quest")}
-            <span className="text-[#4D7EFF]">
-              {" "}
+            <span className="ml-1 text-[#4D7EFF] underline underline-offset-4">
               {examGroups?.find((a) => a.id === formik.values?.question_group)
                 ?.name ?? ""}
             </span>

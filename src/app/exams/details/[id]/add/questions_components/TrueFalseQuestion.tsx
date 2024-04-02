@@ -307,38 +307,40 @@ function TrueFalseQuestion({
                   <div className="body_semibold_14 mr-2 ">
                     {w === "a" ? "A." : "B."}
                   </div>
-                  <EditorHook
-                    formik={formik}
-                    // onBlur={async () => {
-                    //   await formik.setFieldTouched(w, true);
-                    // }}
-                    // touch={formik.touched[w === "a" ? "a" : "b"] as any}
-                    // error={formik.errors[w === "a" ? "a" : "b"] as any}
-                    // value={w === "a" ? aResult?.text : bResult?.text}
-                    setValue={async (na: any, val: any) => {
-                      console.log("val", val);
+                  <div className="flex flex-grow w-[calc(100%-4rem)]">
+                    <EditorHook
+                      formik={formik}
+                      // onBlur={async () => {
+                      //   await formik.setFieldTouched(w, true);
+                      // }}
+                      // touch={formik.touched[w === "a" ? "a" : "b"] as any}
+                      // error={formik.errors[w === "a" ? "a" : "b"] as any}
+                      // value={w === "a" ? aResult?.text : bResult?.text}
+                      setValue={async (na: any, val: any) => {
+                        console.log("val", val);
 
-                      if (w === "a") {
-                        setAResult({
-                          ...aResult,
-                          text: val,
-                          label: cheerio.load(val).text(),
-                        });
-                      } else {
-                        setBResult({
-                          ...bResult,
-                          text: val,
-                          label: cheerio.load(val).text(),
-                        });
-                      }
-                      await formik.setFieldValue(w, val);
-                      formik.validateForm();
-                    }}
-                    isCount={false}
-                    isBubble={true}
-                    id={w}
-                    name={w}
-                  />
+                        if (w === "a") {
+                          setAResult({
+                            ...aResult,
+                            text: val,
+                            label: cheerio.load(val).text(),
+                          });
+                        } else {
+                          setBResult({
+                            ...bResult,
+                            text: val,
+                            label: cheerio.load(val).text(),
+                          });
+                        }
+                        await formik.setFieldValue(w, val);
+                        formik.validateForm();
+                      }}
+                      isCount={false}
+                      isBubble={true}
+                      id={w}
+                      name={w}
+                    />
+                  </div>
                 </div>
               ))}
               {/* <div className="w-full flex items-center mb-4"> */}

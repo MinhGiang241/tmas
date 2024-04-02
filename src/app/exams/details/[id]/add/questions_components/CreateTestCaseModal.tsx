@@ -26,6 +26,8 @@ function CreateTestCaseModal(props: Props) {
 
     if (!values.name?.trim()) {
       errors.name = "common_not_empty";
+    } else if (values.name?.length < 3) {
+      errors.name = "name_testcase_not_less_3";
     }
 
     return errors;
@@ -67,6 +69,8 @@ function CreateTestCaseModal(props: Props) {
     >
       <form className="w-full" onSubmit={onSubmit}>
         <MInput
+          namespace="exam"
+          maxLength={255}
           formik={formik}
           title={t("name")}
           id="name"

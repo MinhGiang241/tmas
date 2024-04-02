@@ -294,9 +294,11 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
                       className="rounded-md px-4 flex lg:min-h-[60px] min-h-[52px] items-center w-full bg-m_neutral_100 mt-4 justify-between overflow-hidden"
                       key={c.id}
                     >
-                      <div className="flex flex-wrap text-wrap">{c?.name}</div>
+                      <div className="flex flex-wrap text-wrap break-all overflow-hidden text-ellipsis">
+                        {c?.name}
+                      </div>
                       {user?.studio?.role != "Member" && (
-                        <div className="min-w-40 flex body_regular_14">
+                        <div className="min-w-40 flex body_regular_14 ml-5">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

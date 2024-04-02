@@ -171,7 +171,7 @@ function CodingQuestion({
       dataIndex: "name",
       key: "name",
       render: (text, data) => (
-        <p key={text} className="w-full caption_regular_14">
+        <p key={text} className="w-full  min-w-11 break-all caption_regular_14">
           {text}
         </p>
       ),
@@ -179,13 +179,17 @@ function CodingQuestion({
     {
       onHeaderCell: (_) => rowStyle,
       width: "25%",
-      title: <div className="w-full flex justify-center">{t("input")}</div>,
+      title: (
+        <div className="w-full break-all  flex justify-center">
+          {t("input")}
+        </div>
+      ),
       dataIndex: "inputData",
       key: "inputData",
       render: (text) => (
         <p
           key={text}
-          className="w-full  flex justify-center caption_regular_14"
+          className="w-full break-all flex  min-w-11 justify-center caption_regular_14"
         >
           {text}
         </p>
@@ -201,7 +205,7 @@ function CodingQuestion({
       render: (text) => (
         <p
           key={text}
-          className="w-full  flex justify-center caption_regular_14"
+          className="w-full  break-all  flex  min-w-11 justify-center caption_regular_14"
         >
           {text}
         </p>
@@ -475,7 +479,7 @@ function CodingQuestion({
             </Radio>
           </Space>
         </Radio.Group>
-        <div className="h-3" />
+        <div className="mt-2 h-3" />
         <MDropdown
           required
           formik={formik}
@@ -500,7 +504,7 @@ function CodingQuestion({
           ))}
         </CheckboxGroup>
       </div>
-      <div className="bg-white p-5 rounded-lg lg:col-span-8 col-span-12">
+      <div className=" bg-white p-5 rounded-lg lg:col-span-8 col-span-12">
         <EditorHook
           formik={formik}
           placeholder={t("enter_content")}

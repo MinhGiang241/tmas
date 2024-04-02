@@ -298,25 +298,27 @@ function ManyResultsQuestion({
                   <div className="mt-2 body_semibold_14 mx-2 w-5">
                     {String.fromCharCode(65 + i)}.
                   </div>
-                  <EditorHook
-                    onBlur={async () => {
-                      await formik.setFieldTouched(`ans-${a?.id}`, true);
-                      formik.validateForm();
-                    }}
-                    touch={formik.touched[`ans-${a?.id}`] as any}
-                    error={formik.errors[`ans-${a?.id}`] as any}
-                    value={a.text}
-                    setValue={async (name: any, e: any) => {
-                      await dispatch(
-                        updateTextMultiAnswer({ index: i, value: e }),
-                      );
-                      formik.validateForm();
-                    }}
-                    isCount={false}
-                    isBubble={true}
-                    id={`result-${String.fromCharCode(65 + i)}`}
-                    name={`result-${String.fromCharCode(65 + i)}`}
-                  />
+                  <div className="flex flex-grow lg:max-w-[596px] sm:max-w-lg max-w-sm">
+                    <EditorHook
+                      onBlur={async () => {
+                        await formik.setFieldTouched(`ans-${a?.id}`, true);
+                        formik.validateForm();
+                      }}
+                      touch={formik.touched[`ans-${a?.id}`] as any}
+                      error={formik.errors[`ans-${a?.id}`] as any}
+                      value={a.text}
+                      setValue={async (name: any, e: any) => {
+                        await dispatch(
+                          updateTextMultiAnswer({ index: i, value: e }),
+                        );
+                        formik.validateForm();
+                      }}
+                      isCount={false}
+                      isBubble={true}
+                      id={`result-${String.fromCharCode(65 + i)}`}
+                      name={`result-${String.fromCharCode(65 + i)}`}
+                    />
+                  </div>
                   <button
                     onClick={async () => {
                       dispatch(deleteMultiAnswer(i));
@@ -332,7 +334,7 @@ function ManyResultsQuestion({
                   onClick={async () => {
                     dispatch(addMoreAnswer("1"));
                   }}
-                  className="text-m_primary_500 underline body_semibold_14 underline-offset-4"
+                  className=" underline body_regular_14 underline-offset-4"
                 >
                   <PlusOutlined /> {t("add_result")}
                 </button>

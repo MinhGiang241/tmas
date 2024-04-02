@@ -36,7 +36,7 @@
   "save_info": "Lưu thông tin",
   "test_time": "Thời gian làm bài (phút)",
   "enter_time": "Nhập thời gian",
-  "display_setting": "Cài đặt hiện thị",
+  "display_setting": "Cài đặt hiển thị",
   "one_question": "Hiển thị 1 câu hỏi trên một trang",
   "all_question": "Hiển thị toàn bộ câu hỏi trên một trang",
   "change_position_question": "Đổi vị trí câu hỏi",
@@ -235,5 +235,7 @@
   "yesnoquestion": "Đúng/sai",
   "fillBlank": "Điền vào chỗ trống",
   "pairing": "Ghép/nối",
-  "essay": "Tự luận"
+  "essay": "Tự luận",
+  "cancel_reject": "Hủy bỏ",
+  "name_testcase_not_less_3": "Tên testcase không nhỏ hơn 3 ký tự"
 }

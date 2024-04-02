@@ -307,25 +307,27 @@ function ConnectQuestion({
                     <p className="min-w-4 mt-2 mr-2 body_semibold_14">
                       {i + 1}.
                     </p>
-                    <EditorHook
-                      onBlur={async () => {
-                        await formik.setFieldTouched(`ques-${s?.id}`, true);
-                        formik.validateForm();
-                      }}
-                      touch={formik.touched[`ques-${s?.id}`] as any}
-                      error={formik.errors[`ques-${s?.id}`] as any}
-                      setValue={(name: any, val: any) => {
-                        dispatch(
-                          updateTextConnectQuestion({ index: i, value: val }),
-                        );
-                        formik.validateForm();
-                      }}
-                      value={s.content}
-                      isCount={false}
-                      isBubble={true}
-                      id={`result-${i + 1}`}
-                      name={`result-${i + 1}`}
-                    />
+                    <div className="w-[calc(100%-4rem)]">
+                      <EditorHook
+                        onBlur={async () => {
+                          await formik.setFieldTouched(`ques-${s?.id}`, true);
+                          formik.validateForm();
+                        }}
+                        touch={formik.touched[`ques-${s?.id}`] as any}
+                        error={formik.errors[`ques-${s?.id}`] as any}
+                        setValue={(name: any, val: any) => {
+                          dispatch(
+                            updateTextConnectQuestion({ index: i, value: val }),
+                          );
+                          formik.validateForm();
+                        }}
+                        value={s.content}
+                        isCount={false}
+                        isBubble={true}
+                        id={`result-${i + 1}`}
+                        name={`result-${i + 1}`}
+                      />
+                    </div>
                     <button
                       onClick={() => {
                         dispatch(deleteConnectQuestion(i));
@@ -355,26 +357,28 @@ function ConnectQuestion({
                     <p className="min-w-4 mt-2 mr-2  body_semibold_14">
                       {String.fromCharCode(65 + i)}.
                     </p>
-                    <EditorHook
-                      onBlur={async () => {
-                        await formik.setFieldTouched(`ans-${s?.id}`, true);
-                        formik.validateForm();
-                      }}
-                      touch={formik.touched[`ans-${s?.id}`] as any}
-                      error={formik.errors[`ans-${s?.id}`] as any}
-                      setValue={async (name: any, val: any) => {
-                        dispatch(
-                          updateTextConnectAnswer({ index: i, value: val }),
-                        );
-                        await formik.setFieldValue(`result-${s?.id}`, val);
-                        formik.validateForm();
-                      }}
-                      value={s.content}
-                      isCount={false}
-                      isBubble={true}
-                      id={`result-${s?.id}`}
-                      name={`result-${s?.id}`}
-                    />
+                    <div className="w-[calc(100%-4rem)]">
+                      <EditorHook
+                        onBlur={async () => {
+                          await formik.setFieldTouched(`ans-${s?.id}`, true);
+                          formik.validateForm();
+                        }}
+                        touch={formik.touched[`ans-${s?.id}`] as any}
+                        error={formik.errors[`ans-${s?.id}`] as any}
+                        setValue={async (name: any, val: any) => {
+                          dispatch(
+                            updateTextConnectAnswer({ index: i, value: val }),
+                          );
+                          await formik.setFieldValue(`result-${s?.id}`, val);
+                          formik.validateForm();
+                        }}
+                        value={s.content}
+                        isCount={false}
+                        isBubble={true}
+                        id={`result-${s?.id}`}
+                        name={`result-${s?.id}`}
+                      />
+                    </div>
                     <button
                       onClick={() => {
                         dispatch(deleteConnectAnswer(i));

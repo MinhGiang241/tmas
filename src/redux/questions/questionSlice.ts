@@ -26,29 +26,9 @@ const initialState: Question = {
       label: undefined,
       content: undefined,
     },
-    {
-      id: uuidv4(),
-      label: undefined,
-      content: undefined,
-    },
-    {
-      id: uuidv4(),
-      label: undefined,
-      content: undefined,
-    },
   ],
 
   connectAnswers: [
-    {
-      id: uuidv4(),
-      label: undefined,
-      content: undefined,
-    },
-    {
-      id: uuidv4(),
-      label: undefined,
-      content: undefined,
-    },
     {
       id: uuidv4(),
       label: undefined,
@@ -190,7 +170,7 @@ export const questionSlice = createSlice({
       var answerIndex = action.payload;
       var newList = _.cloneDeep(state.connectAnswers);
       var pairings = _.cloneDeep(state.connectPairing).filter(
-        (e) => !(newList[answerIndex].id === e.idQuestion),
+        (e) => !(newList[answerIndex].id === e.idAnswer),
       );
 
       newList.splice(answerIndex, 1);
@@ -255,29 +235,9 @@ export const questionSlice = createSlice({
             label: undefined,
             content: undefined,
           },
-          {
-            id: uuidv4(),
-            label: undefined,
-            content: undefined,
-          },
-          {
-            id: uuidv4(),
-            label: undefined,
-            content: undefined,
-          },
         ],
 
         connectQuestions: [
-          {
-            id: uuidv4(),
-            label: undefined,
-            content: undefined,
-          },
-          {
-            id: uuidv4(),
-            label: undefined,
-            content: undefined,
-          },
           {
             id: uuidv4(),
             label: undefined,
