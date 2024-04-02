@@ -296,14 +296,24 @@ function ExamDetails({ params }: any) {
     }
   };
 
+  // const getListQuestion = () => {
+  //   const res = getQuestionList({
+  //     paging: { startIndex: 0, recordPerPage: 100 },
+  //     studioSorters: [{ name: "createdTime", isAsc: true }],
+  //   })
+  //   console.log(res, "res");
+  // }
+
   useEffect(() => {
     setLoadDataQuestion([]);
     getData();
+    // getListQuestion()
   }, []);
   // const filteredData = data.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id));
   // const filteredData = data?.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id)
   // console.log(filteredData, "filteredData");
-  // console.log(exam);
+  // console.log(exam, "exam");
+
 
   return (
     <HomeLayout>
@@ -312,12 +322,15 @@ function ExamDetails({ params }: any) {
       <ConfirmModal
         onOk={async () => {
           var res = await CopyQuestion(params.id);
+          console.log(res?.data, "copy");
           if (res?.code != 0) {
             errorToast(res.message || "");
             return;
           }
           setOpenCopyQuestion(false);
-          router.push(`/exams/${res?.data}`)
+          // router.push(`/exams/details/${res.data}`)
+          const newId = res?.data[0]?.newId || '';
+          router.push(`/exams/details/${newId}`);
         }}
         onCancel={() => {
           setOpenCopyQuestion(false);
@@ -385,7 +398,6 @@ function ExamDetails({ params }: any) {
                 `/exams/${params.id}`,
               );
             }
-
             }>
               <EditIcon
               />
@@ -412,7 +424,7 @@ function ExamDetails({ params }: any) {
         <div className="h-[1px] bg-m_neutral_200 mt-10" />
         <div className="flex justify-between items-center mt-6 mb-6">
           <div className="text-sm text-m_neutral_900 flex">
-            <Menu className="mr-1" />3 phần
+            <Menu className="mr-1" />{data?.totalOfRecords} phần
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Play className="mr-1" />
@@ -420,11 +432,13 @@ function ExamDetails({ params }: any) {
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <MessageQuestion className="mr-1 scale-75" />
-            10 câu hỏi
+            {data?.records?.[0]?.examQuestions?.length ?? 0} câu hỏi
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Cup className="mr-1 scale-75" />
-            10 điểm
+            {data?.records?.[0]?.examQuestions?.reduce(function (total: any, question: any) {
+              return total + question.numberPoint;
+            }, 0)} điểm
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Time className="mr-1" />
@@ -642,7 +656,7 @@ function ExamDetails({ params }: any) {
                                     return;
                                   }
                                   await updateAExamQuestionPart({
-                                    idExam: x.id,
+                                    ...x,
                                     name: customName,
                                     description: customNote,
                                   });
