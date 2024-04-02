@@ -32,7 +32,7 @@ import {
   CopyQuestion,
   updateAExamQuestionPart,
   deleteQuestionPart,
-  getQuestionList
+  // getExamById
 } from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
@@ -77,7 +77,7 @@ function ExamDetails({ params }: any) {
   const [list, setList] = useState<ExamData[]>([]);
   //
   const [name, setName] = React.useState<string>("");
-  const [nameError, setNameError] = useState<string>("");
+  const [nameError, setNameError] = useState<string>();
   const [note, setNote] = React.useState<string>("");
   const [customName, setCustomName] = useState("");
   const [customNote, setCustomNote] = useState("");
@@ -138,7 +138,7 @@ function ExamDetails({ params }: any) {
       errorToast(res?.message ?? "");
       return;
     }
-    // console.log(res, "exam");
+    console.log(res, "exam");
 
     setExam(res?.data?.records[0]);
   };
@@ -313,7 +313,7 @@ function ExamDetails({ params }: any) {
   // const filteredData = data?.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id)
   // console.log(filteredData, "filteredData");
   // console.log(exam, "exam");
-
+  const defaultActiveKeys = ['1'];
 
   return (
     <HomeLayout>
@@ -339,7 +339,7 @@ function ExamDetails({ params }: any) {
         text={t("confirm_copy")}
         open={openCopyQuestion}
       />
-      {/* Xóa phần câu hỏi */}
+      {/* Xóa phần */}
       <ConfirmModal
         onOk={() => {
           handleDelete();
@@ -428,7 +428,8 @@ function ExamDetails({ params }: any) {
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Play className="mr-1" />
-            Chuyển phần tự do
+
+            {exam?.examNextQuestion === "FreeByUser" ? "Chuyển phần tự do" : "Lần lượt các phần"}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <MessageQuestion className="mr-1 scale-75" />
@@ -442,14 +443,14 @@ function ExamDetails({ params }: any) {
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Time className="mr-1" />
-            Không giới hạn
+            {exam?.timeLimitMinutes ? `${exam?.timeLimitMinutes} phút` : "Không giới hạn"}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
-            <Document className="mr-1" />1 câu hỏi/trang
+            <Document className="mr-1" />{exam?.examViewQuestionType === "MultiplePages" ? "Hiển thị toàn bộ câu hỏi/trang" : "1 câu hỏi/trang"}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Group className="mr-1" />
-            Giữ thứ tự câu hỏi
+            {exam?.changePositionQuestion === false ? "Chuyển phần tự do" : "Lần lượt các phần"}
           </div>
           <MButton
             h="h-11"
@@ -464,6 +465,9 @@ function ExamDetails({ params }: any) {
             width={564}
             onCancel={() => {
               setOpen(false);
+              setName("")
+              setNote("")
+              setNameError("")
             }}
             title={t("add_new")}
             open={open}
@@ -476,6 +480,9 @@ function ExamDetails({ params }: any) {
                 required
                 // onChange={handleNameChange, handleNameChangeValid}
                 onChange={(event) => {
+                  if (event.target.value) {
+                    setNameError('')
+                  }
                   handleNameChange(event);
                   handleNameChangeValid(event);
                 }}
@@ -522,12 +529,15 @@ function ExamDetails({ params }: any) {
           {data &&
             data.records?.map((x: any, key: any) => (
               <Collapse
+                defaultActiveKey={['1']}
+                // defaultActiveKey={defaultActiveKeys}
                 key={key}
                 ghost
                 expandIconPosition="end"
                 className="mb-5 rounded-lg bg-white overflow-hidden"
               >
                 <Collapse.Panel
+                  key="1"
                   header={
                     <div className="my-3 flex justify-between items-center">
                       <div>
@@ -607,22 +617,28 @@ function ExamDetails({ params }: any) {
                             title={t("edit_add_new")}
                             open={openEdit}
                           >
-                            <MInput
-                              // formik={formik}
-                              id="customName"
-                              name="customName"
-                              title={t("name")}
-                              required
-                              placeholder="Nhập nội dung"
-                              maxLength={255}
-                              value={customName}
-                              onChange={(event) => {
-                                setCustomName(event.target.value);
-                                handleNameChangeValid(event);
-                              }}
-                              className={`${nameError ? "border-red-300" : ""}`}
-                            />
-                            {nameError && <div style={{ color: "red" }}>{nameError}</div>}
+                            <div className="w-full mb-5">
+                              <MInput
+                                id="customName"
+                                name="customName"
+                                title={t("name")}
+                                required
+                                // onChange={handleNameChange, handleNameChangeValid}
+                                onChange={(event) => {
+                                  if (event.target.value) {
+                                    setNameError('')
+                                  }
+                                  setCustomName(event.target.value);
+                                  handleNameChangeValid(event);
+                                }}
+                                value={customName}
+                                placeholder="Nhập nội dung"
+                                maxLength={255}
+                                isTextRequire={false}
+                                className={nameError ? "border-red-300" : ""}
+                              />
+                              {nameError && <span className="text-left text-red-500">{nameError}</span>}
+                            </div>
                             <MTextArea
                               // formik={formik}
                               id="customNote"
@@ -685,9 +701,8 @@ function ExamDetails({ params }: any) {
                       </div>
                     </div>
                   }
-                  key={""}
                 >
-                  {x?.examQuestions?.map((e: any, key: any) => {
+                  {x?.examQuestions?.sort((a: any, b: any) => (a.createdTime < b.createdTime) ? -1 : ((a.createdTime > b.createdTime) ? 1 : 0)).map((e: any, key: any) => {
                     var questionGroup = questionGroups?.find((v: any) => (v.id === e.idGroupQuestion))
                     if (e.questionType == "Coding") {
                       return (
