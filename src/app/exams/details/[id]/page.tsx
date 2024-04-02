@@ -314,9 +314,96 @@ function ExamDetails({ params }: any) {
   // console.log(filteredData, "filteredData");
   // console.log(exam, "exam");
   const defaultActiveKeys = ['1'];
-
+  const [activeDelete, setActiveDelete] = useState<any>()
   return (
     <HomeLayout>
+      <BaseModal
+        width={564}
+        onCancel={() => {
+          setOpenEdit(false);
+          setActiveDelete(undefined)
+          setNameError("")
+        }}
+        title={t("edit_add_new")}
+        open={openEdit}
+      >
+        <div className="w-full mb-5">
+          <MInput
+            id="customName"
+            name="customName"
+            title={t("name")}
+            required
+            // onChange={handleNameChange, handleNameChangeValid}
+            onChange={(event) => {
+              if (event.target.value) {
+                setNameError('')
+              }
+              setCustomName(event.target.value);
+              handleNameChangeValid(event);
+            }}
+            value={customName}
+            placeholder="Nhập nội dung"
+            maxLength={255}
+            isTextRequire={false}
+            className={nameError ? "border-red-300" : ""}
+          />
+          {nameError && <span className="text-left text-red-500">{nameError}</span>}
+        </div>
+        <MTextArea
+          // formik={formik}
+          id="customNote"
+          name="customNote"
+          title={t("note")}
+          placeholder="Nhập nội dung"
+          maxLength={500}
+          value={customNote}
+          onChange={(event) =>
+            setCustomNote(event.target.value)
+          }
+        />
+        <div className="w-full flex justify-center mt-7">
+          <MButton
+            className="w-36"
+            type="secondary"
+            text={t("cancel")}
+            onClick={() => {
+              setOpenEdit(false);
+              setCustomNote("");
+              setCustomName("");
+              setNameError("")
+              setName("")
+              setNote("")
+            }}
+          />
+          <div className="w-5" />
+          <MButton
+            // loading={loading}
+            htmlType="submit"
+            className={`w-36`}
+            text={t("update")}
+            onClick={async () => {
+              if (!customName) {
+                setNameError("Vui lòng nhập tên phần thi.");
+                return;
+              }
+              await updateAExamQuestionPart({
+                ...activeDelete,
+                name: customName,
+                description: customNote,
+              });
+              setOpenEdit(false);
+              getData();
+              setCustomNote("");
+              setCustomName("");
+              setNameError("")
+              setName("")
+              setNote("")
+              // setActiveDelete(undefined)
+              // successToast(t("success_edit_question"));
+            }}
+          />
+        </div>
+      </BaseModal>
       <div className="h-5" />
       {/* Copy phần câu hỏi */}
       <ConfirmModal
@@ -428,7 +515,6 @@ function ExamDetails({ params }: any) {
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Play className="mr-1" />
-
             {exam?.examNextQuestion === "FreeByUser" ? "Chuyển phần tự do" : "Lần lượt các phần"}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
@@ -450,7 +536,7 @@ function ExamDetails({ params }: any) {
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Group className="mr-1" />
-            {exam?.changePositionQuestion === false ? "Chuyển phần tự do" : "Lần lượt các phần"}
+            {exam?.changePositionQuestion === false ? "Giữ thứ tự câu hỏi" : "Đổi vị trí câu hỏi"}
           </div>
           <MButton
             h="h-11"
@@ -508,6 +594,9 @@ function ExamDetails({ params }: any) {
                 // onClick={onCancel}
                 onClick={() => {
                   setOpen(false);
+                  setName("")
+                  setNote("")
+                  setNameError("")
                 }}
                 className="w-36"
                 type="secondary"
@@ -606,85 +695,11 @@ function ExamDetails({ params }: any) {
                           <EditIcon
                             onClick={() => {
                               // setOpenEdit(true);
+                              setActiveDelete(x)
                               openEditModal(x.id);
                             }}
                           />
-                          <BaseModal
-                            width={564}
-                            onCancel={() => {
-                              setOpenEdit(false);
-                            }}
-                            title={t("edit_add_new")}
-                            open={openEdit}
-                          >
-                            <div className="w-full mb-5">
-                              <MInput
-                                id="customName"
-                                name="customName"
-                                title={t("name")}
-                                required
-                                // onChange={handleNameChange, handleNameChangeValid}
-                                onChange={(event) => {
-                                  if (event.target.value) {
-                                    setNameError('')
-                                  }
-                                  setCustomName(event.target.value);
-                                  handleNameChangeValid(event);
-                                }}
-                                value={customName}
-                                placeholder="Nhập nội dung"
-                                maxLength={255}
-                                isTextRequire={false}
-                                className={nameError ? "border-red-300" : ""}
-                              />
-                              {nameError && <span className="text-left text-red-500">{nameError}</span>}
-                            </div>
-                            <MTextArea
-                              // formik={formik}
-                              id="customNote"
-                              name="customNote"
-                              title={t("note")}
-                              placeholder="Nhập nội dung"
-                              maxLength={500}
-                              value={customNote}
-                              onChange={(event) =>
-                                setCustomNote(event.target.value)
-                              }
-                            />
-                            <div className="w-full flex justify-center mt-7">
-                              <MButton
-                                className="w-36"
-                                type="secondary"
-                                text={t("cancel")}
-                                onClick={() => {
-                                  setOpenEdit(false);
-                                }}
-                              />
-                              <div className="w-5" />
-                              <MButton
-                                // loading={loading}
-                                htmlType="submit"
-                                className={`w-36`}
-                                text={t("update")}
-                                onClick={async () => {
-                                  if (!customName) {
-                                    setNameError("Vui lòng nhập tên phần thi.");
-                                    return;
-                                  }
-                                  await updateAExamQuestionPart({
-                                    ...x,
-                                    name: customName,
-                                    description: customNote,
-                                  });
-                                  setOpenEdit(false);
-                                  getData();
-                                  setCustomNote("");
-                                  setCustomName("");
-                                  successToast(t("success_edit_question"));
-                                }}
-                              />
-                            </div>
-                          </BaseModal>
+
                         </button>
                         <button
                           onClick={(e) => {
