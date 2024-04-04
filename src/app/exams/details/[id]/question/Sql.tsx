@@ -151,13 +151,11 @@ export default function Sql({
                   className="flex items-center"
                   onClick={(e) => {
                     e.stopPropagation();
-                    addExamBank(e, question);
+                    addExamBank!(e, question);
                   }}
                   h="h-11"
                   type="secondary"
                   icon={<AddIcon />}
-                  id="add_bank"
-                  name="add_bank"
                   text={t("add_bank")}
                 />
               ) : (
