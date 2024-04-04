@@ -167,7 +167,7 @@ function MDropdown({
           className={`${successText && touch ? "border-m_success_500" : ""} ${
             dangerText && touch ? "border-m_warning_500" : ""
           } ${disable ? "text-m_neutral_900" : ""} ${
-            mode == "tags" ? "tag-selector" : h ? h : "h-12"
+            mode == "tags" ? "tag-selector" : h ? h : "min-h-11"
           } rounded-lg ${className} body_regular_14`} //shadow-inner shadow-gray-300 bg-m_neutral_100
           id={id}
           onKeyDown={onKeyDown}

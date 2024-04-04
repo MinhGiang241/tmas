@@ -205,13 +205,13 @@ export interface CodingQuestionFormData extends BaseQuestionFormData {
   content?: {
     codingScroringMethod?: "PassAllTestcase" | "EachTestcase";
     codeLanguages:
-    | any
-    | "PHP"
-    | "Javascrip"
-    | "Java"
-    | "Python"
-    | "Ruby"
-    | "CShape"[];
+      | any
+      | "PHP"
+      | "Javascrip"
+      | "Java"
+      | "Python"
+      | "Ruby"
+      | "CShape"[];
     testcases: {
       name?: string;
       inputData?: string;
@@ -234,7 +234,6 @@ export interface ParameterType {
 }
 
 export interface ExamQuestionPart {
-
   id?: string;
   name?: string;
   description?: string;
@@ -302,4 +301,10 @@ export interface SqlQuestionFormData extends BaseQuestionFormData {
     schemaSql?: string;
     expectedOutput?: string;
   };
+}
+
+export interface DuplicateQuestionParams {
+  newIdExamQuestionPart?: string;
+  ids?: string[];
+  idExams?: string[];
 }

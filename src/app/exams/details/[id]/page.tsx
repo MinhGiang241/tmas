@@ -50,9 +50,13 @@ import { ExamPrint } from "../components/ExamPrint";
 import { color } from "@uiw/react-codemirror";
 import { RootState } from "@/redux/store";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { fetchDataExamGroup, setquestionGroupLoading } from "@/redux/exam_group/examGroupSlice";
+import {
+  fetchDataExamGroup,
+  setquestionGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
 import { getQuestionGroups } from "@/services/api_services/exam_api";
 import { UserData } from "@/data/user";
+import Random from "./question/Random";
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -94,12 +98,13 @@ function ExamDetails({ params }: any) {
     setNote(event.target.value);
   };
 
-  const user: UserData | undefined = useAppSelector((state: RootState) => state?.user?.user);
-  const dispatchGroup = useAppDispatch()
-  const questionGroups: ExamGroupData[] | undefined
-    = useAppSelector(
-      (state: RootState) => state?.examGroup?.list,
-    );
+  const user: UserData | undefined = useAppSelector(
+    (state: RootState) => state?.user?.user,
+  );
+  const dispatchGroup = useAppDispatch();
+  const questionGroups: ExamGroupData[] | undefined = useAppSelector(
+    (state: RootState) => state?.examGroup?.list,
+  );
   const loadQuestionGroupList = async (init?: boolean) => {
     if (init) {
       dispatchGroup(setquestionGroupLoading(true));
@@ -120,9 +125,10 @@ function ExamDetails({ params }: any) {
 
   useEffect(() => {
     if (user?.studio?._id) {
-      dispatchGroup(fetchDataExamGroup(async () => loadQuestionGroupList(true)));
+      dispatchGroup(
+        fetchDataExamGroup(async () => loadQuestionGroupList(true)),
+      );
     }
-
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -219,7 +225,9 @@ function ExamDetails({ params }: any) {
   //   getData();
   // }
 
-  const handleNameChangeValid = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNameChangeValid = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const { value } = event.target;
     setName(value);
   };
@@ -278,7 +286,7 @@ function ExamDetails({ params }: any) {
       studioSorters: [{ name: "createdTime", isAsc: true }],
       // truyền idexam thay vì ids
       // ids: [params.id],
-      idExams: [params.id]
+      idExams: [params.id],
     });
     const data = res.data;
     console.log(data);
@@ -313,16 +321,16 @@ function ExamDetails({ params }: any) {
   // const filteredData = data?.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id)
   // console.log(filteredData, "filteredData");
   // console.log(exam, "exam");
-  const defaultActiveKeys = ['1'];
-  const [activeDelete, setActiveDelete] = useState<any>()
+  const defaultActiveKeys = ["1"];
+  const [activeDelete, setActiveDelete] = useState<any>();
   return (
     <HomeLayout>
       <BaseModal
         width={564}
         onCancel={() => {
           setOpenEdit(false);
-          setActiveDelete(undefined)
-          setNameError("")
+          setActiveDelete(undefined);
+          setNameError("");
         }}
         title={t("edit_add_new")}
         open={openEdit}
@@ -336,7 +344,7 @@ function ExamDetails({ params }: any) {
             // onChange={handleNameChange, handleNameChangeValid}
             onChange={(event) => {
               if (event.target.value) {
-                setNameError('')
+                setNameError("");
               }
               setCustomName(event.target.value);
               handleNameChangeValid(event);
@@ -347,7 +355,9 @@ function ExamDetails({ params }: any) {
             isTextRequire={false}
             className={nameError ? "border-red-300" : ""}
           />
-          {nameError && <span className="text-left text-red-500">{nameError}</span>}
+          {nameError && (
+            <span className="text-left text-red-500">{nameError}</span>
+          )}
         </div>
         <MTextArea
           // formik={formik}
@@ -357,9 +367,7 @@ function ExamDetails({ params }: any) {
           placeholder="Nhập nội dung"
           maxLength={500}
           value={customNote}
-          onChange={(event) =>
-            setCustomNote(event.target.value)
-          }
+          onChange={(event) => setCustomNote(event.target.value)}
         />
         <div className="w-full flex justify-center mt-7">
           <MButton
@@ -370,9 +378,9 @@ function ExamDetails({ params }: any) {
               setOpenEdit(false);
               setCustomNote("");
               setCustomName("");
-              setNameError("")
-              setName("")
-              setNote("")
+              setNameError("");
+              setName("");
+              setNote("");
             }}
           />
           <div className="w-5" />
@@ -395,9 +403,9 @@ function ExamDetails({ params }: any) {
               getData();
               setCustomNote("");
               setCustomName("");
-              setNameError("")
-              setName("")
-              setNote("")
+              setNameError("");
+              setName("");
+              setNote("");
               // setActiveDelete(undefined)
               // successToast(t("success_edit_question"));
             }}
@@ -416,7 +424,7 @@ function ExamDetails({ params }: any) {
           }
           setOpenCopyQuestion(false);
           // router.push(`/exams/details/${res.data}`)
-          const newId = res?.data[0]?.newId || '';
+          const newId = res?.data[0]?.newId || "";
           router.push(`/exams/details/${newId}`);
         }}
         onCancel={() => {
@@ -480,14 +488,12 @@ function ExamDetails({ params }: any) {
               // text={common.t("create_new")}
               text={question.t("Lựa chọn khác")}
             /> */}
-            <button onClick={() => {
-              router.push(
-                `/exams/${params.id}`,
-              );
-            }
-            }>
-              <EditIcon
-              />
+            <button
+              onClick={() => {
+                router.push(`/exams/${params.id}`);
+              }}
+            >
+              <EditIcon />
             </button>
             {/* <button className="pl-3">
               <MoreIcon />
@@ -504,25 +510,32 @@ function ExamDetails({ params }: any) {
             </Popover>
           </div>
         </div>
-        <div className="text-sm text-m_neutral_500 pt-1" dangerouslySetInnerHTML={{ __html: exam?.description || "" }} />
+        <div
+          className="text-sm text-m_neutral_500 pt-1"
+          dangerouslySetInnerHTML={{ __html: exam?.description || "" }}
+        />
         {/* <div className="text-sm text-m_neutral_500 pt-1">
           {exam?.description}
         </div> */}
         <div className="h-[1px] bg-m_neutral_200 mt-10" />
         <div className="flex justify-between items-center mt-6 mb-6">
           <div className="text-sm text-m_neutral_900 flex">
-            <Menu className="mr-1" />{data?.totalOfRecords} phần
+            <Menu className="mr-1" />
+            {data?.totalOfRecords} phần
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Play className="mr-1" />
-            {exam?.examNextQuestion === "FreeByUser" ? "Chuyển phần tự do" : "Lần lượt các phần"}
+            {exam?.examNextQuestion === "FreeByUser"
+              ? "Chuyển phần tự do"
+              : "Lần lượt các phần"}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <MessageQuestion className="mr-1 scale-75" />
             {/* {data?.records?.[0]?.examQuestions?.length ?? 0} câu hỏi */}
             {data?.records?.reduce(function (total: any, question: any) {
               return total + question?.examQuestions?.length;
-            }, 0)} câu hỏi
+            }, 0)}{" "}
+            câu hỏi
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Cup className="mr-1 scale-75" />
@@ -533,14 +546,21 @@ function ExamDetails({ params }: any) {
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Time className="mr-1" />
-            {exam?.timeLimitMinutes ? `${exam?.timeLimitMinutes} phút` : "Không giới hạn"}
+            {exam?.timeLimitMinutes
+              ? `${exam?.timeLimitMinutes} phút`
+              : "Không giới hạn"}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
-            <Document className="mr-1" />{exam?.examViewQuestionType === "MultiplePages" ? "Hiển thị toàn bộ câu hỏi/trang" : "1 câu hỏi/trang"}
+            <Document className="mr-1" />
+            {exam?.examViewQuestionType === "MultiplePages"
+              ? "Hiển thị toàn bộ câu hỏi/trang"
+              : "1 câu hỏi/trang"}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Group className="mr-1" />
-            {exam?.changePositionQuestion === false ? "Giữ thứ tự câu hỏi" : "Đổi vị trí câu hỏi"}
+            {exam?.changePositionQuestion === false
+              ? "Giữ thứ tự câu hỏi"
+              : "Đổi vị trí câu hỏi"}
           </div>
           <MButton
             h="h-11"
@@ -555,9 +575,9 @@ function ExamDetails({ params }: any) {
             width={564}
             onCancel={() => {
               setOpen(false);
-              setName("")
-              setNote("")
-              setNameError("")
+              setName("");
+              setNote("");
+              setNameError("");
             }}
             title={t("add_new")}
             open={open}
@@ -571,7 +591,7 @@ function ExamDetails({ params }: any) {
                 // onChange={handleNameChange, handleNameChangeValid}
                 onChange={(event) => {
                   if (event.target.value) {
-                    setNameError('')
+                    setNameError("");
                   }
                   handleNameChange(event);
                   handleNameChangeValid(event);
@@ -582,7 +602,9 @@ function ExamDetails({ params }: any) {
                 isTextRequire={false}
                 className={nameError ? "border-red-300" : ""}
               />
-              {nameError && <span className="text-left text-red-500">{nameError}</span>}
+              {nameError && (
+                <span className="text-left text-red-500">{nameError}</span>
+              )}
             </div>
             <MTextArea
               id="note"
@@ -598,9 +620,9 @@ function ExamDetails({ params }: any) {
                 // onClick={onCancel}
                 onClick={() => {
                   setOpen(false);
-                  setName("")
-                  setNote("")
-                  setNameError("")
+                  setName("");
+                  setNote("");
+                  setNameError("");
                 }}
                 className="w-36"
                 type="secondary"
@@ -622,7 +644,7 @@ function ExamDetails({ params }: any) {
           {data &&
             data.records?.map((x: any, key: any) => (
               <Collapse
-                defaultActiveKey={['1']}
+                defaultActiveKey={["1"]}
                 // defaultActiveKey={defaultActiveKeys}
                 key={key}
                 ghost
@@ -699,11 +721,10 @@ function ExamDetails({ params }: any) {
                           <EditIcon
                             onClick={() => {
                               // setOpenEdit(true);
-                              setActiveDelete(x)
+                              setActiveDelete(x);
                               openEditModal(x.id);
                             }}
                           />
-
                         </button>
                         <button
                           onClick={(e) => {
@@ -721,191 +742,124 @@ function ExamDetails({ params }: any) {
                     </div>
                   }
                 >
-                  {x?.examQuestions?.sort((a: any, b: any) => (a.createdTime < b.createdTime) ? -1 : ((a.createdTime > b.createdTime) ? 1 : 0)).map((e: any, key: any) => {
-                    var questionGroup = questionGroups?.find((v: any) => (v.id === e.idGroupQuestion))
-                    if (e.questionType == "Coding") {
-                      return (
-                        <Coding index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />
+                  {x?.examQuestions
+                    ?.sort((a: any, b: any) =>
+                      a.createdTime < b.createdTime
+                        ? -1
+                        : a.createdTime > b.createdTime
+                          ? 1
+                          : 0,
+                    )
+                    .map((e: any, key: any) => {
+                      var questionGroup = questionGroups?.find(
+                        (v: any) => v.id === e.idGroupQuestion,
                       );
-                    }
-                    if (e.questionType == "Pairing") {
+                      if (e.questionType == "Coding") {
+                        return (
+                          <Coding
+                            index={key + 1}
+                            key={e.id}
+                            examId={params.id}
+                            question={e}
+                            getData={getData}
+                            questionGroup={questionGroup}
+                          />
+                        );
+                      }
+                      if (e.questionType == "Pairing") {
+                        return (
+                          <Connect
+                            index={key + 1}
+                            key={e.id}
+                            examId={params.id}
+                            question={e}
+                            getData={getData}
+                            questionGroup={questionGroup}
+                          />
+                        );
+                      }
+                      if (e.questionType == "Essay") {
+                        return (
+                          <Explain
+                            index={key + 1}
+                            key={e.id}
+                            examId={params.id}
+                            question={e}
+                            getData={getData}
+                            questionGroup={questionGroup}
+                          />
+                        );
+                      }
+                      if (e.questionType == "FillBlank") {
+                        return (
+                          <FillBlank
+                            index={key + 1}
+                            key={e.id}
+                            examId={params.id}
+                            question={e}
+                            getData={getData}
+                            questionGroup={questionGroup}
+                          />
+                        );
+                      }
+                      if (e.questionType == "MutilAnswer") {
+                        return (
+                          <ManyResult
+                            getData={getData}
+                            index={key + 1}
+                            key={e.id}
+                            examId={params.id}
+                            question={e}
+                            questionGroup={questionGroup}
+                          />
+                        );
+                      }
+                      if (e.questionType == "SQL") {
+                        return (
+                          <Sql
+                            index={key + 1}
+                            key={e.id}
+                            examId={params.id}
+                            question={e}
+                            getData={getData}
+                            questionGroup={questionGroup}
+                          />
+                        );
+                      }
+                      if (e.questionType == "YesNoQuestion") {
+                        return (
+                          <TrueFalse
+                            index={key + 1}
+                            key={e.id}
+                            examId={params.id}
+                            question={e}
+                            getData={getData}
+                            questionGroup={questionGroup}
+                          />
+                        );
+                      }
                       return (
-                        <Connect index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />
-                      );
-                    }
-                    if (e.questionType == "Essay") {
-                      return (
-                        <Explain index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />
-                      );
-                    }
-                    if (e.questionType == "FillBlank") {
-                      return (
-                        <FillBlank index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />
-                      );
-                    }
-                    if (e.questionType == "MutilAnswer") {
-                      return (
-                        <ManyResult
-                          getData={getData}
+                        <Random
                           index={key + 1}
                           key={e.id}
                           examId={params.id}
                           question={e}
+                          getData={getData}
                           questionGroup={questionGroup}
                         />
                       );
-                    }
-                    if (e.questionType == "SQL") {
-                      return <Sql index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />;
-                    }
-                    if (e.questionType == "YesNoQuestion") {
-                      return (
-                        <TrueFalse index={key + 1} key={e.id} examId={params.id} question={e} getData={getData} questionGroup={questionGroup} />
-                      );
-                    }
-                    return (
-                      <Collapse
-                        key={key}
-                        ghost
-                        expandIconPosition="end"
-                        className="mb-3 rounded-lg bg-m_question overflow-hidden"
-                      >
-                        <Collapse.Panel
-                          header={
-                            <div className="my-3 flex justify-between items-center">
-                              <div className="flex">
-                                <span className="body_semibold_14">Câu {key + 1}:<span className="body_regular_14 pl-2" dangerouslySetInnerHTML={{ __html: e?.question }} /></span>
-                              </div>
-                              <div className="min-w-28 pl-4">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                  }}
-                                >
-                                  <EditIcon
-                                    onClick={() => {
-                                      router.push(
-                                        `/exams/details/${params.id}/edit?questId=${e?.id}`,
-                                      );
-                                    }}
-                                  />
-                                  {/* <BaseModal
-                                    width={564}
-                                    onCancel={() => {
-                                      setOpenEditQuestion(false);
-                                    }}
-                                    title={t("edit_question")}
-                                    open={openEditQuestion}
-                                  >
-                                    <MInput
-                                      // formik={formik}
-                                      id="name"
-                                      name="name"
-                                      title={t("name")}
-                                      required
-                                    />
-                                    <MTextArea
-                                      // formik={formik}
-                                      id="note"
-                                      name="note"
-                                      title={t("note")}
-                                    />
-                                    <div className="w-full flex justify-center mt-7">
-                                      <MButton
-                                        className="w-36"
-                                        type="secondary"
-                                        text={t("cancel")}
-                                        onClick={() => {
-                                          setOpenEditQuestion(false);
-                                        }}
-                                      />
-                                      <div className="w-5" />
-                                      <MButton
-                                        // loading={loading}
-                                        htmlType="submit"
-                                        className="w-36"
-                                        text={t("update")}
-                                      />
-                                    </div>
-                                  </BaseModal> */}
-                                </button>
-                                <button
-                                  className="px-2"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                  }}
-                                >
-                                  <CopyIcon
-                                    onClick={() => {
-                                      setOpenCopyQuestion(true);
-                                    }}
-                                  />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                  }}
-                                >
-                                  <DeleteRedIcon
-                                    onClick={() => {
-                                      setOpenDeleteQuestion(true);
-                                      setActive(e.id);
-                                      // console.log(e);
-                                    }}
-                                  />
-                                </button>
-                              </div>
-                            </div>
-                          }
-                          key={""}
-                        >
-                          <div className="h-[1px] bg-m_primary_200 mb-3" />
-                          <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                            Thông tin câu hỏi
-                          </div>
-                          <div className="flex">
-                            <div className="text-sm pr-2 font-semibold">
-                              Nhóm câu hỏi:{" "}
-                            </div>
-                            <span>{questionGroup?.name}</span>
-                          </div>
-                          <div className="flex">
-                            <div className="text-sm pr-2 font-semibold">
-                              Kiểu câu hỏi:{" "}
-                            </div>
-                            <span>{t(e?.questionType)}</span>
-                          </div>
-                          <div className="flex">
-                            <div className="text-sm pr-2 font-semibold">
-                              Điểm:{" "}
-                            </div>
-                            <span>{e.numberPoint}</span>
-                          </div>
-                          <div className="flex">
-                            <div className="text-sm pr-2 font-semibold">
-                              Ngày tạo:{" "}
-                            </div>
-                            <FormattedDate
-                              value={e?.createdTime}
-                              day="2-digit"
-                              month="2-digit"
-                              year="numeric"
-                            />
-                          </div>
-                        </Collapse.Panel>
-                      </Collapse>
-                    );
-                  })}
+                    })}
                 </Collapse.Panel>
               </Collapse>
             ))}
         </div>
         {/* <ManyResult /> */}
       </div>
+      <div className="h-20" />
       <div className="hidden">
         <ExamPrint exam={data?.records} ref={printRef} name={exam?.name} />
       </div>
-    </HomeLayout >
+    </HomeLayout>
   );
 }
 
@@ -913,4 +867,3 @@ export default ExamDetails;
 function dispatch(arg0: any) {
   throw new Error("Function not implemented.");
 }
-

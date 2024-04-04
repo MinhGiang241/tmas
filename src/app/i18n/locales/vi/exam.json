@@ -233,9 +233,11 @@
   "create_question": "Tạo câu hỏi",
   "mutilanswer": "Nhiều đáp án",
   "yesnoquestion": "Đúng/sai",
-  "fillBlank": "Điền vào chỗ trống",
+  "fillblank": "Điền vào chỗ trống",
   "pairing": "Ghép/nối",
   "essay": "Tự luận",
   "cancel_reject": "Hủy bỏ",
-  "name_testcase_not_less_3": "Tên testcase không nhỏ hơn 3 ký tự"
+  "name_testcase_not_less_3": "Tên testcase không nhỏ hơn 3 ký tự",
+  "exam_bank": "Ngân hàng đề thi",
+  "add_my_bank_quest": "Thêm vào ngân hàng câu hỏi của tôi"
 }

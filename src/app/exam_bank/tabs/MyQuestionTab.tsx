@@ -19,8 +19,16 @@ import FillBlank from "@/app/exams/details/[id]/question/FillBlank";
 import Explain from "@/app/exams/details/[id]/question/Explain";
 import TrueFalse from "@/app/exams/details/[id]/question/TrueFalse";
 import ManyResult from "@/app/exams/details/[id]/question/ManyResult";
-import { setquestionGroupLoading } from "@/redux/exam_group/examGroupSlice";
-import { ExamGroupData } from "@/data/exam";
+import {
+  fetchDataQuestionGroup,
+  setquestionGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
+import { ExamGroupData, QuestionGroupData } from "@/data/exam";
+import Random from "@/app/exams/details/[id]/question/Random";
+import { useRouter } from "next/navigation";
+import { APIResults } from "@/data/api_results";
+import { getQuestionGroups } from "@/services/api_services/exam_api";
+import AddBankModal from "../components/AddBankModal";
 
 function MyQuestionTab() {
   const { t } = useTranslation("exam");
@@ -31,12 +39,14 @@ function MyQuestionTab() {
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(0);
+  const router = useRouter();
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     loadQuestionList(true);
     loadQuestionGroupList(true);
+    dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, indexPage, recordNum]);
 
@@ -66,12 +76,23 @@ function MyQuestionTab() {
     setLoadingPage(false);
     console.log("res", res);
   };
-  const questionGroups: ExamGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.list,
+  const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
+    (state: RootState) => state?.examGroup?.questions,
   );
   const loadQuestionGroupList = async (init?: boolean) => {
     if (init) {
       dispatch(setquestionGroupLoading(true));
+    }
+    var dataResults: APIResults = await getQuestionGroups(
+      "",
+      user?.studio?._id,
+    );
+    dispatch(setquestionGroupLoading(false));
+    if (dataResults.code != 0) {
+      return [];
+    } else {
+      var data = dataResults?.data as QuestionGroupData[];
+      return data;
     }
   };
 
@@ -80,12 +101,16 @@ function MyQuestionTab() {
     index: number,
   ) => React.ReactNode = (e: BaseQuestionData, index: number) => {
     var group = questionGroups?.find((v: any) => v.id === e.idGroupQuestion);
+    console.log("questionGroups", questionGroups);
+    console.log("group", group);
+
     switch (e.questionType) {
       case QuestionType.MutilAnswer:
         return (
           <ManyResult
+            key={e?.id}
             question={e}
-            index={index}
+            index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
             getData={() => loadQuestionList(false)}
@@ -94,8 +119,9 @@ function MyQuestionTab() {
       case QuestionType.YesNoQuestion:
         return (
           <TrueFalse
+            key={e?.id}
             question={e}
-            index={index}
+            index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
             getData={() => loadQuestionList(false)}
@@ -104,8 +130,9 @@ function MyQuestionTab() {
       case QuestionType.Essay:
         return (
           <Explain
+            key={e?.id}
             question={e}
-            index={index}
+            index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
             getData={() => loadQuestionList(false)}
@@ -114,8 +141,9 @@ function MyQuestionTab() {
       case QuestionType.Coding:
         return (
           <Coding
+            key={e?.id}
             question={e}
-            index={index}
+            index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
             getData={() => loadQuestionList(false)}
@@ -124,8 +152,9 @@ function MyQuestionTab() {
       case QuestionType.SQL:
         return (
           <Sql
+            key={e?.id}
             question={e}
-            index={index}
+            index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
             getData={() => loadQuestionList(false)}
@@ -134,8 +163,9 @@ function MyQuestionTab() {
       case QuestionType.Pairing:
         return (
           <Connect
+            key={e?.id}
             question={e}
-            index={index}
+            index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
             getData={() => loadQuestionList(false)}
@@ -144,24 +174,39 @@ function MyQuestionTab() {
       case QuestionType.FillBlank:
         return (
           <FillBlank
+            key={e?.id}
             question={e}
-            index={index}
+            index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
             getData={() => loadQuestionList(false)}
           />
         );
       case QuestionType.Random:
-        return <div />;
+        return (
+          <Random
+            key={e?.id}
+            question={e}
+            index={index + (indexPage - 1) * recordNum + 1}
+            questionGroup={group}
+            examId={e?.idExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
       default:
-        return <div />;
+        return <div key={e?.id} />;
     }
   };
-
   return (
     <>
       <div className="w-full flex justify-end max-lg:pr-5">
-        <MButton h="h-11" text={t("create_question")} />
+        <MButton
+          onClick={() => {
+            router.push(`/exams/details/u/add`);
+          }}
+          h="h-11"
+          text={t("create_question")}
+        />
       </div>
       <div className="w-full flex ">
         <form

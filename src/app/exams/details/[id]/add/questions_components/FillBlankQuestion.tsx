@@ -211,7 +211,7 @@ function FillBlankQuestion({
       successToast(
         question ? t("success_update_question") : t("success_add_question"),
       );
-      router.push(`/exams/details/${idExam}`);
+      router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },
   });
 

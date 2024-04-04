@@ -13,7 +13,13 @@ import NewIcon from "@/app/components/icons/export.svg";
 import Tick from "@/app/components/icons/tick-circle.svg";
 import { useRouter } from "next/navigation";
 import { FormattedDate } from "react-intl";
-import { deleteQuestionById } from "@/services/api_services/question_api";
+import {
+  deleteQuestionById,
+  duplicateQuestion,
+} from "@/services/api_services/question_api";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { APIResults } from "@/data/api_results";
+import AddIcon from "@/app/components/icons/add.svg";
 
 export default function Connect({
   examId,
@@ -21,17 +27,23 @@ export default function Connect({
   index,
   getData,
   questionGroup,
+  tmasQuest,
+  addExamBank,
 }: {
   examId?: any;
   question?: any;
   index?: any;
   getData?: any;
   questionGroup?: any;
+  tmasQuest?: boolean;
+  addExamBank?: Function;
 }) {
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-  const [active, setActive] = useState("");
+
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [dupLoading, setDupLoading] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("question");
 
@@ -50,8 +62,47 @@ export default function Connect({
   return (
     <div>
       <ConfirmModal
+        loading={dupLoading}
         onOk={async () => {
-          await deleteQuestionById(active);
+          setDupLoading(true);
+          var res: APIResults = await duplicateQuestion({
+            newIdExamQuestionPart: question?.idExamQuestionPart,
+            ids: [question?.id],
+            idExams: examId ? [examId] : [],
+          });
+          setDupLoading(false);
+          if (res.code != 0) {
+            errorToast(res?.message ?? "");
+            return;
+          }
+          successToast(t("sucess_duplicate_question"));
+          setOpenCopyQuestion(false);
+          router.push(
+            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
+          );
+
+          await getData();
+        }}
+        onCancel={() => {
+          setOpenCopyQuestion(false);
+        }}
+        action={t("copy")}
+        text={t("confirm_copy")}
+        open={openCopyQuestion}
+      />
+
+      <ConfirmModal
+        loading={deleteLoading}
+        onOk={async () => {
+          setDeleteLoading(true);
+          var res = await deleteQuestionById(question?.id);
+          setDeleteLoading(false);
+          if (res.code != 0) {
+            errorToast(res?.message ?? "");
+            return;
+          }
+          successToast(t("success_delete_question"));
+
           setOpenDeleteQuestion(false);
           await getData();
         }}
@@ -78,7 +129,7 @@ export default function Connect({
                     expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
                   }`}
                 >
-                  Câu {index}:
+                  {`${t("quest")} ${index}`}:
                   <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
@@ -97,93 +148,53 @@ export default function Connect({
                   </button>
                 ) : null}
               </div>
-              <div className="min-w-28 pl-4">
-                <button
+              {tmasQuest ? (
+                <MButton
+                  className="flex items-center"
                   onClick={(e) => {
                     e.stopPropagation();
+                    addExamBank(e, question);
                   }}
-                >
-                  <EditIcon
-                    onClick={() => {
+                  h="h-11"
+                  type="secondary"
+                  icon={<AddIcon />}
+                  id="add_bank"
+                  name="add_bank"
+                  text={t("add_bank")}
+                />
+              ) : (
+                <div className="min-w-28 pl-4">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
                       router.push(
-                        `/exams/details/${examId}/edit?questId=${question.id}`,
+                        `/exams/details/${examId ?? "u"}/edit?questId=${
+                          question.id
+                        }`,
                       );
                     }}
-                  />
-                  <BaseModal
-                    width={564}
-                    onCancel={() => {
-                      setOpenEditQuestion(false);
-                    }}
-                    title={t("edit_question")}
-                    open={openEditQuestion}
                   >
-                    <MInput
-                      // formik={formik}
-                      id="name"
-                      name="name"
-                      title={t("name")}
-                      required
-                    />
-                    <MTextArea
-                      // formik={formik}
-                      id="note"
-                      name="note"
-                      title={t("note")}
-                    />
-                    <div className="w-full flex justify-center mt-7">
-                      <MButton
-                        className="w-36"
-                        type="secondary"
-                        text={t("cancel")}
-                        onClick={() => {
-                          setOpenEditQuestion(false);
-                        }}
-                      />
-                      <div className="w-5" />
-                      <MButton
-                        // loading={loading}
-                        htmlType="submit"
-                        className="w-36"
-                        text={t("update")}
-                      />
-                    </div>
-                  </BaseModal>
-                </button>
-                <button
-                  className="px-2"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <CopyIcon
-                    onClick={() => {
+                    <EditIcon />
+                  </button>
+                  <button
+                    className="px-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setOpenCopyQuestion(true);
                     }}
-                  />
-                  <ConfirmModal
-                    onOk={() => {}}
-                    onCancel={() => {
-                      setOpenCopyQuestion(false);
-                    }}
-                    action={t("copy")}
-                    text={t("confirm_copy")}
-                    open={openCopyQuestion}
-                  />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <DeleteRedIcon
-                    onClick={() => {
+                  >
+                    <CopyIcon />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setOpenDeleteQuestion(true);
-                      setActive(question.id);
                     }}
-                  />
-                </button>
-              </div>
+                  >
+                    <DeleteRedIcon />
+                  </button>
+                </div>
+              )}
             </div>
           }
           key={""}
@@ -192,22 +203,28 @@ export default function Connect({
           <div className="flex">
             <div className="w-1/2 p-4">
               <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                Thông tin câu hỏi
+                {t("quest_info")}
               </div>
               <div className="flex">
-                <div className="text-sm pr-2 font-semibold">Nhóm câu hỏi: </div>
+                <div className="text-sm pr-2 font-semibold">
+                  {t("quest_group")}:
+                </div>
                 <span>{questionGroup?.name}</span>
               </div>
               <div className="flex">
-                <div className="text-sm pr-2 font-semibold">Kiểu câu hỏi: </div>
+                <div className="text-sm pr-2 font-semibold">
+                  {t("quest_type")}:{" "}
+                </div>
                 <span>{t(question?.questionType)}</span>
               </div>
               <div className="flex">
-                <div className="text-sm pr-2 font-semibold">Điểm: </div>
+                <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
                 <span>{question.numberPoint}</span>
               </div>
               <div className="flex">
-                <div className="text-sm pr-2 font-semibold">Ngày tạo: </div>
+                <div className="text-sm pr-2 font-semibold">
+                  {t("created_date")}:{" "}
+                </div>
                 <FormattedDate
                   value={question?.createdTime}
                   day="2-digit"
@@ -218,7 +235,7 @@ export default function Connect({
             </div>
             <div className="w-1/2 p-4">
               <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                Đáp án
+                {t("result")}
               </div>
               <div className="flex justify-start items-center">
                 <div>

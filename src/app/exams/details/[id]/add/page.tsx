@@ -23,6 +23,7 @@ import {
 } from "@/services/api_services/exam_api";
 import {
   fetchDataExamGroup,
+  fetchDataQuestionGroup,
   setExamGroupLoading,
   setquestionGroupLoading,
 } from "@/redux/exam_group/examGroupSlice";
@@ -42,7 +43,7 @@ function CreateQuestionPage({ params, question }: any) {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state: RootState) => state?.user?.user);
   const questionGroups = useAppSelector(
-    (state: RootState) => state?.examGroup?.list,
+    (state: RootState) => state?.examGroup?.questions,
   );
   var search = useSearchParams();
   var questionType = search.get("question");
@@ -81,10 +82,11 @@ function CreateQuestionPage({ params, question }: any) {
 
   useEffect(() => {
     if (user?.studio?._id) {
-      dispatch(fetchDataExamGroup(async () => loadQuestionGroupList(true)));
+      dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
     }
-
-    loadExamById();
+    if (params.id && params.id != "u") {
+      loadExamById();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -108,15 +110,26 @@ function CreateQuestionPage({ params, question }: any) {
     <HomeLayout>
       <div className="w-full flex mt-4 items-center justify-between">
         <MBreadcrumb
-          items={[
-            { text: t("exam_list"), href: "/exams" },
-            { text: exam?.name, href: `/exams/details/${exam?.id}` },
-            {
-              text: question ? common.t("edit") : t("manual_add"),
-              href: question ? `` : `/exams/details/${exam?.id}/add`,
-              active: true,
-            },
-          ]}
+          items={
+            exam?.id
+              ? [
+                  { text: t("exam_list"), href: "/exams" },
+                  { text: exam?.name, href: `/exams/details/${exam?.id}` },
+                  {
+                    text: question ? common.t("edit") : t("manual_add"),
+                    href: question ? `` : `/exams/details/${exam?.id}/add`,
+                    active: true,
+                  },
+                ]
+              : [
+                  { text: t("exam_bank"), href: "/exam_bank" },
+                  {
+                    text: question ? common.t("edit") : t("manual_add"),
+                    href: question ? `` : `/exams/details/u/add`,
+                    active: true,
+                  },
+                ]
+          }
         />
         <div className="flex items-center">
           <MButton
@@ -124,8 +137,7 @@ function CreateQuestionPage({ params, question }: any) {
             className="min-w-20"
             onClick={() => {
               dispatch(resetMultiAnswer(1));
-
-              router.push(`/exams/details/${params.id}`);
+              router.back();
             }}
             type="secondary"
             text={t("cancel_reject")}
@@ -187,7 +199,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
-          idExam={params?.id}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
       {questionType == "true_false" && (
@@ -195,7 +207,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
-          idExam={params?.id}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
       {questionType == "explain" && (
@@ -203,7 +215,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
-          idExam={params?.id}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
       {questionType == "connect_quest" && (
@@ -211,7 +223,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
-          idExam={params?.id}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
       {questionType == "coding" && (
@@ -219,7 +231,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
-          idExam={params?.id}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
       {questionType == "sql" && (
@@ -227,7 +239,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
-          idExam={params?.id}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
       {questionType == "fill_blank" && (
@@ -235,7 +247,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
-          idExam={params?.id}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
       {questionType == "random" && (
@@ -243,7 +255,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
-          idExam={params?.id}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
     </HomeLayout>

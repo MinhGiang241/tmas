@@ -233,12 +233,19 @@ body {
 /*   align-items: start !important; */
 /* } */
 
+.dropdown-flex .ant-select-selection-item {
+  display: flex;
+}
+
 .select-page .ant-select-selection-item {
   display: flex;
   justify-content: center;
 }
 .tag-selector .ant-select-selector {
   min-height: 36px;
+}
+.tag-big .ant-select-selector {
+  min-height: 44px !important ;
 }
 
 /* @font-face { */

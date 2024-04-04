@@ -1,6 +1,7 @@
 import {
   CodingQuestionFormData,
   ConnectQuestionFormData,
+  DuplicateQuestionParams,
   EssayQuestionFormData,
   ExamQuestionPart,
   FillBlankQuestionFormData,
@@ -302,3 +303,12 @@ export const getExamById = async (id?: string) => {
   );
   return results;
 };
+
+export const duplicateQuestion = async (data: DuplicateQuestionParams) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/Copy`,
+    data,
+  );
+  return results;
+};
+
