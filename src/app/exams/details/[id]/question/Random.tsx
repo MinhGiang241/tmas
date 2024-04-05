@@ -1,4 +1,4 @@
-import { Collapse } from "antd";
+import { Checkbox, Collapse } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
 import EditIcon from "@/app/components/icons/edit-black.svg";
@@ -24,6 +24,8 @@ function Random({
   questionGroup,
   tmasQuest,
   addExamBank,
+  canCheck,
+  onChangeCheck,
 }: {
   getData?: any;
   examId?: any;
@@ -32,6 +34,8 @@ function Random({
   questionGroup?: any;
   tmasQuest?: boolean;
   addExamBank?: Function;
+  canCheck?: boolean;
+  onChangeCheck?: Function;
 }) {
   const router = useRouter();
   const { t } = useTranslation("question");
@@ -117,6 +121,15 @@ function Random({
             <div className="my-3 flex justify-between items-center">
               <div className="flex">
                 <span className="body_semibold_14">
+                  {canCheck && (
+                    <Checkbox
+                      onChange={onChangeCheck as any}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                      value={question?.id}
+                    />
+                  )}{" "}
                   {`${t("quest")} ${index}`}:
                   <span
                     className="body_regular_14 pl-2"

@@ -253,7 +253,13 @@ function MyQuestionTab() {
             }))}
           />
           <div className="w-11" />
-          <MDropdown h="h-11" id="category" name="category" options={[]} />
+          <MDropdown
+            className="tag-big"
+            popupClassName="hidden"
+            id="tags"
+            name="tags"
+            mode="tags"
+          />
           <div className="w-11" />
           <MDropdown
             h="h-11"
@@ -312,7 +318,7 @@ function MyQuestionTab() {
                 setRecordNum(v);
               }}
               options={[
-                ...[1, 2, 15, 25, 30, 50, 100].map((i: number) => ({
+                ...[15, 25, 30, 50, 100].map((i: number) => ({
                   value: i,
                   label: (
                     <span className="pl-3 body_regular_14">{`${i}/${common.t(

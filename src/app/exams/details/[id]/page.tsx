@@ -89,6 +89,7 @@ function ExamDetails({ params }: any) {
   const [active, setActive] = useState("");
   const router = useRouter();
   const printRef = useRef(null);
+  const examTrans = useTranslation("exam");
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -350,7 +351,7 @@ function ExamDetails({ params }: any) {
               handleNameChangeValid(event);
             }}
             value={customName}
-            placeholder="Nhập nội dung"
+            placeholder={examTrans.t("enter_content")}
             maxLength={255}
             isTextRequire={false}
             className={nameError ? "border-red-300" : ""}
@@ -364,7 +365,7 @@ function ExamDetails({ params }: any) {
           id="customNote"
           name="customNote"
           title={t("note")}
-          placeholder="Nhập nội dung"
+          placeholder={examTrans.t("enter_content")}
           maxLength={500}
           value={customNote}
           onChange={(event) => setCustomNote(event.target.value)}
@@ -391,7 +392,7 @@ function ExamDetails({ params }: any) {
             text={t("update")}
             onClick={async () => {
               if (!customName) {
-                setNameError("Vui lòng nhập tên phần thi.");
+                setNameError(t("enter_name_part"));
                 return;
               }
               await updateAExamQuestionPart({
@@ -462,12 +463,11 @@ function ExamDetails({ params }: any) {
       />
       <MBreadcrumb
         items={[
-          { text: t("Danh sách đề thi"), href: "/exams" },
+          { text: t("exam_list"), href: "/exams" },
           // { text: exam?.name, href: `/exams/details/${exam?.id}` },
           {
-            // href: `/exams/details/${exam?.id}/add`,
+            href: `/exams/details/${exam?.id}`,
             text: exam?.name,
-            href: "/",
             active: true,
           },
         ]}
@@ -521,13 +521,13 @@ function ExamDetails({ params }: any) {
         <div className="flex justify-between items-center mt-6 mb-6">
           <div className="text-sm text-m_neutral_900 flex">
             <Menu className="mr-1" />
-            {data?.totalOfRecords} phần
+            {data?.totalOfRecords} {t("part")}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Play className="mr-1" />
             {exam?.examNextQuestion === "FreeByUser"
-              ? "Chuyển phần tự do"
-              : "Lần lượt các phần"}
+              ? t("free_change_part")
+              : t("part_in_row")}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <MessageQuestion className="mr-1 scale-75" />
@@ -535,32 +535,32 @@ function ExamDetails({ params }: any) {
             {data?.records?.reduce(function (total: any, question: any) {
               return total + question?.examQuestions?.length;
             }, 0)}{" "}
-            câu hỏi
+            {t("quest")}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Cup className="mr-1 scale-75" />
             {/* {data?.records?.[0]?.examQuestions?.reduce(function (total: any, question: any) {
               return total + question.numberPoint;
             }, 0)} điểm */}
-            {exam?.totalPoints} điểm
+            {exam?.totalPoints} {t("point")}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Time className="mr-1" />
             {exam?.timeLimitMinutes
-              ? `${exam?.timeLimitMinutes} phút`
-              : "Không giới hạn"}
+              ? `${exam?.timeLimitMinutes} ${t("minute")}`
+              : t("unlimited")}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Document className="mr-1" />
             {exam?.examViewQuestionType === "MultiplePages"
-              ? "Hiển thị toàn bộ câu hỏi/trang"
-              : "1 câu hỏi/trang"}
+              ? t("all_quest_page")
+              : t("quest_per_page")}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Group className="mr-1" />
             {exam?.changePositionQuestion === false
-              ? "Giữ thứ tự câu hỏi"
-              : "Đổi vị trí câu hỏi"}
+              ? t("keep_quest_order")
+              : t("change_quest_order")}
           </div>
           <MButton
             h="h-11"
@@ -597,7 +597,7 @@ function ExamDetails({ params }: any) {
                   handleNameChangeValid(event);
                 }}
                 value={name}
-                placeholder="Nhập nội dung"
+                placeholder={examTrans.t("enter_content")}
                 maxLength={255}
                 isTextRequire={false}
                 className={nameError ? "border-red-300" : ""}
@@ -612,7 +612,7 @@ function ExamDetails({ params }: any) {
               title={t("note")}
               onChange={handleNoteChange}
               value={note}
-              placeholder="Nhập nội dung"
+              placeholder={examTrans.t("enter_content")}
               maxLength={500}
             />
             <div className="w-full flex justify-center mt-7">
@@ -676,23 +676,29 @@ function ExamDetails({ params }: any) {
                                 }}
                                 className="text-left mb-2 pb-1"
                               >
-                                Thêm thủ công
+                                {t("manual_add")}
                               </button>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
+                                  router.push(
+                                    `/exams/details/${params.id}/my_bank?tab=0`,
+                                  );
                                 }}
                                 className="text-left mb-2 pb-1 "
                               >
-                                Thêm từ ngân hàng câu hỏi của tôi
+                                {t("add_from_my_bank")}
                               </button>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
+                                  router.push(
+                                    `/exams/details/${params.id}/my_bank?tab=1`,
+                                  );
                                 }}
                                 className="text-left mb-2 pb-1 "
                               >
-                                Thêm từ ngân hàng câu hỏi của TMAS
+                                {t("add_from_tmas")}
                               </button>
                             </div>
                           }
@@ -700,7 +706,7 @@ function ExamDetails({ params }: any) {
                         >
                           <Tooltip
                             placement="bottom"
-                            title={"Thêm câu hỏi"}
+                            title={t("add_question")}
                             arrow={mergedArrow}
                           >
                             <button

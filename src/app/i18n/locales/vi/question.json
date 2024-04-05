@@ -38,5 +38,20 @@
   "result": "Đáp án",
   "explain_result": "Giải thích đáp án",
   "sucess_duplicate_question": "Nhân bản câu hỏi thành công",
-  "add_bank": "Thêm vào ngân hàng câu hỏi"
+  "add_bank": "Thêm vào ngân hàng câu hỏi",
+  "exam_list": "Danh sách câu hỏi",
+  "add_from_my_bank": "Thêm từ ngân hàng câu hỏi của tôi",
+  "manual_add": "Thêm thủ công",
+  "add_from_tmas": "Thêm từ ngân hàng câu hỏi của tmas",
+  "add_question": "Thêm câu hỏi",
+  "enter_name_part": "Vui lòng nhập tên phần thi.",
+  "part": "Phần",
+  "free_change_part": "Chuyển phần tự do",
+  "part_in_row": "Lần lượt các phần",
+  "unlimited": "Không giới hạn",
+  "minute": "Phút",
+  "all_quest_page": "Hiển thị toàn bộ câu hỏi/trang",
+  "quest_per_page": "1 câu hỏi/trang",
+  "keep_quest_order": "Giữ thứ tự câu hỏi",
+  "change_quest_order": "Đổi vị trí câu hỏi"
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
-import { Collapse, Popover } from "antd";
+import { Checkbox, Collapse, Popover } from "antd";
 import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
 import EditIcon from "@/app/components/icons/edit-black.svg";
 import CopyIcon from "@/app/components/icons/size.svg";
@@ -28,6 +28,8 @@ export default function Explain({
   questionGroup,
   tmasQuest,
   addExamBank,
+  canCheck,
+  onChangeCheck,
 }: {
   examId?: any;
   question?: any;
@@ -36,6 +38,8 @@ export default function Explain({
   questionGroup?: any;
   tmasQuest?: boolean;
   addExamBank?: Function;
+  canCheck?: boolean;
+  onChangeCheck?: Function;
 }) {
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
@@ -128,6 +132,15 @@ export default function Explain({
                     expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
                   }`}
                 >
+                  {canCheck && (
+                    <Checkbox
+                      onChange={onChangeCheck as any}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                      value={question?.id}
+                    />
+                  )}{" "}
                   {`${t("quest")} ${index}`}:
                   <div
                     ref={contentRef}
