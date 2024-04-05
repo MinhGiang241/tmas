@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import AddIcon from "../components/icons/add.svg";
 import MInput from "../components/config/MInput";
 import MDropdown from "../components/config/MDropdown";
-import { Divider, Pagination, Select, Spin, Switch } from "antd";
+import { Divider, Pagination, Popover, Select, Spin, Switch } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import EditBlackIcon from "../components/icons/edit-black.svg";
 import DeleteRedIcon from "../components/icons/trash-red.svg";
@@ -38,6 +38,7 @@ import { FormattedDate } from "react-intl";
 import ConfirmModal from "../components/modals/ConfirmModal";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
+import SendExaminationInfo from "./modals/SendExaminationInfo";
 
 function ExaminationPage() {
   const router = useRouter();
@@ -190,8 +191,20 @@ function ExaminationPage() {
     loadExamination(false);
     setOpenDup(false);
   };
+  const [openPop, setOpenPop] = useState<boolean>(false);
+  const [openExaminationInfo, setOpenExaminationInfo] =
+    useState<boolean>(false);
   return (
     <HomeLayout>
+      <SendExaminationInfo
+        open={openExaminationInfo}
+        onCancel={() => {
+          setOpenExaminationInfo(false);
+        }}
+        onOk={() => {
+          setOpenExaminationInfo(false);
+        }}
+      />
       <ConfirmModal
         action={common.t("duplicate")}
         loading={dupLoading}
@@ -402,12 +415,12 @@ function ExaminationPage() {
                         <span className="body_regular_14 mr-2">
                           {t("status")}:{" "}
                         </span>
-                        <div className="p-2 rounded-lg bg-m_success_100 text-m_success_700">
+                        <div className="p-2 italic rounded-lg bg-m_success_100 text-m_success_700">
                           {"Đã duyệt"}
                         </div>
                       </div>
                     </div>
-                    <div className="body_regular_14italic">
+                    <div className="body_regular_14 italic">
                       <span className="mr-2">{t("approve_code")}:</span>
                       {"MK20102024-01"}
                     </div>
@@ -473,7 +486,40 @@ function ExaminationPage() {
                         className="w-[114px]"
                       />
                       <div className="w-3" />
-                      <MButton text={t("send_info")} h="h-9" className="" />
+                      <Popover
+                        open={openPop}
+                        trigger={"click"}
+                        placement="bottom"
+                        content={
+                          <div className="flex flex-col items-start">
+                            <button
+                              onClick={() => {
+                                setOpenPop(false);
+                                setOpenExaminationInfo(true);
+                              }}
+                              className="flex justify-start hover:bg-m_primary_100 p-1 rounded-sm w-full"
+                            >
+                              {t("send_exam_info")}
+                            </button>
+
+                            <button
+                              onClick={() => {
+                                setOpenPop(false);
+                              }}
+                              className="flex justify-start hover:bg-m_primary_100 p-1 rounded-sm w-full"
+                            >
+                              {t("send_result_info")}
+                            </button>
+                          </div>
+                        }
+                      >
+                        <MButton
+                          onClick={() => setOpenPop(true)}
+                          text={t("send_info")}
+                          h="h-9"
+                          className=""
+                        />
+                      </Popover>
                     </div>
                   </div>
                 </div>
