@@ -1,4 +1,4 @@
-import { Collapse, Radio, Space } from "antd";
+import { Collapse, Radio, Space, Switch } from "antd";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -47,6 +47,10 @@ function Share({ value, setValue }: { value: any; setValue: any }) {
                 ? t("private_share_intro")
                 : t("public_share_intro")}
             </p>
+            <div className="flex mt-2 items-center">
+              <Switch size="small" />
+              <p className="ml-2">{t("push_exam_bank")}</p>
+            </div>
           </div>
         </Collapse.Panel>
       </Collapse>

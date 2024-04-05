@@ -40,6 +40,7 @@ import dayjs from "dayjs";
 import { ExamData, ExaminationData } from "@/data/exam";
 import { v4 as uuidv4 } from "uuid";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import GoldPrice from "../components/GoldPrice";
 const EditorHook = dynamic(
   () => import("../../exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -475,6 +476,8 @@ function CreateExaminationPage({ examination }: any) {
         <div className="max-lg:mx-5  grid grid-cols-12 gap-6">
           <div className="max-lg:grid-cols-1 max-lg:mb-5 lg:col-span-6 col-span-12  h-fit rounded-lg">
             <Share value={share} setValue={setShare} />
+            <div className="h-4" />
+            <GoldPrice formik={formik} />
             <div className="h-4" />
             <ExaminationCodePage
               codeList={codeList}

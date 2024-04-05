@@ -245,5 +245,11 @@
   "tmas_bank": "Ngân hàng câu hỏi của TMAS",
   "check_all": "Chọn tất cả",
   "add_selected": "Thêm đã chọn",
-  "delete_selected": "Xóa đã chọn"
+  "delete_selected": "Xóa đã chọn",
+  "push_exam_bank": "Đẩy lên ngân hàng đề thi",
+  "gold_price": "Giá gold",
+  "created_date": "Ngày tạo",
+  "approved_date": "Ngày duyệt",
+  "status": "Trạng thái",
+  "send_info": "Gửi thông tin"
 }

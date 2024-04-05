@@ -318,7 +318,7 @@ function ExaminationPage() {
                 key={i}
                 className="w-full p-3 min-h-[100px] mb-4 flex items-center justify-between rounded-lg bg-white"
               >
-                <div className="flex w-full items-center justify-between">
+                <div className="flex max-lg:flex-col w-full lg:items-center justify-between">
                   <div className="flex-1 items-start justify-start flex-grow flex flex-col">
                     <div className="flex items-center ">
                       <div
@@ -373,60 +373,109 @@ function ExaminationPage() {
                         </button>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center ">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/examination/${v?.id}`);
-                      }}
-                    >
-                      <EditBlackIcon />
-                    </button>
-                    <div className="w-3" />
-                    <button
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        setActive(v);
-                        setOpenDup(true);
-                      }}
-                    >
-                      <CopyIcon />
-                    </button>
-                    <div className="w-3" />
+                    <div className="body_semibold_14">
+                      <span className="body_regular_14 mr-2">
+                        {t("created_date")}:
+                      </span>
+                      <FormattedDate
+                        value={v?.createdTime}
+                        day="2-digit"
+                        month="2-digit"
+                        year="numeric"
+                      />
+                    </div>
 
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActive(v);
-                        setOpenDelete(true);
-                      }}
-                    >
-                      <DeleteRedIcon />
-                    </button>
+                    <div className=" flex body_semibold_14 items-center w-full">
+                      <div>
+                        <span className="body_regular_14 mr-2">
+                          {t("approved_date")}:
+                        </span>
+                        <FormattedDate
+                          value={v?.createdTime}
+                          day="2-digit"
+                          month="2-digit"
+                          year="numeric"
+                        />
+                      </div>
+                      <div className="w-1/3" />
+                      <div className="flex items-center">
+                        <span className="body_regular_14 mr-2">
+                          {t("status")}:{" "}
+                        </span>
+                        <div className="p-2 rounded-lg bg-m_success_100 text-m_success_700">
+                          {"Đã duyệt"}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="body_regular_14italic">
+                      <span className="mr-2">{t("approve_code")}:</span>
+                      {"MK20102024-01"}
+                    </div>
                   </div>
-                  <div className="mx-4">
-                    <Switch
-                      className="scale-[1.18]"
-                      onChange={async (t: any) => {
-                        console.log("t", t);
+                  <div className="lg:flex ">
+                    <div className="flex items-center mb-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/examination/${v?.id}`);
+                        }}
+                      >
+                        <EditBlackIcon />
+                      </button>
+                      <div className="w-3" />
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          setActive(v);
+                          setOpenDup(true);
+                        }}
+                      >
+                        <CopyIcon />
+                      </button>
+                      <div className="w-3" />
 
-                        var data = await updateExamination({
-                          ...v,
-                          isActive: t,
-                        });
-                        if (data?.code != 0) {
-                          errorToast(data?.message ?? "");
-                          return;
-                        }
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActive(v);
+                          setOpenDelete(true);
+                        }}
+                      >
+                        <DeleteRedIcon />
+                      </button>
+                      <div className="mx-4">
+                        <Switch
+                          className="scale-[1.18]"
+                          onChange={async (t: any) => {
+                            console.log("t", t);
 
-                        loadExamination(false);
-                      }}
-                      value={v?.isActive ?? false}
-                      size="small"
-                    />
+                            var data = await updateExamination({
+                              ...v,
+                              isActive: t,
+                            });
+                            if (data?.code != 0) {
+                              errorToast(data?.message ?? "");
+                              return;
+                            }
+
+                            loadExamination(false);
+                          }}
+                          value={v?.isActive ?? false}
+                          size="small"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex max-lg:mt-3">
+                      <MButton
+                        type="secondary"
+                        text={t("result")}
+                        h="h-9"
+                        className="w-[114px]"
+                      />
+                      <div className="w-3" />
+                      <MButton text={t("send_info")} h="h-9" className="" />
+                    </div>
                   </div>
-                  <MButton text={t("result")} h="h-9" className="w-[114px]" />
                 </div>
               </div>
             );
