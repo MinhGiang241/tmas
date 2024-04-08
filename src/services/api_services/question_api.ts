@@ -10,7 +10,7 @@ import {
   RandomQuestionFormData,
   SqlQuestionFormData,
 } from "@/data/form_interface";
-import { callStudioAPI } from "./base_api";
+import { callApi, callStudioAPI } from "./base_api";
 import { result } from "lodash";
 
 export const createCodingQuestion = async (data: CodingQuestionFormData) => {
@@ -312,3 +312,25 @@ export const duplicateQuestion = async (data: DuplicateQuestionParams) => {
   return results;
 };
 
+export const getTmasQuestList = async ({
+  text,
+  skip,
+  limit,
+  fields,
+}: {
+  text?: string;
+  skip?: number;
+  limit?: number;
+  fields?: any;
+}) => {
+  const results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examlibrary.search`,
+    {
+      text: text ?? "",
+      skip,
+      limit,
+      fields,
+    },
+  );
+  return results;
+};

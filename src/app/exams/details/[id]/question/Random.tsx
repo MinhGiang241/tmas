@@ -26,7 +26,11 @@ function Random({
   addExamBank,
   canCheck,
   onChangeCheck,
+  isExist,
+  deleteExamBank,
 }: {
+  isExist?: boolean;
+  deleteExamBank?: Function;
   getData?: any;
   examId?: any;
   question?: any;
@@ -138,17 +142,31 @@ function Random({
                 </span>
               </div>
               {tmasQuest ? (
-                <MButton
-                  className="flex items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addExamBank!(e, question);
-                  }}
-                  h="h-11"
-                  type="secondary"
-                  icon={<AddIcon />}
-                  text={t("add_bank")}
-                />
+                isExist ? (
+                  <MButton
+                    type="error"
+                    className="flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteExamBank!(e, question);
+                    }}
+                    h="h-11"
+                    icon={<DeleteRedIcon />}
+                    text={t("delete_bank")}
+                  />
+                ) : (
+                  <MButton
+                    className="flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addExamBank!(e, question);
+                    }}
+                    h="h-11"
+                    type="secondary"
+                    icon={<AddIcon />}
+                    text={t("add_bank")}
+                  />
+                )
               ) : (
                 <div className="min-w-28 pl-4">
                   <button

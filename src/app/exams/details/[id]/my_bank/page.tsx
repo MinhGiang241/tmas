@@ -15,6 +15,8 @@ import { setquestionGroupLoading } from "@/redux/exam_group/examGroupSlice";
 import TmasExamAdd from "./tabs/TmasAdd";
 import { errorToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
+import { getExamQuestionPartList } from "@/services/api_services/question_api";
+import { BaseQuestionData } from "@/data/question";
 
 function AddFromMyBank({ params }: any) {
   const { t } = useTranslation("exam");
@@ -25,6 +27,7 @@ function AddFromMyBank({ params }: any) {
   const router = useRouter();
   var search = useSearchParams();
   var tab = search.get("tab") ?? "0";
+  var partId = search.get("partId");
   var index = ["0", "1"].includes(tab) ? tab : "0";
 
   const loadExamById = async () => {
@@ -39,6 +42,7 @@ function AddFromMyBank({ params }: any) {
   useEffect(() => {
     loadExamById();
     loadQuestionGroupList();
+    getExamQuestionList();
   }, [user]);
 
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
@@ -59,6 +63,24 @@ function AddFromMyBank({ params }: any) {
       var data = dataResults?.data as QuestionGroupData[];
       return data;
     }
+  };
+  const [examQuestList, setExamQuestList] = useState<BaseQuestionData[]>([]);
+  const getExamQuestionList = async () => {
+    const res = await getExamQuestionPartList({
+      paging: { startIndex: 0, recordPerPage: 1000 },
+      studioSorters: [{ name: "createdTime", isAsc: true }],
+      // truyền idexam thay vì ids
+      // ids: [params.id],
+      idExams: [params.id],
+    });
+    if (res.code != 0) {
+      return;
+    }
+    const data = res?.data?.records ?? [];
+    const list = data.reduce((s: any, i: any) => {
+      return [...s, ...(i?.examQuestions ?? [])];
+    }, []) as BaseQuestionData[];
+    setExamQuestList(list);
   };
 
   return (
@@ -91,7 +113,9 @@ function AddFromMyBank({ params }: any) {
       <div className="w-full flex border-b-m_neutral_200 h-11 border-b mt-4">
         <button
           onClick={() => {
-            router.push(`/exams/details/${params?.id}/my_bank?tab=0`);
+            router.push(
+              `/exams/details/${params?.id}/my_bank?tab=0&partId=${partId}`,
+            );
           }}
           className={`${
             index === "0"
@@ -103,7 +127,9 @@ function AddFromMyBank({ params }: any) {
         </button>
         <button
           onClick={() => {
-            router.push(`/exams/details/${params?.id}/my_bank?tab=1`);
+            router.push(
+              `/exams/details/${params?.id}/my_bank?tab=1&partId=${partId}`,
+            );
           }}
           className={`${
             index === "1"
@@ -116,7 +142,12 @@ function AddFromMyBank({ params }: any) {
       </div>
       <div className="h-3 " />
       {index === "0" ? (
-        <MyBankAddTab hidden={index != "0"} />
+        <MyBankAddTab
+          hidden={index != "0"}
+          examQuestList={examQuestList}
+          exam={exam}
+          partId={partId}
+        />
       ) : (
         <TmasExamAdd hidden={index != "1"} />
       )}

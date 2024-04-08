@@ -9,11 +9,15 @@ import Coding from "../../question/Coding";
 import Explain from "../../question/Explain";
 import TrueFalse from "../../question/TrueFalse";
 import ManyResult from "../../question/ManyResult";
-import { QuestionGroupData } from "@/data/exam";
+import { ExamData, QuestionGroupData } from "@/data/exam";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import { getQuestionList } from "@/services/api_services/question_api";
-import { errorToast } from "@/app/components/toast/customToast";
+import {
+  deleteQuestionById,
+  duplicateQuestion,
+  getQuestionList,
+} from "@/services/api_services/question_api";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { Checkbox, Pagination, Select, Spin, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import MDropdown from "@/app/components/config/MDropdown";
@@ -21,8 +25,19 @@ import MInput from "@/app/components/config/MInput";
 import { SearchOutlined } from "@ant-design/icons";
 import DeleteIcon from "@/app/components/icons/trash-red.svg";
 import AddIcon from "@/app/components/icons/add.svg";
+import _ from "lodash";
 
-function MyBankAddTab({ hidden }: { hidden?: boolean }) {
+function MyBankAddTab({
+  hidden,
+  examQuestList,
+  exam,
+  partId,
+}: {
+  hidden?: boolean;
+  examQuestList?: BaseQuestionData[];
+  exam?: ExamData;
+  partId?: string;
+}) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const [questionList, setQuestionList] = useState<BaseQuestionData[]>([]);
@@ -64,20 +79,60 @@ function MyBankAddTab({ hidden }: { hidden?: boolean }) {
     setLoadingPage(false);
     console.log("res", res);
   };
+
+  const addExamBank = async (__: any, question: BaseQuestionData) => {
+    const res = await duplicateQuestion({
+      idExams: [exam?.id],
+      ids: [question.id],
+      newIdExamQuestionPart: question?.idExamQuestionPart,
+    });
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    console.log("res", res);
+
+    successToast(t("success_add_into_exam"));
+    const isAddClone = _.cloneDeep(isAdd);
+    for (let i of res.data) {
+      isAddClone[question?.id] = i;
+    }
+    setIsAdd(isAddClone);
+  };
+
+  const deleteExamBank = async (__: any, question: BaseQuestionData) => {
+    console.log("isAdd", isAdd);
+
+    const res = await deleteQuestionById(isAdd[question?.id]);
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    console.log("res", res);
+    successToast(t("Thêm vào câu hỏi vào đề thi thành công"));
+    const isAddClone = _.cloneDeep(isAdd);
+    isAddClone[question?.id] = undefined;
+    setIsAdd(isAddClone);
+  };
+
+  const [isAdd, setIsAdd] = useState<any>({});
   const onChangeCheck = (checkedList: any) => {};
   const renderQuestion: (
     e: BaseQuestionData,
     index: number,
   ) => React.ReactNode = (e: BaseQuestionData, index: number) => {
     var group = questionGroups?.find((v: any) => v.id === e.idGroupQuestion);
+    var isExist = isAdd[e.id] ? true : false;
     switch (e.questionType) {
       case QuestionType.MutilAnswer:
         return (
           <ManyResult
+            isExist={isExist}
+            deleteExamBank={deleteExamBank}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -89,10 +144,12 @@ function MyBankAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.YesNoQuestion:
         return (
           <TrueFalse
+            isExist={isExist}
+            deleteExamBank={deleteExamBank}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -104,10 +161,12 @@ function MyBankAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.Essay:
         return (
           <Explain
+            isExist={isExist}
+            deleteExamBank={deleteExamBank}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -119,10 +178,12 @@ function MyBankAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.Coding:
         return (
           <Coding
+            isExist={isExist}
+            deleteExamBank={deleteExamBank}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -134,10 +195,12 @@ function MyBankAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.SQL:
         return (
           <Sql
+            isExist={isExist}
+            deleteExamBank={deleteExamBank}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -149,10 +212,12 @@ function MyBankAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.Pairing:
         return (
           <Connect
+            isExist={isExist}
+            deleteExamBank={deleteExamBank}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -164,10 +229,12 @@ function MyBankAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.FillBlank:
         return (
           <FillBlank
+            isExist={isExist}
+            deleteExamBank={deleteExamBank}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -179,6 +246,8 @@ function MyBankAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.Random:
         return (
           <Random
+            isExist={isExist}
+            deleteExamBank={deleteExamBank}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest

@@ -33,7 +33,10 @@ import {
   resetConnectAnswer,
   resetMultiAnswer,
 } from "@/redux/questions/questionSlice";
-import { getQuestionById } from "@/services/api_services/question_api";
+import {
+  getExamQuestionPartList,
+  getQuestionById,
+} from "@/services/api_services/question_api";
 import { renderQuestTypeRoute } from "@/services/ui/navigate";
 
 function CreateQuestionPage({ params, question }: any) {

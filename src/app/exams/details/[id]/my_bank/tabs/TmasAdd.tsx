@@ -12,7 +12,10 @@ import ManyResult from "../../question/ManyResult";
 import { QuestionGroupData } from "@/data/exam";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import { getQuestionList } from "@/services/api_services/question_api";
+import {
+  getQuestionList,
+  getTmasQuestList,
+} from "@/services/api_services/question_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import { Checkbox, Pagination, Select, Spin, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
@@ -42,15 +45,9 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
     if (init) {
       setLoadingPage(true);
     }
-    const res = await getQuestionList({
-      paging: {
-        recordPerPage: recordNum,
-        startIndex: indexPage,
-      },
-      // andIdExamQuestionParts: "",
-      // andQuestionTypes: "",
-      // idExams: "",
-      // andIdGroupQuestions: "",
+    const res = await getTmasQuestList({
+      limit: recordNum,
+      skip: (indexPage - 1) * recordNum,
     });
 
     if (res.code != 0) {
@@ -59,8 +56,8 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
       return;
     }
 
-    setTotal(res?.data?.totalOfRecords ?? 0);
-    setQuestionList(res.data?.records);
+    setTotal(res?.records);
+    setQuestionList(res?.data ?? []);
     setLoadingPage(false);
     console.log("res", res);
   };

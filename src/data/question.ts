@@ -37,6 +37,7 @@ export interface BaseQuestionData {
   questionType?: QuestionType;
   idExam?: string;
   idExamQuestionPart?: string;
+  idExamQuestionBank?: string;
   studioIdstudioId?: string;
   createdBy?: string;
   ownerId?: string;

@@ -30,7 +30,11 @@ export default function TrueFalse({
   addExamBank,
   canCheck,
   onChangeCheck,
+  isExist,
+  deleteExamBank,
 }: {
+  isExist?: boolean;
+  deleteExamBank?: Function;
   examId?: any;
   question?: any;
   index?: any;
@@ -161,17 +165,31 @@ export default function TrueFalse({
                 ) : null}
               </div>
               {tmasQuest ? (
-                <MButton
-                  className="flex items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addExamBank!(e, question);
-                  }}
-                  h="h-11"
-                  type="secondary"
-                  icon={<AddIcon />}
-                  text={t("add_bank")}
-                />
+                isExist ? (
+                  <MButton
+                    type="error"
+                    className="flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteExamBank!(e, question);
+                    }}
+                    h="h-11"
+                    icon={<DeleteRedIcon />}
+                    text={t("delete_bank")}
+                  />
+                ) : (
+                  <MButton
+                    className="flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addExamBank!(e, question);
+                    }}
+                    h="h-11"
+                    type="secondary"
+                    icon={<AddIcon />}
+                    text={t("add_bank")}
+                  />
+                )
               ) : (
                 <div className="min-w-28 pl-4">
                   <button

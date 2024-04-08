@@ -70,11 +70,17 @@ export interface ExamData {
   idSession?: string;
 }
 
+export enum AppovedState {
+  Rejected = "Rejected",
+  Approved = "Approved",
+}
+
 export interface ExamVersion {
   id?: string;
   approvedState?: {
-    approvedState?: string;
+    approvedState?: AppovedState;
     rejectedMessage?: string;
+    rejectedReason?: string;
   };
   createdBy?: string;
   createdTime?: string;
@@ -107,6 +113,7 @@ export interface ExaminationData {
   updateTime?: string;
   createdTime?: string;
   examVersion?: ExamVersion;
+  examTestCode?: string;
   accessCodeSettings?: AccessCodeExaminantionSetting[];
   cheatingSetting?: {
     disableCopy?: boolean;

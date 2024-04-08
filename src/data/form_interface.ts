@@ -252,6 +252,8 @@ export interface PagingGetData {
   andIdExamQuestionParts?: string[];
   andIdGroupQuestions?: string[];
   andQuestionTypes?: string[];
+  isQuestionBank?: boolean;
+  searchQuestion?: string;
 }
 
 export interface EssayQuestionFormData extends BaseQuestionFormData {
