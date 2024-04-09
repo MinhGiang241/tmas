@@ -79,7 +79,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
     }
     const res: APIResults = await getExaminationList({
       "Paging.RecordPerPage": recordNum,
-      "Paging.StartIndex": (indexPage - 1) * recordNum,
+      "Paging.StartIndex": indexPage,
       "FilterByNameOrTag.InValues": search,
       "FilterByNameOrTag.Name": "Name",
       "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,

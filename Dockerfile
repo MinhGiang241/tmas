@@ -20,7 +20,7 @@ RUN npm run build
 FROM node:21.6-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV development
+ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 bloggroup
 RUN adduser --system --uid 1001 bloguser

@@ -82,8 +82,8 @@ function MyBankAddTab({
 
   const addExamBank = async (__: any, question: BaseQuestionData) => {
     const res = await duplicateQuestion({
-      idExams: [exam?.id],
-      ids: [question.id],
+      idExams: exam?.id ? [exam?.id] : undefined,
+      ids: question?.id ? [question.id] : undefined,
       newIdExamQuestionPart: question?.idExamQuestionPart,
     });
     if (res?.code != 0) {
@@ -95,7 +95,7 @@ function MyBankAddTab({
     successToast(t("success_add_into_exam"));
     const isAddClone = _.cloneDeep(isAdd);
     for (let i of res.data) {
-      isAddClone[question?.id] = i;
+      isAddClone[question?.id as string] = i;
     }
     setIsAdd(isAddClone);
   };
@@ -103,7 +103,7 @@ function MyBankAddTab({
   const deleteExamBank = async (__: any, question: BaseQuestionData) => {
     console.log("isAdd", isAdd);
 
-    const res = await deleteQuestionById(isAdd[question?.id]);
+    const res = await deleteQuestionById(isAdd[question?.id as string]);
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
       return;
@@ -111,7 +111,7 @@ function MyBankAddTab({
     console.log("res", res);
     successToast(t("Thêm vào câu hỏi vào đề thi thành công"));
     const isAddClone = _.cloneDeep(isAdd);
-    isAddClone[question?.id] = undefined;
+    isAddClone[question?.id as string] = undefined;
     setIsAdd(isAddClone);
   };
 
@@ -122,7 +122,7 @@ function MyBankAddTab({
     index: number,
   ) => React.ReactNode = (e: BaseQuestionData, index: number) => {
     var group = questionGroups?.find((v: any) => v.id === e.idGroupQuestion);
-    var isExist = isAdd[e.id] ? true : false;
+    var isExist = isAdd[e.id as string] ? true : false;
     switch (e.questionType) {
       case QuestionType.MutilAnswer:
         return (

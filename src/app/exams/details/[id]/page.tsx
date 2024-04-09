@@ -283,7 +283,7 @@ function ExamDetails({ params }: any) {
 
   const getData = async () => {
     const res = await getExamQuestionPartList({
-      paging: { startIndex: 0, recordPerPage: 100 },
+      paging: { startIndex: 1, recordPerPage: 1000 },
       studioSorters: [{ name: "createdTime", isAsc: true }],
       // truyền idexam thay vì ids
       // ids: [params.id],

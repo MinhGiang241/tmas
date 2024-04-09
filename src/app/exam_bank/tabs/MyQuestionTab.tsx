@@ -82,7 +82,7 @@ function MyQuestionTab() {
       andQuestionTypes: questionType ? [questionType] : undefined,
       // idExams: "",
     });
-
+    setLoadingPage(false);
     if (res.code != 0) {
       errorToast(res.message ?? "");
       setQuestionList([]);
@@ -117,7 +117,7 @@ function MyQuestionTab() {
   };
 
   const questionGroupOptions = [
-    ...questionGroups.map((v) => ({
+    ...(questionGroups ?? []).map((v) => ({
       value: v.id,
       label: v.name,
     })),

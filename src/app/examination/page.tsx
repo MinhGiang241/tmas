@@ -77,7 +77,7 @@ function ExaminationPage() {
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
             "FilterByExamGroupId.Name": "Name",
             "Paging.RecordPerPage": recordNum,
-            "Paging.StartIndex": (indexPage - 1) * recordNum,
+            "Paging.StartIndex": indexPage, //(indexPage - 1) * recordNum,
             "SorterByName.isAsc": sort == "name" ? true : undefined,
             "SorterByCreateTime.IsAsc": sort == "time" ? false : undefined,
           }
@@ -85,7 +85,7 @@ function ExaminationPage() {
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
             "FilterByExamGroupId.Name": "Name",
             "Paging.RecordPerPage": recordNum,
-            "Paging.StartIndex": (indexPage - 1) * recordNum,
+            "Paging.StartIndex": indexPage, //(indexPage - 1) * recordNum,
             "SorterByName.isAsc": sort == "name" ? true : undefined,
             "SorterByCreateTime.IsAsc": sort == "time" ? false : undefined,
           },
@@ -337,8 +337,8 @@ function ExaminationPage() {
             placeholder={t("status")}
             options={["Public", "Pending", "Approved", "Rejected", "lock"].map(
               (e: any) => ({
-                id: e,
-                value: t(e),
+                value: e,
+                label: t(e),
               }),
             )}
             h="h-11"
