@@ -54,6 +54,7 @@ function ExaminationPage() {
   const [sort, setSort] = useState("time");
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [status, setStatus] = useState<string | undefined>();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -62,7 +63,7 @@ function ExaminationPage() {
       loadExamination(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, recordNum, indexPage, groupId, sort]);
+  }, [user, recordNum, indexPage, groupId, sort, status]);
 
   const loadExamination = async (init: boolean) => {
     if (init) {
@@ -101,6 +102,31 @@ function ExaminationPage() {
     setTotal(data?.totalOfRecords ?? 0);
 
     setLoading(false);
+  };
+
+  const genStateWidget = (state?: string) => {
+    switch (state) {
+      case "Rejected":
+        return (
+          <div className="p-2 italic rounded-lg bg-m_error_100 text-m_error_600">
+            {t(state)}
+          </div>
+        );
+      case "Pending":
+        return (
+          <div className="p-2 italic rounded-lg bg-m_warning_100 text-m_warning_700">
+            {t(state)}
+          </div>
+        );
+      case "Approved":
+        return (
+          <div className="p-2 italic rounded-lg bg-m_success_100 text-m_success_700">
+            {t(state)}
+          </div>
+        );
+      default:
+        return null;
+    }
   };
 
   const loadExamGroupList = async (init?: boolean) => {
@@ -191,7 +217,7 @@ function ExaminationPage() {
     loadExamination(false);
     setOpenDup(false);
   };
-  const [openPop, setOpenPop] = useState<boolean>(false);
+  const [openPop, setOpenPop] = useState<string | undefined>();
   const [openExaminationInfo, setOpenExaminationInfo] =
     useState<boolean>(false);
   return (
@@ -284,7 +310,7 @@ function ExaminationPage() {
             h="h-11"
             className="lg:mx-4"
             options={optionSelect}
-          />{" "}
+          />
           <MDropdown
             value={sort}
             setValue={(n: any, value: any) => {
@@ -302,6 +328,23 @@ function ExaminationPage() {
             className=""
             id="category"
             name="category"
+          />
+          <MDropdown
+            value={status}
+            setValue={(name: any, value: any) => {
+              setStatus(value);
+            }}
+            placeholder={t("status")}
+            options={["Public", "Pending", "Approved", "Rejected", "lock"].map(
+              (e: any) => ({
+                id: e,
+                value: t(e),
+              }),
+            )}
+            h="h-11"
+            className="ml-4"
+            id="public_free"
+            name="public_free"
           />
         </div>
         <Divider className="mt-1 mb-6" />
@@ -415,14 +458,14 @@ function ExaminationPage() {
                         <span className="body_regular_14 mr-2">
                           {t("status")}:{" "}
                         </span>
-                        <div className="p-2 italic rounded-lg bg-m_success_100 text-m_success_700">
-                          {"Đã duyệt"}
-                        </div>
+                        {genStateWidget(
+                          v?.examVersion?.approvedState?.approvedState ?? "",
+                        )}
                       </div>
                     </div>
                     <div className="body_regular_14 italic">
                       <span className="mr-2">{t("approve_code")}:</span>
-                      {"MK20102024-01"}
+                      {v?.examTestCode ?? ""}
                     </div>
                   </div>
                   <div className="lg:flex ">
@@ -487,14 +530,14 @@ function ExaminationPage() {
                       />
                       <div className="w-3" />
                       <Popover
-                        open={openPop}
+                        open={openPop === v.id}
                         trigger={"click"}
                         placement="bottom"
                         content={
                           <div className="flex flex-col items-start">
                             <button
                               onClick={() => {
-                                setOpenPop(false);
+                                setOpenPop(undefined);
                                 setOpenExaminationInfo(true);
                               }}
                               className="flex justify-start hover:bg-m_primary_100 p-1 rounded-sm w-full"
@@ -504,7 +547,7 @@ function ExaminationPage() {
 
                             <button
                               onClick={() => {
-                                setOpenPop(false);
+                                setOpenPop(undefined);
                               }}
                               className="flex justify-start hover:bg-m_primary_100 p-1 rounded-sm w-full"
                             >
@@ -514,7 +557,7 @@ function ExaminationPage() {
                         }
                       >
                         <MButton
-                          onClick={() => setOpenPop(true)}
+                          onClick={() => setOpenPop(v.id)}
                           text={t("send_info")}
                           h="h-9"
                           className=""

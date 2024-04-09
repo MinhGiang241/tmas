@@ -53,5 +53,6 @@
   "all_quest_page": "Hiển thị toàn bộ câu hỏi/trang",
   "quest_per_page": "1 câu hỏi/trang",
   "keep_quest_order": "Giữ thứ tự câu hỏi",
-  "change_quest_order": "Đổi vị trí câu hỏi"
+  "change_quest_order": "Đổi vị trí câu hỏi",
+  "delete_bank": "Xóa câu hỏi khỏi đề thi"
 }

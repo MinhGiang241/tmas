@@ -682,7 +682,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/my_bank?tab=0`,
+                                    `/exams/details/${params.id}/my_bank?tab=0&partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1 "
@@ -693,7 +693,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/my_bank?tab=1`,
+                                    `/exams/details/${params.id}/my_bank?tab=1&partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1 "

@@ -275,5 +275,11 @@
   "preview": "Xem trước",
   "up_suceess_data": "Tải lên thành công {{num}} dữ liệu",
   "down_error_list": "Tải dah sách lỗi",
-  "up_list": "Tải danh sách lên"
+  "up_list": "Tải danh sách lên",
+  "all_quest_type": "Tất cả kiểu câu hỏi",
+  "quest_type": "Kiểu câu hỏi",
+  "Public": "Public",
+  "lock": "Khóa",
+  "success_add_into_exam": "Thêm vào câu hỏi vào đề thi thành công",
+  "success_delete_form_exam": "Thêm vào câu hỏi vào đề thi thành công"
 }

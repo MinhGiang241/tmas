@@ -29,9 +29,12 @@ export default function ManyResult({
   questionGroup,
   tmasQuest,
   addExamBank,
+  deleteExamBank,
   canCheck,
   onChangeCheck,
+  isExist,
 }: {
+  isExist?: boolean;
   examId?: any;
   question?: any;
   index?: any;
@@ -39,6 +42,7 @@ export default function ManyResult({
   questionGroup?: any;
   tmasQuest?: boolean;
   addExamBank?: Function;
+  deleteExamBank?: Function;
   onChangeCheck?: Function;
   canCheck?: boolean;
 }) {
@@ -160,18 +164,33 @@ export default function ManyResult({
                   </button>
                 ) : null}
               </div>
+
               {tmasQuest ? (
-                <MButton
-                  className="flex items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addExamBank!(e, question);
-                  }}
-                  h="h-11"
-                  type="secondary"
-                  icon={<AddIcon />}
-                  text={t("add_bank")}
-                />
+                isExist ? (
+                  <MButton
+                    type="error"
+                    className="flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteExamBank!(e, question);
+                    }}
+                    h="h-11"
+                    icon={<DeleteRedIcon />}
+                    text={t("delete_bank")}
+                  />
+                ) : (
+                  <MButton
+                    className="flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addExamBank!(e, question);
+                    }}
+                    h="h-11"
+                    type="secondary"
+                    icon={<AddIcon />}
+                    text={t("add_bank")}
+                  />
+                )
               ) : (
                 <div className="min-w-28 pl-4">
                   <button

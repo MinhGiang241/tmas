@@ -40,6 +40,10 @@ function MyQuestionTab() {
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(0);
   const router = useRouter();
+  const [search, setSearch] = useState<string | undefined>();
+  const [questGroupId, setQuestGroupId] = useState<string | undefined>();
+  const [questionType, setQuestionType] = useState<string | undefined>();
+  const [sort, setSort] = useState<string>("recently_create");
 
   const dispatch = useAppDispatch();
 
@@ -48,21 +52,35 @@ function MyQuestionTab() {
     loadQuestionGroupList(true);
     dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, indexPage, recordNum]);
+  }, [user, indexPage, recordNum, search, questGroupId, questionType, sort]);
 
   const loadQuestionList = async (init: boolean) => {
     if (init) {
       setLoadingPage(true);
+      setIndexPage(1);
     }
     const res = await getQuestionList({
       paging: {
         recordPerPage: recordNum,
         startIndex: indexPage,
       },
+      isQuestionBank: false,
+      searchQuestion: search,
+      andIdGroupQuestions: questGroupId ? [questGroupId] : undefined,
+      sorters: [
+        sort === "A-Z"
+          ? {
+              name: "CreatedTime",
+              isAsc: false,
+            }
+          : {
+              name: "Question",
+              isAsc: true,
+            },
+      ],
       // andIdExamQuestionParts: "",
-      // andQuestionTypes: "",
+      andQuestionTypes: questionType ? [questionType] : undefined,
       // idExams: "",
-      // andIdGroupQuestions: "",
     });
 
     if (res.code != 0) {
@@ -88,6 +106,8 @@ function MyQuestionTab() {
       user?.studio?._id,
     );
     dispatch(setquestionGroupLoading(false));
+    console.log("dataResults", dataResults);
+
     if (dataResults.code != 0) {
       return [];
     } else {
@@ -96,13 +116,21 @@ function MyQuestionTab() {
     }
   };
 
+  const questionGroupOptions = [
+    ...questionGroups.map((v) => ({
+      value: v.id,
+      label: v.name,
+    })),
+    { value: "", label: t("all_category") },
+  ];
+
+  console.log("questionGroupOptions", questionGroupOptions);
+
   const renderQuestion: (
     e: BaseQuestionData,
     index: number,
   ) => React.ReactNode = (e: BaseQuestionData, index: number) => {
     var group = questionGroups?.find((v: any) => v.id === e.idGroupQuestion);
-    console.log("questionGroups", questionGroups);
-    console.log("group", group);
 
     switch (e.questionType) {
       case QuestionType.MutilAnswer:
@@ -217,10 +245,10 @@ function MyQuestionTab() {
         >
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
-              // setSearch(e.target.value);
+              setSearch(e.target.value);
             }}
             className="max-lg:mt-3"
-            placeholder={t("search_test_group")}
+            placeholder={t("enter_key_search")}
             h="h-11"
             id="search"
             name="search"
@@ -235,6 +263,11 @@ function MyQuestionTab() {
           />
           <div className="w-11" />
           <MDropdown
+            placeholder={t("quest_type")}
+            value={questionType}
+            setValue={(na: any, val: any) => {
+              setQuestionType(val);
+            }}
             h="h-11"
             id="question_type"
             name="question_type"
@@ -249,22 +282,29 @@ function MyQuestionTab() {
               "",
             ].map((e: string) => ({
               value: e,
-              label: !e ? t("Tất cả ") : t(e?.toLowerCase()),
+              label: !e ? t("all_quest_type") : t(e?.toLowerCase()),
             }))}
           />
           <div className="w-11" />
           <MDropdown
-            className="tag-big"
-            popupClassName="hidden"
-            id="tags"
-            name="tags"
-            mode="tags"
+            placeholder={t("question_group")}
+            value={questGroupId}
+            setValue={(name: any, value: any) => {
+              setQuestGroupId(value);
+            }}
+            options={questionGroupOptions}
+            id="question_group"
+            name="question_group"
           />
           <div className="w-11" />
           <MDropdown
+            value={sort}
+            setValue={(name: any, value: any) => {
+              setSort(value);
+            }}
             h="h-11"
-            id="category"
-            name="category"
+            id="sort"
+            name="sort"
             options={["recently_create", "A-Z"].map((e) => ({
               value: e,
               label: t(e),
@@ -272,6 +312,9 @@ function MyQuestionTab() {
           />
         </form>
       </div>
+      {/* {(questionGroupOptions ?? []).map((e, i) => ( */}
+      {/*   <div key={i}>{e.value}</div> */}
+      {/* ))} */}
       {loadingPage ? (
         <div
           className={
