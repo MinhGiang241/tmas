@@ -4,7 +4,7 @@ import {
   ExaminationListParams,
   ParamGetExamList,
 } from "@/data/form_interface";
-import { callStudioAPI } from "./base_api";
+import { callApi, callStudioAPI } from "./base_api";
 import { ExamData } from "@/data/exam";
 
 export const createExaminationList = async (data: ExamFormData) => {
@@ -181,6 +181,32 @@ export const duplicateExamination = async (data: {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/Copy`,
     data,
+  );
+  return results;
+};
+
+export const getTmasExaminationList = async ({
+  text,
+  skip,
+  limit,
+  fields,
+  tags,
+}: {
+  text?: string;
+  skip?: number;
+  limit?: number;
+  fields?: any;
+  tags?: any;
+}) => {
+  const results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examlibrary.search`,
+    {
+      text: text ?? "",
+      skip,
+      limit,
+      fields,
+      tags,
+    },
   );
   return results;
 };

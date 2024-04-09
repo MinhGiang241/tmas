@@ -41,6 +41,7 @@ import { ExamData, ExaminationData } from "@/data/exam";
 import { v4 as uuidv4 } from "uuid";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import GoldPrice from "../components/GoldPrice";
+import { parseInt } from "lodash";
 const EditorHook = dynamic(
   () => import("../../exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -48,7 +49,11 @@ const EditorHook = dynamic(
   },
 );
 
-function CreateExaminationPage({ examination }: any) {
+function CreateExaminationPage({
+  examination,
+}: {
+  examination: ExaminationData;
+}) {
   const createSessionId = async () => {
     var dataSessionId = await createSession(examination?.idSession ?? "");
     console.log("dataSessionId", dataSessionId);
@@ -80,6 +85,7 @@ function CreateExaminationPage({ examination }: any) {
     loadExam();
     if (examination) {
       console.log("examination", examination);
+      setPush(examination?.isPushToBank ?? false);
       setActive(examination?.isActive ?? false);
       setStartTime(
         examination?.validAccessSetting?.validFrom
@@ -174,8 +180,12 @@ function CreateExaminationPage({ examination }: any) {
     examination_name?: string;
     avatarId?: string;
     description?: string;
+    gold_price?: string;
   }
   const initialValues: FormValue = {
+    gold_price: examination?.goldSetting?.goldPrice
+      ? examination?.goldSetting?.goldPrice?.toString()
+      : undefined,
     one_code:
       examination?.accessCodeSettingType == "One"
         ? examination?.accessCodeSettings[0].code
@@ -341,6 +351,13 @@ function CreateExaminationPage({ examination }: any) {
         idExam:
           exam?.id ?? examination?.id ?? search.get("examId") ?? undefined,
         idSession: sessionId,
+        isPushToBank: push,
+        goldSetting: {
+          goldPrice: values?.gold_price
+            ? parseInt(values?.gold_price)
+            : undefined,
+          isEnable: true,
+        },
       };
 
       console.log("submitData", submitData);
@@ -389,6 +406,7 @@ function CreateExaminationPage({ examination }: any) {
   };
 
   const [showCamAvatar, setShowCamAvatar] = useState<boolean>(false);
+  const [push, setPush] = useState<boolean>(false);
 
   return (
     <HomeLayout>
@@ -475,7 +493,13 @@ function CreateExaminationPage({ examination }: any) {
 
         <div className="max-lg:mx-5  grid grid-cols-12 gap-6">
           <div className="max-lg:grid-cols-1 max-lg:mb-5 lg:col-span-6 col-span-12  h-fit rounded-lg">
-            <Share value={share} setValue={setShare} />
+            <Share
+              examination={examination}
+              push={push}
+              setPush={setPush}
+              value={share}
+              setValue={setShare}
+            />
             <div className="h-4" />
             <GoldPrice formik={formik} />
             <div className="h-4" />

@@ -2,11 +2,17 @@ import MInput from "@/app/components/config/MInput";
 import { useTranslation } from "react-i18next";
 import { SearchOutlined } from "@ant-design/icons";
 import MDropdown from "@/app/components/config/MDropdown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Collapse, Pagination, Select, Spin } from "antd";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import { ExamGroupData, ExaminationData } from "@/data/exam";
+import {
+  ExamData,
+  ExamGroupData,
+  ExaminationData,
+  TmasExamData,
+  TmasStudioExamData,
+} from "@/data/exam";
 import CopyIcon from "@/app/components/icons/size.svg";
 import LinkIcon from "@/app/components/icons/link-2.svg";
 import MessIcon from "@/app/components/icons/message-question.svg";
@@ -17,6 +23,9 @@ import AddIcon from "@/app/components/icons/add.svg";
 
 import { FormattedDate } from "react-intl";
 import MButton from "@/app/components/config/MButton";
+import { getTmasExaminationList } from "@/services/api_services/examination_api";
+import { APIResults } from "@/data/api_results";
+import { errorToast } from "@/app/components/toast/customToast";
 
 function ExamTmasTab() {
   const { t } = useTranslation("exam");
@@ -24,17 +33,57 @@ function ExamTmasTab() {
   const [loadingPage, setLoadingPage] = useState<boolean>(false);
   // // const [list, setList] = useState<any[]>([]);
   // const list = useAppSelector((state: RootState) => state.examGroup.list);
-  const list = [{}];
+  const [list, setList] = useState<TmasStudioExamData[]>([]);
+  const [search, setSearch] = useState<string | undefined>();
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
-  const [total, setTotal] = useState<number>(100);
+  const [total, setTotal] = useState<number>(0);
+  const user = useAppSelector((state: RootState) => state.user.user);
+  const loadTmasExamList = async (init: boolean) => {
+    if (init) {
+      setLoadingPage(true);
+    }
+    const res: APIResults = await getTmasExaminationList({
+      skip: (indexPage - 1) * recordNum,
+      limit: recordNum,
+      fields: {},
+      text: search,
+      tags: [],
+    });
+    setLoadingPage(false);
+    console.log("res", res);
+    if (res.code != 0) {
+      errorToast(res.message ?? "");
+      return;
+    }
+
+    // var tmasList = res.data as TmasExamData[];
+    const examList = (res.data ?? []).map(
+      (e: TmasExamData) => e?.version?.examData,
+    );
+    console.log("examList", examList);
+    setTotal(res?.records ?? 0);
+    setList(examList);
+  };
+
+  useEffect(() => {
+    loadTmasExamList(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [indexPage, recordNum, user]);
+
   return (
     <>
       <div className="w-full flex">
-        <form className="flex w-full max-lg:flex-col max-lg:mx-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            loadTmasExamList(true);
+          }}
+          className="flex w-full max-lg:flex-col max-lg:mx-5"
+        >
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
-              // setSearch(e.target.value);
+              setSearch(e.target.value);
             }}
             className="max-lg:mt-3"
             placeholder={t("search_test_group")}
@@ -52,6 +101,9 @@ function ExamTmasTab() {
           />
           <div className="w-11" />
           <MDropdown
+            setValue={(name: any, value: any) => {
+              loadTmasExamList(true);
+            }}
             className="tag-big"
             popupClassName="hidden"
             id="tags"
@@ -77,7 +129,7 @@ function ExamTmasTab() {
         </div>
       ) : (
         <>
-          {[{}, {}, {}].map((a: ExaminationData, i: number) => (
+          {list.map((a: TmasStudioExamData, i: number) => (
             <Collapse
               key={i}
               ghost
@@ -90,16 +142,14 @@ function ExamTmasTab() {
                   <div className="w-full p-2 min-h-[100px] flex items-center justify-between rounded-lg bg-white">
                     <div className="flex max-lg:flex-col w-full lg:items-center justify-between">
                       <div className="flex-1 items-start justify-start flex-grow flex flex-col">
-                        <div className="body_semibold_16">
-                          {"Đề thi tuyển dụng fresher Kế toán"}
-                        </div>
+                        <div className="body_semibold_16">{a?.Name ?? ""}</div>
                         <div className="h-2" />
                         <div className="w-full justify-start my-1 flex max-lg:flex-wrap">
                           <div className="flex ">
                             <CalendarIcon />
                             <span className="body_regular_14 ml-2">
                               <FormattedDate
-                                value={"2024-04-02T09:31:13.300+0000"}
+                                value={a?.CreatedTime}
                                 day="2-digit"
                                 month="2-digit"
                                 year="numeric"
@@ -109,19 +159,21 @@ function ExamTmasTab() {
                           <div className="flex mx-8">
                             <MessIcon />
                             <span className="ml-2 body_regular_14">
-                              {`${"3"} ${t("question")?.toLowerCase()}`}
+                              {`${a?.NumberOfQuestions ?? ""} ${t(
+                                "question",
+                              )?.toLowerCase()}`}
                             </span>
                           </div>
                           <div className="flex ml-2">
                             <CupIcon />
                             <span className="mx-4 body_regular_14">
-                              {"3 điểm"}
+                              {`${a?.TotalPointsAsInt} ${t("point")}`}
                             </span>
                           </div>
 
                           <div className="flex">
                             <FolderIcon />
-                            <span className="ml-2 body_regular_14">{"1M"}</span>
+                            <span className="ml-2 body_regular_14">{`${1}M`}</span>
                           </div>
                         </div>
                       </div>

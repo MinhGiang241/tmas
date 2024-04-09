@@ -94,7 +94,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
 
       const list = levelOne.map((e: ExamGroupData) => {
         const childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id
+          (ch: ExamGroupData) => ch.idParent === e.id,
         );
         return { ...e, childs };
       });
@@ -212,10 +212,10 @@ function Collaborator({ hidden }: { hidden: boolean }) {
 
               const childsList = (examGroup ?? []).reduce(
                 (acc: any, va) => [...acc, ...(va?.childs ?? [])],
-                []
+                [],
               );
               const group = (childsList ?? []).find(
-                (g: any) => g?.id === examData?.idExamGroup
+                (g: any) => g?.id === examData?.idExamGroup,
               );
 
               return (
@@ -245,7 +245,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                           <MessIcon />
                           <span className="ml-2 body_regular_14">
                             {`${examData?.numberOfQuestions} ${t(
-                              "question"
+                              "question",
                             )?.toLowerCase()}`}
                           </span>
                         </div>
@@ -316,7 +316,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
         {list.length != 0 && (
           <div className="w-full flex items-center justify-center">
             <span className="body_regular_14 mr-2">{`${total} ${t(
-              "result"
+              "result",
             )}`}</span>
 
             <Pagination
@@ -342,7 +342,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                     value: i,
                     label: (
                       <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                        "page"
+                        "page",
                       )}`}</span>
                     ),
                   })),

@@ -550,7 +550,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                   setRecordNum(v);
                 }}
                 options={[
-                  ...[15, 25, 30, 50, 100].map((i: number) => ({
+                  ...[1, 2, 3, 15, 25, 30, 50, 100].map((i: number) => ({
                     value: i,
                     label: (
                       <span className="pl-3 body_regular_14">{`${i}/${common.t(

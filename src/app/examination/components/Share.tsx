@@ -2,7 +2,19 @@ import { Collapse, Radio, Space, Switch } from "antd";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-function Share({ value, setValue }: { value: any; setValue: any }) {
+function Share({
+  value,
+  setValue,
+  push,
+  setPush,
+  examination,
+}: {
+  value: any;
+  setValue: any;
+  push: any;
+  setPush: any;
+  examination: any;
+}) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   return (
@@ -47,10 +59,19 @@ function Share({ value, setValue }: { value: any; setValue: any }) {
                 ? t("private_share_intro")
                 : t("public_share_intro")}
             </p>
-            <div className="flex mt-2 items-center">
-              <Switch size="small" />
-              <p className="ml-2">{t("push_exam_bank")}</p>
-            </div>
+            {value === "Public" && (
+              <div className="flex mt-2 items-center">
+                <Switch
+                  disabled={!!examination}
+                  value={push}
+                  onChange={(v) => {
+                    setPush(v);
+                  }}
+                  size="small"
+                />
+                <p className="ml-2">{t("push_exam_bank")}</p>
+              </div>
+            )}
           </div>
         </Collapse.Panel>
       </Collapse>

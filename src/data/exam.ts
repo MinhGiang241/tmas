@@ -1,4 +1,6 @@
+import { ExaminationVersionState } from "@/services/api_services/examination_bc_api";
 import { AccessCodeExaminantionSetting } from "./form_interface";
+import { QuestionType } from "./question";
 
 export interface ExamGroupData {
   name?: string;
@@ -156,4 +158,98 @@ export interface ExaminationData {
     validTo?: string;
     ipWhiteLists?: string[];
   };
+  isPushToBank?: boolean;
+  goldSetting?: {
+    isEnable?: boolean;
+    goldPrice?: number;
+  };
+}
+
+export interface TmasExamVersion {
+  code?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  examId?: string;
+  examData?: TmasStudioExamData;
+  group_name?: string;
+  name?: string;
+  state?: ExaminationVersionState;
+  studioId?: string;
+  userId?: string;
+  version: number;
+  _id?: string;
+}
+
+export interface TmasExamData {
+  code?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  userId?: string;
+  versionId?: string;
+  _id?: string;
+  visibleState: string;
+  version: TmasExamVersion;
+}
+
+export interface TmasStudioExamData {
+  ApprovedState?: {
+    ApprovedState?: AppovedState;
+  };
+  ChangePositionQuestion?: boolean;
+  CreatedBy?: string;
+  CreatedTime?: string;
+  Description?: string;
+  Documents?: any[];
+  ExamNextQuestion?: "FreeByUser" | "ByOrderQuestion";
+  ExamViewQuestionType?: "SinglePage" | "MultiplePages";
+  ExternalLinks?: string[];
+  Group?: { Level?: number; Name?: string }[];
+  IdDocuments?: any[];
+  IdExamGroup?: string;
+  IdSession?: string;
+  IdTags?: string[];
+  Language?: string;
+  Name?: string;
+  NumberOfQuestions?: number;
+  NumberOfTests?: number;
+  OwnerId?: string;
+  Parts: {
+    Description?: string;
+    Name?: string;
+    Question?: {
+      Base?: {
+        Content?: {
+          Answers?: {
+            IsCorrectAnswer?: boolean;
+            Label?: string;
+            Text?: string;
+          }[];
+          ExplainAnswer?: string;
+          IsChangePosition?: boolean;
+        };
+        NumberPoint?: number;
+        Question?: string;
+
+        NumberPointAsInt?: number;
+        QuestionType: QuestionType;
+      };
+      IdExam?: string;
+      IdExamQuestion?: string;
+      UnsignedName?: string;
+      IdExamQuestionPart?: string;
+      IdGroupQuestion?: string;
+      IsQuestionBank?: boolean;
+      NumberPointAsInt?: number;
+      QuestionType: QuestionType;
+    }[];
+  }[];
+  PlayAudio?: "OnlyOneTime" | "MultipleTimes";
+  StudioId?: string;
+  Tags?: any[];
+  TimeLimitMinutes?: number;
+  TotalPointsAsInt?: number;
+  UnsignedName?: string;
+  UpdateBy?: string;
+  UpdateTime?: string;
+  Version?: string;
 }

@@ -9,7 +9,7 @@ export class callApi {
   static post = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token =
       sessionStorage.getItem("access_token") ??
@@ -30,6 +30,7 @@ export class callApi {
           code: response?.data?.code,
           data: response.data?.data ?? response.data,
           message: response.data?.message,
+          records: response?.data?.records,
         };
       }
 
@@ -37,6 +38,7 @@ export class callApi {
         code: 0,
         data: response?.data?.data ?? response.data,
         message: response?.data?.message,
+        records: response?.data?.records,
       };
     } catch (error: any) {
       return {
@@ -48,7 +50,7 @@ export class callApi {
   };
   static get = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token =
       sessionStorage.getItem("access_token") ??
@@ -69,6 +71,7 @@ export class callApi {
           code: response?.data?.code,
           data: response.data?.data ?? response.data,
           message: response.data?.message,
+          records: response?.data?.records,
         };
       }
       return {
@@ -76,6 +79,7 @@ export class callApi {
         code: 0,
         data: response?.data?.data ?? response.data,
         message: response?.data?.message,
+        records: response?.data?.records,
       };
     } catch (error: any) {
       return {
@@ -89,7 +93,7 @@ export class callApi {
   static upload = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ) {
     const token =
       sessionStorage.getItem("access_token") ??
@@ -119,7 +123,7 @@ export class callStudioAPI {
   static post = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ) {
     const token =
       sessionStorage.getItem("access_token") ??
@@ -161,7 +165,7 @@ export class callStudioAPI {
 
   static get = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token =
       sessionStorage.getItem("access_token") ??
@@ -202,7 +206,7 @@ export class callStudioAPI {
   static put = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token =
       sessionStorage.getItem("access_token") ??
@@ -242,7 +246,7 @@ export class callStudioAPI {
 
   static delete = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token =
       sessionStorage.getItem("access_token") ??
@@ -283,7 +287,7 @@ export class callStudioAPI {
 
   static download = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token =
       sessionStorage.getItem("access_token") ??

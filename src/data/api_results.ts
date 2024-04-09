@@ -3,6 +3,7 @@ export interface APIResults {
   isPopup?: boolean;
   message?: string;
   data: any;
+  records?: number;
 }
 
 export interface APIResultsBC {

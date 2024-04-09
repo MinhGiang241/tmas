@@ -135,6 +135,11 @@ export interface ExaminationFormData {
     validTo?: string;
     ipWhiteLists?: string[];
   };
+  isPushToBank?: boolean;
+  goldSetting?: {
+    isEnable?: boolean;
+    goldPrice?: number;
+  };
 }
 
 export interface ExaminationListParams {
