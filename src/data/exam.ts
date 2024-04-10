@@ -53,6 +53,7 @@ export interface ExamData {
   idExamGroup?: string;
   version?: string;
   timeLimitMinutes?: number;
+  TimeLimitMinutes?: number;
   examNextQuestion: "FreeByUser" | "ByOrderQuestion";
   examViewQuestionType?: "SinglePage" | "MultiplePages";
   language?: "English" | "Vietnamese";

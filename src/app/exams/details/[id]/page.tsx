@@ -145,7 +145,7 @@ function ExamDetails({ params }: any) {
       errorToast(res?.message ?? "");
       return;
     }
-    console.log(res, "exam");
+    // console.log(res, "exam");
 
     setExam(res?.data?.records[0]);
   };
