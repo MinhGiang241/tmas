@@ -144,7 +144,7 @@ function ExamDetails({ params }: any) {
                     // { text: exam?.name, href: `/exams/details/${exam?.id}` },
                     {
                         href: `/exams/details/${data?.id}`,
-                        text: data?.name,
+                        text: data?.examData?.Name,
                         active: true,
                     },
                 ]}
@@ -152,13 +152,13 @@ function ExamDetails({ params }: any) {
             <div className="h-2" />
             <div className="w-full max-lg:px-3 mb-5">
                 <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
-                    <div className="">{data?.name}</div>
+                    <div className="">{data?.examData?.Name}</div>
                     <div className="flex">
                     </div>
                 </div>
                 <div
                     className="text-sm text-m_neutral_500 pt-1"
-                    dangerouslySetInnerHTML={{ __html: data?.description || "" }}
+                    dangerouslySetInnerHTML={{ __html: data?.examData?.Description || "" }}
                 />
                 <div className="h-[1px] bg-m_neutral_200 mt-10" />
                 <div className="flex justify-between items-center mt-6 mb-6">
