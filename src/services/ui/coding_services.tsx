@@ -34,6 +34,23 @@ export const renderExtension: (
   }
 };
 
+export const mapStudioToTmaslanguage = (index: number) => {
+  switch (index) {
+    case 0:
+      return "php";
+    case 1:
+      return "javascript";
+    case 2:
+      return "java";
+    case 3:
+      return "python";
+    case 4:
+      return "ruby";
+    case 5:
+      return "c#";
+  }
+};
+
 export const mapLanguage = (lang?: string) => {
   switch (lang) {
     case "php":

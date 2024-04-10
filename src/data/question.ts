@@ -38,7 +38,6 @@ export interface BaseQuestionData {
   idExam?: string;
   idExamQuestionPart?: string;
   idExamQuestionBank?: string;
-  studioIdstudioId?: string;
   createdBy?: string;
   ownerId?: string;
   updateTime?: string;
@@ -49,7 +48,7 @@ export interface BaseQuestionData {
 export interface CodingQuestionData extends BaseQuestionData {
   content?: {
     codingScroringMethod?: "PassAllTestcase" | "EachTestcase";
-    codeLanguages:
+    codeLanguages?:
       | any
       | "PHP"
       | "Javascrip"
@@ -57,7 +56,7 @@ export interface CodingQuestionData extends BaseQuestionData {
       | "Python"
       | "Ruby"
       | "CShape"[];
-    testcases: {
+    testcases?: {
       name?: string;
       inputData?: string;
       outputData?: string;
@@ -102,7 +101,7 @@ export interface ConnectQuestionData extends BaseQuestionData {
     pairingScroringMethod?: "EachCorrectItem" | "CorrectAll";
     questions?: ConnectQuestAns[];
     answers?: ConnectQuestAns[];
-    pairings: {
+    pairings?: {
       idQuestion?: string;
       idAnswer?: string;
     }[];

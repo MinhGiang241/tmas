@@ -1,5 +1,8 @@
 import { ExaminationVersionState } from "@/services/api_services/examination_bc_api";
-import { AccessCodeExaminantionSetting } from "./form_interface";
+import {
+  AccessCodeExaminantionSetting,
+  CodingDataType,
+} from "./form_interface";
 import { BaseQuestionData, QuestionType } from "./question";
 
 export interface ExamGroupData {
@@ -232,7 +235,7 @@ export interface BaseTmasQuestionExamData {
   Base?: BaseTmasQuestionData;
 }
 
-export interface MultiTmasQuestionData extends BaseQuestionData {
+export interface MultiTmasQuestionData extends BaseTmasQuestionData {
   Content?: {
     Answers?: {
       IsCorrectAnswer?: boolean;
@@ -244,7 +247,7 @@ export interface MultiTmasQuestionData extends BaseQuestionData {
   };
 }
 
-export interface TrueFalseTmasQuestionData extends BaseQuestionData {
+export interface TrueFalseTmasQuestionData extends BaseTmasQuestionData {
   Content?: {
     Answers?: {
       IsCorrectAnswer?: boolean;
@@ -256,15 +259,16 @@ export interface TrueFalseTmasQuestionData extends BaseQuestionData {
   };
 }
 
-export interface EssayQuestionData extends BaseQuestionData {
+export interface EssayTmasQuestionData extends BaseTmasQuestionData {
   Content?: {
     GradingNote?: string;
     RequiredFile?: boolean;
   };
 }
 
-export interface ConnectQuestionData extends BaseQuestionData {
+export interface ConnectTmasQuestionData extends BaseTmasQuestionData {
   Content?: {
+    ExplainAnswer?: string;
     PairingScroringMethod?: "CorrectAll" | "EachCorrectItem";
     Answers?: { _id?: string; Label?: string; Content?: string }[];
     Pairings?: {
@@ -279,35 +283,34 @@ export interface ConnectQuestionData extends BaseQuestionData {
   };
 }
 
-export interface CodeQuestionData extends BaseQuestionData {
+export interface CodeTmasQuestionData extends BaseTmasQuestionData {
   Content?: {
-    CodeLanguages: number;
+    CodeLanguages: number[];
     CodingScroringMethod?: "PassAllTestcase" | "EachTestcase";
     CodingTemplate?: {
       ExplainAnswer?: string;
+      NameFunction?: string;
+      ParameterInputs?: { NameParameter?: string; ReturnType?: string }[];
+      ReturnType?: CodingDataType;
+      Template?: string;
     };
-    NameFunction?: string;
-    ParameterInputs?: {
-      NameParameter?: string;
-      ReturnType?: string;
+    Testcases?: {
+      Name?: string;
+      _id?: string;
+      OutputData?: string;
+      InputData?: string;
     }[];
-    ReturnType?: string;
-    Template?: string;
   };
-  Testcases?: {
-    Name?: string;
-    _id?: string;
-  }[];
 }
 
-export interface SQLQuestionData extends BaseQuestionData {
+export interface SQLTmasQuestionData extends BaseTmasQuestionData {
   Content?: {
     ExpectedOutput?: string;
     ExplainAnswer?: string;
     SchemaSql?: string;
   };
 }
-export interface FillBlankQuestionData extends BaseQuestionData {
+export interface FillBlankTmasQuestionData extends BaseTmasQuestionData {
   Content?: {
     AnwserItems: {
       Label?: string;
@@ -318,7 +321,7 @@ export interface FillBlankQuestionData extends BaseQuestionData {
     FormatBlank?: string;
   };
 }
-export interface RandomQuestionData extends BaseQuestionData {}
+export interface RandomTmasQuestionData extends BaseTmasQuestionData {}
 
 export interface TmasStudioExamData {
   ApprovedState?: {
