@@ -53,7 +53,7 @@ export default function Coding({
   const containerRef = useRef(null);
   const contentRef = useRef(null);
   // console.log(questionGroup, "questionGroup");
-  // console.log(question, "question");
+  console.log(question, "question");
 
   useEffect(() => {
     setIsOverflowing(
@@ -147,7 +147,7 @@ export default function Coding({
               {t("created_date")}:
             </div>
             <FormattedDate
-              value={question?.createdTime}
+              value={question?.Base?.CreatedTime}
               day="2-digit"
               month="2-digit"
               year="numeric"
