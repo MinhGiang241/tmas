@@ -9,22 +9,21 @@ import BaseModal from "@/app/components/config/BaseModal";
 import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
-import NewIcon from "@/app/components/icons/export.svg";
-import Tick from "@/app/components/icons/tick-circle.svg";
-import { useRouter } from "next/navigation";
-import { FormattedDate } from "react-intl";
 import {
+  ExamQuestionPartById,
   deleteQuestionById,
   duplicateQuestion,
 } from "@/services/api_services/question_api";
+import { useRouter } from "next/navigation";
+import { FormattedDate } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
 
-export default function ManyResult({
+export default function Explain({
+  index,
   examId,
   question,
-  index,
   getData,
   questionGroup,
   tmasQuest,
@@ -39,26 +38,85 @@ export default function ManyResult({
   questionGroup?: any;
   tmasQuest?: boolean;
   addExamBank?: Function;
-  onChangeCheck?: Function;
   canCheck?: boolean;
+  onChangeCheck?: Function;
 }) {
+  const [openEditQuestion, setOpenEditQuestion] = useState(false);
+  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
+  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
 
-  const router = useRouter();
   const { t } = useTranslation("question");
 
+  const router = useRouter();
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [dupLoading, setDupLoading] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
+
 
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
       ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div>
+      <ConfirmModal
+        loading={dupLoading}
+        onOk={async () => {
+          setDupLoading(true);
+          var res: APIResults = await duplicateQuestion({
+            newIdExamQuestionPart: question?.idExamQuestionPart,
+            ids: [question?.id],
+            idExams: examId ? [examId] : [],
+          });
+          setDupLoading(false);
+          if (res.code != 0) {
+            errorToast(res?.message ?? "");
+            return;
+          }
+          successToast(t("sucess_duplicate_question"));
+          setOpenCopyQuestion(false);
+          router.push(
+            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
+          );
+          await getData();
+        }}
+        onCancel={() => {
+          setOpenCopyQuestion(false);
+        }}
+        action={t("copy")}
+        text={t("confirm_copy")}
+        open={openCopyQuestion}
+      />
+
+      <ConfirmModal
+        loading={deleteLoading}
+        onOk={async () => {
+          setDeleteLoading(true);
+          var res = await deleteQuestionById(question?.id);
+          setDeleteLoading(false);
+          if (res.code != 0) {
+            errorToast(res?.message ?? "");
+            return;
+          }
+          successToast(t("success_delete_question"));
+
+          setOpenDeleteQuestion(false);
+          await getData();
+        }}
+        onCancel={() => {
+          setOpenDeleteQuestion(false);
+        }}
+        action={t("delete_question")}
+        text={t("confirm_delete_question")}
+        open={openDeleteQuestion}
+      />
+      {/* {data?.examQuestions?.map((x: any, key: any) => ( */}
       <Collapse
         // key={key}
         ghost
@@ -83,12 +141,11 @@ export default function ManyResult({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} ${index}`}
-                  :
+                  {`${t("quest")} ${index}`}:
                   <div
                     ref={contentRef}
-                    className={`body_regular_14 pl-2 `}
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
+                    className="body_regular_14 pl-2"
+                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -115,7 +172,6 @@ export default function ManyResult({
                   icon={<AddIcon />}
                   text={t("add_bank")}
                 />
-
               ) : (
                 <div></div>
               )}
@@ -124,74 +180,39 @@ export default function ManyResult({
           key={""}
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
+          <div className="text-m_primary_500 text-sm font-semibold mb-2">
+            {t("quest_info")}
+          </div>
           <div className="flex">
-            <div className="w-1/2">
-              <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                {t("quest_info")}
-              </div>
-              <div className="flex">
-                <div className="text-sm pr-2 font-semibold">
-                  {t("quest_group")}:
-                </div>
-                <span>{questionGroup?.name}</span>
-              </div>
-              <div className="flex">
-                <div className="text-sm pr-2 font-semibold">
-                  {t("quest_type")}:
-                </div>
-                <span>{t(question?.questionType)}</span>
-              </div>
-              <div className="flex">
-                <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-                <span>{question.numberPoint}</span>
-              </div>
-              <div className="flex">
-                <div className="text-sm pr-2 font-semibold">
-                  {t("created_date")}:
-                </div>
-                <FormattedDate
-                  value={question?.createdTime}
-                  day="2-digit"
-                  month="2-digit"
-                  year="numeric"
-                />
-              </div>
+            <div className="text-sm pr-2 font-semibold">
+              {t("quest_group")}:
             </div>
-            <div className="w-1/2">
-              <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                {t("result")}
-              </div>
-              <div>
-                <div>
-                  {question?.content?.answers?.map((x: any, key: any) =>
-                    x.isCorrectAnswer === false ? (
-                      <div className="flex" key={key}>
-                        <div className="body_semibold_14">{x.label}</div>
-                        <div
-                          className="body_regular_14 pl-2"
-                          dangerouslySetInnerHTML={{ __html: x.text }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex" key={key}>
-                        <div className="body_semibold_14 text-green-500">
-                          {x.label}
-                        </div>
-                        <div
-                          className="body_regular_14 pl-2 text-green-500 pr-2"
-                          dangerouslySetInnerHTML={{ __html: x.text }}
-                        />
-                        <Tick />
-                      </div>
-                    ),
-                  )}
-                </div>
-              </div>
+            <span>{questionGroup?.name}</span>
+          </div>
+          <div className="flex">
+            <div className="text-sm pr-2 font-semibold">
+              {t("quest_type")}:{" "}
             </div>
+            <span>{t(question?.QuestionType)}</span>
+          </div>
+          <div className="flex">
+            <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
+            <span>{question.Base.NumberPoint}</span>
+          </div>
+          <div className="flex">
+            <div className="text-sm pr-2 font-semibold">
+              {t("created_date")}:
+            </div>
+            <FormattedDate
+              value={question?.CreatedTime}
+              day="2-digit"
+              month="2-digit"
+              year="numeric"
+            />
           </div>
         </Collapse.Panel>
       </Collapse>
-      {/* </Collapse.Panel> */}
+      {/* ))} */}
     </div>
   );
 }

@@ -24,6 +24,7 @@ import { FormattedDate } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
+import dayjs from "dayjs";
 
 export default function Coding({
   getData,
@@ -46,22 +47,14 @@ export default function Coding({
   canCheck?: boolean;
   onChangeCheck?: Function;
 }) {
-  const [openEditQuestion, setOpenEditQuestion] = useState(false);
-  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
-  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [dupLoading, setDupLoading] = useState(false);
-  //
-  // const [data, setData] = useState<any>();
-  //
-  const router = useRouter();
   const { t } = useTranslation("question");
   // console.log(examId);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
+  // console.log(questionGroup, "questionGroup");
+  console.log(question, "question");
 
   useEffect(() => {
     setIsOverflowing(
@@ -100,7 +93,7 @@ export default function Coding({
                   <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
+                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -144,18 +137,18 @@ export default function Coding({
           </div>
           <div className="flex">
             <div className="body_semibold_14 pr-2">{t("quest_type")}: </div>
-            <span>{t(question?.questionType)}</span>
+            <span>{t(question?.QuestionType)}</span>
           </div>
           <div className="flex">
             <div className="body_semibold_14 pr-2">{t("point")}: </div>
-            <span>{question.numberPoint}</span>
+            <span>{question.Base.NumberPoint}</span>
           </div>
           <div className="flex">
             <div className="text-sm pr-2 font-semibold">
               {t("created_date")}:
             </div>
             <FormattedDate
-              value={question?.createdTime}
+              value={question?.CreatedTime}
               day="2-digit"
               month="2-digit"
               year="numeric"

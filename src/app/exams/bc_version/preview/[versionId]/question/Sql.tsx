@@ -9,21 +9,21 @@ import BaseModal from "@/app/components/config/BaseModal";
 import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
+import Tick from "@/app/components/icons/tick-circle.svg";
+import { useRouter } from "next/navigation";
+import { FormattedDate } from "react-intl";
 import {
-  ExamQuestionPartById,
   deleteQuestionById,
   duplicateQuestion,
 } from "@/services/api_services/question_api";
-import { useRouter } from "next/navigation";
-import { FormattedDate } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
 
-export default function Explain({
-  index,
+export default function Sql({
   examId,
   question,
+  index,
   getData,
   questionGroup,
   tmasQuest,
@@ -45,15 +45,15 @@ export default function Explain({
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
 
-  const { t } = useTranslation("question");
-
   const router = useRouter();
+  const { t } = useTranslation("question");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [dupLoading, setDupLoading] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
+
 
   useEffect(() => {
     setIsOverflowing(
@@ -62,6 +62,7 @@ export default function Explain({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <div>
       <ConfirmModal
@@ -115,12 +116,11 @@ export default function Explain({
         text={t("confirm_delete_question")}
         open={openDeleteQuestion}
       />
-      {/* {data?.examQuestions?.map((x: any, key: any) => ( */}
       <Collapse
-        // key={key}
+        // key={v?.id}
         ghost
         expandIconPosition="end"
-        className="mb-3 rounded-lg bg-m_question overflow-hidden"
+        className="rounded-lg bg-m_question overflow-hidden mb-4"
       >
         <Collapse.Panel
           header={
@@ -140,11 +140,11 @@ export default function Explain({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} ${index}`}:
+                  {`${t("question")} ${index}`}:
                   <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
+                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -189,21 +189,19 @@ export default function Explain({
             <span>{questionGroup?.name}</span>
           </div>
           <div className="flex">
-            <div className="text-sm pr-2 font-semibold">
-              {t("quest_type")}:{" "}
-            </div>
-            <span>{t(question?.questionType)}</span>
+            <div className="text-sm pr-2 font-semibold">{t("quest_type")}:</div>
+            <span>{t(question?.QuestionType)}</span>
           </div>
           <div className="flex">
             <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-            <span>{question.numberPoint}</span>
+            <span>{question.Base.NumberPoint}</span>
           </div>
           <div className="flex">
             <div className="text-sm pr-2 font-semibold">
-              {t("created_date")}:
+              {t("created_date")}:{" "}
             </div>
             <FormattedDate
-              value={question?.createdTime}
+              value={question?.CreatedTime}
               day="2-digit"
               month="2-digit"
               year="numeric"
@@ -211,7 +209,6 @@ export default function Explain({
           </div>
         </Collapse.Panel>
       </Collapse>
-      {/* ))} */}
     </div>
   );
 }

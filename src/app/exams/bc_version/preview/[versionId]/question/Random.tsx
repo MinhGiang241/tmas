@@ -1,17 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import MButton from "@/app/components/config/MButton";
-import { useTranslation } from "react-i18next";
-import { Checkbox, Collapse, Popover } from "antd";
+import { Checkbox, Collapse } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
 import EditIcon from "@/app/components/icons/edit-black.svg";
 import CopyIcon from "@/app/components/icons/size.svg";
-import BaseModal from "@/app/components/config/BaseModal";
-import MInput from "@/app/components/config/MInput";
-import MTextArea from "@/app/components/config/MTextArea";
-import ConfirmModal from "@/app/components/modals/ConfirmModal";
-import Tick from "@/app/components/icons/tick-circle.svg";
-import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { FormattedDate } from "react-intl";
+import { useRouter } from "next/navigation";
+import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import {
   deleteQuestionById,
   duplicateQuestion,
@@ -19,40 +14,38 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
+import MButton from "@/app/components/config/MButton";
 
-export default function Sql({
+function Random({
+  getData,
   examId,
   question,
   index,
-  getData,
   questionGroup,
   tmasQuest,
   addExamBank,
   canCheck,
   onChangeCheck,
 }: {
+  getData?: any;
   examId?: any;
   question?: any;
   index?: any;
-  getData?: any;
   questionGroup?: any;
   tmasQuest?: boolean;
   addExamBank?: Function;
   canCheck?: boolean;
   onChangeCheck?: Function;
 }) {
-  const [openEditQuestion, setOpenEditQuestion] = useState(false);
-  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
-  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-
   const router = useRouter();
   const { t } = useTranslation("question");
+  const [expanded, setExpanded] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [dupLoading, setDupLoading] = useState(false);
-  const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
+
 
   useEffect(() => {
     setIsOverflowing(
@@ -61,7 +54,9 @@ export default function Sql({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
+  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
+  const [active, setActive] = useState("");
   return (
     <div>
       <ConfirmModal
@@ -115,21 +110,18 @@ export default function Sql({
         text={t("confirm_delete_question")}
         open={openDeleteQuestion}
       />
+
       <Collapse
-        // key={v?.id}
+        key={index}
         ghost
         expandIconPosition="end"
-        className="rounded-lg bg-m_question overflow-hidden mb-4"
+        className="mb-3 rounded-lg bg-m_question overflow-hidden"
       >
         <Collapse.Panel
           header={
             <div className="my-3 flex justify-between items-center">
-              <div className="flex flex-col">
-                <span
-                  ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
-                >
+              <div className="flex">
+                <span className="body_semibold_14">
                   {canCheck && (
                     <Checkbox
                       onChange={onChangeCheck as any}
@@ -139,24 +131,12 @@ export default function Sql({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("question")} ${index}`}:
-                  <div
-                    ref={contentRef}
+                  {`${t("quest")} ${index}`}:
+                  <span
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
+                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
                   />
                 </span>
-                {isOverflowing ? (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setExpanded(!expanded);
-                    }}
-                    className="m-auto mt-1 text-blue-500 "
-                  >
-                    {expanded ? t("collapse") : t("read_more")}
-                  </button>
-                ) : null}
               </div>
               {tmasQuest ? (
                 <MButton
@@ -189,18 +169,18 @@ export default function Sql({
           </div>
           <div className="flex">
             <div className="text-sm pr-2 font-semibold">{t("quest_type")}:</div>
-            <span>{t(question?.questionType)}</span>
+            <span>{t(question?.QuestionType)}</span>
           </div>
           <div className="flex">
             <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-            <span>{question.numberPoint}</span>
+            <span>{question.Base.NumberPoint}</span>
           </div>
           <div className="flex">
             <div className="text-sm pr-2 font-semibold">
-              {t("created_date")}:{" "}
+              {t("created_date")}:
             </div>
             <FormattedDate
-              value={question?.createdTime}
+              value={question?.CreatedTime}
               day="2-digit"
               month="2-digit"
               year="numeric"
@@ -211,3 +191,5 @@ export default function Sql({
     </div>
   );
 }
+
+export default Random;

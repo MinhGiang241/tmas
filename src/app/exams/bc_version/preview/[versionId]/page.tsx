@@ -37,6 +37,7 @@ import {
 } from "@/redux/exam_group/examGroupSlice";
 import { getQuestionGroups } from "@/services/api_services/exam_api";
 import { UserData } from "@/data/user";
+import { getExamDetail } from "@/services/api_services/exam_detail";
 
 function ExamDetails({ params }: any) {
     const [exam, setExam] = useState<ExamData | undefined>();
@@ -107,24 +108,32 @@ function ExamDetails({ params }: any) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params]);
 
-    const getData = async () => {
-        const res = await getExamQuestionPartList({
-            paging: { startIndex: 0, recordPerPage: 100 },
-            studioSorters: [{ name: "createdTime", isAsc: true }],
-            // truyền idexam thay vì ids
-            // ids: [params.id],
-            idExams: [params.id],
-        });
-        const data = res.data;
-        console.log(data);
-        if (data) {
-            setData(data);
+    // const getData = async () => {
+    //     const res = await getExamQuestionPartList({
+    //         paging: { startIndex: 0, recordPerPage: 100 },
+    //         studioSorters: [{ name: "createdTime", isAsc: true }],
+    //         // truyền idexam thay vì ids
+    //         // ids: [params.id],
+    //         idExams: [params.id],
+    //     });
+    //     const data = res.data;
+    //     console.log(data);
+    //     if (data) {
+    //         setData(data);
+    //     }
+    // };
+
+    const getDataDetail = async (params: any) => {
+        const res = await getExamDetail(params)
+        console.log(res, "res Detail");
+        if (res) {
+            setData(res);
         }
-    };
+    }
 
     useEffect(() => {
         setLoadDataQuestion([]);
-        getData();
+        getDataDetail(params.versionId)
     }, []);
     return (
         <HomeLayout>
@@ -134,8 +143,8 @@ function ExamDetails({ params }: any) {
                     { text: t("exam_list"), href: "/exams" },
                     // { text: exam?.name, href: `/exams/details/${exam?.id}` },
                     {
-                        href: `/exams/details/${exam?.id}`,
-                        text: exam?.name,
+                        href: `/exams/details/${data?.id}`,
+                        text: data?.examData?.Name,
                         active: true,
                     },
                 ]}
@@ -143,59 +152,58 @@ function ExamDetails({ params }: any) {
             <div className="h-2" />
             <div className="w-full max-lg:px-3 mb-5">
                 <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
-                    <div className="">{exam?.name}</div>
+                    <div className="">{data?.examData?.Name}</div>
                     <div className="flex">
                     </div>
                 </div>
                 <div
                     className="text-sm text-m_neutral_500 pt-1"
-                    dangerouslySetInnerHTML={{ __html: exam?.description || "" }}
+                    dangerouslySetInnerHTML={{ __html: data?.examData?.Description || "" }}
                 />
                 <div className="h-[1px] bg-m_neutral_200 mt-10" />
                 <div className="flex justify-between items-center mt-6 mb-6">
                     <div className="text-sm text-m_neutral_900 flex">
                         <Menu className="mr-1" />
-                        {data?.totalOfRecords} {t("part")}
+                        {data?.examData?.Parts.length} {t("part")}
                     </div>
                     <div className="text-sm text-m_neutral_900 flex">
                         <Play className="mr-1" />
-                        {exam?.examNextQuestion === "FreeByUser"
+                        {data?.examData?.ExamNextQuestion === "FreeByUser"
                             ? t("free_change_part")
                             : t("part_in_row")}
                     </div>
                     <div className="text-sm text-m_neutral_900 flex">
                         <MessageQuestion className="mr-1 scale-75" />
-                        {data?.records?.reduce(function (total: any, question: any) {
-                            return total + question?.examQuestions?.length;
-                        }, 0)}{" "}
-                        {t("quest")}
+                        {data?.examData?.NumberOfQuestions} {t("quest")}
                     </div>
                     <div className="text-sm text-m_neutral_900 flex">
                         <Cup className="mr-1 scale-75" />
-                        {exam?.totalPoints} {t("point")}
+                        {data?.examData?.TotalPointsAsInt} {t("point")}
                     </div>
                     <div className="text-sm text-m_neutral_900 flex">
                         <Time className="mr-1" />
-                        {exam?.timeLimitMinutes
-                            ? `${exam?.timeLimitMinutes} ${t("minute")}`
+                        {/* {data?.Base?.TimeLimitMinutes ? `${data?.Base?.TimeLimitMinutes} ${t("minute")}` : t("unlimited")} */}
+                        {data?.examData?.TimeLimitMinutes
+                            ? `${data?.examData?.TimeLimitMinutes} ${t("minute")}`
                             : t("unlimited")}
                     </div>
                     <div className="text-sm text-m_neutral_900 flex">
                         <Document className="mr-1" />
-                        {exam?.examViewQuestionType === "MultiplePages"
+                        {data?.examData?.ExamViewQuestionType === "MultiplePages"
                             ? t("all_quest_page")
                             : t("quest_per_page")}
                     </div>
                     <div className="text-sm text-m_neutral_900 flex">
                         <Group className="mr-1" />
-                        {exam?.changePositionQuestion === false
+                        {data?.examData?.ChangePositionQuestion === false
                             ? t("keep_quest_order")
                             : t("change_quest_order")}
                     </div>
                 </div>
                 <div>
                     {data &&
-                        data.records?.map((x: any, key: any) => (
+                        data?.examData.Parts?.map((x: any, key: any) => (
+                            // console.log(x,"x");
                             <Collapse
                                 defaultActiveKey={["1"]}
                                 // defaultActiveKey={defaultActiveKeys}
@@ -209,9 +217,9 @@ function ExamDetails({ params }: any) {
                                     header={
                                         <div className="my-3 flex justify-between items-center">
                                             <div>
-                                                <div className="text-base font-semibold">{x.name}</div>
+                                                <div className="text-base font-semibold">{x.Name}</div>
                                                 <div className="text-sm text-m_neutral_500">
-                                                    {x.description}
+                                                    {x.Description}
                                                 </div>
                                             </div>
                                             <div className="min-w-28  pl-5">
@@ -219,7 +227,7 @@ function ExamDetails({ params }: any) {
                                         </div>
                                     }
                                 >
-                                    {x?.examQuestions
+                                    {x?.Questions
                                         ?.sort((a: any, b: any) =>
                                             a.createdTime < b.createdTime
                                                 ? -1
@@ -229,60 +237,62 @@ function ExamDetails({ params }: any) {
                                         )
                                         .map((e: any, key: any) => {
                                             var questionGroup = questionGroups?.find(
-                                                (v: any) => v.id === e.idGroupQuestion,
+                                                (v: any) => v.id === e.IdGroupQuestion,
                                             );
-                                            if (e.questionType == "Coding") {
+                                            // console.log(questionGroup, "questionGroup");
+
+                                            if (e.QuestionType == "Coding") {
                                                 return (
                                                     <Coding
                                                         index={key + 1}
                                                         key={e.id}
                                                         examId={params.id}
                                                         question={e}
-                                                        getData={getData}
+                                                        getData={getDataDetail}
                                                         questionGroup={questionGroup}
                                                     />
                                                 );
                                             }
-                                            if (e.questionType == "Pairing") {
+                                            if (e.QuestionType == "Pairing") {
                                                 return (
                                                     <Connect
                                                         index={key + 1}
                                                         key={e.id}
                                                         examId={params.id}
                                                         question={e}
-                                                        getData={getData}
+                                                        getData={getDataDetail}
                                                         questionGroup={questionGroup}
                                                     />
                                                 );
                                             }
-                                            if (e.questionType == "Essay") {
+                                            if (e.QuestionType == "Essay") {
                                                 return (
                                                     <Explain
                                                         index={key + 1}
                                                         key={e.id}
                                                         examId={params.id}
                                                         question={e}
-                                                        getData={getData}
+                                                        getData={getDataDetail}
                                                         questionGroup={questionGroup}
                                                     />
                                                 );
                                             }
-                                            if (e.questionType == "FillBlank") {
+                                            if (e.QuestionType == "FillBlank") {
                                                 return (
                                                     <FillBlank
                                                         index={key + 1}
                                                         key={e.id}
                                                         examId={params.id}
                                                         question={e}
-                                                        getData={getData}
+                                                        getData={getDataDetail}
                                                         questionGroup={questionGroup}
                                                     />
                                                 );
                                             }
-                                            if (e.questionType == "MutilAnswer") {
+                                            if (e.QuestionType == "MutilAnswer") {
                                                 return (
                                                     <ManyResult
-                                                        getData={getData}
+                                                        getData={getDataDetail}
                                                         index={key + 1}
                                                         key={e.id}
                                                         examId={params.id}
@@ -291,26 +301,26 @@ function ExamDetails({ params }: any) {
                                                     />
                                                 );
                                             }
-                                            if (e.questionType == "SQL") {
+                                            if (e.QuestionType == "SQL") {
                                                 return (
                                                     <Sql
                                                         index={key + 1}
                                                         key={e.id}
                                                         examId={params.id}
                                                         question={e}
-                                                        getData={getData}
+                                                        getData={getDataDetail}
                                                         questionGroup={questionGroup}
                                                     />
                                                 );
                                             }
-                                            if (e.questionType == "YesNoQuestion") {
+                                            if (e.QuestionType == "YesNoQuestion") {
                                                 return (
                                                     <TrueFalse
                                                         index={key + 1}
                                                         key={e.id}
                                                         examId={params.id}
                                                         question={e}
-                                                        getData={getData}
+                                                        getData={getDataDetail}
                                                         questionGroup={questionGroup}
                                                     />
                                                 );
@@ -321,7 +331,7 @@ function ExamDetails({ params }: any) {
                                                     key={e.id}
                                                     examId={params.id}
                                                     question={e}
-                                                    getData={getData}
+                                                    getData={getDataDetail}
                                                     questionGroup={questionGroup}
                                                 />
                                             );

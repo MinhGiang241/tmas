@@ -9,10 +9,9 @@ import BaseModal from "@/app/components/config/BaseModal";
 import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
-import Tick from "@/app/components/icons/tick-circle.svg";
 import { useRouter } from "next/navigation";
 import { FormattedDate } from "react-intl";
-import { FillBlankQuestionFormData } from "@/data/form_interface";
+import Tick from "@/app/components/icons/tick-circle.svg";
 import {
   deleteQuestionById,
   duplicateQuestion,
@@ -21,10 +20,10 @@ import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
 
-export default function FillBlank({
-  index,
+export default function TrueFalse({
   examId,
   question,
+  index,
   getData,
   questionGroup,
   tmasQuest,
@@ -39,22 +38,23 @@ export default function FillBlank({
   questionGroup?: any;
   tmasQuest?: boolean;
   addExamBank?: Function;
-  canCheck?: boolean;
   onChangeCheck?: Function;
+  canCheck?: boolean;
 }) {
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-  const [dupLoading, setDupLoading] = useState(false);
-  const [active, setActive] = useState("");
+
   const router = useRouter();
   const { t } = useTranslation("question");
   const [deleteLoading, setDeleteLoading] = useState(false);
-  // console.log("question", question);
+  const [dupLoading, setDupLoading] = useState(false);
+  // console.log(question);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
+
 
   useEffect(() => {
     setIsOverflowing(
@@ -66,58 +66,8 @@ export default function FillBlank({
 
   return (
     <div>
-      <ConfirmModal
-        loading={dupLoading}
-        onOk={async () => {
-          setDupLoading(true);
-          var res: APIResults = await duplicateQuestion({
-            newIdExamQuestionPart: question?.idExamQuestionPart,
-            ids: [question?.id],
-            idExams: examId ? [examId] : [],
-          });
-          setDupLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("sucess_duplicate_question"));
-          setOpenCopyQuestion(false);
-          router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
-          );
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenCopyQuestion(false);
-        }}
-        action={t("copy")}
-        text={t("confirm_copy")}
-        open={openCopyQuestion}
-      />
-
-      <ConfirmModal
-        loading={deleteLoading}
-        onOk={async () => {
-          setDeleteLoading(true);
-          var res = await deleteQuestionById(question?.id);
-          setDeleteLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("success_delete_question"));
-          setOpenDeleteQuestion(false);
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenDeleteQuestion(false);
-        }}
-        action={t("delete_question")}
-        text={t("confirm_delete_question")}
-        open={openDeleteQuestion}
-      />
       <Collapse
-        // key={key}
+        // key={v?.id}
         ghost
         expandIconPosition="end"
         className="rounded-lg bg-m_question overflow-hidden mb-4"
@@ -144,9 +94,7 @@ export default function FillBlank({
                   <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{
-                      __html: question?.content?.formatBlank,
-                    }}
+                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -196,18 +144,18 @@ export default function FillBlank({
                 <div className="text-sm pr-2 font-semibold">
                   {t("quest_type")}:
                 </div>
-                <span>{t(question?.questionType)}</span>
+                <span>{t(question?.QuestionType)}</span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-                <span>{question.numberPoint}</span>
+                <span>{question.Base.NumberPoint}</span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">
                   {t("created_date")}:
                 </div>
                 <FormattedDate
-                  value={question?.createdTime}
+                  value={question?.CreatedTime}
                   day="2-digit"
                   month="2-digit"
                   year="numeric"
@@ -215,40 +163,34 @@ export default function FillBlank({
               </div>
             </div>
             <div className="w-1/2">
-              <div className="pb-2">
-                <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                  {t("result")}
-                </div>
-                {(question?.content?.anwserItems ?? []).map(
-                  (x: any, key: any) => {
-                    return (
-                      <div key={key}>
-                        <div className="flex items-center">
-                          <div className="body_semibold_14 pr-2">
-                            ({x.label})
-                          </div>
-                          <span className="pr-2">{x?.anwsers?.join("/")}</span>
-                          <Tick />
-                        </div>
-                        {/* <div className="flex items-center">
-                                        <div className="body_semibold_14 pr-2">(2)</div><span className="pr-2">Nghĩa mẹ</span>
-                                        <Tick />
-                                    </div> */}
-                      </div>
-                    );
-                  },
-                )}
+              <div className="text-m_primary_500 text-sm font-semibold mb-2">
+                {t("result")}
               </div>
               <div>
-                <div className="text-m_primary_500 text-sm font-semibold pb-1">
-                  {t("explain_result")}
+                <div>
+                  {question?.Base?.Content?.Answers?.map((x: any, key: any) =>
+                    x.IsCorrectAnswer === false ? (
+                      <div className="flex" key={key}>
+                        <div className="body_semibold_14">{x.Label}</div>
+                        <div
+                          className="body_regular_14 pl-2"
+                          dangerouslySetInnerHTML={{ __html: x.Text }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex" key={key}>
+                        <div className="body_semibold_14 text-green-500">
+                          {x.Label}
+                        </div>
+                        <div
+                          className="body_regular_14 pl-2 text-green-500 pr-2"
+                          dangerouslySetInnerHTML={{ __html: x.Text }}
+                        />
+                        <Tick />
+                      </div>
+                    ),
+                  )}
                 </div>
-                <span
-                  className="body_semibold_14"
-                  dangerouslySetInnerHTML={{
-                    __html: question?.content?.explainAnswer,
-                  }}
-                />
               </div>
             </div>
           </div>

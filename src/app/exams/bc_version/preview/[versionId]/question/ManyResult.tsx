@@ -21,7 +21,7 @@ import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
 
-export default function Connect({
+export default function ManyResult({
   examId,
   question,
   index,
@@ -39,15 +39,10 @@ export default function Connect({
   questionGroup?: any;
   tmasQuest?: boolean;
   addExamBank?: Function;
-  canCheck?: boolean;
   onChangeCheck?: Function;
+  canCheck?: boolean;
 }) {
-  const [openEditQuestion, setOpenEditQuestion] = useState(false);
-  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
-  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
 
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [dupLoading, setDupLoading] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("question");
 
@@ -56,72 +51,20 @@ export default function Connect({
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
+
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
       ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div>
-      <ConfirmModal
-        loading={dupLoading}
-        onOk={async () => {
-          setDupLoading(true);
-          var res: APIResults = await duplicateQuestion({
-            newIdExamQuestionPart: question?.idExamQuestionPart,
-            ids: [question?.id],
-            idExams: examId ? [examId] : [],
-          });
-          setDupLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("sucess_duplicate_question"));
-          setOpenCopyQuestion(false);
-          router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
-          );
-
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenCopyQuestion(false);
-        }}
-        action={t("copy")}
-        text={t("confirm_copy")}
-        open={openCopyQuestion}
-      />
-
-      <ConfirmModal
-        loading={deleteLoading}
-        onOk={async () => {
-          setDeleteLoading(true);
-          var res = await deleteQuestionById(question?.id);
-          setDeleteLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("success_delete_question"));
-
-          setOpenDeleteQuestion(false);
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenDeleteQuestion(false);
-        }}
-        action={t("delete_question")}
-        text={t("confirm_delete_question")}
-        open={openDeleteQuestion}
-      />
       <Collapse
-        // key={v?.id}
+        // key={key}
         ghost
         expandIconPosition="end"
-        className="rounded-lg bg-m_question overflow-hidden mb-4"
+        className="mb-3 rounded-lg bg-m_question overflow-hidden"
       >
         <Collapse.Panel
           header={
@@ -141,11 +84,12 @@ export default function Connect({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} ${index}`}:
+                  {`${t("quest")} ${index}`}
+                  :
                   <div
                     ref={contentRef}
-                    className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
+                    className={`body_regular_14 pl-2 `}
+                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -172,6 +116,7 @@ export default function Connect({
                   icon={<AddIcon />}
                   text={t("add_bank")}
                 />
+
               ) : (
                 <div></div>
               )}
@@ -181,7 +126,7 @@ export default function Connect({
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
           <div className="flex">
-            <div className="w-1/2 p-4">
+            <div className="w-1/2">
               <div className="text-m_primary_500 text-sm font-semibold mb-2">
                 {t("quest_info")}
               </div>
@@ -193,49 +138,54 @@ export default function Connect({
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">
-                  {t("quest_type")}:{" "}
+                  {t("quest_type")}:
                 </div>
-                <span>{t(question?.questionType)}</span>
+                <span>{t(question?.QuestionType)}</span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-                <span>{question.numberPoint}</span>
+                <span>{question.Base.NumberPoint}</span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">
-                  {t("created_date")}:{" "}
+                  {t("created_date")}:
                 </div>
                 <FormattedDate
-                  value={question?.createdTime}
+                  value={question?.CreatedTime}
                   day="2-digit"
                   month="2-digit"
                   year="numeric"
                 />
               </div>
             </div>
-            <div className="w-1/2 p-4">
+            <div className="w-1/2">
               <div className="text-m_primary_500 text-sm font-semibold mb-2">
                 {t("result")}
               </div>
-              <div className="flex justify-start items-center">
+              <div>
                 <div>
-                  {question?.content?.pairings?.map((e: any, key: any) => {
-                    var ques = question?.content?.questions?.find(
-                      (q: any) => q.id == e.idQuestion,
-                    );
-                    var ans = question?.content?.answers?.find(
-                      (a: any) => a.id == e.idAnswer,
-                    );
-                    return (
-                      <div
-                        key={key}
-                        className="flex font-semibold items-center"
-                      >
-                        {`${ques?.label} : ${ans?.label}`}
-                        <Tick className="ml-2" />
+                  {question?.Base?.Content?.Answers?.map((x: any, key: any) =>
+                    x.IsCorrectAnswer === false ? (
+                      <div className="flex" key={key}>
+                        <div className="body_semibold_14">{x.Label}</div>
+                        <div
+                          className="body_regular_14 pl-2"
+                          dangerouslySetInnerHTML={{ __html: x.Text }}
+                        />
                       </div>
-                    );
-                  })}
+                    ) : (
+                      <div className="flex" key={key}>
+                        <div className="body_semibold_14 text-green-500">
+                          {x.Label}
+                        </div>
+                        <div
+                          className="body_regular_14 pl-2 text-green-500 pr-2"
+                          dangerouslySetInnerHTML={{ __html: x.Text }}
+                        />
+                        <Tick />
+                      </div>
+                    ),
+                  )}
                 </div>
               </div>
             </div>

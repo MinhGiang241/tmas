@@ -11,6 +11,8 @@ function Test() {
   useEffect(() => {
     const eventHandler = (event: MessageEvent<any>) => {
       console.log("Event nhận từ bên ngoài:", event);
+      console.log(redirectUrl, "redirectUrl");
+
       if (event?.data?.type == "authorization") {
         sessionStorage.setItem("access_token", event.data?.data);
         router.push(redirectUrl);
