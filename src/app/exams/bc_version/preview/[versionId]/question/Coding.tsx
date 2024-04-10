@@ -24,6 +24,7 @@ import { FormattedDate } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
+import dayjs from "dayjs";
 
 export default function Coding({
   getData,
@@ -147,7 +148,7 @@ export default function Coding({
               {t("created_date")}:
             </div>
             <FormattedDate
-              value={question?.Base?.CreatedTime}
+              value={question?.CreatedTime}
               day="2-digit"
               month="2-digit"
               year="numeric"

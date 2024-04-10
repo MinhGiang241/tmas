@@ -204,7 +204,7 @@ export default function Explain({
               {t("created_date")}:
             </div>
             <FormattedDate
-              value={question?.createdTime}
+              value={question?.CreatedTime}
               day="2-digit"
               month="2-digit"
               year="numeric"
