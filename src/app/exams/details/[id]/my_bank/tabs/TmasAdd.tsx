@@ -9,7 +9,11 @@ import Coding from "../../question/Coding";
 import Explain from "../../question/Explain";
 import TrueFalse from "../../question/TrueFalse";
 import ManyResult from "../../question/ManyResult";
-import { QuestionGroupData } from "@/data/exam";
+import {
+  QuestionGroupData,
+  BaseTmasQuestionData,
+  TmasStudioExamData,
+} from "@/data/exam";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import {
@@ -30,7 +34,7 @@ import { TagData } from "@/data/tag";
 function TmasAddTab({ hidden }: { hidden?: boolean }) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
-  const [questionList, setQuestionList] = useState<BaseQuestionData[]>([]);
+  const [questionList, setQuestionList] = useState<BaseTmasQuestionData[]>([]);
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(0);
@@ -57,23 +61,24 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
       type: questionType,
     });
     setLoadingPage(false);
+    console.log("res", res);
+
     if (res.code != 0) {
-      //   errorToast(res.message ?? "");
+      errorToast(res.message ?? "");
       setQuestionList([]);
       return;
     }
 
-    // setTotal(res?.records);
+    setTotal(res?.records);
     setQuestionList(res?.data ?? []);
-    setLoadingPage(false);
   };
   const onChangeCheck = (checkedList: any) => {};
   const renderQuestion: (
-    e: BaseQuestionData,
+    e: BaseTmasQuestionData,
     index: number,
-  ) => React.ReactNode = (e: BaseQuestionData, index: number) => {
-    var group = questionGroups?.find((v: any) => v.id === e.idGroupQuestion);
-    switch (e.questionType) {
+  ) => React.ReactNode = (e: BaseTmasQuestionData, index: number) => {
+    var group = questionGroups?.find((v: any) => v.id === e.IdGroupQuestion);
+    switch (e?.QuestionType) {
       case QuestionType.MutilAnswer:
         return (
           <ManyResult
@@ -81,11 +86,11 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
             onChangeCheck={onChangeCheck}
             tmasQuest
             addExamBank={() => {}}
-            key={e?.id}
+            key={e?._id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
-            examId={e?.idExam}
+            examId={e?.IdExam}
             getData={() => loadQuestionList(false)}
           />
         );
@@ -96,11 +101,11 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
             onChangeCheck={onChangeCheck}
             tmasQuest
             addExamBank={() => {}}
-            key={e?.id}
+            key={e?._id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
-            examId={e?.idExam}
+            examId={e?.IdExam}
             getData={() => loadQuestionList(false)}
           />
         );
@@ -111,11 +116,11 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
             onChangeCheck={onChangeCheck}
             tmasQuest
             addExamBank={() => {}}
-            key={e?.id}
+            key={e?._id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
-            examId={e?.idExam}
+            examId={e?.IdExam}
             getData={() => loadQuestionList(false)}
           />
         );
@@ -126,11 +131,11 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
             onChangeCheck={onChangeCheck}
             tmasQuest
             addExamBank={() => {}}
-            key={e?.id}
+            key={e?._id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
-            examId={e?.idExam}
+            examId={e?.IdExam}
             getData={() => loadQuestionList(false)}
           />
         );
@@ -141,11 +146,11 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
             onChangeCheck={onChangeCheck}
             tmasQuest
             addExamBank={() => {}}
-            key={e?.id}
+            key={e?._id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
-            examId={e?.idExam}
+            examId={e?.IdExam}
             getData={() => loadQuestionList(false)}
           />
         );
@@ -156,11 +161,11 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
             onChangeCheck={onChangeCheck}
             tmasQuest
             addExamBank={() => {}}
-            key={e?.id}
+            key={e?._id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
-            examId={e?.idExam}
+            examId={e?.IdExam}
             getData={() => loadQuestionList(false)}
           />
         );
@@ -171,11 +176,11 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
             onChangeCheck={onChangeCheck}
             tmasQuest
             addExamBank={() => {}}
-            key={e?.id}
+            key={e?._id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
-            examId={e?.idExam}
+            examId={e?.IdExam}
             getData={() => loadQuestionList(false)}
           />
         );
@@ -186,16 +191,16 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
             onChangeCheck={onChangeCheck}
             tmasQuest
             addExamBank={() => {}}
-            key={e?.id}
+            key={e?._id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
-            examId={e?.idExam}
+            examId={e?.IdExam}
             getData={() => loadQuestionList(false)}
           />
         );
       default:
-        return <div key={e?.id} />;
+        return <div key={e?._id} />;
     }
   };
   const CheckboxGroup = Checkbox.Group;
@@ -205,7 +210,7 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
 
   const onCheckAllChange = (e: any) => {
     setSelectedList(
-      (e.target.checked as boolean) ? questionList?.map((e) => e?.id) : [],
+      (e.target.checked as boolean) ? questionList?.map((e) => e?._id) : [],
     );
     setCheckedAll(e.target.checked);
   };
@@ -368,7 +373,7 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
             }}
             className="flex flex-col"
           >
-            {questionList.map((e: BaseQuestionData, i: number) =>
+            {questionList.map((e: BaseTmasQuestionData, i: number) =>
               renderQuestion(e, i),
             )}
           </CheckboxGroup>

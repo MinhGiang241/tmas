@@ -1,6 +1,6 @@
 import { ExaminationVersionState } from "@/services/api_services/examination_bc_api";
 import { AccessCodeExaminantionSetting } from "./form_interface";
-import { QuestionType } from "./question";
+import { BaseQuestionData, QuestionType } from "./question";
 
 export interface ExamGroupData {
   name?: string;
@@ -192,6 +192,134 @@ export interface TmasExamData {
   version: TmasExamVersion;
 }
 
+export interface BaseTmasQuestionData {
+  _id?: string;
+  IdExam?: string;
+  IdExamQuestion?: string;
+  UnsignedName?: string;
+  IdExamQuestionPart?: string;
+  IdGroupQuestion?: string;
+  IsQuestionBank?: boolean;
+  NumberPointAsInt?: number;
+  NumberPoint?: number;
+  Questions?: string;
+  QuestionType: QuestionType;
+  Code?: string;
+  State?: string;
+  VersionId?: string;
+  updatedTime?: string;
+  createdTime?: string;
+  creator?: string;
+  version_number?: number;
+}
+
+export interface BaseTmasQuestionExamData {
+  _id?: string;
+  IdExam?: string;
+  IdExamQuestion?: string;
+  UnsignedName?: string;
+  IdExamQuestionPart?: string;
+  IdGroupQuestion?: string;
+  IsQuestionBank?: boolean;
+  NumberPointAsInt?: number;
+  QuestionType: QuestionType;
+  Code?: string;
+  State?: string;
+  VersionId?: string;
+  updatedTime?: string;
+  CreatedTime?: string;
+  creator?: string;
+  Base?: BaseTmasQuestionData;
+}
+
+export interface MultiTmasQuestionData extends BaseQuestionData {
+  Content?: {
+    Answers?: {
+      IsCorrectAnswer?: boolean;
+      Label?: string;
+      Text?: string;
+    }[];
+    ExplainAnswer?: string;
+    IsChangePosition?: boolean;
+  };
+}
+
+export interface TrueFalseTmasQuestionData extends BaseQuestionData {
+  Content?: {
+    Answers?: {
+      IsCorrectAnswer?: boolean;
+      Label?: string;
+      Text?: string;
+    }[];
+    ExplainAnswer?: string;
+    IsChangePosition?: boolean;
+  };
+}
+
+export interface EssayQuestionData extends BaseQuestionData {
+  Content?: {
+    GradingNote?: string;
+    RequiredFile?: boolean;
+  };
+}
+
+export interface ConnectQuestionData extends BaseQuestionData {
+  Content?: {
+    PairingScroringMethod?: "CorrectAll" | "EachCorrectItem";
+    Answers?: { _id?: string; Label?: string; Content?: string }[];
+    Pairings?: {
+      IdAnswer?: string;
+      IdQuestion?: string;
+    }[];
+    Questions: {
+      _id?: string;
+      Content?: string;
+      Label?: string;
+    }[];
+  };
+}
+
+export interface CodeQuestionData extends BaseQuestionData {
+  Content?: {
+    CodeLanguages: number;
+    CodingScroringMethod?: "PassAllTestcase" | "EachTestcase";
+    CodingTemplate?: {
+      ExplainAnswer?: string;
+    };
+    NameFunction?: string;
+    ParameterInputs?: {
+      NameParameter?: string;
+      ReturnType?: string;
+    }[];
+    ReturnType?: string;
+    Template?: string;
+  };
+  Testcases?: {
+    Name?: string;
+    _id?: string;
+  }[];
+}
+
+export interface SQLQuestionData extends BaseQuestionData {
+  Content?: {
+    ExpectedOutput?: string;
+    ExplainAnswer?: string;
+    SchemaSql?: string;
+  };
+}
+export interface FillBlankQuestionData extends BaseQuestionData {
+  Content?: {
+    AnwserItems: {
+      Label?: string;
+      Anwsers?: string[];
+    }[];
+    ExplainAnswer?: string;
+    FillBlankScoringMethod?: "CorrectAllBlank" | "EachCorrectBlank";
+    FormatBlank?: string;
+  };
+}
+export interface RandomQuestionData extends BaseQuestionData {}
+
 export interface TmasStudioExamData {
   ApprovedState?: {
     ApprovedState?: AppovedState;
@@ -217,32 +345,7 @@ export interface TmasStudioExamData {
   Parts: {
     Description?: string;
     Name?: string;
-    Questions?: {
-      Base?: {
-        Content?: {
-          Answers?: {
-            IsCorrectAnswer?: boolean;
-            Label?: string;
-            Text?: string;
-          }[];
-          ExplainAnswer?: string;
-          IsChangePosition?: boolean;
-        };
-        NumberPoint?: number;
-        Question?: string;
-
-        NumberPointAsInt?: number;
-        QuestionType: QuestionType;
-      };
-      IdExam?: string;
-      IdExamQuestion?: string;
-      UnsignedName?: string;
-      IdExamQuestionPart?: string;
-      IdGroupQuestion?: string;
-      IsQuestionBank?: boolean;
-      NumberPointAsInt?: number;
-      QuestionType: QuestionType;
-    }[];
+    Questions?: BaseTmasQuestionData[];
   }[];
   PlayAudio?: "OnlyOneTime" | "MultipleTimes";
   StudioId?: string;
