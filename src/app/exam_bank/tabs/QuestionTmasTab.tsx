@@ -28,6 +28,8 @@ import { getQuestionGroups } from "@/services/api_services/exam_api";
 import Random from "@/app/exams/details/[id]/question/Random";
 import AddBankModal from "../components/AddBankModal";
 import BaseModal from "@/app/components/config/BaseModal";
+import { getTags } from "@/services/api_services/tag_api";
+import { TagData } from "@/data/tag";
 
 function QuestionTmasTab() {
   const { t } = useTranslation("exam");
@@ -203,6 +205,30 @@ function QuestionTmasTab() {
         return <div />;
     }
   };
+  const [optionTag, setOptionTag] = useState<any[]>([]);
+  const onSearchTags = async (searchKey: any) => {
+    console.log("onSearchKey", searchKey);
+    const data = await getTags(
+      searchKey
+        ? {
+            "Names.Name": "Name",
+            "Names.InValues": searchKey,
+            "Paging.StartIndex": 0,
+            "Paging.RecordPerPage": 100,
+          }
+        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
+    );
+    if (data?.code != 0) {
+      return [];
+    }
+    console.log("dataTag", data);
+
+    var op = (data?.data?.records ?? []).map((e: TagData) => ({
+      value: e?.name,
+      label: e.name,
+    }));
+    setOptionTag(op);
+  };
 
   return (
     <>
@@ -262,11 +288,14 @@ function QuestionTmasTab() {
               "",
             ].map((e: string) => ({
               value: e,
-              label: !e ? t("Tất cả ") : t(e?.toLowerCase()),
+              label: !e ? common.t("all") : t(e?.toLowerCase()),
             }))}
           />
           <div className="w-11" />
           <MDropdown
+            placeholder={t("enter_tags_to_search")}
+            onSearch={onSearchTags}
+            options={optionTag}
             className="tag-big"
             popupClassName="hidden"
             id="tags"

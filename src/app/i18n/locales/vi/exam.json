@@ -240,6 +240,7 @@
   "name_testcase_not_less_3": "Tên testcase không nhỏ hơn 3 ký tự",
   "exam_bank": "Ngân hàng đề thi",
   "add_my_bank_quest": "Thêm vào ngân hàng câu hỏi của tôi",
+  "delete_my_bank_quest": "Xóa khỏi ngân hàng câu hỏi của tôi",
   "add_bank": "Thêm vào ngân hàng câu hỏi",
   "my_bank": "Ngân hàng câu hỏi của tôi",
   "tmas_bank": "Ngân hàng câu hỏi của TMAS",
@@ -281,5 +282,10 @@
   "Public": "Public",
   "lock": "Khóa",
   "success_add_into_exam": "Thêm vào câu hỏi vào đề thi thành công",
-  "success_delete_form_exam": "Thêm vào câu hỏi vào đề thi thành công"
+  "success_delete_form_exam": "Thêm vào câu hỏi vào đề thi thành công",
+  "preview_5_question": "Xem trước 5 câu hỏi",
+  "enter_tags_to_search": "Nhập vào tags để tìm kiếm",
+  "add_my_exam": "Thêm vào danh sách đề thi của tôi",
+  "success_add_quest_to_exam": "Thêm câu hỏi vào đề thi thành công",
+  "success_remove_quest_to_exam": "Xóa câu hỏi khỏi đề thi thành công"
 }

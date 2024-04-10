@@ -45,7 +45,7 @@ function BaseModal({
       footer={<div />}
       open={open}
       onOk={onOk}
-      width={width}
+      width={width ?? 564}
     >
       <div
         className={` ${

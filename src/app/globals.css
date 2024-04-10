@@ -223,7 +223,9 @@ body {
   background-color: #0b8199 !important;
   border-radius: 6px;
 }
-
+.tag-big .ant-select-selection-item {
+  display: flex !important;
+}
 .ql-editor.ql-blank::before {
   font-style: normal !important;
 }

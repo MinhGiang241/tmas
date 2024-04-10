@@ -24,6 +24,8 @@ import MInput from "@/app/components/config/MInput";
 import { SearchOutlined } from "@ant-design/icons";
 import DeleteIcon from "@/app/components/icons/trash-red.svg";
 import AddIcon from "@/app/components/icons/add.svg";
+import { getTags } from "@/services/api_services/tag_api";
+import { TagData } from "@/data/tag";
 
 function TmasAddTab({ hidden }: { hidden?: boolean }) {
   const { t } = useTranslation("exam");
@@ -32,34 +34,38 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(0);
+  const [search, setSearch] = useState<string | undefined>();
   const [loadingPage, setLoadingPage] = useState<boolean>(false);
   const user = useAppSelector((state: RootState) => state.user.user);
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
     (state: RootState) => state?.examGroup?.questions,
   );
+  const [questGroupId, setQuestGroupId] = useState<string | undefined>();
+  const [questionType, setQuestionType] = useState<string | undefined>();
   useEffect(() => {
     loadQuestionList(true);
-  }, [user, recordNum, indexPage]);
+  }, [user, recordNum, indexPage, questionType]);
 
   const loadQuestionList = async (init: boolean) => {
     if (init) {
       setLoadingPage(true);
     }
     const res = await getTmasQuestList({
+      text: search,
       limit: recordNum,
       skip: (indexPage - 1) * recordNum,
+      type: questionType,
     });
-
+    setLoadingPage(false);
     if (res.code != 0) {
-      errorToast(res.message ?? "");
+      //   errorToast(res.message ?? "");
       setQuestionList([]);
       return;
     }
 
-    setTotal(res?.records);
+    // setTotal(res?.records);
     setQuestionList(res?.data ?? []);
     setLoadingPage(false);
-    console.log("res", res);
   };
   const onChangeCheck = (checkedList: any) => {};
   const renderQuestion: (
@@ -205,13 +211,44 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
   };
   const [checkedAll, setCheckedAll] = useState<boolean>(false);
 
+  const [optionTag, setOptionTag] = useState<any[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const onSearchTags = async (searchKey: any) => {
+    console.log("onSearchKey", searchKey);
+    const data = await getTags(
+      searchKey
+        ? {
+            "Names.Name": "Name",
+            "Names.InValues": searchKey,
+            "Paging.StartIndex": 0,
+            "Paging.RecordPerPage": 100,
+          }
+        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
+    );
+    if (data?.code != 0) {
+      return [];
+    }
+    console.log("dataTag", data);
+
+    var op = (data?.data?.records ?? []).map((e: TagData) => ({
+      value: e?.name,
+      label: e.name,
+    }));
+    setOptionTag(op);
+  };
   return (
     <>
       <div className="w-full flex">
-        <form className="flex w-full max-lg:flex-col max-lg:mx-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            loadQuestionList(true);
+          }}
+          className="flex w-full max-lg:flex-col max-lg:mx-5"
+        >
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
-              // setSearch(e.target.value);
+              setSearch(e.target.value);
             }}
             className="max-lg:mt-3"
             placeholder={t("search_test_group")}
@@ -229,6 +266,11 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
           />
           <div className="w-11" />
           <MDropdown
+            placeholder={t("quest_type")}
+            value={questionType}
+            setValue={(na: any, val: any) => {
+              setQuestionType(val);
+            }}
             h="h-11"
             id="question_type"
             name="question_type"
@@ -248,6 +290,12 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
           />
           <div className="w-11" />
           <MDropdown
+            placeholder={t("enter_tags_to_search")}
+            setValue={(name: any, value: any) => {
+              setTags(() => value);
+            }}
+            onSearch={onSearchTags}
+            options={optionTag}
             className="tag-big"
             popupClassName="hidden"
             id="tags"

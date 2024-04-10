@@ -4,7 +4,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import MDropdown from "@/app/components/config/MDropdown";
 import { useEffect, useState } from "react";
 import { Collapse, Pagination, Select, Spin } from "antd";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import {
   ExamData,
@@ -13,19 +13,30 @@ import {
   TmasExamData,
   TmasStudioExamData,
 } from "@/data/exam";
-import CopyIcon from "@/app/components/icons/size.svg";
+//import CopyIcon from "@/app/components/icons/size.svg";
 import LinkIcon from "@/app/components/icons/link-2.svg";
 import MessIcon from "@/app/components/icons/message-question.svg";
-import FolderIcon from "@/app/components/icons/folder.svg";
+import SizeIcon from "@/app/components/icons/size.svg";
 import CalendarIcon from "@/app/components/icons/calendar.svg";
 import CupIcon from "@/app/components/icons/cup.svg";
 import AddIcon from "@/app/components/icons/add.svg";
+import RedDeleteIcon from "@/app/components/icons/trash-red.svg";
+import _ from "lodash";
 
 import { FormattedDate } from "react-intl";
 import MButton from "@/app/components/config/MButton";
 import { getTmasExaminationList } from "@/services/api_services/examination_api";
 import { APIResults } from "@/data/api_results";
 import { errorToast } from "@/app/components/toast/customToast";
+import AddBankTmasExam from "../components/AddBankTmasExam";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import {
+  fetchDataExamGroup,
+  setExamGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
+import { getExamGroupTest } from "@/services/api_services/exam_api";
+import { getTags } from "@/services/api_services/tag_api";
+import { TagData } from "@/data/tag";
 
 function ExamTmasTab() {
   const { t } = useTranslation("exam");
@@ -48,7 +59,7 @@ function ExamTmasTab() {
       limit: recordNum,
       fields: {},
       text: search,
-      tags: [],
+      tags,
     });
     setLoadingPage(false);
     console.log("res", res);
@@ -66,13 +77,89 @@ function ExamTmasTab() {
     setList(examList);
   };
 
+  const [isAdd, setIsAdd] = useState<any>({});
+  const [tags, setTags] = useState<string[]>([]);
+  const [active, setActive] = useState<any>();
+  const dispatch = useAppDispatch();
   useEffect(() => {
+    //        dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
     loadTmasExamList(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [indexPage, recordNum, user]);
+  }, [indexPage, recordNum, user, tags]);
+  const [openSelectExam, setOpenSelectExam] = useState<boolean>(false);
+  useOnMountUnsafe(() => {
+    dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
+  }, []);
+  const loadExamGroupList = async (init?: boolean) => {
+    if (init) {
+      dispatch(setExamGroupLoading(true));
+    }
+
+    var dataResults: APIResults = await getExamGroupTest({
+      text: "",
+      studioId: user?.studio?._id,
+    });
+
+    if (dataResults.code != 0) {
+      return [];
+    } else {
+      var data = dataResults?.data as ExamGroupData[];
+      var levelOne = data?.filter((v: ExamGroupData) => v.level === 0);
+      var levelTwo = data?.filter((v: ExamGroupData) => v.level === 1);
+
+      var list = levelOne.map((e: ExamGroupData) => {
+        var childs = levelTwo.filter(
+          (ch: ExamGroupData) => ch.idParent === e.id,
+        );
+        return { ...e, childs };
+      });
+      return list;
+    }
+  };
+  const [loadingClone, setLoadingClone] = useState<boolean>(false);
+  const [optionTag, setOptionTag] = useState<any[]>([]);
+  const onSearchTags = async (searchKey: any) => {
+    console.log("onSearchKey", searchKey);
+    const data = await getTags(
+      searchKey
+        ? {
+            "Names.Name": "Name",
+            "Names.InValues": searchKey,
+            "Paging.StartIndex": 0,
+            "Paging.RecordPerPage": 100,
+          }
+        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
+    );
+    if (data?.code != 0) {
+      return [];
+    }
+    console.log("dataTag", data);
+
+    var op = (data?.data?.records ?? []).map((e: TagData) => ({
+      value: e?.name,
+      label: e.name,
+    }));
+    setOptionTag(op);
+  };
 
   return (
     <>
+      <AddBankTmasExam
+        exam={active}
+        loading={loadingClone}
+        open={openSelectExam}
+        examGroup={
+          useAppSelector((state: RootState) => state.examGroup.list) ?? []
+        }
+        onCancel={() => {
+          setOpenSelectExam(false);
+          setActive(undefined);
+        }}
+        onOk={() => {
+          setOpenSelectExam(false);
+          setActive(undefined);
+        }}
+      />
       <div className="w-full flex">
         <form
           onSubmit={(e) => {
@@ -101,8 +188,14 @@ function ExamTmasTab() {
           />
           <div className="w-11" />
           <MDropdown
+            placeholder={t("enter_tags_to_search")}
+            onChange={(c) => {
+              console.log("change", c);
+            }}
+            onSearch={onSearchTags}
+            options={optionTag}
             setValue={(name: any, value: any) => {
-              loadTmasExamList(true);
+              setTags(() => value);
             }}
             className="tag-big"
             popupClassName="hidden"
@@ -145,7 +238,7 @@ function ExamTmasTab() {
                         <div className="body_semibold_16">{a?.Name ?? ""}</div>
                         <div className="h-2" />
                         <div className="w-full justify-start my-1 flex max-lg:flex-wrap">
-                          <div className="flex ">
+                          <div className="flex items-center">
                             <CalendarIcon />
                             <span className="body_regular_14 ml-2">
                               <FormattedDate
@@ -156,7 +249,7 @@ function ExamTmasTab() {
                               />
                             </span>
                           </div>
-                          <div className="flex mx-8">
+                          <div className="flex items-center mx-8">
                             <MessIcon />
                             <span className="ml-2 body_regular_14">
                               {`${a?.NumberOfQuestions ?? ""} ${t(
@@ -164,49 +257,95 @@ function ExamTmasTab() {
                               )?.toLowerCase()}`}
                             </span>
                           </div>
-                          <div className="flex ml-2">
+                          <div className="flex items-center ml-2">
                             <CupIcon />
                             <span className="mx-4 body_regular_14">
                               {`${a?.TotalPointsAsInt} ${t("point")}`}
                             </span>
                           </div>
 
-                          <div className="flex">
-                            <FolderIcon />
+                          <div className="flex items-center">
+                            <SizeIcon />
                             <span className="ml-2 body_regular_14">{`${1}M`}</span>
                           </div>
                         </div>
                       </div>
-                      <MButton
-                        className="flex items-center max-lg:justify-center max-lg:mt-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        h="h-11"
-                        type="secondary"
-                        icon={<AddIcon />}
-                        text={t("add_bank")}
-                      />
+                      {isAdd[a?.Version!] ? (
+                        <MButton
+                          loading={active === a.Version}
+                          className="flex items-center max-lg:justify-center max-lg:mt-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (active) {
+                              return;
+                            }
+                            setActive(a);
+                            var isAddClone = _.cloneDeep(isAdd);
+                            isAddClone[a.Version!] = undefined;
+                            setActive(undefined);
+                            setIsAdd(isAddClone);
+                          }}
+                          h="h-11"
+                          type="error"
+                          icon={<RedDeleteIcon />}
+                          text={t("delete_my_bank_quest")}
+                        />
+                      ) : (
+                        <MButton
+                          loading={active === a?.Version && !openSelectExam}
+                          className="flex items-center max-lg:justify-center max-lg:mt-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (active) {
+                              return;
+                            }
+                            setActive(a);
+                            var isAddClone = _.cloneDeep(isAdd);
+                            isAddClone[a.Version!] = a.Parts?.reduce(
+                              (acc, el) =>
+                                [...acc, ...(el?.Questions ?? [])] as any,
+                              [],
+                            );
+                            console.log("isAddClone", isAddClone);
+
+                            setIsAdd(isAddClone);
+                            setOpenSelectExam(true);
+                          }}
+                          h="h-11"
+                          type="secondary"
+                          icon={<AddIcon />}
+                          text={t("add_bank")}
+                        />
+                      )}
                     </div>
                   </div>
                 }
               >
-                <button className="body_semibold_14 text-m_primary_500 mb-2">
-                  {"Xem trước 5 câu hỏi"}
-                </button>
-                {[
-                  " Viết chương trình tính tổng 2 số nguyên a,b",
-                  "Lệnh GROUP BY không thể sử dụng với các hàm tập hợp",
-                  "Miêu tả mẹ em",
-                  " Cho hình bát diện đều ABCDEF. Chứng minh rằng các đoạn thẳng AD, BD và CE đôi một vuông góc với nhau và cắt nhau tại trung điểm mỗi đường thẳng",
-                ].map((a: any, i: number) => (
-                  <div className="mb-1" key={i}>
-                    <span className="body_semibold_14">{`Câu hỏi ${
-                      i + 1
-                    }: `}</span>
-                    {a}
-                  </div>
-                ))}
+                <div className="body_semibold_14 text-m_primary_500 mb-2">
+                  {t("preview_5_question")}
+                </div>
+                {(
+                  a.Parts?.reduce(
+                    (acc, i) => [...acc, ...(i?.Questions ?? [])] as any,
+                    [],
+                  ) ?? []
+                ).map(function (q: any, i: number) {
+                  if (i > 4) {
+                    return null;
+                  }
+                  return (
+                    <div className="mb-1 flex items-center" key={i}>
+                      <div className="body_semibold_14 min-w-20">{`${t(
+                        "question",
+                      )} ${i + 1}: `}</div>
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: (q as any)?.Base?.Question,
+                        }}
+                      ></span>
+                    </div>
+                  );
+                })}
               </Collapse.Panel>
             </Collapse>
           ))}

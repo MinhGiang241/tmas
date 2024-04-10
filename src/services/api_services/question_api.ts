@@ -12,6 +12,7 @@ import {
 } from "@/data/form_interface";
 import { callApi, callStudioAPI } from "./base_api";
 import { result } from "lodash";
+import axios from "axios";
 
 export const createCodingQuestion = async (data: CodingQuestionFormData) => {
   const results = await callStudioAPI.post(
@@ -316,20 +317,21 @@ export const getTmasQuestList = async ({
   text,
   skip,
   limit,
-  fields,
+  type,
 }: {
   text?: string;
   skip?: number;
   limit?: number;
   fields?: any;
+  type?: string;
 }) => {
   const results = await callApi.post(
-    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examlibrary.search`,
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/questionbank.search`,
     {
       text: text ?? "",
       skip,
       limit,
-      fields,
+      type,
     },
   );
   return results;

@@ -216,7 +216,7 @@ export interface TmasStudioExamData {
   Parts: {
     Description?: string;
     Name?: string;
-    Question?: {
+    Questions?: {
       Base?: {
         Content?: {
           Answers?: {

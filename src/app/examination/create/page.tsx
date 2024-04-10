@@ -49,11 +49,7 @@ const EditorHook = dynamic(
   },
 );
 
-function CreateExaminationPage({
-  examination,
-}: {
-  examination: ExaminationData;
-}) {
+function CreateExaminationPage({ examination }: any) {
   const createSessionId = async () => {
     var dataSessionId = await createSession(examination?.idSession ?? "");
     console.log("dataSessionId", dataSessionId);

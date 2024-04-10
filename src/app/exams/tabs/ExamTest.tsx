@@ -206,7 +206,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
     if (result.code === 0) {
       successToast(common.t("success"));
     } else {
-      errorToast(common.t("fail"));
+      errorToast(result?.message ?? "");
     }
   };
 

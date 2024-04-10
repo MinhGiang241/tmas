@@ -49,7 +49,6 @@ function MyQuestionTab() {
 
   useEffect(() => {
     loadQuestionList(true);
-    loadQuestionGroupList(true);
     dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, indexPage, recordNum, search, questGroupId, questionType, sort]);

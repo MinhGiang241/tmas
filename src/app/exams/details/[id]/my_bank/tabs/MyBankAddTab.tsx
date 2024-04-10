@@ -10,10 +10,12 @@ import Explain from "../../question/Explain";
 import TrueFalse from "../../question/TrueFalse";
 import ManyResult from "../../question/ManyResult";
 import { ExamData, QuestionGroupData } from "@/data/exam";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import {
+  deleteManyQuestion,
   deleteQuestionById,
+  deleteQuestionPartById,
   duplicateQuestion,
   getQuestionList,
 } from "@/services/api_services/question_api";
@@ -26,6 +28,12 @@ import { SearchOutlined } from "@ant-design/icons";
 import DeleteIcon from "@/app/components/icons/trash-red.svg";
 import AddIcon from "@/app/components/icons/add.svg";
 import _ from "lodash";
+import {
+  fetchDataQuestionGroup,
+  setquestionGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
+import { getQuestionGroups } from "@/services/api_services/exam_api";
+import { APIResults } from "@/data/api_results";
 
 function MyBankAddTab({
   hidden,
@@ -46,28 +54,70 @@ function MyBankAddTab({
   const [total, setTotal] = useState<number>(0);
   const [loadingPage, setLoadingPage] = useState<boolean>(false);
   const user = useAppSelector((state: RootState) => state.user.user);
+  const [questGroupId, setQuestGroupId] = useState<string | undefined>();
+  const [questionType, setQuestionType] = useState<string | undefined>();
+  const [search, setSearch] = useState<string | undefined>();
+  const [sort, setSort] = useState<string>("recently_create");
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
     (state: RootState) => state?.examGroup?.questions,
   );
-  useEffect(() => {
-    loadQuestionList(true);
-  }, [user, recordNum, indexPage]);
+  const dispatch = useAppDispatch();
 
-  const loadQuestionList = async (init: boolean) => {
+  useEffect(() => {
+    loadQuestionsList(true);
+    dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
+  }, [user, recordNum, indexPage, search, questGroupId, questionType, sort]);
+
+  const loadQuestionGroupList = async (init?: boolean) => {
+    if (init) {
+      dispatch(setquestionGroupLoading(true));
+    }
+    var dataResults: APIResults = await getQuestionGroups(
+      "",
+      user?.studio?._id,
+    );
+    dispatch(setquestionGroupLoading(false));
+    console.log("dataResults", dataResults);
+
+    if (dataResults.code != 0) {
+      return [];
+    } else {
+      var data = dataResults?.data as QuestionGroupData[];
+      return data;
+    }
+  };
+
+  const loadQuestionsList = async (init: boolean) => {
     if (init) {
       setLoadingPage(true);
+      setIndexPage(1);
     }
     const res = await getQuestionList({
       paging: {
         recordPerPage: recordNum,
         startIndex: indexPage,
       },
+      isQuestionBank: false,
+      searchQuestion: search,
+      andIdGroupQuestions: questGroupId ? [questGroupId] : undefined,
+      sorters: [
+        sort === "A-Z"
+          ? {
+              name: "CreatedTime",
+              isAsc: false,
+            }
+          : {
+              name: "Question",
+              isAsc: true,
+            },
+      ],
+      andQuestionTypes: questionType ? [questionType] : undefined,
       // andIdExamQuestionParts: "",
       // andQuestionTypes: "",
       // idExams: "",
       // andIdGroupQuestions: "",
     });
-
+    setLoadingPage(false);
     if (res.code != 0) {
       errorToast(res.message ?? "");
       setQuestionList([]);
@@ -76,7 +126,6 @@ function MyBankAddTab({
 
     setTotal(res?.data?.totalOfRecords ?? 0);
     setQuestionList(res.data?.records);
-    setLoadingPage(false);
     console.log("res", res);
   };
 
@@ -84,7 +133,7 @@ function MyBankAddTab({
     const res = await duplicateQuestion({
       idExams: exam?.id ? [exam?.id] : undefined,
       ids: question?.id ? [question.id] : undefined,
-      newIdExamQuestionPart: question?.idExamQuestionPart,
+      newIdExamQuestionPart: partId,
     });
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
@@ -98,6 +147,7 @@ function MyBankAddTab({
       isAddClone[question?.id as string] = i;
     }
     setIsAdd(isAddClone);
+    setSelectedList([]);
   };
 
   const deleteExamBank = async (__: any, question: BaseQuestionData) => {
@@ -113,6 +163,7 @@ function MyBankAddTab({
     const isAddClone = _.cloneDeep(isAdd);
     isAddClone[question?.id as string] = undefined;
     setIsAdd(isAddClone);
+    setSelectedList([]);
   };
 
   const [isAdd, setIsAdd] = useState<any>({});
@@ -138,7 +189,7 @@ function MyBankAddTab({
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
-            getData={() => loadQuestionList(false)}
+            getData={() => loadQuestionsList(false)}
           />
         );
       case QuestionType.YesNoQuestion:
@@ -155,7 +206,7 @@ function MyBankAddTab({
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
-            getData={() => loadQuestionList(false)}
+            getData={() => loadQuestionsList(false)}
           />
         );
       case QuestionType.Essay:
@@ -172,7 +223,7 @@ function MyBankAddTab({
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
-            getData={() => loadQuestionList(false)}
+            getData={() => loadQuestionsList(false)}
           />
         );
       case QuestionType.Coding:
@@ -189,7 +240,7 @@ function MyBankAddTab({
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
-            getData={() => loadQuestionList(false)}
+            getData={() => loadQuestionsList(false)}
           />
         );
       case QuestionType.SQL:
@@ -206,7 +257,7 @@ function MyBankAddTab({
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
-            getData={() => loadQuestionList(false)}
+            getData={() => loadQuestionsList(false)}
           />
         );
       case QuestionType.Pairing:
@@ -223,7 +274,7 @@ function MyBankAddTab({
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
-            getData={() => loadQuestionList(false)}
+            getData={() => loadQuestionsList(false)}
           />
         );
       case QuestionType.FillBlank:
@@ -240,7 +291,7 @@ function MyBankAddTab({
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
-            getData={() => loadQuestionList(false)}
+            getData={() => loadQuestionsList(false)}
           />
         );
       case QuestionType.Random:
@@ -251,13 +302,13 @@ function MyBankAddTab({
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
-            getData={() => loadQuestionList(false)}
+            getData={() => loadQuestionsList(false)}
           />
         );
       default:
@@ -274,6 +325,57 @@ function MyBankAddTab({
     setCheckedAll(e.target.checked);
   };
   const [checkedAll, setCheckedAll] = useState<boolean>(false);
+  const questionGroupOptions = [
+    ...(questionGroups ?? []).map((v) => ({
+      value: v.id,
+      label: v.name,
+    })),
+    { value: "", label: t("all_category") },
+  ];
+
+  const [loadingMany, setLoadingMany] = useState<boolean>(false);
+  const removeManyQuestion = async (e: any) => {
+    setLoadingMany(true);
+    var ids = [];
+    for (let i of selectedList) {
+      if (isAdd[i]) {
+        ids.push(isAdd[i]);
+      }
+    }
+    const res = await deleteManyQuestion({
+      ids,
+    });
+
+    setLoadingMany(false);
+    if (res.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    successToast(t("success_delete_quest_to_exam"));
+    setSelectedList([]);
+    setCheckedAll(false);
+  };
+
+  const addManyQuestion = async (e: any) => {
+    setLoadingMany(true);
+    const res = await duplicateQuestion({
+      ids: [...selectedList],
+      idExams: exam?.id ? [exam?.id] : undefined,
+      newIdExamQuestionPart: partId,
+    });
+    setLoadingMany(false);
+
+    if (res.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    for (let i of res.data) {
+      isAdd[i] = undefined;
+    }
+    successToast(t("success_add_quest_to_exam"));
+    setSelectedList([]);
+    setCheckedAll(false);
+  };
 
   return (
     <>
@@ -281,7 +383,7 @@ function MyBankAddTab({
         <form className="flex w-full max-lg:flex-col max-lg:mx-5">
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
-              // setSearch(e.target.value);
+              setSearch(e.target.value);
             }}
             className="max-lg:mt-3"
             placeholder={t("search_test_group")}
@@ -299,6 +401,11 @@ function MyBankAddTab({
           />
           <div className="w-11" />
           <MDropdown
+            value={questionType}
+            setValue={(na: any, val: any) => {
+              setQuestionType(val);
+            }}
+            placeholder={t("quest_type")}
             h="h-11"
             id="question_type"
             name="question_type"
@@ -313,22 +420,29 @@ function MyBankAddTab({
               "",
             ].map((e: string) => ({
               value: e,
-              label: !e ? t("Tất cả ") : t(e?.toLowerCase()),
+              label: !e ? common.t("all") : t(e?.toLowerCase()),
             }))}
           />
           <div className="w-11" />
           <MDropdown
-            className="tag-big"
-            popupClassName="hidden"
-            id="tags"
-            name="tags"
-            mode="tags"
+            placeholder={t("question_group")}
+            value={questGroupId}
+            setValue={(name: any, value: any) => {
+              setQuestGroupId(value);
+            }}
+            options={questionGroupOptions}
+            id="question_group"
+            name="question_group"
           />
           <div className="w-11" />
           <MDropdown
+            value={sort}
+            setValue={(name: any, value: any) => {
+              setSort(value);
+            }}
             h="h-11"
-            id="category"
-            name="category"
+            id="sort"
+            name="sort"
             options={["recently_create", "A-Z"].map((e) => ({
               value: e,
               label: t(e),
@@ -367,10 +481,8 @@ function MyBankAddTab({
               <div className="flex">
                 <Tooltip placement="bottom" title={t("add_selected")}>
                   <button
-                    onClick={(e) => {
-                      setSelectedList([]);
-                      setCheckedAll(false);
-                    }}
+                    disabled={loadingMany}
+                    onClick={removeManyQuestion}
                     className="rounded-lg py-2 px-[10px] border border-m_primary_500"
                   >
                     <AddIcon />
@@ -379,10 +491,8 @@ function MyBankAddTab({
                 <div className="w-2" />
                 <Tooltip placement="bottom" title={t("delete_selected")}>
                   <button
-                    onClick={(e) => {
-                      setSelectedList([]);
-                      setCheckedAll(false);
-                    }}
+                    disabled={loadingMany}
+                    onClick={addManyQuestion}
                     className="rounded-lg p-2 border border-m_error_500"
                   >
                     <DeleteIcon />
