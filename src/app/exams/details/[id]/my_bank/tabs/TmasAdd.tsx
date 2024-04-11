@@ -157,6 +157,9 @@ function TmasAddTab({
           studioQuest.idGroupQuestion = idGroup;
           studioQuest.idExam = exam?.id;
           studioQuest.idExamQuestionPart = partId;
+          (studioQuest as any).content = JSON.stringify(
+            (studioQuest as any)?.content,
+          );
           return studioQuest;
         });
       console.log("selectedTmasQuestion", selectedQuestion);
@@ -169,11 +172,15 @@ function TmasAddTab({
       }
       successToast(t("success_add_into_exam"));
       const isAddClone = _.cloneDeep(isAdd);
-      for (let j in selectedList) {
-        for (let i of res.data) {
+      var idsList = (res.data ?? [])?.map((e: any) => e?.idQuestionCreated);
+      console.log("idsList", idsList);
+
+      for (let j of selectedList) {
+        for (let i of idsList) {
           isAddClone[j as string] = i;
         }
       }
+      console.log("isAdd", isAddClone);
       setIsAdd(isAddClone);
       setOpenAdd(false);
       setSelectedList([]);

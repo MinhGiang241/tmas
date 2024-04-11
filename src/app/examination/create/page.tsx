@@ -626,9 +626,12 @@ function CreateExaminationPage({ examination }: any) {
             </div>
 
             <div className="body_semibold_14">{t("selected_exam")}</div>
-            <div className="text-[#4D7EFF] body_regular_14 underline underline-offset-4">
+            <Link
+              href={`/exams/details/${exam?.id}`}
+              className="text-[#4D7EFF] body_regular_14 underline underline-offset-4"
+            >
               {exam?.name ?? ""}
-            </div>
+            </Link>
             {examination?.linkJoinTest ? (
               <>
                 <div className="h-4" />

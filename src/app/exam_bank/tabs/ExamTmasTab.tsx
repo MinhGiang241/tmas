@@ -25,9 +25,12 @@ import _ from "lodash";
 
 import { FormattedDate } from "react-intl";
 import MButton from "@/app/components/config/MButton";
-import { getTmasExaminationList } from "@/services/api_services/examination_api";
+import {
+  deleteExamination,
+  getTmasExaminationList,
+} from "@/services/api_services/examination_api";
 import { APIResults } from "@/data/api_results";
-import { errorToast } from "@/app/components/toast/customToast";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
 import AddBankTmasExam from "../components/AddBankTmasExam";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import {
@@ -37,6 +40,10 @@ import {
 import { getExamGroupTest } from "@/services/api_services/exam_api";
 import { getTags } from "@/services/api_services/tag_api";
 import { TagData } from "@/data/tag";
+import { importTmasExamData } from "@/services/api_services/question_api";
+import { DocumentObject, PartObject } from "@/data/form_interface";
+import { mapStudioToTmaslanguage } from "@/services/ui/coding_services";
+import { mapTmasQuestionToStudioQuestion } from "@/services/ui/mapTmasToSTudio";
 
 function ExamTmasTab() {
   const { t } = useTranslation("exam");
@@ -79,7 +86,7 @@ function ExamTmasTab() {
 
   const [isAdd, setIsAdd] = useState<any>({});
   const [tags, setTags] = useState<string[]>([]);
-  const [active, setActive] = useState<any>();
+  const [active, setActive] = useState<TmasStudioExamData | undefined>();
   const dispatch = useAppDispatch();
   useEffect(() => {
     //        dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
@@ -142,6 +149,99 @@ function ExamTmasTab() {
     setOptionTag(op);
   };
 
+  const handleCloneExam = async (name?: string, idGroup?: string) => {
+    setLoadingClone(true);
+    console.log("active", active);
+
+    var documentObj: DocumentObject[] = (active?.Documents ?? []).map((e) => ({
+      contentType: e?.ContentType,
+      createdBy: e?.CreatedBy,
+      createdTime: e?.CreatedTime,
+      fileName: e?.FileName,
+      fileSize: e?.FileSize,
+      fileType: e?.FileType,
+      id: e?.Id,
+      idSession: e?.IdSession,
+      link: e?.Link,
+      ownerId: e?.OwnerId,
+      studioId: e?.StudioId,
+      updateBy: e?.UpdatedBy,
+      updateTime: e?.UpdateTime,
+    }));
+
+    var partObj: PartObject[] = (active?.Parts ?? []).map((e) => ({
+      description: e?.Description,
+      name: e?.Name,
+      jsonExamQuestions: e?.Questions?.map((e) =>
+        JSON.stringify(mapTmasQuestionToStudioQuestion(e)),
+      ),
+    }));
+
+    var examObj: ExamData = {
+      timeLimitMinutes: active?.TimeLimitMinutes,
+      changePositionQuestion: active?.ChangePositionQuestion,
+      description: active?.Description,
+      examNextQuestion: active?.ExamNextQuestion,
+      examViewQuestionType: active?.ExamViewQuestionType,
+      externalLinks: active?.ExternalLinks,
+      idDocuments: active?.IdDocuments,
+      idExamGroup: idGroup,
+      idSession: active?.IdSession,
+      studioId: active?.StudioId,
+      name,
+      numberOfQuestions: active?.NumberOfQuestions,
+      numberOfTests: active?.NumberOfTests,
+      totalPoints: (active?.TotalPointsAsInt ?? 0) / 100,
+      tags: active?.Tags,
+      playAudio: active?.PlayAudio,
+      version: active?.Version,
+    };
+
+    var res = await importTmasExamData({
+      examFulls: [
+        {
+          documents: documentObj,
+          exam: examObj,
+          jsonExamQuestions: (partObj ?? []).reduce(
+            (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
+            [],
+          ),
+          parts: partObj,
+        },
+      ],
+    });
+
+    if (res.code != 0) {
+      errorToast(res.message ?? "");
+      return;
+    }
+    setLoadingClone(false);
+    var isAddClone = _.cloneDeep(isAdd);
+    isAddClone[active?.Version!] = res?.data;
+    console.log("isAddClone", isAddClone);
+
+    setIsAdd(isAddClone);
+
+    setOpenSelectExam(false);
+    setActive(undefined);
+  };
+
+  const handleDeleteExam = async (id: string) => {
+    setLoadingClone(true);
+    const res = await deleteExamination(isAdd(id));
+    setLoadingClone(false);
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+
+    successToast(t("success_delete_exam"));
+    var isAddClone = _.cloneDeep(isAdd);
+    isAddClone[id] = undefined;
+    setActive(undefined);
+    setIsAdd(isAddClone);
+  };
+
   return (
     <>
       <AddBankTmasExam
@@ -155,10 +255,7 @@ function ExamTmasTab() {
           setOpenSelectExam(false);
           setActive(undefined);
         }}
-        onOk={() => {
-          setOpenSelectExam(false);
-          setActive(undefined);
-        }}
+        onOk={handleCloneExam}
       />
       <div className="w-full flex">
         <form
@@ -260,7 +357,9 @@ function ExamTmasTab() {
                           <div className="flex items-center ml-2">
                             <CupIcon />
                             <span className="mx-4 body_regular_14">
-                              {`${a?.TotalPointsAsInt} ${t("point")}`}
+                              {`${(a?.TotalPointsAsInt ?? 0) / 100} ${t(
+                                "point",
+                              )}`}
                             </span>
                           </div>
 
@@ -280,10 +379,7 @@ function ExamTmasTab() {
                               return;
                             }
                             setActive(a);
-                            var isAddClone = _.cloneDeep(isAdd);
-                            isAddClone[a.Version!] = undefined;
-                            setActive(undefined);
-                            setIsAdd(isAddClone);
+                            handleDeleteExam(a?.Version ?? "");
                           }}
                           h="h-11"
                           type="error"
@@ -300,15 +396,6 @@ function ExamTmasTab() {
                               return;
                             }
                             setActive(a);
-                            var isAddClone = _.cloneDeep(isAdd);
-                            isAddClone[a.Version!] = a.Parts?.reduce(
-                              (acc, el) =>
-                                [...acc, ...(el?.Questions ?? [])] as any,
-                              [],
-                            );
-                            console.log("isAddClone", isAddClone);
-
-                            setIsAdd(isAddClone);
                             setOpenSelectExam(true);
                           }}
                           h="h-11"

@@ -5,6 +5,7 @@ import {
   EssayQuestionFormData,
   ExamQuestionPart,
   FillBlankQuestionFormData,
+  ImportTmasExamParams,
   MultiAnswerQuestionFormData,
   PagingGetData,
   RandomQuestionFormData,
@@ -378,4 +379,16 @@ export const createBatchQuestion = async (items: BaseQuestionData[]) => {
     { items },
   );
   return results;
+};
+
+export const importTmasExamData = async (data: ImportTmasExamParams) => {
+  var results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Import`,
+    data,
+  );
+  if (results.code === 0) {
+    return results.data;
+  }
+
+  return 0;
 };

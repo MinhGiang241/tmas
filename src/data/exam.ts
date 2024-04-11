@@ -59,7 +59,7 @@ export interface ExamData {
   version?: string;
   timeLimitMinutes?: number;
   TimeLimitMinutes?: number;
-  examNextQuestion: "FreeByUser" | "ByOrderQuestion";
+  examNextQuestion?: "FreeByUser" | "ByOrderQuestion";
   examViewQuestionType?: "SinglePage" | "MultiplePages";
   language?: "English" | "Vietnamese";
   playAudio?: "OnlyOneTime" | "MultipleTimes";
