@@ -23,7 +23,7 @@ import {
 import _ from "lodash";
 import { mapStudioToTmaslanguage } from "./coding_services";
 
-export const mapTmasQuestionToStudioQestion: (
+export const mapTmasQuestionToStudioQuestion: (
   question: BaseTmasQuestionData,
 ) => BaseQuestionData = (question: BaseTmasQuestionData) => {
   switch (question?.QuestionType) {
@@ -38,7 +38,7 @@ export const mapTmasQuestionToStudioQestion: (
         numberPoint: questClone?.NumberPoint,
         numberPointAsInt: questClone?.NumberPointAsInt,
         questionType: questClone?.QuestionType,
-        question: questClone?.Questions,
+        question: questClone?.Question,
         updateTime: questClone?.updatedTime,
         content: {
           answers: (questClone?.Content?.Answers ?? []).map((e) => ({
@@ -63,7 +63,7 @@ export const mapTmasQuestionToStudioQestion: (
         numberPoint: questClone?.NumberPoint,
         numberPointAsInt: questClone?.NumberPointAsInt,
         questionType: questClone?.QuestionType,
-        question: questClone?.Questions,
+        question: questClone?.Question,
         updateTime: questClone?.updatedTime,
         content: {
           answers: (questClone?.Content?.Answers ?? []).map((e) => ({
@@ -88,7 +88,7 @@ export const mapTmasQuestionToStudioQestion: (
         numberPoint: sqlQuestClone?.NumberPoint,
         numberPointAsInt: sqlQuestClone?.NumberPointAsInt,
         questionType: sqlQuestClone?.QuestionType,
-        question: sqlQuestClone?.Questions,
+        question: sqlQuestClone?.Question,
         updateTime: sqlQuestClone?.updatedTime,
         content: {
           expectedOutput: sqlQuestClone?.Content?.ExpectedOutput,
@@ -109,7 +109,7 @@ export const mapTmasQuestionToStudioQestion: (
         numberPoint: essayQuestClone?.NumberPoint,
         numberPointAsInt: essayQuestClone?.NumberPointAsInt,
         questionType: essayQuestClone?.QuestionType,
-        question: essayQuestClone?.Questions,
+        question: essayQuestClone?.Question,
         updateTime: essayQuestClone?.updatedTime,
         content: {
           gradingNote: essayQuestClone?.Content?.GradingNote,
@@ -129,7 +129,7 @@ export const mapTmasQuestionToStudioQestion: (
         numberPoint: fillQuestClone?.NumberPoint,
         numberPointAsInt: fillQuestClone?.NumberPointAsInt,
         questionType: fillQuestClone?.QuestionType,
-        question: fillQuestClone?.Questions,
+        question: fillQuestClone?.Question,
         updateTime: fillQuestClone?.updatedTime,
         content: {
           anwserItems: (fillQuestClone?.Content?.AnwserItems ?? []).map(
@@ -157,7 +157,7 @@ export const mapTmasQuestionToStudioQestion: (
         numberPoint: connQuestClone?.NumberPoint,
         numberPointAsInt: connQuestClone?.NumberPointAsInt,
         questionType: connQuestClone?.QuestionType,
-        question: connQuestClone?.Questions,
+        question: connQuestClone?.Question,
         updateTime: connQuestClone?.updatedTime,
         content: {
           questions: (connQuestClone?.Content?.Questions ?? []).map((e) => ({
@@ -192,7 +192,7 @@ export const mapTmasQuestionToStudioQestion: (
         numberPoint: ranQuestClone?.NumberPoint,
         numberPointAsInt: ranQuestClone?.NumberPointAsInt,
         questionType: ranQuestClone?.QuestionType,
-        question: ranQuestClone?.Questions,
+        question: ranQuestClone?.Question,
         updateTime: ranQuestClone?.updatedTime,
       };
       return studioRanQuestion;
@@ -207,7 +207,7 @@ export const mapTmasQuestionToStudioQestion: (
         numberPoint: codeQuestClone?.NumberPoint,
         numberPointAsInt: codeQuestClone?.NumberPointAsInt,
         questionType: codeQuestClone?.QuestionType,
-        question: codeQuestClone?.Questions,
+        question: codeQuestClone?.Question,
         updateTime: codeQuestClone?.updatedTime,
       };
       return studioCodeQuestion;
@@ -223,7 +223,7 @@ export const mapTmasQuestionToStudioQestion: (
         numberPoint: codeQuestClone?.NumberPoint,
         numberPointAsInt: codeQuestClone?.NumberPointAsInt,
         questionType: codeQuestClone?.QuestionType,
-        question: codeQuestClone?.Questions,
+        question: codeQuestClone?.Question,
         updateTime: codeQuestClone?.updatedTime,
         content: {
           codeLanguages: (codeQuestClone?.Content?.CodeLanguages ?? []).map(

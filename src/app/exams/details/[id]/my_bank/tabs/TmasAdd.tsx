@@ -13,14 +13,19 @@ import {
   QuestionGroupData,
   BaseTmasQuestionData,
   TmasStudioExamData,
+  ExamData,
 } from "@/data/exam";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import {
+  cloneQuestionFromTmas,
+  createBatchQuestion,
+  deleteManyQuestion,
+  deleteQuestionById,
   getQuestionList,
   getTmasQuestList,
 } from "@/services/api_services/question_api";
-import { errorToast } from "@/app/components/toast/customToast";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { Checkbox, Pagination, Select, Spin, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import MDropdown from "@/app/components/config/MDropdown";
@@ -30,8 +35,26 @@ import DeleteIcon from "@/app/components/icons/trash-red.svg";
 import AddIcon from "@/app/components/icons/add.svg";
 import { getTags } from "@/services/api_services/tag_api";
 import { TagData } from "@/data/tag";
+import _ from "lodash";
+import { mapTmasQuestionToStudioQuestion } from "@/services/ui/mapTmasToSTudio";
+import AddBankModal from "@/app/exam_bank/components/AddBankModal";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import {
+  fetchDataQuestionGroup,
+  setquestionGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
+import { APIResults } from "@/data/api_results";
+import { getQuestionGroups } from "@/services/api_services/exam_api";
 
-function TmasAddTab({ hidden }: { hidden?: boolean }) {
+function TmasAddTab({
+  hidden,
+  exam,
+  partId,
+}: {
+  hidden?: boolean;
+  exam?: ExamData;
+  partId?: string;
+}) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const [questionList, setQuestionList] = useState<BaseTmasQuestionData[]>([]);
@@ -44,11 +67,35 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
     (state: RootState) => state?.examGroup?.questions,
   );
+  const dispatch = useAppDispatch();
   const [questGroupId, setQuestGroupId] = useState<string | undefined>();
   const [questionType, setQuestionType] = useState<string | undefined>();
+  const [active, setActive] = useState<BaseQuestionData>();
   useEffect(() => {
     loadQuestionList(true);
+    // dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
   }, [user, recordNum, indexPage, questionType]);
+
+  useOnMountUnsafe(() => {
+    dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
+  });
+
+  const loadQuestionGroupList = async (init?: boolean) => {
+    if (user?.studio?._id) {
+      var dataResults: APIResults = await getQuestionGroups(
+        "",
+        user?.studio?._id,
+      );
+      console.log("group_question", dataResults);
+
+      if (dataResults.code != 0) {
+        return [];
+      } else {
+        var data = dataResults?.data as QuestionGroupData[];
+        return data;
+      }
+    }
+  };
 
   const loadQuestionList = async (init: boolean) => {
     if (init) {
@@ -73,21 +120,105 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
     setQuestionList(res?.data ?? []);
   };
   const onChangeCheck = (checkedList: any) => {};
+
+  const addExamBank = async (__: any, question: BaseQuestionData) => {
+    setOpenAdd(true);
+    setActive(question);
+  };
+  const handleCloneQuestion = async (idGroup: string) => {
+    if (active) {
+      var cloneQuestion = _.cloneDeep(active);
+      cloneQuestion!.idExamQuestionPart = partId;
+      cloneQuestion!.idGroupQuestion = idGroup;
+      cloneQuestion!.idExam = exam?.id;
+      const res = await cloneQuestionFromTmas(cloneQuestion!);
+      if (res?.code != 0) {
+        errorToast(res?.message ?? "");
+        return;
+      }
+      console.log("res", res);
+
+      successToast(t("success_add_into_exam"));
+      const isAddClone = _.cloneDeep(isAdd);
+      isAddClone[active?.id as string] = res.data;
+      setIsAdd(isAddClone);
+      setOpenAdd(false);
+      setSelectedList([]);
+      setActive(undefined);
+      return;
+    } else {
+      setLoadingAdd(true);
+      console.log("check", selectedList);
+      var selectedQuestion = questionList
+        ?.filter((e) => selectedList?.some((i) => i === e?._id))
+        .map((q) => {
+          var quest = _.cloneDeep(q);
+          var studioQuest = mapTmasQuestionToStudioQuestion(quest);
+          studioQuest.idGroupQuestion = idGroup;
+          studioQuest.idExam = exam?.id;
+          studioQuest.idExamQuestionPart = partId;
+          return studioQuest;
+        });
+      console.log("selectedTmasQuestion", selectedQuestion);
+
+      const res = await createBatchQuestion(selectedQuestion);
+      setLoadingAdd(false);
+      if (res.code != 0) {
+        errorToast(res?.message ?? "");
+        return;
+      }
+      successToast(t("success_add_into_exam"));
+      const isAddClone = _.cloneDeep(isAdd);
+      for (let j in selectedList) {
+        for (let i of res.data) {
+          isAddClone[j as string] = i;
+        }
+      }
+      setIsAdd(isAddClone);
+      setOpenAdd(false);
+      setSelectedList([]);
+      setActive(undefined);
+
+      return;
+    }
+  };
+  const deleteExamBank = async (__: any, question: BaseQuestionData) => {
+    console.log("isAdd", isAdd);
+    setLoadingAdd(true);
+    const res = await deleteQuestionById(isAdd[question?.id as string]);
+    setLoadingAdd(false);
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    console.log("res", res);
+    successToast(t("success_delete_from_exam"));
+    const isAddClone = _.cloneDeep(isAdd);
+    isAddClone[question?.id as string] = undefined;
+    setIsAdd(isAddClone);
+    setSelectedList([]);
+  };
+
+  const [isAdd, setIsAdd] = useState<any>({});
   const renderQuestion: (
     e: BaseTmasQuestionData,
     index: number,
   ) => React.ReactNode = (e: BaseTmasQuestionData, index: number) => {
     var group = questionGroups?.find((v: any) => v.id === e.IdGroupQuestion);
+    var questMap = mapTmasQuestionToStudioQuestion(e);
+    var isExist = isAdd[e._id as string] ? true : false;
     switch (e?.QuestionType) {
       case QuestionType.MutilAnswer:
         return (
           <ManyResult
+            isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
+            deleteExamBank={deleteExamBank}
             key={e?._id}
-            question={e}
+            question={questMap}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.IdExam}
@@ -97,12 +228,14 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.YesNoQuestion:
         return (
           <TrueFalse
+            isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
+            deleteExamBank={deleteExamBank}
             key={e?._id}
-            question={e}
+            question={questMap}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.IdExam}
@@ -112,12 +245,14 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.Essay:
         return (
           <Explain
+            isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
+            deleteExamBank={deleteExamBank}
             key={e?._id}
-            question={e}
+            question={questMap}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.IdExam}
@@ -127,12 +262,14 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.Coding:
         return (
           <Coding
+            isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
+            deleteExamBank={deleteExamBank}
             key={e?._id}
-            question={e}
+            question={questMap}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.IdExam}
@@ -142,12 +279,14 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.SQL:
         return (
           <Sql
+            isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
+            deleteExamBank={deleteExamBank}
             key={e?._id}
-            question={e}
+            question={questMap}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.IdExam}
@@ -157,12 +296,14 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.Pairing:
         return (
           <Connect
+            isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
+            deleteExamBank={deleteExamBank}
             key={e?._id}
-            question={e}
+            question={questMap}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.IdExam}
@@ -172,12 +313,14 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.FillBlank:
         return (
           <FillBlank
+            isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
+            deleteExamBank={deleteExamBank}
             key={e?._id}
-            question={e}
+            question={questMap}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.IdExam}
@@ -187,12 +330,14 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
       case QuestionType.Random:
         return (
           <Random
+            isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
             tmasQuest
-            addExamBank={() => {}}
+            addExamBank={addExamBank}
+            deleteExamBank={deleteExamBank}
             key={e?._id}
-            question={e}
+            question={questMap}
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.IdExam}
@@ -204,8 +349,7 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
     }
   };
   const CheckboxGroup = Checkbox.Group;
-  const plainOptions = [];
-  const defaultCheckedList = [];
+
   const [selectedList, setSelectedList] = useState<any[]>([]);
 
   const onCheckAllChange = (e: any) => {
@@ -241,8 +385,48 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
     }));
     setOptionTag(op);
   };
+
+  const [openAdd, setOpenAdd] = useState<boolean>(false);
+  const [loadingAdd, setLoadingAdd] = useState<boolean>(false);
+
+  const cloneManyQuestion = (__: any) => {
+    setOpenAdd(true);
+  };
+
+  const deleteQuestions = async (__: any) => {
+    setLoadingAdd(true);
+    var deleteIds = selectedList
+      .map((e) => {
+        return isAdd[e];
+      })
+      .filter((t) => t);
+    const res = await deleteManyQuestion({ ids: deleteIds });
+    setLoadingAdd(false);
+    if (res?.code) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    successToast(t("success_delete_from_exam"));
+    setIsAdd({});
+    setSelectedList([]);
+    setCheckedAll(false);
+  };
+
   return (
     <>
+      <AddBankModal
+        questionGroups={questionGroups}
+        width={564}
+        title={t("add_my_bank_quest")}
+        loading={loadingAdd}
+        open={openAdd}
+        onCancel={() => {
+          setActive(undefined);
+          setOpenAdd(false);
+        }}
+        onOk={handleCloneQuestion}
+      />
+
       <div className="w-full flex">
         <form
           onSubmit={(e) => {
@@ -340,10 +524,8 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
               <div className="flex">
                 <Tooltip placement="bottom" title={t("add_selected")}>
                   <button
-                    onClick={(e) => {
-                      setSelectedList([]);
-                      setCheckedAll(false);
-                    }}
+                    disabled={loadingAdd}
+                    onClick={cloneManyQuestion}
                     className="rounded-lg py-2 px-[10px] border border-m_primary_500"
                   >
                     <AddIcon />
@@ -352,10 +534,8 @@ function TmasAddTab({ hidden }: { hidden?: boolean }) {
                 <div className="w-2" />
                 <Tooltip placement="bottom" title={t("delete_selected")}>
                   <button
-                    onClick={(e) => {
-                      setSelectedList([]);
-                      setCheckedAll(false);
-                    }}
+                    disabled={loadingAdd}
+                    onClick={deleteQuestions}
                     className="rounded-lg p-2 border border-m_error_500"
                   >
                     <DeleteIcon />

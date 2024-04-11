@@ -205,7 +205,7 @@ export interface BaseTmasQuestionData {
   IsQuestionBank?: boolean;
   NumberPointAsInt?: number;
   NumberPoint?: number;
-  Questions?: string;
+  Question?: string;
   QuestionType: QuestionType;
   Code?: string;
   State?: string;

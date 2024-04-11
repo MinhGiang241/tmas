@@ -63,7 +63,6 @@ function AddBankTmasExam(props: Props) {
     validate,
     onSubmit: async () => {
       setLoading(true);
-
       setLoading(false);
       formik.resetForm();
       props.onOk!();
