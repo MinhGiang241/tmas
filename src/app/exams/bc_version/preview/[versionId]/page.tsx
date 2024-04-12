@@ -178,7 +178,7 @@ function ExamDetails({ params }: any) {
                     </div>
                     <div className="text-sm text-m_neutral_900 flex">
                         <Cup className="mr-1 scale-75" />
-                        {data?.examData?.TotalPointsAsInt} {t("point")}
+                        {data?.examData?.TotalPointsAsInt / 100} {t("point")}
                     </div>
                     <div className="text-sm text-m_neutral_900 flex">
                         <Time className="mr-1" />

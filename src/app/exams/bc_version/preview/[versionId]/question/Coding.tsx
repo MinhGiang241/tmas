@@ -54,7 +54,7 @@ export default function Coding({
   const containerRef = useRef(null);
   const contentRef = useRef(null);
   // console.log(questionGroup, "questionGroup");
-  console.log(question, "question");
+  // console.log(question, "question");
 
   useEffect(() => {
     setIsOverflowing(
