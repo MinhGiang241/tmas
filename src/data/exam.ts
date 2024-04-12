@@ -78,6 +78,7 @@ export interface ExamData {
 
 export enum AppovedState {
   Rejected = "Rejected",
+  Pending = "Pending",
   Approved = "Approved",
 }
 
@@ -346,6 +347,7 @@ export interface TmasStudioExamData {
   NumberOfTests?: number;
   OwnerId?: string;
   Parts: {
+    _id?: string;
     Description?: string;
     Name?: string;
     Questions?: BaseTmasQuestionData[];

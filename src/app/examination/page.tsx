@@ -16,7 +16,7 @@ import LinkIcon from "../components/icons/link-2.svg";
 import CalendarIcon from "../components/icons/calendar.svg";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import { ExamGroupData, ExaminationData } from "@/data/exam";
+import { AppovedState, ExamGroupData, ExaminationData } from "@/data/exam";
 import copy from "copy-text-to-clipboard";
 import {
   fetchDataExamGroup,
@@ -72,6 +72,15 @@ function ExaminationPage() {
     const dataExamination: APIResults = await getExaminationTestList(
       search
         ? {
+            LockState:
+              status === "Lock" || status === "Unlock" ? status : undefined,
+            ApprovedState:
+              status === "Approved" ||
+              status === "Pending" ||
+              status === "Rejected"
+                ? status
+                : undefined,
+            isIncludeExamVersion: true,
             "FilterByName.Name": "Name",
             "FilterByName.InValues": search ?? undefined,
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
@@ -82,6 +91,16 @@ function ExaminationPage() {
             "SorterByCreateTime.IsAsc": sort == "time" ? false : undefined,
           }
         : {
+            LockState:
+              status === "Lock" || status === "Unlock" ? status : undefined,
+            ApprovedState:
+              status === "Approved" ||
+              status === "Pending" ||
+              status === "Rejected"
+                ? status
+                : undefined,
+
+            isIncludeExamVersion: true,
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
             "FilterByExamGroupId.Name": "Name",
             "Paging.RecordPerPage": recordNum,
@@ -335,12 +354,17 @@ function ExaminationPage() {
               setStatus(value);
             }}
             placeholder={t("status")}
-            options={["Public", "Pending", "Approved", "Rejected", "lock"].map(
-              (e: any) => ({
-                value: e,
-                label: t(e),
-              }),
-            )}
+            options={[
+              "Public",
+              "Pending",
+              "Approved",
+              "Rejected",
+              "Lock",
+              "Unlock",
+            ].map((e: any) => ({
+              value: e,
+              label: t(e),
+            }))}
             h="h-11"
             className="ml-4"
             id="public_free"
@@ -388,8 +412,25 @@ function ExaminationPage() {
                             : "bg-m_neutral_300"
                         }`}
                       />
+                      <div className="w-full flex justify-start">
+                        <div className={`body_semibold_16`}>{v.name}</div>
 
-                      <div className="body_semibold_16">{v.name}</div>
+                        <div
+                          className={`ml-8 ${
+                            v?.sharingSetting == "Public"
+                              ? "text-[#366DFF]"
+                              : "text-[#FF9736]"
+                          }`}
+                        >
+                          {v?.sharingSetting === "Public" &&
+                          v?.goldSetting?.isEnable &&
+                          v?.goldSetting.goldPrice != 0
+                            ? `Public_${v?.goldSetting?.goldPrice}`
+                            : v?.sharingSetting === "Public"
+                              ? `Public_Free`
+                              : `Private`}
+                        </div>
+                      </div>
                     </div>
                     <div className="w-full justify-start my-3 flex max-lg:flex-wrap">
                       <div className="flex ">
@@ -416,14 +457,16 @@ function ExaminationPage() {
                         </span>
                       </div>
                       <div className="flex">
-                        <LinkIcon />
+                        <div className="min-w-6">
+                          <LinkIcon />
+                        </div>
 
                         <button
                           onClick={() => {
                             copy(v?.linkJoinTest ?? "");
                             toast(common?.t("success_copy"));
                           }}
-                          className="ml-2 body_regular_14 cursor-copy"
+                          className="ml-2 body_regular_14 cursor-copy break-all"
                         >
                           {v?.linkJoinTest ?? ""}
                         </button>
@@ -459,14 +502,17 @@ function ExaminationPage() {
                           {t("status")}:{" "}
                         </span>
                         {genStateWidget(
-                          v?.examVersion?.approvedState?.approvedState ?? "",
+                          v?.examVersion?.exam?.approvedState?.approvedState ??
+                            "",
                         )}
                       </div>
                     </div>
-                    <div className="body_regular_14 italic">
-                      <span className="mr-2">{t("approve_code")}:</span>
-                      {v?.examTestCode ?? ""}
-                    </div>
+                    {v?.examTestCode && (
+                      <div className="body_regular_14 italic mt-3">
+                        <span className="mr-2">{t("approve_code")}:</span>
+                        {v?.examTestCode ?? ""}
+                      </div>
+                    )}
                   </div>
                   <div className="lg:flex ">
                     <div className="flex items-center mb-1">
