@@ -196,21 +196,6 @@ export const mapTmasQuestionToStudioQuestion: (
         updateTime: ranQuestClone?.updatedTime,
       };
       return studioRanQuestion;
-    case QuestionType.Coding:
-      var codeQuestClone: CodeTmasQuestionData = _.cloneDeep(question);
-      var studioCodeQuestion: CodingQuestionData = {
-        createdTime: codeQuestClone?.createdTime,
-        id: codeQuestClone?._id,
-        idExam: codeQuestClone?.IdExam,
-        idExamQuestionPart: codeQuestClone?.IdExamQuestionPart,
-        idGroupQuestion: codeQuestClone?.IdGroupQuestion,
-        numberPoint: codeQuestClone?.NumberPoint,
-        numberPointAsInt: codeQuestClone?.NumberPointAsInt,
-        questionType: codeQuestClone?.QuestionType,
-        question: codeQuestClone?.Question,
-        updateTime: codeQuestClone?.updatedTime,
-      };
-      return studioCodeQuestion;
 
     case QuestionType.Coding:
       var codeQuestClone: CodeTmasQuestionData = _.cloneDeep(question);
@@ -222,7 +207,7 @@ export const mapTmasQuestionToStudioQuestion: (
         idGroupQuestion: codeQuestClone?.IdGroupQuestion,
         numberPoint: codeQuestClone?.NumberPoint,
         numberPointAsInt: codeQuestClone?.NumberPointAsInt,
-        questionType: codeQuestClone?.QuestionType,
+        questionType: QuestionType.Coding,
         question: codeQuestClone?.Question,
         updateTime: codeQuestClone?.updatedTime,
         content: {

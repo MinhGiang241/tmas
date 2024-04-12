@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import { ConnectQuestAns } from "./question";
-import { ExamData } from "./exam";
+import { AppovedState, ExamData } from "./exam";
 import { TagParams } from "./tag";
 
 export interface RegisterFormValues {
@@ -145,7 +145,7 @@ export interface ExaminationFormData {
 }
 
 export interface ExaminationListParams {
-  "FilterByExamGroupId.InValues"?: string;
+  "FilterByExamGroupId.InValues"?: string[];
   "FilterByExamGroupId.Name"?: string;
   "FilterByName.Name"?: string;
   "FilterByName.InValues"?: string;
@@ -161,6 +161,11 @@ export interface ExaminationListParams {
   "SorterByCreateTime.IsAsc"?: boolean;
   "SorterByName.Name"?: string;
   "SorterByName.isAsc"?: boolean;
+  RangeGold?: number[];
+  VisibleState?: "On" | "Off";
+  LockState?: "Unlock" | "Lock";
+  ApprovedState?: AppovedState;
+  isIncludeExamVersion?: boolean;
 }
 
 export type CodingDataType =

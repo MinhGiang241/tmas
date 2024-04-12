@@ -351,7 +351,7 @@ function MyBankAddTab({
       errorToast(res?.message ?? "");
       return;
     }
-    successToast(t("success_delete_quest_to_exam"));
+    successToast(t("success_delete_from_exam"));
     setSelectedList([]);
     setCheckedAll(false);
   };
@@ -482,7 +482,7 @@ function MyBankAddTab({
                 <Tooltip placement="bottom" title={t("add_selected")}>
                   <button
                     disabled={loadingMany}
-                    onClick={removeManyQuestion}
+                    onClick={addManyQuestion}
                     className="rounded-lg py-2 px-[10px] border border-m_primary_500"
                   >
                     <AddIcon />
@@ -492,7 +492,7 @@ function MyBankAddTab({
                 <Tooltip placement="bottom" title={t("delete_selected")}>
                   <button
                     disabled={loadingMany}
-                    onClick={addManyQuestion}
+                    onClick={removeManyQuestion}
                     className="rounded-lg p-2 border border-m_error_500"
                   >
                     <DeleteIcon />

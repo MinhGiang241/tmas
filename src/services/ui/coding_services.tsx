@@ -37,19 +37,25 @@ export const renderExtension: (
 export const mapStudioToTmaslanguage = (index: number) => {
   switch (index) {
     case 0:
-      return "php";
+      return "PHP"; // "php";
     case 1:
-      return "javascript";
+      return "Javascrip"; //"javascript";
     case 2:
-      return "java";
+      return "Java"; //"java";
     case 3:
-      return "python";
+      return "Python"; //"python";
     case 4:
-      return "ruby";
+      return "Ruby"; //"ruby";
     case 5:
-      return "c#";
+      return "CShape"; //"c#";
   }
 };
+// | "PHP"
+// | "Javascrip"
+// | "Java"
+// | "Python"
+// | "Ruby"
+// | "CShape"[];
 
 export const mapLanguage = (lang?: string) => {
   switch (lang) {

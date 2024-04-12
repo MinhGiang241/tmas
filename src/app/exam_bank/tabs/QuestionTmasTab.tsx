@@ -272,10 +272,10 @@ function QuestionTmasTab() {
         ? {
             "Names.Name": "Name",
             "Names.InValues": searchKey,
-            "Paging.StartIndex": 0,
+            "Paging.StartIndex": 1,
             "Paging.RecordPerPage": 100,
           }
-        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
+        : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 },
     );
     if (data?.code != 0) {
       return [];

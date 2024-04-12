@@ -132,10 +132,10 @@ function ExamTmasTab() {
         ? {
             "Names.Name": "Name",
             "Names.InValues": searchKey,
-            "Paging.StartIndex": 0,
+            "Paging.StartIndex": 1,
             "Paging.RecordPerPage": 100,
           }
-        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
+        : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 },
     );
     if (data?.code != 0) {
       return [];
@@ -170,6 +170,7 @@ function ExamTmasTab() {
     }));
 
     var partObj: PartObject[] = (active?.Parts ?? []).map((e) => ({
+      id: e?._id,
       description: e?.Description,
       name: e?.Name,
       jsonExamQuestions: e?.Questions?.map((e) =>
@@ -210,12 +211,11 @@ function ExamTmasTab() {
         },
       ],
     });
-
+    setLoadingClone(false);
     if (res.code != 0) {
       errorToast(res.message ?? "");
       return;
     }
-    setLoadingClone(false);
     var isAddClone = _.cloneDeep(isAdd);
     isAddClone[active?.Version!] = res?.data;
     console.log("isAddClone", isAddClone);
