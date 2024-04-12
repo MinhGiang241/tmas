@@ -39,6 +39,7 @@ function Share({
         >
           <div className="flex flex-col">
             <Radio.Group
+              disabled={!!examination}
               buttonStyle="solid"
               onChange={(v) => {
                 setValue(v.target.value);

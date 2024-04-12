@@ -19,12 +19,14 @@ function ExaminationCodePage({
   formik,
   codeList,
   setCodeList,
+  examination,
 }: {
   value: any;
   setValue: any;
   formik: any;
   codeList: any;
   setCodeList: any;
+  examination: any;
 }) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
@@ -82,6 +84,7 @@ function ExaminationCodePage({
         >
           <div className="flex flex-col">
             <Radio.Group
+              disabled={!!examination}
               buttonStyle="solid"
               onChange={(v) => {
                 setValue(v.target.value);
@@ -112,6 +115,7 @@ function ExaminationCodePage({
               <>
                 <div className="h-3" />
                 <MInput
+                  disable={!!examination}
                   required={true}
                   formik={formik}
                   h="h-9"
@@ -140,6 +144,7 @@ function ExaminationCodePage({
                   </div>
                   {codeList.length > 0 && (
                     <button
+                      disabled={!!examination}
                       onClick={() => {
                         setOpenCodeList(true);
                       }}
@@ -151,6 +156,7 @@ function ExaminationCodePage({
                 </div>
                 <div className="my-2 flex items-center text-m_primary_500 min-w-24 ">
                   <button
+                    disabled={!!examination}
                     onClick={() => setOpenCreateCode(true)}
                     className="underline font-semibold underline-offset-4"
                   >
@@ -158,6 +164,7 @@ function ExaminationCodePage({
                   </button>
                 </div>
                 <MInput
+                  disable={!!examination}
                   required={true}
                   formik={formik}
                   h="h-9"

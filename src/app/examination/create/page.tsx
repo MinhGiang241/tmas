@@ -497,9 +497,10 @@ function CreateExaminationPage({ examination }: any) {
               setValue={setShare}
             />
             <div className="h-4" />
-            <GoldPrice formik={formik} />
+            {share != "Private" && <GoldPrice formik={formik} />}
             <div className="h-4" />
             <ExaminationCodePage
+              examination={examination}
               codeList={codeList}
               setCodeList={setCodeList}
               formik={formik}

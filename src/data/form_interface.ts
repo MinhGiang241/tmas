@@ -164,7 +164,7 @@ export interface ExaminationListParams {
   RangeGold?: number[];
   VisibleState?: "On" | "Off";
   LockState?: "Unlock" | "Lock";
-  ApprovedState?: AppovedState;
+  ApprovedState?: AppovedState | string;
   isIncludeExamVersion?: boolean;
 }
 

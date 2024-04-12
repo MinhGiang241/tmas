@@ -33,7 +33,11 @@ export default function ManyResult({
   canCheck,
   onChangeCheck,
   isExist,
+  addText,
+  deleteText,
 }: {
+  addText?: string;
+  deleteText?: string;
   isExist?: boolean;
   examId?: any;
   question?: any;
@@ -137,14 +141,15 @@ export default function ManyResult({
                 >
                   {canCheck && (
                     <Checkbox
+                      className="mr-3"
                       onChange={onChangeCheck as any}
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
                       value={question?.id}
                     />
-                  )}{" "}
-                  {`${t("quest")} ${index}`}
+                  )}
+                  {`${t("question")} ${index}`}
                   :
                   <div
                     ref={contentRef}
@@ -176,7 +181,7 @@ export default function ManyResult({
                     }}
                     h="h-11"
                     icon={<DeleteRedIcon />}
-                    text={t("delete_bank")}
+                    text={deleteText ?? t("delete_bank")}
                   />
                 ) : (
                   <MButton
@@ -188,7 +193,7 @@ export default function ManyResult({
                     h="h-11"
                     type="secondary"
                     icon={<AddIcon />}
-                    text={t("add_bank")}
+                    text={addText ?? t("add_bank")}
                   />
                 )
               ) : (

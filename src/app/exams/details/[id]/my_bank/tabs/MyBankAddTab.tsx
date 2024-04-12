@@ -55,7 +55,7 @@ function MyBankAddTab({
   const [loadingPage, setLoadingPage] = useState<boolean>(false);
   const user = useAppSelector((state: RootState) => state.user.user);
   const [questGroupId, setQuestGroupId] = useState<string | undefined>();
-  const [questionType, setQuestionType] = useState<string | undefined>();
+  const [questionType, setQuestionType] = useState<string | undefined>("");
   const [search, setSearch] = useState<string | undefined>();
   const [sort, setSort] = useState<string>("recently_create");
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
@@ -90,7 +90,7 @@ function MyBankAddTab({
   const loadQuestionsList = async (init: boolean) => {
     if (init) {
       setLoadingPage(true);
-      setIndexPage(1);
+      //setIndexPage(1);
     }
     const res = await getQuestionList({
       paging: {
@@ -159,7 +159,7 @@ function MyBankAddTab({
       return;
     }
     console.log("res", res);
-    successToast(t("Thêm vào câu hỏi vào đề thi thành công"));
+    successToast(t("success_add_into_exam"));
     const isAddClone = _.cloneDeep(isAdd);
     isAddClone[question?.id as string] = undefined;
     setIsAdd(isAddClone);
@@ -178,6 +178,8 @@ function MyBankAddTab({
       case QuestionType.MutilAnswer:
         return (
           <ManyResult
+            deleteText={t("add_quest_to_exam")}
+            addText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -195,6 +197,8 @@ function MyBankAddTab({
       case QuestionType.YesNoQuestion:
         return (
           <TrueFalse
+            deleteText={t("add_quest_to_exam")}
+            addText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -212,6 +216,8 @@ function MyBankAddTab({
       case QuestionType.Essay:
         return (
           <Explain
+            deleteText={t("add_quest_to_exam")}
+            addText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -229,6 +235,8 @@ function MyBankAddTab({
       case QuestionType.Coding:
         return (
           <Coding
+            deleteText={t("add_quest_to_exam")}
+            addText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -246,6 +254,8 @@ function MyBankAddTab({
       case QuestionType.SQL:
         return (
           <Sql
+            deleteText={t("add_quest_to_exam")}
+            addText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -263,6 +273,8 @@ function MyBankAddTab({
       case QuestionType.Pairing:
         return (
           <Connect
+            deleteText={t("add_quest_to_exam")}
+            addText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -280,6 +292,8 @@ function MyBankAddTab({
       case QuestionType.FillBlank:
         return (
           <FillBlank
+            deleteText={t("add_quest_to_exam")}
+            addText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -297,6 +311,8 @@ function MyBankAddTab({
       case QuestionType.Random:
         return (
           <Random
+            deleteText={t("add_quest_to_exam")}
+            addText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -386,7 +402,7 @@ function MyBankAddTab({
               setSearch(e.target.value);
             }}
             className="max-lg:mt-3"
-            placeholder={t("search_test_group")}
+            placeholder={t("enter_key_search")}
             h="h-11"
             id="search"
             name="search"
@@ -401,6 +417,7 @@ function MyBankAddTab({
           />
           <div className="w-11" />
           <MDropdown
+            allowClear={false}
             value={questionType}
             setValue={(na: any, val: any) => {
               setQuestionType(val);
@@ -420,7 +437,7 @@ function MyBankAddTab({
               "",
             ].map((e: string) => ({
               value: e,
-              label: !e ? common.t("all") : t(e?.toLowerCase()),
+              label: !e ? t("all_question_type") : t(e?.toLowerCase()),
             }))}
           />
           <div className="w-11" />

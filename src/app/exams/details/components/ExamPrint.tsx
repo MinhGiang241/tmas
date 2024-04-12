@@ -73,7 +73,7 @@ const ExamQuestion = ({
               className="mb-2"
             />
             <div className="flex flex-col gap-4">
-              {anwserItems.map((awn: any, index: number) => {
+              {anwserItems?.map((awn: any, index: number) => {
                 return (
                   <div key={index} className="flex gap-1">
                     <span

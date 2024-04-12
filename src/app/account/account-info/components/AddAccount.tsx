@@ -98,7 +98,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
       title={t("add_account")}
       open={open}
     >
-      <form onSubmit={onSubmit} className="w-full ">
+      <form onSubmit={onSubmit} className="w-full flex flex-col items-start">
         <MInput
           extend={false}
           loadingValidate={loadingValidateMail}
@@ -113,8 +113,13 @@ function AddAccount({ open, onCancel, onOk }: Props) {
         />
 
         <p className="caption_semibold_14 mt-[35px] mb-2">{t("role")}</p>
-        <Radio.Group buttonStyle="solid" onChange={onChangeValue} value={role}>
-          <Space direction="vertical">
+        <Radio.Group
+          className="flex flex-col justify-start"
+          buttonStyle="solid"
+          onChange={onChangeValue}
+          value={role}
+        >
+          <Space direction="vertical" className="flex flex-col items-start">
             <Radio className=" caption_regular_14" value={"Member"}>
               {t("member_role")}
             </Radio>

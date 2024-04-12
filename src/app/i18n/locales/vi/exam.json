@@ -288,5 +288,9 @@
   "add_my_exam": "Thêm vào danh sách đề thi của tôi",
   "success_add_quest_to_exam": "Thêm câu hỏi vào đề thi thành công",
   "success_remove_quest_to_exam": "Xóa câu hỏi khỏi đề thi thành công",
-  "success_delete_exam": "Xóa đề thi thành công"
+  "success_delete_exam": "Xóa đề thi thành công",
+  "not_delete_public": "Không xóa được đợt thi công khai",
+  "all_question_type": "Tất cả kiểu câu hỏi",
+  "add_quest_to_exam": "Thêm câu hỏi vào đề thi",
+  "delete_quest_to_exam": "Xóa câu hỏi khỏi đề thi"
 }
