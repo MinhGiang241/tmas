@@ -41,7 +41,7 @@ const ExamQuestion = ({
         const sufferAnswers = isChangePosition ? shuffle(answers) : answers;
         return (
           <div className="flex flex-col gap-2 p-4">
-            {sufferAnswers.map((ans: any, index: number) => (
+            {sufferAnswers?.map((ans: any, index: number) => (
               <p key={index} className="inline-flex gap-1">
                 <span className="font-semibold mr-2">
                   {indexToAlphabet(index + 1)})
@@ -68,7 +68,10 @@ const ExamQuestion = ({
         const { formatBlank, anwserItems } = ques.content;
         return (
           <div className="flex flex-col gap-4 p-4">
-            <div dangerouslySetInnerHTML={{ __html: formatBlank }} className="mb-2" />
+            <div
+              dangerouslySetInnerHTML={{ __html: formatBlank }}
+              className="mb-2"
+            />
             <div className="flex flex-col gap-4">
               {anwserItems.map((awn: any, index: number) => {
                 return (
@@ -91,7 +94,7 @@ const ExamQuestion = ({
           <div className="flex flex-col gap-2 p-4">
             <div className="grid grid-cols-2">
               <div className="flex flex-col space-y-2">
-                {answers.map((ans: any, index: number) => (
+                {answers?.map((ans: any, index: number) => (
                   <p key={index} className="inline-flex gap-1">
                     <span
                       className="font-semibold"
@@ -102,7 +105,7 @@ const ExamQuestion = ({
                 ))}
               </div>
               <div className="flex flex-col space-y-2">
-                {questions.map((ans: any, index: number) => (
+                {questions?.map((ans: any, index: number) => (
                   <p key={index} className="inline-flex gap-1">
                     <span
                       className="font-semibold"
@@ -194,7 +197,7 @@ const ExamPrint = React.forwardRef<HTMLDivElement, any>(
         <br />
       </div>
     );
-  }
+  },
 );
 
 ExamPrint.displayName = "ExamPrint";

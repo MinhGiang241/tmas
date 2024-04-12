@@ -282,10 +282,11 @@
   "Public": "Public",
   "lock": "Khóa",
   "success_add_into_exam": "Thêm vào câu hỏi vào đề thi thành công",
-  "success_delete_form_exam": "Thêm vào câu hỏi vào đề thi thành công",
+  "success_delete_from_exam": "Xóa câu hỏi khỏi đề thi thành công",
   "preview_5_question": "Xem trước 5 câu hỏi",
   "enter_tags_to_search": "Nhập vào tags để tìm kiếm",
   "add_my_exam": "Thêm vào danh sách đề thi của tôi",
   "success_add_quest_to_exam": "Thêm câu hỏi vào đề thi thành công",
-  "success_remove_quest_to_exam": "Xóa câu hỏi khỏi đề thi thành công"
+  "success_remove_quest_to_exam": "Xóa câu hỏi khỏi đề thi thành công",
+  "success_delete_exam": "Xóa đề thi thành công"
 }

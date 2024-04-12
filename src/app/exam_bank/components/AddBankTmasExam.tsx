@@ -61,12 +61,8 @@ function AddBankTmasExam(props: Props) {
     enableReinitialize: true,
     initialValues,
     validate,
-    onSubmit: async () => {
-      setLoading(true);
-
-      setLoading(false);
-      formik.resetForm();
-      props.onOk!();
+    onSubmit: async (values: FormValue) => {
+      props.onOk!(values.exam_name, values.group);
     },
   });
 

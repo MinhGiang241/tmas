@@ -17,9 +17,11 @@ import { errorToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import { getExamQuestionPartList } from "@/services/api_services/question_api";
 import { BaseQuestionData } from "@/data/question";
+import MButton from "@/app/components/config/MButton";
 
 function AddFromMyBank({ params }: any) {
   const { t } = useTranslation("exam");
+  const common = useTranslation();
   const questTrans = useTranslation("question");
   const [exam, setExam] = useState<ExamData | undefined>();
   const user = useAppSelector((state: RootState) => state?.user?.user);
@@ -86,34 +88,42 @@ function AddFromMyBank({ params }: any) {
   return (
     <HomeLayout>
       <div className="h-4" />
-      <MBreadcrumb
-        items={[
-          { text: t("exam_list"), href: "/exams" },
-          // { text: exam?.name, href: `/exams/details/${exam?.id}` },
-          {
-            href: `/exams/details/${exam?.id}`,
-            text: exam?.name,
-            active: true,
-          },
-          {
-            href:
-              index === "0"
-                ? `/exams/details/${exam?.id}/my_bank?tab=0`
-                : `/exams/details/${exam?.id}/my_bank?tab=1`,
-            text:
-              index == "0"
-                ? questTrans.t("add_from_my_bank")
-                : questTrans.t("add_from_tmas"),
-            active: true,
-          },
-        ]}
-      />
+      <div className="w-full flex justify-between items-center">
+        <MBreadcrumb
+          items={[
+            { text: t("exam_list"), href: "/exams" },
+            // { text: exam?.name, href: `/exams/details/${exam?.id}` },
+            {
+              href: `/exams/details/${exam?.id}`,
+              text: exam?.name,
+              active: true,
+            },
+            {
+              href:
+                index === "0"
+                  ? `/exams/details/${exam?.id}/my_bank?tab=0`
+                  : `/exams/details/${exam?.id}/my_bank?tab=1`,
+              text:
+                index == "0"
+                  ? questTrans.t("add_from_my_bank")
+                  : questTrans.t("add_from_tmas"),
+              active: true,
+            },
+          ]}
+        />
+        <MButton
+          onClick={() => {
+            router.back();
+          }}
+          text={common.t("back")}
+        />
+      </div>
       <div className="h-3  lg:h-1" />
 
       <div className="w-full flex border-b-m_neutral_200 h-11 border-b mt-4">
         <button
           onClick={() => {
-            router.push(
+            router.replace(
               `/exams/details/${params?.id}/my_bank?tab=0&partId=${partId}`,
             );
           }}
@@ -127,7 +137,7 @@ function AddFromMyBank({ params }: any) {
         </button>
         <button
           onClick={() => {
-            router.push(
+            router.replace(
               `/exams/details/${params?.id}/my_bank?tab=1&partId=${partId}`,
             );
           }}
@@ -149,7 +159,11 @@ function AddFromMyBank({ params }: any) {
           partId={partId ?? undefined}
         />
       ) : (
-        <TmasExamAdd hidden={index != "1"} />
+        <TmasExamAdd
+          hidden={index != "1"}
+          exam={exam}
+          partId={partId ?? undefined}
+        />
       )}
 
       <div className="h-3" />

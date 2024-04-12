@@ -36,26 +36,24 @@ export const examGroupSlice = createSlice({
       return { ...state, loading: false, list: action.payload };
     },
     setExamGroupLoading: (state, action) => {
-      return { ...state, loading: true, list: [] };
+      return { ...state, loading: true };
     },
     setquestionGroupList: (state, action) => {
       return { ...state, loading: false, questions: action.payload };
     },
     setquestionGroupLoading: (state, action) => {
-      return { ...state, loading: true, questions: [] };
+      return { ...state, loading: true };
     },
     setExamAndQuestionLoading: (state, action) => {
-      return { loading: true, questions: [], list: [] };
+      return { ...state, loading: true };
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchDataExamGroup.fulfilled, (state, action) => {
-      state.list = action.payload;
-      state.loading = false;
+      return { ...state, list: action.payload, loading: false };
     });
     builder.addCase(fetchDataQuestionGroup.fulfilled, (state, action) => {
-      state.questions = action.payload;
-      state.loading = false;
+      return { ...state, questions: action.payload, loading: false };
     });
   },
 });

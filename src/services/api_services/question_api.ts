@@ -5,6 +5,7 @@ import {
   EssayQuestionFormData,
   ExamQuestionPart,
   FillBlankQuestionFormData,
+  ImportTmasExamParams,
   MultiAnswerQuestionFormData,
   PagingGetData,
   RandomQuestionFormData,
@@ -13,6 +14,10 @@ import {
 import { callApi, callStudioAPI } from "./base_api";
 import { result } from "lodash";
 import axios from "axios";
+import { BaseTmasQuestionData } from "@/data/exam";
+import { APIResults } from "@/data/api_results";
+import { mapTmasQuestionToStudioQuestion } from "../ui/mapTmasToSTudio";
+import { BaseQuestionData, QuestionType } from "@/data/question";
 
 export const createCodingQuestion = async (data: CodingQuestionFormData) => {
   const results = await callStudioAPI.post(
@@ -334,5 +339,66 @@ export const getTmasQuestList = async ({
       type,
     },
   );
+  return results;
+};
+
+export const cloneQuestionFromTmas = async (question: BaseQuestionData) => {
+  var res: APIResults = { data: undefined };
+  switch (question?.questionType) {
+    case QuestionType.MutilAnswer:
+      res = await createMultiAnswerQuestion(question);
+      break;
+    case QuestionType.YesNoQuestion:
+      res = await createTrueFalseQuestion(question);
+      break;
+    case QuestionType.SQL:
+      res = await createSqlQuestion(question);
+      break;
+    case QuestionType.Essay:
+      res = await createEssayQuestion(question);
+      break;
+    case QuestionType.Coding:
+      res = await createCodingQuestion(question);
+      break;
+    case QuestionType.FillBlank:
+      res = await createFillBlankQuestion(question);
+      break;
+    case QuestionType.Pairing:
+      res = await createConnectQuestion(question);
+      break;
+    case QuestionType.Random:
+      res = await createRandomQuestion(question);
+      break;
+  }
+  return res;
+};
+
+export const createBatchQuestion = async (items: BaseQuestionData[]) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/CreateBatch`,
+    { items },
+  );
+  return results;
+};
+
+export const importTmasExamData = async (data: ImportTmasExamParams) => {
+  var results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Import`,
+    data,
+  );
+  if (results.code === 0) {
+    return results.data;
+  }
+
+  return 0;
+};
+
+
+export const getExamTestId = async (Id?: string | null) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/${Id}`,
+    { params: { IsIncludeExamVersion: true } }
+  );
+
   return results;
 };

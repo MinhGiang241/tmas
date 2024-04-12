@@ -1,5 +1,7 @@
 import i18next from "i18next";
 import { ConnectQuestAns } from "./question";
+import { ExamData } from "./exam";
+import { TagParams } from "./tag";
 
 export interface RegisterFormValues {
   full_name?: string;
@@ -314,4 +316,57 @@ export interface DuplicateQuestionParams {
   newIdExamQuestionPart?: string;
   ids?: string[];
   idExams?: string[];
+}
+
+export interface DocumentObject {
+  id?: string;
+  createdTime?: string;
+  createdBy?: string;
+  updateTime?: string;
+  updateBy?: string;
+  ownerId?: string;
+  studioId?: string;
+  fileName?: string;
+  contentType?: string;
+  fileSize?: number;
+  fileType?: string;
+  idSession?: string;
+  link?: string;
+}
+
+export interface TagObject {
+  id?: string;
+  createdTime?: string;
+  createdBy?: string;
+  updateTime?: string;
+  updateBy?: string;
+  ownerId?: string;
+  studioId?: string;
+  name?: string;
+  unsignedName?: string;
+}
+
+export interface PartObject {
+  id?: string;
+  createdTime?: string;
+  createdBy?: string;
+  updateTime?: string;
+  updateBy?: string;
+  ownerId?: string;
+  studioId?: string;
+  name?: string;
+  description?: string;
+  idExam?: string;
+  jsonExamQuestions?: string[];
+}
+
+export interface ImportTmasExamParams {
+  linkFormatById?: string;
+  examFulls?: {
+    exam?: ExamData;
+    documents?: DocumentObject[];
+    tags?: TagObject[];
+    parts?: PartObject[];
+    jsonExamQuestions?: string[];
+  }[];
 }

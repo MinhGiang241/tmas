@@ -438,8 +438,8 @@ function CreateExaminationPage({ examination }: any) {
               ) : (
                 <Link
                   className={`${pathname.includes("/examination/create")
-                      ? "text-m_neutral_900"
-                      : ""
+                    ? "text-m_neutral_900"
+                    : ""
                     } body_regular_14`}
                   href={"/examination/create"}
                 >
@@ -625,9 +625,13 @@ function CreateExaminationPage({ examination }: any) {
             </div>
 
             <div className="body_semibold_14">{t("selected_exam")}</div>
-            <div className="text-[#4D7EFF] body_regular_14 underline underline-offset-4">
-              {exam?.name ?? ""}11111
-            </div>
+            <Link
+              href={`/examination/details?examId=${exam?.id}&examTestId=${examination?.id}`}
+              className="text-[#4D7EFF] body_regular_14 underline underline-offset-4"
+            >
+              {exam?.name ?? ""}
+            </Link>
+            {/* <div>link ở đây: {exam?.name ?? ""}</div> */}
             {examination?.linkJoinTest ? (
               <>
                 <div className="h-4" />
