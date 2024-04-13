@@ -292,5 +292,8 @@
   "not_delete_public": "Không xóa được đợt thi công khai",
   "all_question_type": "Tất cả kiểu câu hỏi",
   "add_quest_to_exam": "Thêm câu hỏi vào đề thi",
-  "delete_quest_to_exam": "Xóa câu hỏi khỏi đề thi"
+  "delete_quest_to_exam": "Xóa câu hỏi khỏi đề thi",
+  "success_add_my_exam": "Thêm váo danh sách đề thi thành công",
+  "success_delete_my_exam": "Xóa khỏi danh sách đề thi thành công",
+  "delete_my_exam": "Xóa khỏi danh sách đề thi"
 }

@@ -178,8 +178,8 @@ function MyBankAddTab({
       case QuestionType.MutilAnswer:
         return (
           <ManyResult
-            deleteText={t("add_quest_to_exam")}
-            addText={t("delete_quest_to_exam")}
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -197,8 +197,8 @@ function MyBankAddTab({
       case QuestionType.YesNoQuestion:
         return (
           <TrueFalse
-            deleteText={t("add_quest_to_exam")}
-            addText={t("delete_quest_to_exam")}
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -216,8 +216,8 @@ function MyBankAddTab({
       case QuestionType.Essay:
         return (
           <Explain
-            deleteText={t("add_quest_to_exam")}
-            addText={t("delete_quest_to_exam")}
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -235,8 +235,8 @@ function MyBankAddTab({
       case QuestionType.Coding:
         return (
           <Coding
-            deleteText={t("add_quest_to_exam")}
-            addText={t("delete_quest_to_exam")}
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -254,8 +254,8 @@ function MyBankAddTab({
       case QuestionType.SQL:
         return (
           <Sql
-            deleteText={t("add_quest_to_exam")}
-            addText={t("delete_quest_to_exam")}
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -273,8 +273,8 @@ function MyBankAddTab({
       case QuestionType.Pairing:
         return (
           <Connect
-            deleteText={t("add_quest_to_exam")}
-            addText={t("delete_quest_to_exam")}
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -292,8 +292,8 @@ function MyBankAddTab({
       case QuestionType.FillBlank:
         return (
           <FillBlank
-            deleteText={t("add_quest_to_exam")}
-            addText={t("delete_quest_to_exam")}
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
@@ -311,8 +311,8 @@ function MyBankAddTab({
       case QuestionType.Random:
         return (
           <Random
-            deleteText={t("add_quest_to_exam")}
-            addText={t("delete_quest_to_exam")}
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             deleteExamBank={deleteExamBank}
             canCheck
