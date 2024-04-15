@@ -140,7 +140,7 @@ function ExamDetails({ params }: any) {
             <div className="h-5" />
             <MBreadcrumb
                 items={[
-                    { text: t("exam_list"), href: "/exams" },
+                    { text: t("story_list"), href: "/exams?tab=1" },
                     // { text: exam?.name, href: `/exams/details/${exam?.id}` },
                     {
                         href: `/exams/details/${data?.id}`,
@@ -178,7 +178,7 @@ function ExamDetails({ params }: any) {
                     </div>
                     <div className="text-sm text-m_neutral_900 flex">
                         <Cup className="mr-1 scale-75" />
-                        {data?.examData?.TotalPointsAsInt} {t("point")}
+                        {data?.examData?.TotalPointsAsInt / 100} {t("point")}
                     </div>
                     <div className="text-sm text-m_neutral_900 flex">
                         <Time className="mr-1" />

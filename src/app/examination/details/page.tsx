@@ -1,12 +1,300 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import HomeLayout from "@/app/layouts/HomeLayout";
-import React from "react";
-import dayjs from "dayjs";
+import { useSearchParams } from "next/navigation";
+import { getExamTestId } from "@/services/api_services/question_api";
+import MBreadcrumb from "@/app/components/config/MBreadcrumb";
+import { useTranslation } from "react-i18next";
+import Menu from "@/app/components/icons/menu.svg";
+import Play from "@/app/components/icons/play-cricle.svg";
+import MessageQuestion from "@/app/components/icons/message-question.svg";
+import Cup from "@/app/components/icons/cup.svg";
+import Time from "@/app/components/icons/timer.svg";
+import Document from "@/app/components/icons/document.svg";
+import Group from "@/app/components/icons/group.svg";
+import { Collapse } from "antd";
+import { getQuestionGroups } from "@/services/api_services/exam_api";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { ExamGroupData, QuestionGroupData } from "@/data/exam";
+import { RootState } from "@/redux/store";
+import {
+  setquestionGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
+import { APIResults } from "@/data/api_results";
+import { UserData } from "@/data/user";
+import Coding from "./question/Coding";
+import Connect from "./question/Connect";
+import Explain from "./question/Explain";
+import FillBlank from "./question/FillBlank";
+import Sql from "./question/Sql";
+import TrueFalse from "./question/TrueFalse";
+import ManyResult from "./question/ManyResult";
+import Random from "./question/Random";
 
 function DetailsPage() {
+  const [data, setData] = useState<any>();
+  // console.log(params, "params");
+  const search = useSearchParams();
+  // Id đợt
+  const examTestId = search.get('examTestId')
+  // console.log(examTestId, "examTestId")
+  // id đề
+  const examId = search.get('examId')
+  // console.log(examId, "examId")
+  const { t } = useTranslation("question");
+  const user: UserData | undefined = useAppSelector(
+    (state: RootState) => state?.user?.user,
+  );
+  const dispatchGroup = useAppDispatch();
+  const questionGroups: ExamGroupData[] | undefined = useAppSelector(
+    (state: RootState) => state?.examGroup?.list,
+  );
+  const loadQuestionGroupList = async (init?: boolean) => {
+    if (init) {
+      dispatchGroup(setquestionGroupLoading(true));
+    }
+
+    var dataResults: APIResults = await getQuestionGroups(
+      "",
+      user?.studio?._id,
+    );
+
+    if (dataResults.code != 0) {
+      return [];
+    } else {
+      var data = dataResults?.data as QuestionGroupData[];
+      return data;
+    }
+  };
+
+  const getDataDetail = async () => {
+    const res = await getExamTestId(examTestId)
+    // console.log(res, "data res");
+    if (res) {
+      setData(res?.data?.records[0]);
+      console.log(res?.data?.records[0], "data res");
+    }
+  }
+  useEffect(() => {
+    getDataDetail()
+  }, []);
   return (
     <HomeLayout>
-      <div className="text-7xl">Trang chi tiết </div>
+      <div className="h-5" />
+      {/* {(data?.examVersion?.exam ?? [])?.map((z: any, key: any) => { */}
+      <>
+        <MBreadcrumb
+          items={[
+            { text: t("exam_list"), href: "/exams" },
+            // { text: exam?.name, href: `/exams/details/${exam?.id}` },
+            {
+              href: `/exams/details/${data?.id}`,
+              text: data?.examVersion?.exam?.name,
+              active: true,
+            },
+          ]}
+        />
+        <div className="h-2" />
+        <div className="w-full max-lg:px-3 mb-5">
+          <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
+            <div className="">{data?.examVersion?.exam?.name}</div>
+            <div className="flex">
+            </div>
+          </div>
+          <div
+            className="text-sm text-m_neutral_500 pt-1"
+            dangerouslySetInnerHTML={{ __html: data?.examVersion?.exam?.description || "" }}
+          />
+          <div className="h-[1px] bg-m_neutral_200 mt-10" />
+          <div className="flex justify-between items-center mt-6 mb-6">
+            <div className="text-sm text-m_neutral_900 flex">
+              <Menu className="mr-1" />
+              {data?.examVersion?.parts.length} {t("part")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex">
+              <Play className="mr-1" />
+              {data?.examVersion?.exam?.examNextQuestion === "FreeByUser"
+                ? t("free_change_part")
+                : t("part_in_row")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex">
+              <MessageQuestion className="mr-1 scale-75" />
+              {data?.examVersion?.exam?.numberOfQuestions} {t("quest")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex">
+              <Cup className="mr-1 scale-75" />
+              {data?.examVersion?.exam?.totalPoints} {t("point")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex">
+              <Time className="mr-1" />
+              {/* {data?.Base?.TimeLimitMinutes ? `${data?.Base?.TimeLimitMinutes} ${t("minute")}` : t("unlimited")} */}
+              {data?.examVersion?.exam?.timeLimitMinutes
+                ? `${data?.examVersion?.exam?.timeLimitMinutes} ${t("minute")}`
+                : t("unlimited")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex">
+              <Document className="mr-1" />
+              {data?.examVersion?.exam?.examViewQuestionType === "MultiplePages"
+                ? t("all_quest_page")
+                : t("quest_per_page")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex">
+              <Group className="mr-1" />
+              {data?.examVersion?.exam?.changePositionQuestion === false
+                ? t("keep_quest_order")
+                : t("change_quest_order")}
+            </div>
+          </div>
+          <div>
+            {data &&
+              data?.examVersion?.parts?.map((x: any, key: any) => (
+                // console.log(x,"x");
+                <Collapse
+                  defaultActiveKey={["1"]}
+                  // defaultActiveKey={defaultActiveKeys}
+                  key={key}
+                  ghost
+                  expandIconPosition="end"
+                  className="mb-5 rounded-lg bg-white overflow-hidden"
+                >
+                  <Collapse.Panel
+                    key="1"
+                    header={
+                      <div className="my-3 flex justify-between items-center">
+                        <div>
+                          <div className="text-base font-semibold">{x.name}</div>
+                          <div className="text-sm text-m_neutral_500">
+                            {x.description}
+                          </div>
+                        </div>
+                        <div className="min-w-28  pl-5">
+                        </div>
+                      </div>
+                    }
+                  >
+                    {x?.Questions
+                      ?.sort((a: any, b: any) =>
+                        a.createdTime < b.createdTime
+                          ? -1
+                          : a.createdTime > b.createdTime
+                            ? 1
+                            : 0,
+                      )
+                      .map((e: any, key: any) => {
+                        var questionGroup = questionGroups?.find(
+                          (v: any) => v.id === e.IdGroupQuestion,
+                        );
+                        // console.log(questionGroup, "questionGroup");
+
+                        if (e.QuestionType == "Coding") {
+                          return (
+                            <Coding
+                              index={key + 1}
+                              key={e.id}
+                              examId={examId}
+                              question={e}
+                              getData={getDataDetail}
+                              questionGroup={questionGroup}
+                            />
+                          );
+                        }
+                        if (e.QuestionType == "Pairing") {
+                          return (
+                            <Connect
+                              index={key + 1}
+                              key={e.id}
+                              examId={examId}
+                              question={e}
+                              getData={getDataDetail}
+                              questionGroup={questionGroup}
+                            />
+                          );
+                        }
+                        if (e.QuestionType == "Essay") {
+                          return (
+                            <Explain
+                              index={key + 1}
+                              key={e.id}
+                              examId={examId}
+                              question={e}
+                              getData={getDataDetail}
+                              questionGroup={questionGroup}
+                            />
+                          );
+                        }
+                        if (e.QuestionType == "FillBlank") {
+                          return (
+                            <FillBlank
+                              index={key + 1}
+                              key={e.id}
+                              examId={examId}
+                              question={e}
+                              getData={getDataDetail}
+                              questionGroup={questionGroup}
+                            />
+                          );
+                        }
+                        if (e.QuestionType == "MutilAnswer") {
+                          return (
+                            <ManyResult
+                              getData={getDataDetail}
+                              index={key + 1}
+                              key={e.id}
+                              examId={examId}
+                              question={e}
+                              questionGroup={questionGroup}
+                            />
+                          );
+                        }
+                        if (e.QuestionType == "SQL") {
+                          return (
+                            <Sql
+                              index={key + 1}
+                              key={e.id}
+                              examId={examId}
+                              question={e}
+                              getData={getDataDetail}
+                              questionGroup={questionGroup}
+                            />
+                          );
+                        }
+                        if (e.QuestionType == "YesNoQuestion") {
+                          return (
+                            <TrueFalse
+                              index={key + 1}
+                              key={e.id}
+                              examId={examId}
+                              question={e}
+                              getData={getDataDetail}
+                              questionGroup={questionGroup}
+                            />
+                          );
+                        }
+                        return (
+                          <Random
+                            index={key + 1}
+                            key={e.id}
+                            examId={examId}
+                            question={e}
+                            getData={getDataDetail}
+                            questionGroup={questionGroup}
+                          />
+                        );
+                      })}
+                  </Collapse.Panel>
+                </Collapse>
+              ))}
+            {/* <div>123123</div> */}
+          </div>
+          {/* <ManyResult /> */}
+        </div>
+        <div className="h-20" />
+      </>
+      {/* })} */}
+
+      {/* <div className="hidden">
+        <ExamPrint exam={data?.records} ref={printRef} name={exam?.name} />
+      </div> */}
     </HomeLayout>
   );
 }

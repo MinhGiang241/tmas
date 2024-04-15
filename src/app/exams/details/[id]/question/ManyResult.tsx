@@ -12,7 +12,7 @@ import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import NewIcon from "@/app/components/icons/export.svg";
 import Tick from "@/app/components/icons/tick-circle.svg";
 import { useRouter } from "next/navigation";
-import { FormattedDate } from "react-intl";
+import { FormattedDate, FormattedTime } from "react-intl";
 import {
   deleteQuestionById,
   duplicateQuestion,
@@ -135,9 +135,8 @@ export default function ManyResult({
               <div className="flex flex-col">
                 <div
                   ref={containerRef}
-                  className={`body_semibold_14 ${
-                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                  }`}
+                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                    }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -264,6 +263,13 @@ export default function ManyResult({
                   day="2-digit"
                   month="2-digit"
                   year="numeric"
+                />
+                <div className="w-2" />
+                <FormattedTime
+                  value={question?.createdTime}
+                  hour="2-digit"
+                  minute="2-digit"
+                  second="2-digit"
                 />
               </div>
             </div>

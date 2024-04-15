@@ -152,7 +152,7 @@ const ExamQuestion = ({
           {renderSubTitleQuestionType(question)}
         </span>
       </h2>
-      {question.questionType !== QuestionType.FillBlank && (
+      {question?.questionType !== QuestionType.FillBlank && (
         <div dangerouslySetInnerHTML={{ __html: question.question }} />
       )}
       <hr />

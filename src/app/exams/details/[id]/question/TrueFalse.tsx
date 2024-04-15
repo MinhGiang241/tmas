@@ -10,7 +10,7 @@ import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import { useRouter } from "next/navigation";
-import { FormattedDate } from "react-intl";
+import { FormattedDate, FormattedTime } from "react-intl";
 import Tick from "@/app/components/icons/tick-circle.svg";
 import {
   deleteQuestionById,
@@ -66,7 +66,7 @@ export default function TrueFalse({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -136,9 +136,8 @@ export default function TrueFalse({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${
-                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                  }`}
+                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                    }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -201,8 +200,7 @@ export default function TrueFalse({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/exams/details/${examId ?? "u"}/edit?questId=${
-                          question.id
+                        `/exams/details/${examId ?? "u"}/edit?questId=${question.id
                         }`,
                       );
                     }}
@@ -263,6 +261,13 @@ export default function TrueFalse({
                   day="2-digit"
                   month="2-digit"
                   year="numeric"
+                />
+                <div className="w-2" />
+                <FormattedTime
+                  value={question?.createdTime}
+                  hour="2-digit"
+                  minute="2-digit"
+                  second="2-digit"
                 />
               </div>
             </div>
