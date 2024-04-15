@@ -45,6 +45,8 @@ import {
 } from "@/redux/exam_group/examGroupSlice";
 import { APIResults } from "@/data/api_results";
 import { getQuestionGroups } from "@/services/api_services/exam_api";
+import TagSearchSelect from "@/app/components/config/TagsSearch";
+import { useFormik } from "formik";
 
 function TmasAddTab({
   hidden,
@@ -74,10 +76,13 @@ function TmasAddTab({
   const [active, setActive] = useState<BaseQuestionData>();
   useEffect(() => {
     loadQuestionList(true);
+    console.log("laod");
+
     // dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
   }, [user, recordNum, indexPage, questionType, tags]);
 
   useOnMountUnsafe(() => {
+    onSearchTags("");
     dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
   });
   const loadQuestionGroupList = async (init?: boolean) => {
@@ -219,6 +224,8 @@ function TmasAddTab({
       case QuestionType.MutilAnswer:
         return (
           <ManyResult
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
@@ -236,6 +243,8 @@ function TmasAddTab({
       case QuestionType.YesNoQuestion:
         return (
           <TrueFalse
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
@@ -253,6 +262,8 @@ function TmasAddTab({
       case QuestionType.Essay:
         return (
           <Explain
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
@@ -270,6 +281,8 @@ function TmasAddTab({
       case QuestionType.Coding:
         return (
           <Coding
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
@@ -287,6 +300,8 @@ function TmasAddTab({
       case QuestionType.SQL:
         return (
           <Sql
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
@@ -304,6 +319,8 @@ function TmasAddTab({
       case QuestionType.Pairing:
         return (
           <Connect
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
@@ -321,6 +338,8 @@ function TmasAddTab({
       case QuestionType.FillBlank:
         return (
           <FillBlank
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
@@ -338,6 +357,8 @@ function TmasAddTab({
       case QuestionType.Random:
         return (
           <Random
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
             isExist={isExist}
             canCheck
             onChangeCheck={onChangeCheck}
@@ -491,14 +512,12 @@ function TmasAddTab({
           <div className="w-11" />
           <MDropdown
             placeholder={t("enter_tags_to_search")}
-            setValue={(name: any, value: any) => {
-              setTags(() => value);
-              setIndexPage(1);
+            setValue={(anme: string, value: any) => {
+              setTags(value), setIndexPage(1);
             }}
             onSearch={onSearchTags}
             options={optionTag}
             className="tag-big"
-            popupClassName="hidden"
             id="tags"
             name="tags"
             mode="tags"

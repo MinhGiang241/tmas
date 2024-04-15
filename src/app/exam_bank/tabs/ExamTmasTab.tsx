@@ -95,6 +95,7 @@ function ExamTmasTab() {
   }, [indexPage, recordNum, user, tags]);
   const [openSelectExam, setOpenSelectExam] = useState<boolean>(false);
   useOnMountUnsafe(() => {
+    onSearchTags("");
     dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
   }, []);
   const loadExamGroupList = async (init?: boolean) => {
@@ -300,7 +301,6 @@ function ExamTmasTab() {
               setIndexPage(1);
             }}
             className="tag-big"
-            popupClassName="hidden"
             id="tags"
             name="tags"
             mode="tags"

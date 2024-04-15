@@ -68,6 +68,7 @@ function QuestionTmasTab() {
   }, [user, indexPage, recordNum, questionType, tags]);
 
   useOnMountUnsafe(() => {
+    onSearchTags("");
     dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
   });
 
@@ -405,7 +406,6 @@ function QuestionTmasTab() {
             onSearch={onSearchTags}
             options={optionTag}
             className="tag-big"
-            popupClassName="hidden"
             id="tags"
             name="tags"
             mode="tags"

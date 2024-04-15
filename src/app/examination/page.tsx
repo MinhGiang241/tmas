@@ -519,6 +519,13 @@ function ExaminationPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+                          if (
+                            v?.stateInfo?.approvedState ===
+                            AppovedState.Rejected
+                          ) {
+                            notifyToast(t("not_edit_refused_examination"));
+                            return;
+                          }
 
                           router.push(`/examination/${v?.id}`);
                         }}
@@ -529,6 +536,10 @@ function ExaminationPage() {
                       <button
                         onClick={async (e) => {
                           e.stopPropagation();
+                          if (v?.sharingSetting === "Public") {
+                            notifyToast(t("not_dup_public_examination"));
+                            return;
+                          }
                           setActive(v);
                           setOpenDup(true);
                         }}
