@@ -11,7 +11,7 @@ import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import Tick from "@/app/components/icons/tick-circle.svg";
 import { useRouter } from "next/navigation";
-import { FormattedDate } from "react-intl";
+import { FormattedDate, FormattedTime } from "react-intl";
 import {
   deleteQuestionById,
   duplicateQuestion,
@@ -61,7 +61,7 @@ export default function Sql({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -131,9 +131,8 @@ export default function Sql({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${
-                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                  }`}
+                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                    }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -195,8 +194,7 @@ export default function Sql({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/exams/details/${examId ?? "u"}/edit?questId=${
-                          question.id
+                        `/exams/details/${examId ?? "u"}/edit?questId=${question.id
                         }`,
                       );
                     }}
@@ -253,6 +251,13 @@ export default function Sql({
               day="2-digit"
               month="2-digit"
               year="numeric"
+            />
+            <div className="w-2" />
+            <FormattedTime
+              value={question?.createdTime}
+              hour="2-digit"
+              minute="2-digit"
+              second="2-digit"
             />
           </div>
         </Collapse.Panel>

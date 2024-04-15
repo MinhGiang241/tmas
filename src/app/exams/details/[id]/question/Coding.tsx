@@ -20,7 +20,7 @@ import {
   deleteQuestionPart,
   duplicateQuestion,
 } from "@/services/api_services/question_api";
-import { FormattedDate } from "react-intl";
+import { FormattedDate, FormattedTime } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
@@ -70,7 +70,7 @@ export default function Coding({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -140,9 +140,8 @@ export default function Coding({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${
-                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                  }`}
+                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                    }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -204,8 +203,7 @@ export default function Coding({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/exams/details/${examId ?? "u"}/edit?questId=${
-                          question.id
+                        `/exams/details/${examId ?? "u"}/edit?questId=${question.id
                         }`,
                       );
                     }}
@@ -260,6 +258,13 @@ export default function Coding({
               day="2-digit"
               month="2-digit"
               year="numeric"
+            />
+            <div className="w-2" />
+            <FormattedTime
+              value={question?.createdTime}
+              hour="2-digit"
+              minute="2-digit"
+              second="2-digit"
             />
           </div>
         </Collapse.Panel>

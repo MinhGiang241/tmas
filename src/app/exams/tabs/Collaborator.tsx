@@ -208,8 +208,9 @@ function Collaborator({ hidden }: { hidden: boolean }) {
             </div>
           ) : (
             list.map((v: any, i: number) => {
+              // console.log("/exams/bc_version/preview/", v);
               const examData = safeParseJson(v?.exam_data);
-
+              // console.log("examData", examData);
               const childsList = (examGroup ?? []).reduce(
                 (acc: any, va) => [...acc, ...(va?.childs ?? [])],
                 [],
@@ -244,7 +245,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                         <div className="flex">
                           <MessIcon />
                           <span className="ml-2 body_regular_14">
-                            {`${examData?.numberOfQuestions} ${t(
+                            {`${v?.examData?.NumberOfQuestions} ${t(
                               "question",
                             )?.toLowerCase()}`}
                           </span>
@@ -252,7 +253,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                         <div className="flex">
                           <FolderIcon />
                           <span className="ml-2 body_regular_14">
-                            {group?.name ?? ""}
+                            {v?.group_name ?? ""}
                           </span>
                         </div>
                       </div>
@@ -300,7 +301,7 @@ function Collaborator({ hidden }: { hidden: boolean }) {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(`/exams/details/${v?.examId}`);
+                          router.push(`/exams/bc_version/preview/${v?._id}`);
                         }}
                       >
                         <ExportOutlined className="text-2xl" />

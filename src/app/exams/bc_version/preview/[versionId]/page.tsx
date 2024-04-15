@@ -140,7 +140,7 @@ function ExamDetails({ params }: any) {
             <div className="h-5" />
             <MBreadcrumb
                 items={[
-                    { text: t("exam_list"), href: "/exams" },
+                    { text: t("story_list"), href: "/exams?tab=1" },
                     // { text: exam?.name, href: `/exams/details/${exam?.id}` },
                     {
                         href: `/exams/details/${data?.id}`,

@@ -73,7 +73,7 @@ const ExamQuestion = ({
               className="mb-2"
             />
             <div className="flex flex-col gap-4">
-              {anwserItems.map((awn: any, index: number) => {
+              {anwserItems?.map((awn: any, index: number) => {
                 return (
                   <div key={index} className="flex gap-1">
                     <span
@@ -152,7 +152,7 @@ const ExamQuestion = ({
           {renderSubTitleQuestionType(question)}
         </span>
       </h2>
-      {question.questionType !== QuestionType.FillBlank && (
+      {question?.questionType !== QuestionType.FillBlank && (
         <div dangerouslySetInnerHTML={{ __html: question.question }} />
       )}
       <hr />

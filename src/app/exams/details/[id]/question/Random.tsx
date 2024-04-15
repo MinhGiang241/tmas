@@ -4,7 +4,7 @@ import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
 import EditIcon from "@/app/components/icons/edit-black.svg";
 import CopyIcon from "@/app/components/icons/size.svg";
 import { useTranslation } from "react-i18next";
-import { FormattedDate } from "react-intl";
+import { FormattedDate, FormattedTime } from "react-intl";
 import { useRouter } from "next/navigation";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import {
@@ -53,7 +53,7 @@ function Random({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -173,8 +173,7 @@ function Random({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/exams/details/${
-                          examId ?? "u"
+                        `/exams/details/${examId ?? "u"
                         }/edit?questId=${question?.id}`,
                       );
                     }}
@@ -231,6 +230,13 @@ function Random({
               day="2-digit"
               month="2-digit"
               year="numeric"
+            />
+            <div className="w-2" />
+            <FormattedTime
+              value={question?.createdTime}
+              hour="2-digit"
+              minute="2-digit"
+              second="2-digit"
             />
           </div>
         </Collapse.Panel>
