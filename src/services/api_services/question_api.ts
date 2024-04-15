@@ -323,12 +323,14 @@ export const getTmasQuestList = async ({
   skip,
   limit,
   type,
+  tags,
 }: {
   text?: string;
   skip?: number;
   limit?: number;
   fields?: any;
   type?: string;
+  tags?: string[];
 }) => {
   const results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/questionbank.search`,
@@ -337,6 +339,7 @@ export const getTmasQuestList = async ({
       skip,
       limit,
       type,
+      tags,
     },
   );
   return results;

@@ -58,13 +58,14 @@ function QuestionTmasTab() {
   const [loadingAdd, setLoadingAdd] = useState<boolean>(false);
   const [active, setActive] = useState<BaseQuestionData>();
   const [search, setSearch] = useState<string | undefined>();
+  const [tags, setTags] = useState<string[]>([]);
   const [questionType, setQuestionType] = useState<string | undefined>();
 
   useEffect(() => {
     loadQuestionList(true);
     loadQuestionGroupList(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, indexPage, recordNum, questionType]);
+  }, [user, indexPage, recordNum, questionType, tags]);
 
   useOnMountUnsafe(() => {
     dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
@@ -80,6 +81,7 @@ function QuestionTmasTab() {
       limit: recordNum,
       skip: (indexPage - 1) * recordNum,
       type: questionType,
+      tags,
     });
     setLoadingPage(false);
     console.log("res", res);
@@ -352,6 +354,7 @@ function QuestionTmasTab() {
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
               setSearch(e.target.value);
+              setIndexPage(1);
             }}
             className="max-lg:mt-3"
             placeholder={t("search_test_group")}
@@ -373,6 +376,7 @@ function QuestionTmasTab() {
             value={questionType}
             setValue={(na: any, val: any) => {
               setQuestionType(val);
+              setIndexPage(1);
             }}
             h="h-11"
             id="question_type"
@@ -385,6 +389,7 @@ function QuestionTmasTab() {
               "Pairing",
               "Coding",
               "Essay",
+              "Random",
               "",
             ].map((e: string) => ({
               value: e,
@@ -393,6 +398,9 @@ function QuestionTmasTab() {
           />
           <div className="w-11" />
           <MDropdown
+            setValue={(anme: string, value: any) => {
+              setTags(value), setIndexPage(1);
+            }}
             placeholder={t("enter_tags_to_search")}
             onSearch={onSearchTags}
             options={optionTag}

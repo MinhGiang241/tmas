@@ -271,6 +271,7 @@ function ExamTmasTab() {
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
               setSearch(e.target.value);
+              setIndexPage(1);
             }}
             className="max-lg:mt-3"
             placeholder={t("search_test_group")}
@@ -296,6 +297,7 @@ function ExamTmasTab() {
             options={optionTag}
             setValue={(name: any, value: any) => {
               setTags(() => value);
+              setIndexPage(1);
             }}
             className="tag-big"
             popupClassName="hidden"

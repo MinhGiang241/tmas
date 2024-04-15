@@ -97,7 +97,7 @@ function MyBankAddTab({
         recordPerPage: recordNum,
         startIndex: indexPage,
       },
-      isQuestionBank: false,
+      isQuestionBank: true,
       searchQuestion: search,
       andIdGroupQuestions: questGroupId ? [questGroupId] : undefined,
       sorters: [
@@ -399,6 +399,7 @@ function MyBankAddTab({
         <form className="flex w-full max-lg:flex-col max-lg:mx-5">
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
+              setIndexPage(1);
               setSearch(e.target.value);
             }}
             className="max-lg:mt-3"
@@ -420,6 +421,7 @@ function MyBankAddTab({
             allowClear={false}
             value={questionType}
             setValue={(na: any, val: any) => {
+              setIndexPage(1);
               setQuestionType(val);
             }}
             placeholder={t("quest_type")}
@@ -434,6 +436,7 @@ function MyBankAddTab({
               "Pairing",
               "Coding",
               "Essay",
+              "Random",
               "",
             ].map((e: string) => ({
               value: e,
@@ -445,6 +448,7 @@ function MyBankAddTab({
             placeholder={t("question_group")}
             value={questGroupId}
             setValue={(name: any, value: any) => {
+              setIndexPage(1);
               setQuestGroupId(value);
             }}
             options={questionGroupOptions}
@@ -455,6 +459,7 @@ function MyBankAddTab({
           <MDropdown
             value={sort}
             setValue={(name: any, value: any) => {
+              setIndexPage(1);
               setSort(value);
             }}
             h="h-11"

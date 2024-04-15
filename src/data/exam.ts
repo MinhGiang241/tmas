@@ -127,6 +127,11 @@ export interface ExaminationData {
     disablePatse?: boolean;
     limitExitScreen?: number;
   };
+  stateInfo?: {
+    approvedState?: AppovedState;
+    approver?: string;
+    lastApproveAt?: string;
+  };
   studioId?: string;
   isActive?: boolean;
   isAvaiableTest?: boolean;

@@ -63,6 +63,7 @@ function TmasAddTab({
   const [total, setTotal] = useState<number>(0);
   const [search, setSearch] = useState<string | undefined>();
   const [loadingPage, setLoadingPage] = useState<boolean>(false);
+  const [tags, setTags] = useState<string[]>([]);
   const user = useAppSelector((state: RootState) => state.user.user);
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
     (state: RootState) => state?.examGroup?.questions,
@@ -74,12 +75,11 @@ function TmasAddTab({
   useEffect(() => {
     loadQuestionList(true);
     // dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
-  }, [user, recordNum, indexPage, questionType]);
+  }, [user, recordNum, indexPage, questionType, tags]);
 
   useOnMountUnsafe(() => {
     dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
   });
-
   const loadQuestionGroupList = async (init?: boolean) => {
     if (user?.studio?._id) {
       var dataResults: APIResults = await getQuestionGroups(
@@ -106,6 +106,7 @@ function TmasAddTab({
       limit: recordNum,
       skip: (indexPage - 1) * recordNum,
       type: questionType,
+      tags,
     });
     setLoadingPage(false);
     console.log("res", res);
@@ -368,7 +369,6 @@ function TmasAddTab({
   const [checkedAll, setCheckedAll] = useState<boolean>(false);
 
   const [optionTag, setOptionTag] = useState<any[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
   const onSearchTags = async (searchKey: any) => {
     console.log("onSearchKey", searchKey);
     const data = await getTags(
@@ -445,6 +445,7 @@ function TmasAddTab({
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
               setSearch(e.target.value);
+              setIndexPage(1);
             }}
             className="max-lg:mt-3"
             placeholder={t("enter_key_search")}
@@ -466,6 +467,7 @@ function TmasAddTab({
             placeholder={t("quest_type")}
             value={questionType}
             setValue={(na: any, val: any) => {
+              setIndexPage(1);
               setQuestionType(val);
             }}
             h="h-11"
@@ -479,6 +481,7 @@ function TmasAddTab({
               "Pairing",
               "Coding",
               "Essay",
+              "Random",
               "",
             ].map((e: string) => ({
               value: e,
@@ -490,6 +493,7 @@ function TmasAddTab({
             placeholder={t("enter_tags_to_search")}
             setValue={(name: any, value: any) => {
               setTags(() => value);
+              setIndexPage(1);
             }}
             onSearch={onSearchTags}
             options={optionTag}

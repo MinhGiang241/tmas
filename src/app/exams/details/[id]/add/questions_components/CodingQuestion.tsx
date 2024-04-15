@@ -141,7 +141,9 @@ function CodingQuestion({
   ]);
   const router = useRouter();
   const search = useSearchParams();
-  const idExamQuestionPart = search.get("partId");
+  const idExamQuestionPart = search.get("partId")
+    ? search.get("partId")
+    : undefined;
   const dispatch = useAppDispatch();
 
   type CheckboxValueType = GetProp<typeof Checkbox.Group, "value">[number];

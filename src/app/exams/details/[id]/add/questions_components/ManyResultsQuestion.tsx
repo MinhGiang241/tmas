@@ -149,7 +149,8 @@ function ManyResultsQuestion({
     return errors;
   };
   const search = useSearchParams();
-  const idExamQuestionPart = search.get("partId");
+  const idExamQuestionPart =
+    search.get("partId") != null ? search.get("partId") : undefined;
 
   const formik = useFormik({
     initialValues,

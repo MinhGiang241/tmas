@@ -498,16 +498,19 @@ function CreateExaminationPage({ examination }: any) {
             />
             <div className="h-4" />
             {share != "Private" && <GoldPrice formik={formik} />}
-            <div className="h-4" />
-            <ExaminationCodePage
-              examination={examination}
-              codeList={codeList}
-              setCodeList={setCodeList}
-              formik={formik}
-              value={code}
-              setValue={setCode}
-            />
-            <div className="h-4" />
+            {share != "Private" && <div className="h-4" />}
+            {share === "Private" && (
+              <ExaminationCodePage
+                examination={examination}
+                codeList={codeList}
+                setCodeList={setCodeList}
+                formik={formik}
+                value={code}
+                setValue={setCode}
+              />
+            )}
+            {share === "Private" && <div className="h-4" />}
+
             <ValidExamination
               startTime={startTime}
               setStartTime={setStartTime}
@@ -516,11 +519,13 @@ function CreateExaminationPage({ examination }: any) {
               formik={formik}
             />
             <div className="h-4" />
-            <ResultTest
-              checkedList={resultChecked}
-              setCheckedList={setResultChecked}
-            />
-            <div className="h-4" />
+            {share === "Private" && (
+              <ResultTest
+                checkedList={resultChecked}
+                setCheckedList={setResultChecked}
+              />
+            )}
+            {share === "Private" && <div className="h-4" />}
             <RequireInfo value={infoChecked} setValue={setInfoChecked} />
             <div className="h-4" />
             <PassPoint formik={formik} />

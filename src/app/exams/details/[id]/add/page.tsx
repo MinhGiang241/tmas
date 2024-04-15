@@ -164,7 +164,7 @@ function CreateQuestionPage({ params, question }: any) {
             onClick={() => {
               if (question) {
                 router.replace(
-                  `?partId=${partId}&questId=${questId}&question=${a}`,
+                  `?partId=${partId ?? ""}&questId=${questId}&question=${a}`,
                 );
                 return;
               }
@@ -175,7 +175,9 @@ function CreateQuestionPage({ params, question }: any) {
                 dispatch(resetConnectAnswer(0));
               }
               router.replace(
-                `/exams/details/${params.id}/add?partId=${partId}&question=${a}`,
+                `/exams/details/${params.id}/add?partId=${
+                  partId ?? ""
+                }&question=${a}`,
                 {
                   scroll: false,
                 },

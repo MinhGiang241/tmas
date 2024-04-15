@@ -88,7 +88,7 @@ function ExaminationPage() {
             "FilterByName.Name": "Name",
             "FilterByName.InValues": search ?? undefined,
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
-            "FilterByExamGroupId.Name": "Name",
+            "FilterByExamGroupId.Name": "ExamGroupId",
             "Paging.RecordPerPage": recordNum,
             "Paging.StartIndex": indexPage, //(indexPage - 1) * recordNum,
             "SorterByName.isAsc": sort == "name" ? true : undefined,
@@ -324,6 +324,7 @@ function ExaminationPage() {
             value={groupId}
             setValue={(name: any, e: any) => {
               setGroupId(e);
+              setIndexPage(1);
             }}
             allowClear={false}
             defaultValue=""
@@ -357,6 +358,7 @@ function ExaminationPage() {
             value={status}
             setValue={(name: any, value: any) => {
               setStatus(value);
+              setIndexPage(1);
             }}
             placeholder={t("status")}
             options={[
@@ -427,12 +429,13 @@ function ExaminationPage() {
                               : "text-[#FF9736]"
                           }`}
                         >
+                          {/* {v.tag} */}
                           {v?.sharingSetting === "Public" &&
                           v?.goldSetting?.isEnable &&
                           v?.goldSetting.goldPrice != 0
                             ? `#Public_${v?.goldSetting?.goldPrice}`
                             : v?.sharingSetting === "Public"
-                              ? `#Public_Free`
+                              ? `#Public_free`
                               : `#Private`}
                         </div>
                       </div>
@@ -489,18 +492,20 @@ function ExaminationPage() {
                         <span className="body_regular_14 mr-2">
                           {t("approved_date")}:
                         </span>
-                        {dayjs(v?.createdTime ?? "").format(dateFormat)}
+                        {v?.stateInfo?.lastApproveAt &&
+                          dayjs(v?.stateInfo?.lastApproveAt ?? "").format(
+                            dateFormat,
+                          )}
                       </div>
                       <div className="w-1/3" />
-                      <div className="flex items-center">
-                        <span className="body_regular_14 mr-2">
-                          {t("status")}:{" "}
-                        </span>
-                        {genStateWidget(
-                          v?.examVersion?.exam?.approvedState?.approvedState ??
-                            "",
-                        )}
-                      </div>
+                      {v?.sharingSetting && v?.sharingSetting != "Private" && (
+                        <div className="flex items-center">
+                          <span className="body_regular_14 mr-2">
+                            {t("status")}
+                          </span>
+                          {genStateWidget(v?.stateInfo?.approvedState ?? "")}
+                        </div>
+                      )}
                     </div>
                     {v?.examTestCode && (
                       <div className="body_regular_14 italic mt-3">
