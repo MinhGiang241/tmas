@@ -212,12 +212,15 @@ function ExamTmasTab() {
       ],
     });
     setLoadingClone(false);
+
     if (res.code != 0) {
       errorToast(res.message ?? "");
       return;
     }
+
+    successToast(t("success_add_my_exam"));
     var isAddClone = _.cloneDeep(isAdd);
-    isAddClone[active?.Version!] = res?.data;
+    isAddClone[active?.Version!] = res?.data[0]?.idExam;
     console.log("isAddClone", isAddClone);
 
     setIsAdd(isAddClone);
@@ -228,14 +231,14 @@ function ExamTmasTab() {
 
   const handleDeleteExam = async (id: string) => {
     setLoadingClone(true);
-    const res = await deleteExamination(isAdd(id));
+    const res = await deleteExamination(isAdd[id]);
     setLoadingClone(false);
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
       return;
     }
 
-    successToast(t("success_delete_exam"));
+    successToast(t("success_delete_my_exam"));
     var isAddClone = _.cloneDeep(isAdd);
     isAddClone[id] = undefined;
     setActive(undefined);
@@ -384,7 +387,7 @@ function ExamTmasTab() {
                           h="h-11"
                           type="error"
                           icon={<RedDeleteIcon />}
-                          text={t("delete_my_bank_quest")}
+                          text={t("delete_my_exam")}
                         />
                       ) : (
                         <MButton
@@ -401,7 +404,7 @@ function ExamTmasTab() {
                           h="h-11"
                           type="secondary"
                           icon={<AddIcon />}
-                          text={t("add_bank")}
+                          text={t("add_my_exam")}
                         />
                       )}
                     </div>

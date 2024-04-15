@@ -69,7 +69,7 @@ function TmasAddTab({
   );
   const dispatch = useAppDispatch();
   const [questGroupId, setQuestGroupId] = useState<string | undefined>();
-  const [questionType, setQuestionType] = useState<string | undefined>();
+  const [questionType, setQuestionType] = useState<string | undefined>("");
   const [active, setActive] = useState<BaseQuestionData>();
   useEffect(() => {
     loadQuestionList(true);
@@ -447,7 +447,7 @@ function TmasAddTab({
               setSearch(e.target.value);
             }}
             className="max-lg:mt-3"
-            placeholder={t("search_test_group")}
+            placeholder={t("enter_key_search")}
             h="h-11"
             id="search"
             name="search"
@@ -462,6 +462,7 @@ function TmasAddTab({
           />
           <div className="w-11" />
           <MDropdown
+            allowClear={false}
             placeholder={t("quest_type")}
             value={questionType}
             setValue={(na: any, val: any) => {
@@ -481,7 +482,7 @@ function TmasAddTab({
               "",
             ].map((e: string) => ({
               value: e,
-              label: !e ? t("Tất cả ") : t(e?.toLowerCase()),
+              label: !e ? t("all_question_type") : t(e?.toLowerCase()),
             }))}
           />
           <div className="w-11" />

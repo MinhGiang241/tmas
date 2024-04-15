@@ -32,7 +32,12 @@ export default function Sql({
   onChangeCheck,
   isExist,
   deleteExamBank,
+  addText,
+  deleteText,
 }: {
+  addText?: string;
+  deleteText?: string;
+
   isExist?: boolean;
   deleteExamBank?: Function;
   examId?: any;
@@ -136,6 +141,7 @@ export default function Sql({
                 >
                   {canCheck && (
                     <Checkbox
+                      className="mr-3"
                       onChange={onChangeCheck as any}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -173,7 +179,7 @@ export default function Sql({
                     }}
                     h="h-11"
                     icon={<DeleteRedIcon />}
-                    text={t("delete_bank")}
+                    text={deleteText ?? t("delete_bank")}
                   />
                 ) : (
                   <MButton
@@ -185,7 +191,7 @@ export default function Sql({
                     h="h-11"
                     type="secondary"
                     icon={<AddIcon />}
-                    text={t("add_bank")}
+                    text={addText ?? t("add_bank")}
                   />
                 )
               ) : (

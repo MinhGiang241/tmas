@@ -32,7 +32,11 @@ import {
   getExaminationTestList,
   updateExamination,
 } from "@/services/api_services/examination_api";
-import { errorToast, successToast } from "../components/toast/customToast";
+import {
+  errorToast,
+  notifyToast,
+  successToast,
+} from "../components/toast/customToast";
 import { ExaminationFormData } from "@/data/form_interface";
 import { FormattedDate } from "react-intl";
 import ConfirmModal from "../components/modals/ConfirmModal";
@@ -127,19 +131,19 @@ function ExaminationPage() {
     switch (state) {
       case "Rejected":
         return (
-          <div className="p-2 italic rounded-lg bg-m_error_100 text-m_error_600">
+          <div className="p-2  rounded-lg bg-m_error_100 text-m_error_600">
             {t(state)}
           </div>
         );
       case "Pending":
         return (
-          <div className="p-2 italic rounded-lg bg-m_warning_100 text-m_warning_700">
+          <div className="p-2  rounded-lg bg-m_warning_100 text-m_warning_700">
             {t(state)}
           </div>
         );
       case "Approved":
         return (
-          <div className="p-2 italic rounded-lg bg-m_success_100 text-m_success_700">
+          <div className="p-2  rounded-lg bg-m_success_100 text-m_success_700">
             {t(state)}
           </div>
         );
@@ -331,6 +335,7 @@ function ExaminationPage() {
             options={optionSelect}
           />
           <MDropdown
+            allowClear={false}
             value={sort}
             setValue={(n: any, value: any) => {
               setSort(value);
@@ -425,15 +430,15 @@ function ExaminationPage() {
                           {v?.sharingSetting === "Public" &&
                           v?.goldSetting?.isEnable &&
                           v?.goldSetting.goldPrice != 0
-                            ? `Public_${v?.goldSetting?.goldPrice}`
+                            ? `#Public_${v?.goldSetting?.goldPrice}`
                             : v?.sharingSetting === "Public"
-                              ? `Public_Free`
-                              : `Private`}
+                              ? `#Public_Free`
+                              : `#Private`}
                         </div>
                       </div>
                     </div>
-                    <div className="w-full justify-start my-3 flex max-lg:flex-wrap">
-                      <div className="flex ">
+                    <div className="w-full items-center justify-start my-3 flex max-lg:flex-wrap">
+                      <div className="flex items-center">
                         <CalendarIcon />
                         <span className="body_regular_14 ml-2">
                           <FormattedDate
@@ -444,7 +449,7 @@ function ExaminationPage() {
                           />
                         </span>
                       </div>
-                      <div className="flex mx-4">
+                      <div className="flex mx-4 items-center">
                         <span className="mx-4 body_regular_14">
                           {!v?.validAccessSetting?.validFrom &&
                           !v?.validAccessSetting?.validTo
@@ -456,7 +461,7 @@ function ExaminationPage() {
                               ).format(dateFormat)}`}
                         </span>
                       </div>
-                      <div className="flex">
+                      <div className="flex items-center">
                         <div className="min-w-6">
                           <LinkIcon />
                         </div>
@@ -476,12 +481,7 @@ function ExaminationPage() {
                       <span className="body_regular_14 mr-2">
                         {t("created_date")}:
                       </span>
-                      <FormattedDate
-                        value={v?.createdTime}
-                        day="2-digit"
-                        month="2-digit"
-                        year="numeric"
-                      />
+                      {dayjs(v?.createdTime ?? "").format(dateFormat)}
                     </div>
 
                     <div className=" flex body_semibold_14 items-center w-full">
@@ -489,12 +489,7 @@ function ExaminationPage() {
                         <span className="body_regular_14 mr-2">
                           {t("approved_date")}:
                         </span>
-                        <FormattedDate
-                          value={v?.createdTime}
-                          day="2-digit"
-                          month="2-digit"
-                          year="numeric"
-                        />
+                        {dayjs(v?.createdTime ?? "").format(dateFormat)}
                       </div>
                       <div className="w-1/3" />
                       <div className="flex items-center">
@@ -519,6 +514,7 @@ function ExaminationPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+
                           router.push(`/examination/${v?.id}`);
                         }}
                       >
@@ -539,6 +535,10 @@ function ExaminationPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+                          if (v?.sharingSetting === "Public") {
+                            notifyToast(t("not_delete_public"));
+                            return;
+                          }
                           setActive(v);
                           setOpenDelete(true);
                         }}

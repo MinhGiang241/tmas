@@ -119,7 +119,7 @@ export interface ExaminationData {
   idSession?: string;
   updateTime?: string;
   createdTime?: string;
-  examVersion?: ExamVersion;
+  examVersion?: { exam?: ExamVersion };
   examTestCode?: string;
   accessCodeSettings?: AccessCodeExaminantionSetting[];
   cheatingSetting?: {

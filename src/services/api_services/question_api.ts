@@ -382,15 +382,11 @@ export const createBatchQuestion = async (items: BaseQuestionData[]) => {
 };
 
 export const importTmasExamData = async (data: ImportTmasExamParams) => {
-  var results = await callApi.post(
+  var results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Import`,
     data,
   );
-  if (results.code === 0) {
-    return results.data;
-  }
-
-  return 0;
+  return results;
 };
 
 
