@@ -179,7 +179,7 @@ function ExamTmasTab() {
         description: e?.Description,
         name: e?.Name,
         jsonExamQuestions: e?.Questions?.map((e) => {
-          var q = _.cloneDeep(e?.Base);
+          var q: BaseTmasQuestionExamData = _.cloneDeep(e?.Base);
           e.IsQuestionBank = false;
           return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
