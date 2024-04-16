@@ -220,7 +220,9 @@ function ExamTmasTab() {
       errorToast(res.message ?? "");
       return;
     }
-    countExamQuestion(active?.Version)
+    // console.log("active",active);
+    // countExamQuestion(active?.Version)
+
     successToast(t("success_add_my_exam"));
     var isAddClone = _.cloneDeep(isAdd);
     isAddClone[active?.Version!] = res?.data[0]?.idExam;
