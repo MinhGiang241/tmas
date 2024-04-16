@@ -302,7 +302,7 @@ function ExamTmasTab() {
               setIndexPage(1);
             }}
             className="max-lg:mt-3"
-            placeholder={t("search_test_group")}
+            placeholder={t("enter_key_search")}
             h="h-11"
             id="search"
             name="search"
