@@ -184,9 +184,12 @@ export const getQuestionList = async (data: PagingGetData) => {
   return results;
 };
 
-export const getQuestionById = async (questId?: string) => {
+export const getQuestionById = async (
+  questId?: string,
+  isQuestionBank?: boolean,
+) => {
   const results = await callStudioAPI.get(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/${questId}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/${questId}?isQuestionBank=${isQuestionBank}`,
   );
 
   return results;
@@ -323,12 +326,14 @@ export const getTmasQuestList = async ({
   skip,
   limit,
   type,
+  tags,
 }: {
   text?: string;
   skip?: number;
   limit?: number;
   fields?: any;
   type?: string;
+  tags?: string[];
 }) => {
   const results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/questionbank.search`,
@@ -337,6 +342,7 @@ export const getTmasQuestList = async ({
       skip,
       limit,
       type,
+      tags,
     },
   );
   return results;
@@ -389,12 +395,12 @@ export const importTmasExamData = async (data: ImportTmasExamParams) => {
   return results;
 };
 
-
 export const getExamTestId = async (Id?: string | null) => {
   const results = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/${Id}`,
-    { params: { IsIncludeExamVersion: true } }
+    { params: { IsIncludeExamVersion: true } },
   );
 
   return results;
 };
+

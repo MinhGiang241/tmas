@@ -90,11 +90,14 @@ function RandomQuestion({
       dispatch(setQuestionLoading(true));
       const submitData: RandomQuestionFormData = {
         id: question?.id ?? undefined,
+        isQuestionBank: idExam ? false : true,
         idExam: question?.idExam ?? idExam,
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
         idExamQuestionPart:
-          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
+          question?.idExamQuestionPart ??
+          (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
+          undefined,
         questionType: "Random",
         content: {},
       };

@@ -16,7 +16,12 @@ import LinkIcon from "../components/icons/link-2.svg";
 import CalendarIcon from "../components/icons/calendar.svg";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import { AppovedState, ExamGroupData, ExaminationData } from "@/data/exam";
+import {
+  AppovedState,
+  ExamGroupData,
+  ExaminationData,
+  ExaminationStateInfo,
+} from "@/data/exam";
 import copy from "copy-text-to-clipboard";
 import {
   fetchDataExamGroup,
@@ -76,6 +81,7 @@ function ExaminationPage() {
     const dataExamination: APIResults = await getExaminationTestList(
       search
         ? {
+            SharingSetting: status == "Private" ? "Private" : undefined,
             LockState:
               status === "Lock" || status === "Unlock" ? status : undefined,
             ApprovedState:
@@ -88,13 +94,14 @@ function ExaminationPage() {
             "FilterByName.Name": "Name",
             "FilterByName.InValues": search ?? undefined,
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
-            "FilterByExamGroupId.Name": "Name",
+            "FilterByExamGroupId.Name": "ExamGroupId",
             "Paging.RecordPerPage": recordNum,
             "Paging.StartIndex": indexPage, //(indexPage - 1) * recordNum,
             "SorterByName.isAsc": sort == "name" ? true : undefined,
             "SorterByCreateTime.IsAsc": sort == "time" ? false : undefined,
           }
         : {
+            SharingSetting: status == "Private" ? "Private" : undefined,
             LockState:
               status === "Lock" || status === "Unlock" ? status : undefined,
             ApprovedState:
@@ -127,24 +134,32 @@ function ExaminationPage() {
     setLoading(false);
   };
 
-  const genStateWidget = (state?: string) => {
-    switch (state) {
+  const genStateWidget = (state?: ExaminationStateInfo) => {
+    if (state?.lockState == "Lock") {
+      return (
+        <div className="p-2 rounded-lg bg-m_warning_100 text-m_warning_700">
+          {t(state?.lockState)}
+        </div>
+      );
+    }
+
+    switch (state?.approvedState) {
       case "Rejected":
         return (
           <div className="p-2  rounded-lg bg-m_error_100 text-m_error_600">
-            {t(state)}
+            {t(state?.approvedState)}
           </div>
         );
       case "Pending":
         return (
-          <div className="p-2  rounded-lg bg-m_warning_100 text-m_warning_700">
-            {t(state)}
+          <div className="p-2  rounded-lg bg-m_primary_100 text-m_primary_500">
+            {t(state?.approvedState)}
           </div>
         );
       case "Approved":
         return (
           <div className="p-2  rounded-lg bg-m_success_100 text-m_success_700">
-            {t(state)}
+            {t(state?.approvedState)}
           </div>
         );
       default:
@@ -324,6 +339,7 @@ function ExaminationPage() {
             value={groupId}
             setValue={(name: any, e: any) => {
               setGroupId(e);
+              setIndexPage(1);
             }}
             allowClear={false}
             defaultValue=""
@@ -357,19 +373,15 @@ function ExaminationPage() {
             value={status}
             setValue={(name: any, value: any) => {
               setStatus(value);
+              setIndexPage(1);
             }}
             placeholder={t("status")}
-            options={[
-              "Public",
-              "Pending",
-              "Approved",
-              "Rejected",
-              "Lock",
-              "Unlock",
-            ].map((e: any) => ({
-              value: e,
-              label: t(e),
-            }))}
+            options={["Private", "Pending", "Approved", "Rejected", "Lock"].map(
+              (e: any) => ({
+                value: e,
+                label: t(e),
+              }),
+            )}
             h="h-11"
             className="ml-4"
             id="public_free"
@@ -427,12 +439,13 @@ function ExaminationPage() {
                               : "text-[#FF9736]"
                           }`}
                         >
+                          {/* {v.tag} */}
                           {v?.sharingSetting === "Public" &&
                           v?.goldSetting?.isEnable &&
                           v?.goldSetting.goldPrice != 0
                             ? `#Public_${v?.goldSetting?.goldPrice}`
                             : v?.sharingSetting === "Public"
-                              ? `#Public_Free`
+                              ? `#Public_free`
                               : `#Private`}
                         </div>
                       </div>
@@ -484,23 +497,25 @@ function ExaminationPage() {
                       {dayjs(v?.createdTime ?? "").format(dateFormat)}
                     </div>
 
-                    <div className=" flex body_semibold_14 items-center w-full">
+                    <div className=" flex body_semibold_14 lg:items-center w-full justify-between max-lg:flex-col">
                       <div>
                         <span className="body_regular_14 mr-2">
                           {t("approved_date")}:
                         </span>
-                        {dayjs(v?.createdTime ?? "").format(dateFormat)}
+                        {v?.stateInfo?.lastApproveAt &&
+                          dayjs(v?.stateInfo?.lastApproveAt ?? "").format(
+                            dateFormat,
+                          )}
                       </div>
-                      <div className="w-1/3" />
-                      <div className="flex items-center">
-                        <span className="body_regular_14 mr-2">
-                          {t("status")}:{" "}
-                        </span>
-                        {genStateWidget(
-                          v?.examVersion?.exam?.approvedState?.approvedState ??
-                            "",
-                        )}
-                      </div>
+
+                      {v?.sharingSetting && v?.sharingSetting != "Private" && (
+                        <div className="flex items-center lg:mr-20 max-lg:mt-2">
+                          <span className="body_regular_14 mr-2">
+                            {t("status")}
+                          </span>
+                          {genStateWidget(v?.stateInfo)}
+                        </div>
+                      )}
                     </div>
                     {v?.examTestCode && (
                       <div className="body_regular_14 italic mt-3">
@@ -514,6 +529,13 @@ function ExaminationPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+                          if (
+                            v?.stateInfo?.approvedState ===
+                            AppovedState.Rejected
+                          ) {
+                            notifyToast(t("not_edit_refused_examination"));
+                            return;
+                          }
 
                           router.push(`/examination/${v?.id}`);
                         }}
@@ -524,6 +546,10 @@ function ExaminationPage() {
                       <button
                         onClick={async (e) => {
                           e.stopPropagation();
+                          if (v?.sharingSetting === "Public") {
+                            notifyToast(t("not_dup_public_examination"));
+                            return;
+                          }
                           setActive(v);
                           setOpenDup(true);
                         }}

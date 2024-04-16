@@ -44,7 +44,6 @@ function AddFromMyBank({ params }: any) {
   useEffect(() => {
     loadExamById();
     loadQuestionGroupList();
-    getExamQuestionList();
   }, [user]);
 
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
@@ -124,7 +123,9 @@ function AddFromMyBank({ params }: any) {
         <button
           onClick={() => {
             router.replace(
-              `/exams/details/${params?.id}/my_bank?tab=0&partId=${partId}`,
+              `/exams/details/${params?.id}/my_bank?tab=0&partId=${
+                partId ?? ""
+              }`,
             );
           }}
           className={`${
@@ -138,7 +139,9 @@ function AddFromMyBank({ params }: any) {
         <button
           onClick={() => {
             router.replace(
-              `/exams/details/${params?.id}/my_bank?tab=1&partId=${partId}`,
+              `/exams/details/${params?.id}/my_bank?tab=1&partId=${
+                partId ?? ""
+              }`,
             );
           }}
           className={`${

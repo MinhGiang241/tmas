@@ -148,7 +148,7 @@ export default function Explain({
                       }}
                       value={question?.id}
                     />
-                  )}{" "}
+                  )}
                   {`${t("question")} ${index}`}:
                   <div
                     ref={contentRef}

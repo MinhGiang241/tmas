@@ -125,13 +125,16 @@ function SqlQuestion({
       dispatch(setQuestionLoading(true));
       const submitData: SqlQuestionFormData = {
         id: question?.id ?? undefined,
+        isQuestionBank: idExam ? false : true,
         idExam: question?.idExam ?? idExam,
         question: values?.question,
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
         questionType: "SQL",
         idExamQuestionPart:
-          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
+          question?.idExamQuestionPart ??
+          (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
+          undefined,
         content: {
           schemaSql,
           expectedOutput,

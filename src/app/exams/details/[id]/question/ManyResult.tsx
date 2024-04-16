@@ -65,8 +65,8 @@ export default function ManyResult({
 
   useEffect(() => {
     setIsOverflowing(
-      ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+      ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -133,10 +133,11 @@ export default function ManyResult({
           header={
             <div className="my-3 flex justify-between items-center">
               <div className="flex flex-col">
-                <span
+                <div
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -155,7 +156,7 @@ export default function ManyResult({
                     className={`body_regular_14 pl-2 `}
                     dangerouslySetInnerHTML={{ __html: question?.question }}
                   />
-                </span>
+                </div>
                 {isOverflowing ? (
                   <button
                     onClick={(e) => {
@@ -200,8 +201,10 @@ export default function ManyResult({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+
                       router.push(
-                        `/exams/details/${examId ?? "u"
+                        `/exams/details/${
+                          examId ?? question?.examId ?? "u"
                         }/edit?questId=${question?.id}`,
                       );
                     }}

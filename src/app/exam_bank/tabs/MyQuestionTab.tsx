@@ -63,7 +63,7 @@ function MyQuestionTab() {
         recordPerPage: recordNum,
         startIndex: indexPage,
       },
-      isQuestionBank: false,
+      isQuestionBank: true,
       searchQuestion: search,
       andIdGroupQuestions: questGroupId ? [questGroupId] : undefined,
       sorters: [
@@ -228,6 +228,7 @@ function MyQuestionTab() {
     <>
       <div className="w-full flex justify-end max-lg:pr-5">
         <MButton
+          type="secondary"
           onClick={() => {
             router.push(`/exams/details/u/add`);
           }}
@@ -266,6 +267,7 @@ function MyQuestionTab() {
             value={questionType}
             setValue={(na: any, val: any) => {
               setQuestionType(val);
+              setIndexPage(1);
             }}
             h="h-11"
             id="question_type"
@@ -278,6 +280,7 @@ function MyQuestionTab() {
               "Pairing",
               "Coding",
               "Essay",
+              "Random",
               "",
             ].map((e: string) => ({
               value: e,
@@ -290,6 +293,7 @@ function MyQuestionTab() {
             value={questGroupId}
             setValue={(name: any, value: any) => {
               setQuestGroupId(value);
+              setIndexPage(1);
             }}
             options={questionGroupOptions}
             id="question_group"
@@ -299,6 +303,7 @@ function MyQuestionTab() {
           <MDropdown
             value={sort}
             setValue={(name: any, value: any) => {
+              setIndexPage(1);
               setSort(value);
             }}
             h="h-11"

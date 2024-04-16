@@ -55,7 +55,9 @@ function FillBlankQuestion({
   const common = useTranslation();
   const router = useRouter();
   const search = useSearchParams();
-  const idExamQuestionPart = search.get("partId");
+  const idExamQuestionPart = search.get("partId")
+    ? search.get("partId")
+    : undefined;
   const dispatch = useAppDispatch();
 
   const [value, setValue] = useState<string | undefined>();
@@ -183,10 +185,13 @@ function FillBlankQuestion({
         id: question?.id,
         idExam: question?.idExam ?? idExam,
         question: values?.question,
+        isQuestionBank: idExam ? false : true,
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
         idExamQuestionPart:
-          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
+          question?.idExamQuestionPart ??
+          (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
+          undefined,
         questionType: "FillBlank",
         content: {
           fillBlankScoringMethod: check,

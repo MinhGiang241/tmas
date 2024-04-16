@@ -295,5 +295,8 @@
   "delete_quest_to_exam": "Xóa câu hỏi khỏi đề thi",
   "success_add_my_exam": "Thêm váo danh sách đề thi thành công",
   "success_delete_my_exam": "Xóa khỏi danh sách đề thi thành công",
-  "delete_my_exam": "Xóa khỏi danh sách đề thi"
+  "delete_my_exam": "Xóa khỏi danh sách đề thi",
+  "not_dup_public_examination": "Không được nhân bản đợt thi công khai",
+  "not_edit_refused_examination": "Không được chỉnh sửa đợt thi đã bị từ chối",
+  "Lock": "Khóa"
 }

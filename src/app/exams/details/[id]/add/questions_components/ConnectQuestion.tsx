@@ -187,13 +187,16 @@ function ConnectQuestion({
 
       const dataSubmit: ConnectQuestionFormData = {
         id: question?.id ?? undefined,
+        isQuestionBank: idExam ? false : true,
         idExam: question?.idExam ?? idExam,
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
         question: values?.question,
         questionType: "Pairing",
         idExamQuestionPart:
-          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
+          question?.idExamQuestionPart ??
+          (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
+          undefined,
         content: {
           pairingScroringMethod,
           explainAnswer: values.explain,

@@ -58,15 +58,17 @@ function QuestionTmasTab() {
   const [loadingAdd, setLoadingAdd] = useState<boolean>(false);
   const [active, setActive] = useState<BaseQuestionData>();
   const [search, setSearch] = useState<string | undefined>();
+  const [tags, setTags] = useState<string[]>([]);
   const [questionType, setQuestionType] = useState<string | undefined>();
 
   useEffect(() => {
     loadQuestionList(true);
     loadQuestionGroupList(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, indexPage, recordNum, questionType]);
+  }, [user, indexPage, recordNum, questionType, tags]);
 
   useOnMountUnsafe(() => {
+    onSearchTags("");
     dispatch(fetchDataQuestionGroup(async () => loadQuestionGroupList(true)));
   });
 
@@ -80,6 +82,7 @@ function QuestionTmasTab() {
       limit: recordNum,
       skip: (indexPage - 1) * recordNum,
       type: questionType,
+      tags,
     });
     setLoadingPage(false);
     console.log("res", res);
@@ -295,6 +298,8 @@ function QuestionTmasTab() {
     if (active) {
       var cloneQuestion = _.cloneDeep(active);
       cloneQuestion!.idGroupQuestion = idGroup;
+      cloneQuestion!.isQuestionBank = true;
+
       const res = await cloneQuestionFromTmas(cloneQuestion!);
       if (res?.code != 0) {
         errorToast(res?.message ?? "");
@@ -332,15 +337,15 @@ function QuestionTmasTab() {
         onOk={handleCloneQuestion}
       />
 
-      <div className="w-full flex justify-end max-lg:pr-5">
-        <MButton
-          onClick={() => {
-            router.push(`/exams/details/u/add`);
-          }}
-          h="h-11"
-          text={t("create_question")}
-        />
-      </div>
+      {/* <div className="w-full flex justify-end max-lg:pr-5"> */}
+      {/*   <MButton */}
+      {/*     onClick={() => { */}
+      {/*       router.push(`/exams/details/u/add`); */}
+      {/*     }} */}
+      {/*     h="h-11" */}
+      {/*     text={t("create_question")} */}
+      {/*   /> */}
+      {/* </div> */}
       <div className="w-full flex ">
         <form
           onSubmit={(e) => {
@@ -352,6 +357,7 @@ function QuestionTmasTab() {
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
               setSearch(e.target.value);
+              setIndexPage(1);
             }}
             className="max-lg:mt-3"
             placeholder={t("search_test_group")}
@@ -373,6 +379,7 @@ function QuestionTmasTab() {
             value={questionType}
             setValue={(na: any, val: any) => {
               setQuestionType(val);
+              setIndexPage(1);
             }}
             h="h-11"
             id="question_type"
@@ -385,6 +392,7 @@ function QuestionTmasTab() {
               "Pairing",
               "Coding",
               "Essay",
+              "Random",
               "",
             ].map((e: string) => ({
               value: e,
@@ -393,11 +401,13 @@ function QuestionTmasTab() {
           />
           <div className="w-11" />
           <MDropdown
+            setValue={(anme: string, value: any) => {
+              setTags(value), setIndexPage(1);
+            }}
             placeholder={t("enter_tags_to_search")}
             onSearch={onSearchTags}
             options={optionTag}
             className="tag-big"
-            popupClassName="hidden"
             id="tags"
             name="tags"
             mode="tags"

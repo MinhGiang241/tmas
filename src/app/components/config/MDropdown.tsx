@@ -106,7 +106,7 @@ function MDropdown({
 
   const { t } = useTranslation(np);
   const common = useTranslation();
-  useEffect(() => {}, [formik]);
+  useEffect(() => {}, [formik, options]);
   type TagRender = SelectProps["tagRender"];
   const tagRender: TagRender = (props) => {
     const { label, value, closable, onClose } = props;
@@ -114,6 +114,7 @@ function MDropdown({
       event.preventDefault();
       event.stopPropagation();
     };
+
     return (
       <Tag
         className="bg-m_primary_100 text-m_primary_900 py-1 rounded-[6px] flex body_regular_14 h-full"
@@ -153,7 +154,6 @@ function MDropdown({
           popupClassName={popupClassName}
           dropdownRender={dropdownRender}
           showSearch={true}
-          // notFoundContent={null}
           tagRender={tagRender}
           mode={mode}
           value={value}

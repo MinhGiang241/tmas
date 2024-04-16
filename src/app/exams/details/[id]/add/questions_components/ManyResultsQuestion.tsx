@@ -149,7 +149,8 @@ function ManyResultsQuestion({
     return errors;
   };
   const search = useSearchParams();
-  const idExamQuestionPart = search.get("partId");
+  const idExamQuestionPart =
+    search.get("partId") != null ? search.get("partId") : undefined;
 
   const formik = useFormik({
     initialValues,
@@ -167,8 +168,11 @@ function ManyResultsQuestion({
       var submitData: MultiAnswerQuestionFormData = {
         id: question?.id ?? undefined,
         idExam: question?.idExam ?? idExam,
+        isQuestionBank: idExam ? false : true,
         idExamQuestionPart:
-          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
+          question?.idExamQuestionPart ??
+          (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
+          undefined,
         idGroupQuestion: values?.question_group,
         question: values?.question,
         questionType: "MutilAnswer",

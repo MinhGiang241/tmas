@@ -166,6 +166,7 @@ export interface ExaminationListParams {
   LockState?: "Unlock" | "Lock";
   ApprovedState?: AppovedState | string;
   isIncludeExamVersion?: boolean;
+  SharingSetting?: string;
 }
 
 export type CodingDataType =
