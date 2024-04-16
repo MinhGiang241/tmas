@@ -228,6 +228,7 @@ function MyQuestionTab() {
     <>
       <div className="w-full flex justify-end max-lg:pr-5">
         <MButton
+          type="secondary"
           onClick={() => {
             router.push(`/exams/details/u/add`);
           }}

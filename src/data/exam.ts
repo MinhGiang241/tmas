@@ -198,6 +198,31 @@ export interface TmasExamVersion {
   userId?: string;
   version: number;
   _id?: string;
+  usage?: { total?: number };
+}
+
+export interface TmasData {
+  code?: string;
+  createdTime?: string;
+  examId?: string;
+  updatedTime?: string;
+  userId?: string;
+  version?: TmasExamVersion;
+  versionId?: string;
+  visibleState?: string;
+}
+
+export interface TmasVersionData {
+  code?: string;
+  createdTime?: string;
+  examId?: string;
+  group_name?: string;
+  name?: string;
+  source?: string;
+  state?: string;
+  studioId?: string;
+  updatedTime?: string;
+  userId?: string;
 }
 
 export interface TmasExamData {

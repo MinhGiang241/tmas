@@ -10,8 +10,10 @@ import {
   ExamData,
   ExamGroupData,
   ExaminationData,
+  TmasData,
   TmasExamData,
   TmasStudioExamData,
+  TmasVersionData,
 } from "@/data/exam";
 //import CopyIcon from "@/app/components/icons/size.svg";
 import LinkIcon from "@/app/components/icons/link-2.svg";
@@ -23,7 +25,7 @@ import AddIcon from "@/app/components/icons/add.svg";
 import RedDeleteIcon from "@/app/components/icons/trash-red.svg";
 import _ from "lodash";
 
-import { FormattedDate } from "react-intl";
+import { FormattedDate, FormattedNumber } from "react-intl";
 import MButton from "@/app/components/config/MButton";
 import {
   deleteExamination,
@@ -52,7 +54,7 @@ function ExamTmasTab() {
   const [loadingPage, setLoadingPage] = useState<boolean>(false);
   // // const [list, setList] = useState<any[]>([]);
   // const list = useAppSelector((state: RootState) => state.examGroup.list);
-  const [list, setList] = useState<TmasStudioExamData[]>([]);
+  const [list, setList] = useState<TmasVersionData[]>([]);
   const [search, setSearch] = useState<string | undefined>();
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
@@ -77,9 +79,7 @@ function ExamTmasTab() {
     }
 
     // var tmasList = res.data as TmasExamData[];
-    const examList = (res.data ?? []).map(
-      (e: TmasExamData) => e?.version?.examData,
-    );
+    const examList = (res.data ?? []).map((e: TmasData) => e);
     console.log("examList", examList);
     setTotal(res?.records ?? 0);
     setList(examList);
@@ -87,7 +87,7 @@ function ExamTmasTab() {
 
   const [isAdd, setIsAdd] = useState<any>({});
   const [tags, setTags] = useState<string[]>([]);
-  const [active, setActive] = useState<TmasStudioExamData | undefined>();
+  const [active, setActive] = useState<TmasData | undefined>();
   const dispatch = useAppDispatch();
   useEffect(() => {
     //        dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
@@ -132,11 +132,11 @@ function ExamTmasTab() {
     const data = await getTags(
       searchKey
         ? {
-          "Names.Name": "Name",
-          "Names.InValues": searchKey,
-          "Paging.StartIndex": 1,
-          "Paging.RecordPerPage": 100,
-        }
+            "Names.Name": "Name",
+            "Names.InValues": searchKey,
+            "Paging.StartIndex": 1,
+            "Paging.RecordPerPage": 100,
+          }
         : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 },
     );
     if (data?.code != 0) {
@@ -155,7 +155,9 @@ function ExamTmasTab() {
     setLoadingClone(true);
     console.log("active", active);
 
-    var documentObj: DocumentObject[] = (active?.Documents ?? []).map((e) => ({
+    var documentObj: DocumentObject[] = (
+      active?.version?.examData?.Documents ?? []
+    ).map((e) => ({
       contentType: e?.ContentType,
       createdBy: e?.CreatedBy,
       createdTime: e?.CreatedTime,
@@ -171,35 +173,36 @@ function ExamTmasTab() {
       updateTime: e?.UpdateTime,
     }));
 
-    var partObj: PartObject[] = (active?.Parts ?? []).map((e) => ({
-      id: e?._id,
-      description: e?.Description,
-      name: e?.Name,
-      jsonExamQuestions: e?.Questions?.map((e) => {
-        e.IsQuestionBank = false;
-        return JSON.stringify(mapTmasQuestionToStudioQuestion(e));
-      },
-      ),
-    }));
+    var partObj: PartObject[] = (active?.version?.examData?.Parts ?? []).map(
+      (e) => ({
+        id: e?._id,
+        description: e?.Description,
+        name: e?.Name,
+        jsonExamQuestions: e?.Questions?.map((e) => {
+          e.IsQuestionBank = false;
+          return JSON.stringify(mapTmasQuestionToStudioQuestion(e));
+        }),
+      }),
+    );
 
     var examObj: ExamData = {
-      timeLimitMinutes: active?.TimeLimitMinutes,
-      changePositionQuestion: active?.ChangePositionQuestion,
-      description: active?.Description,
-      examNextQuestion: active?.ExamNextQuestion,
-      examViewQuestionType: active?.ExamViewQuestionType,
-      externalLinks: active?.ExternalLinks,
-      idDocuments: active?.IdDocuments,
+      timeLimitMinutes: active?.version?.examData?.TimeLimitMinutes,
+      changePositionQuestion: active?.version?.examData?.ChangePositionQuestion,
+      description: active?.version?.examData?.Description,
+      examNextQuestion: active?.version?.examData?.ExamNextQuestion,
+      examViewQuestionType: active?.version?.examData?.ExamViewQuestionType,
+      externalLinks: active?.version?.examData?.ExternalLinks,
+      idDocuments: active?.version?.examData?.IdDocuments,
       idExamGroup: idGroup,
-      idSession: active?.IdSession,
-      studioId: active?.StudioId,
+      idSession: active?.version?.examData?.IdSession,
+      studioId: active?.version?.examData?.StudioId,
       name,
-      numberOfQuestions: active?.NumberOfQuestions,
-      numberOfTests: active?.NumberOfTests,
-      totalPoints: (active?.TotalPointsAsInt ?? 0) / 100,
-      tags: active?.Tags,
-      playAudio: active?.PlayAudio,
-      version: active?.Version,
+      numberOfQuestions: active?.version?.examData?.NumberOfQuestions,
+      numberOfTests: active?.version?.examData?.NumberOfTests,
+      totalPoints: (active?.version?.examData?.TotalPointsAsInt ?? 0) / 100,
+      tags: active?.version?.examData?.Tags,
+      playAudio: active?.version?.examData?.PlayAudio,
+      version: active?.version?.examData?.Version,
     };
 
     var res = await importTmasExamData({
@@ -221,10 +224,11 @@ function ExamTmasTab() {
       errorToast(res.message ?? "");
       return;
     }
-    countExamQuestion(active?.Version)
+    await countExamQuestion(active?.version?._id);
+    loadTmasExamList(false);
     successToast(t("success_add_my_exam"));
     var isAddClone = _.cloneDeep(isAdd);
-    isAddClone[active?.Version!] = res?.data[0]?.idExam;
+    isAddClone[active?.code!] = res?.data[0]?.idExam;
     console.log("isAddClone", isAddClone);
 
     setIsAdd(isAddClone);
@@ -260,7 +264,7 @@ function ExamTmasTab() {
   return (
     <>
       <AddBankTmasExam
-        exam={active}
+        exam={active?.version?.examData}
         loading={loadingClone}
         open={openSelectExam}
         examGroup={
@@ -329,14 +333,13 @@ function ExamTmasTab() {
           <Spin size="large" />
         </div>
       ) : !list || list?.length === 0 ? (
-
         <div className="w-full flex flex-col items-center justify-center mt-28">
           <div className="  w-[350px] h-[213px]  bg-[url('/images/empty.png')] bg-no-repeat bg-contain " />
           <div className="body_regular_14">{common.t("empty_list")}</div>
         </div>
       ) : (
         <>
-          {list.map((a: TmasStudioExamData, i: number) => (
+          {list.map((a: TmasData, i: number) => (
             <Collapse
               key={i}
               ghost
@@ -349,14 +352,16 @@ function ExamTmasTab() {
                   <div className="w-full p-2 min-h-[100px] flex items-center justify-between rounded-lg bg-white">
                     <div className="flex max-lg:flex-col w-full lg:items-center justify-between">
                       <div className="flex-1 items-start justify-start flex-grow flex flex-col">
-                        <div className="body_semibold_16">{a?.Name ?? ""}</div>
+                        <div className="body_semibold_16">
+                          {a?.version?.examData?.Name ?? ""}
+                        </div>
                         <div className="h-2" />
                         <div className="w-full justify-start my-1 flex max-lg:flex-wrap">
                           <div className="flex items-center">
                             <CalendarIcon />
                             <span className="body_regular_14 ml-2">
                               <FormattedDate
-                                value={a?.CreatedTime}
+                                value={a?.version?.examData?.CreatedTime}
                                 day="2-digit"
                                 month="2-digit"
                                 year="numeric"
@@ -366,29 +371,36 @@ function ExamTmasTab() {
                           <div className="flex items-center mx-8">
                             <MessIcon />
                             <span className="ml-2 body_regular_14">
-                              {`${a?.NumberOfQuestions ?? ""} ${t(
-                                "question",
-                              )?.toLowerCase()}`}
+                              {`${
+                                a?.version?.examData?.NumberOfQuestions ?? ""
+                              } ${t("question")?.toLowerCase()}`}
                             </span>
                           </div>
                           <div className="flex items-center ml-2">
                             <CupIcon />
                             <span className="mr-4 ml-2 body_regular_14">
-                              {`${(a?.TotalPointsAsInt ?? 0) / 100} ${t(
-                                "point",
-                              )}`}
+                              {`${
+                                (a?.version?.examData?.TotalPointsAsInt ?? 0) /
+                                100
+                              } ${t("point")}`}
                             </span>
                           </div>
 
                           <div className="flex items-center">
                             <SizeIcon />
-                            <span className="ml-2 body_regular_14">{`${1}M`}</span>
+                            <span className="ml-2 body_regular_14">
+                              <FormattedNumber
+                                value={a?.version?.usage?.total ?? 0}
+                                style="decimal"
+                                maximumFractionDigits={2}
+                              />
+                            </span>
                           </div>
                         </div>
                       </div>
-                      {isAdd[a?.Version!] ? (
+                      {isAdd[a?.code!] ? (
                         <MButton
-                          loading={active === a.Version}
+                          loading={active === a.code}
                           className="flex items-center max-lg:justify-center max-lg:mt-2"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -396,7 +408,7 @@ function ExamTmasTab() {
                               return;
                             }
                             setActive(a);
-                            handleDeleteExam(a?.Version ?? "");
+                            handleDeleteExam(a?.code ?? "");
                           }}
                           h="h-11"
                           type="error"
@@ -405,7 +417,7 @@ function ExamTmasTab() {
                         />
                       ) : (
                         <MButton
-                          loading={active === a?.Version && !openSelectExam}
+                          loading={active === a?.code && !openSelectExam}
                           className="flex items-center max-lg:justify-center max-lg:mt-2"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -429,7 +441,7 @@ function ExamTmasTab() {
                   {t("preview_5_question")}
                 </div>
                 {(
-                  a.Parts?.reduce(
+                  a?.version?.examData?.Parts?.reduce(
                     (acc, i) => [...acc, ...(i?.Questions ?? [])] as any,
                     [],
                   ) ?? []

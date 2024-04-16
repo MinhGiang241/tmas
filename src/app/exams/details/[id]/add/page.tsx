@@ -161,6 +161,7 @@ function CreateQuestionPage({ params, question }: any) {
       <div className="max-lg:ml-5 flex mt-5 flex-wrap">
         {questionList.map((a: any, i: number) => (
           <button
+            disabled={params?.id == "u" && a == "random"}
             onClick={() => {
               if (question) {
                 router.replace(
@@ -184,12 +185,14 @@ function CreateQuestionPage({ params, question }: any) {
               );
             }}
             className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${
-              a == "many_results" &&
-              !questionList.some((a: any) => a == questionType)
-                ? "bg-m_primary_100"
-                : a == questionType
+              params?.id == "u" && a == "random"
+                ? "bg-neutral-300"
+                : a == "many_results" &&
+                    !questionList.some((a: any) => a == questionType)
                   ? "bg-m_primary_100"
-                  : "bg-white "
+                  : a == questionType
+                    ? "bg-m_primary_100"
+                    : "bg-white "
             }`}
             key={i}
           >
@@ -255,7 +258,7 @@ function CreateQuestionPage({ params, question }: any) {
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
-      {questionType == "random" && (
+      {questionType == "random" && params?.id != "u" && (
         <RandomQuestion
           question={question}
           questionGroups={questionGroups}
