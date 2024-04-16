@@ -7,6 +7,7 @@ import { Collapse, Pagination, Select, Spin } from "antd";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import {
+  BaseTmasQuestionExamData,
   ExamData,
   ExamGroupData,
   ExaminationData,
@@ -179,7 +180,7 @@ function ExamTmasTab() {
         description: e?.Description,
         name: e?.Name,
         jsonExamQuestions: e?.Questions?.map((e) => {
-          var q: BaseTmasQuestionExamData = _.cloneDeep(e?.Base);
+          var q = _.cloneDeep(e?.Base) as BaseTmasQuestionExamData;
           e.IsQuestionBank = false;
           return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
