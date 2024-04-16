@@ -38,6 +38,7 @@ import {
 import { getQuestionGroups } from "@/services/api_services/exam_api";
 import { UserData } from "@/data/user";
 import { getExamDetail } from "@/services/api_services/exam_detail";
+import { ExaminationVersionState } from "@/services/api_services/examination_bc_api";
 
 function ExamDetails({ params }: any) {
     const [exam, setExam] = useState<ExamData | undefined>();
@@ -144,15 +145,17 @@ function ExamDetails({ params }: any) {
                     // { text: exam?.name, href: `/exams/details/${exam?.id}` },
                     {
                         href: `/exams/details/${data?.id}`,
-                        text: data?.examData?.Name,
+                        // text: data?.examData?.Name,
+                        text: `${data?.examData?.Name} - ${data?.version}`,
                         active: true,
                     },
                 ]}
             />
             <div className="h-2" />
+
             <div className="w-full max-lg:px-3 mb-5">
                 <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
-                    <div className="">{data?.examData?.Name}</div>
+                    <div className="">{data?.code} - {data?.examData?.Name} - {data?.version}</div>
                     <div className="flex">
                     </div>
                 </div>

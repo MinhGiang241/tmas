@@ -44,6 +44,7 @@ import { importTmasExamData } from "@/services/api_services/question_api";
 import { DocumentObject, PartObject } from "@/data/form_interface";
 import { mapStudioToTmaslanguage } from "@/services/ui/coding_services";
 import { mapTmasQuestionToStudioQuestion } from "@/services/ui/mapTmasToSTudio";
+import { countExamQuestion } from "@/services/api_services/count_exam_api";
 
 function ExamTmasTab() {
   const { t } = useTranslation("exam");
@@ -130,11 +131,11 @@ function ExamTmasTab() {
     const data = await getTags(
       searchKey
         ? {
-            "Names.Name": "Name",
-            "Names.InValues": searchKey,
-            "Paging.StartIndex": 1,
-            "Paging.RecordPerPage": 100,
-          }
+          "Names.Name": "Name",
+          "Names.InValues": searchKey,
+          "Paging.StartIndex": 1,
+          "Paging.RecordPerPage": 100,
+        }
         : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 },
     );
     if (data?.code != 0) {
@@ -173,8 +174,10 @@ function ExamTmasTab() {
       id: e?._id,
       description: e?.Description,
       name: e?.Name,
-      jsonExamQuestions: e?.Questions?.map((e) =>
-        JSON.stringify(mapTmasQuestionToStudioQuestion(e)),
+      jsonExamQuestions: e?.Questions?.map((e) => {
+        e.IsQuestionBank = false;
+        return JSON.stringify(mapTmasQuestionToStudioQuestion(e));
+      },
       ),
     }));
 
@@ -217,7 +220,7 @@ function ExamTmasTab() {
       errorToast(res.message ?? "");
       return;
     }
-
+    countExamQuestion(active?.Version)
     successToast(t("success_add_my_exam"));
     var isAddClone = _.cloneDeep(isAdd);
     isAddClone[active?.Version!] = res?.data[0]?.idExam;
@@ -245,6 +248,14 @@ function ExamTmasTab() {
     setIsAdd(isAddClone);
   };
 
+  // const [count, setCount] = useState();
+  // const countExam = async (versionId: any) => {
+  //   const res = await countExamQuestion(versionId)
+  //   if (res) {
+  //     setCount(res)
+  //   }
+  // }
+
   return (
     <>
       <AddBankTmasExam
@@ -252,7 +263,7 @@ function ExamTmasTab() {
         loading={loadingClone}
         open={openSelectExam}
         examGroup={
-          useAppSelector((state: RootState) => state.examGroup.list) ?? []
+          useAppSelector((state: RootState) => state?.examGroup.list) ?? []
         }
         onCancel={() => {
           setOpenSelectExam(false);
@@ -316,6 +327,7 @@ function ExamTmasTab() {
           <Spin size="large" />
         </div>
       ) : !list || list?.length === 0 ? (
+
         <div className="w-full flex flex-col items-center justify-center mt-28">
           <div className="  w-[350px] h-[213px]  bg-[url('/images/empty.png')] bg-no-repeat bg-contain " />
           <div className="body_regular_14">{common.t("empty_list")}</div>
@@ -359,7 +371,7 @@ function ExamTmasTab() {
                           </div>
                           <div className="flex items-center ml-2">
                             <CupIcon />
-                            <span className="mx-4 body_regular_14">
+                            <span className="mr-4 ml-2 body_regular_14">
                               {`${(a?.TotalPointsAsInt ?? 0) / 100} ${t(
                                 "point",
                               )}`}
