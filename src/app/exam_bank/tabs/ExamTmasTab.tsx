@@ -450,8 +450,8 @@ function ExamTmasTab() {
                     return null;
                   }
                   return (
-                    <div className="mb-1 flex items-center" key={i}>
-                      <div className="body_semibold_14 min-w-20">{`${t(
+                    <div className="mb-1 flex " key={i}>
+                      <div className="body_semibold_14 min-w-20 mt-[1px]">{`${t(
                         "question",
                       )} ${i + 1}: `}</div>
                       <span
