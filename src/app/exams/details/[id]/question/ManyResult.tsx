@@ -135,8 +135,9 @@ export default function ManyResult({
               <div className="flex flex-col">
                 <div
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -200,6 +201,7 @@ export default function ManyResult({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+
                       router.push(
                         `/exams/details/${
                           examId ?? question?.examId ?? "u"

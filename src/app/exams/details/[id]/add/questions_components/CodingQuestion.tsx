@@ -141,9 +141,7 @@ function CodingQuestion({
   ]);
   const router = useRouter();
   const search = useSearchParams();
-  const idExamQuestionPart = search.get("partId")
-    ? search.get("partId")
-    : undefined;
+  const idExamQuestionPart = search.get("partId");
   const dispatch = useAppDispatch();
 
   type CheckboxValueType = GetProp<typeof Checkbox.Group, "value">[number];
@@ -341,10 +339,13 @@ function CodingQuestion({
       dispatch(setQuestionLoading(true));
       const submitData: CodingQuestionFormData = {
         id: question?.id,
+        isQuestionBank: idExam ? false : true,
         idExam: question?.idExam ?? idExam,
         question: values.question,
         idExamQuestionPart:
-          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
+          question?.idExamQuestionPart ??
+          (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
+          undefined,
         idGroupQuestion: values.question_group,
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         questionType: "Coding",

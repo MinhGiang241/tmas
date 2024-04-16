@@ -114,6 +114,20 @@ export interface ExamVersion {
   version?: string;
 }
 
+export interface ExaminationStateInfo {
+  approvedState?: AppovedState;
+  approver?: string;
+  lastApproveAt?: string;
+  lastLockAt?: string;
+  lastVisibleAt?: string;
+  lockState?: "Lock" | "Unlock";
+  lockedMessage?: string;
+  lockedReason?: string;
+  locker?: string;
+  rejectedMessage?: string;
+  rejectedReason?: string;
+}
+
 export interface ExaminationData {
   id?: string;
   idSession?: string;
@@ -127,11 +141,7 @@ export interface ExaminationData {
     disablePatse?: boolean;
     limitExitScreen?: number;
   };
-  stateInfo?: {
-    approvedState?: AppovedState;
-    approver?: string;
-    lastApproveAt?: string;
-  };
+  stateInfo?: ExaminationStateInfo;
   studioId?: string;
   isActive?: boolean;
   isAvaiableTest?: boolean;

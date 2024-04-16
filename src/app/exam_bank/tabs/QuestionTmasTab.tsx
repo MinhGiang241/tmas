@@ -298,7 +298,7 @@ function QuestionTmasTab() {
     if (active) {
       var cloneQuestion = _.cloneDeep(active);
       cloneQuestion!.idGroupQuestion = idGroup;
-      cloneQuestion!.idExamQuestionBank = true;
+      cloneQuestion!.isQuestionBank = true;
 
       const res = await cloneQuestionFromTmas(cloneQuestion!);
       if (res?.code != 0) {
@@ -337,15 +337,15 @@ function QuestionTmasTab() {
         onOk={handleCloneQuestion}
       />
 
-      <div className="w-full flex justify-end max-lg:pr-5">
-        <MButton
-          onClick={() => {
-            router.push(`/exams/details/u/add`);
-          }}
-          h="h-11"
-          text={t("create_question")}
-        />
-      </div>
+      {/* <div className="w-full flex justify-end max-lg:pr-5"> */}
+      {/*   <MButton */}
+      {/*     onClick={() => { */}
+      {/*       router.push(`/exams/details/u/add`); */}
+      {/*     }} */}
+      {/*     h="h-11" */}
+      {/*     text={t("create_question")} */}
+      {/*   /> */}
+      {/* </div> */}
       <div className="w-full flex ">
         <form
           onSubmit={(e) => {

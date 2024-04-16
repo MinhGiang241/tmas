@@ -23,7 +23,9 @@ function EditQuestionPage({ params }: any) {
   const router = useRouter();
 
   const getQuestionDetailById = async () => {
-    var results: APIResults = await getQuestionById(questId!);
+    var results: APIResults = await getQuestionById(questId!, !partId);
+    console.log("question", questId);
+
     if (results.code != 0) {
       return;
     }

@@ -181,8 +181,11 @@ function TrueFalseQuestion({
       const submitData: MultiAnswerQuestionFormData = {
         id: question?.id,
         idExam: question?.idExam ?? idExam,
+        isQuestionBank: idExam ? false : true,
         idExamQuestionPart:
-          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
+          question?.idExamQuestionPart ??
+          (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
+          undefined,
         idGroupQuestion: values?.question_group,
         question: values?.question,
         questionType: "YesNoQuestion",

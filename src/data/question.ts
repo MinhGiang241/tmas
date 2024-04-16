@@ -38,6 +38,7 @@ export interface BaseQuestionData {
   idExam?: string;
   idExamQuestionPart?: string;
   idExamQuestionBank?: boolean;
+  isQuestionBank?: boolean;
   createdBy?: string;
   ownerId?: string;
   updateTime?: string;

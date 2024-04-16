@@ -114,12 +114,15 @@ function ExplainQuestion({
       dispatch(setQuestionLoading(true));
       const submitData: EssayQuestionFormData = {
         id: question?.id ?? undefined,
+        isQuestionBank: idExam ? false : true,
         idExam: question?.idExam ?? idExam,
         question: values?.question,
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
         idExamQuestionPart:
-          question?.idExamQuestionPart ?? idExamQuestionPart ?? undefined,
+          question?.idExamQuestionPart ??
+          (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
+          undefined,
         questionType: "Essay",
         content: { requiredFile, gradingNote: values.note },
       };
