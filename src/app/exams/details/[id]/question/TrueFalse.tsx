@@ -34,7 +34,9 @@ export default function TrueFalse({
   deleteExamBank,
   addText,
   deleteText,
+  isBank = true,
 }: {
+  isBank?: boolean;
   addText?: string;
   deleteText?: string;
   isExist?: boolean;
@@ -66,7 +68,7 @@ export default function TrueFalse({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -90,7 +92,9 @@ export default function TrueFalse({
           successToast(t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
+            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}&isBank=${
+              isBank ? "true" : "false"
+            }`,
           );
           await getData();
         }}
@@ -136,8 +140,9 @@ export default function TrueFalse({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -200,7 +205,8 @@ export default function TrueFalse({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/exams/details/${examId ?? "u"}/edit?questId=${question.id
+                        `/exams/details/${examId ?? "u"}/edit?questId=${
+                          question.id
                         }`,
                       );
                     }}

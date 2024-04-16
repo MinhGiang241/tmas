@@ -179,8 +179,9 @@ function ExamTmasTab() {
         description: e?.Description,
         name: e?.Name,
         jsonExamQuestions: e?.Questions?.map((e) => {
+          var q = _.cloneDeep(e?.Base);
           e.IsQuestionBank = false;
-          return JSON.stringify(mapTmasQuestionToStudioQuestion(e));
+          return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
       }),
     );
@@ -204,7 +205,17 @@ function ExamTmasTab() {
       playAudio: active?.version?.examData?.PlayAudio,
       version: active?.version?.examData?.Version,
     };
+    console.log("active part", active?.version?.examData?.Parts);
 
+    console.log(
+      "quest",
+      (partObj ?? []).reduce(
+        (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
+        [],
+      ),
+    );
+
+    // return;
     var res = await importTmasExamData({
       examFulls: [
         {
