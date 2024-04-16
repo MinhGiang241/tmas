@@ -510,18 +510,19 @@ function TmasAddTab({
             }))}
           />
           <div className="w-11" />
-          <MDropdown
-            placeholder={t("enter_tags_to_search")}
-            setValue={(anme: string, value: any) => {
-              setTags(value), setIndexPage(1);
-            }}
-            onSearch={onSearchTags}
-            options={optionTag}
-            className="tag-big"
-            id="tags"
-            name="tags"
-            mode="tags"
-          />
+          <div className="w-full" />
+          {/* <MDropdown */}
+          {/*   placeholder={t("enter_tags_to_search")} */}
+          {/*   setValue={(anme: string, value: any) => { */}
+          {/*     setTags(value), setIndexPage(1); */}
+          {/*   }} */}
+          {/*   onSearch={onSearchTags} */}
+          {/*   options={optionTag} */}
+          {/*   className="tag-big" */}
+          {/*   id="tags" */}
+          {/*   name="tags" */}
+          {/*   mode="tags" */}
+          {/* /> */}
         </form>
       </div>
 

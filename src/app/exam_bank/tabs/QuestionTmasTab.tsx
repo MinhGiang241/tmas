@@ -400,18 +400,19 @@ function QuestionTmasTab() {
             }))}
           />
           <div className="w-11" />
-          <MDropdown
-            setValue={(anme: string, value: any) => {
-              setTags(value), setIndexPage(1);
-            }}
-            placeholder={t("enter_tags_to_search")}
-            onSearch={onSearchTags}
-            options={optionTag}
-            className="tag-big"
-            id="tags"
-            name="tags"
-            mode="tags"
-          />
+          <div className="w-full" />
+          {/* <MDropdown */}
+          {/*   setValue={(anme: string, value: any) => { */}
+          {/*     setTags(value), setIndexPage(1); */}
+          {/*   }} */}
+          {/*   placeholder={t("enter_tags_to_search")} */}
+          {/*   onSearch={onSearchTags} */}
+          {/*   options={optionTag} */}
+          {/*   className="tag-big" */}
+          {/*   id="tags" */}
+          {/*   name="tags" */}
+          {/*   mode="tags" */}
+          {/* /> */}
         </form>
       </div>
       {loadingPage ? (
