@@ -30,7 +30,9 @@ function Random({
   deleteExamBank,
   addText,
   deleteText,
+  isBank = true,
 }: {
+  isBank?: boolean;
   addText?: string;
   deleteText?: string;
   isExist?: boolean;
@@ -57,7 +59,7 @@ function Random({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -178,8 +180,11 @@ function Random({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/exams/details/${examId ?? "u"
-                        }/edit?questId=${question?.id}`,
+                        `/exams/details/${
+                          examId ?? "u"
+                        }/edit?questId=${question?.id}&isBank=${
+                          isBank ? "true" : "false"
+                        }`,
                       );
                     }}
                   >

@@ -1,5 +1,6 @@
 import {
   BaseTmasQuestionData,
+  BaseTmasQuestionExamData,
   CodeTmasQuestionData,
   ConnectTmasQuestionData,
   EssayTmasQuestionData,
@@ -24,8 +25,8 @@ import _ from "lodash";
 import { mapStudioToTmaslanguage } from "./coding_services";
 
 export const mapTmasQuestionToStudioQuestion: (
-  question: BaseTmasQuestionData,
-) => BaseQuestionData = (question: BaseTmasQuestionData) => {
+  question: BaseTmasQuestionExamData,
+) => BaseQuestionData = (question: BaseTmasQuestionExamData) => {
   switch (question?.QuestionType) {
     case QuestionType?.MutilAnswer:
       var questClone: MultiTmasQuestionData = _.cloneDeep(question);

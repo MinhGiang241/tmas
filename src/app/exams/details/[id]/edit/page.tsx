@@ -18,13 +18,15 @@ function EditQuestionPage({ params }: any) {
   >();
   var search = useSearchParams();
   var question = search.get("question");
+  var isBank = search.get("isBank");
   var partId = search.get("partId");
   var questId = search.get("questId");
+  console.log("isBank", isBank);
+
   const router = useRouter();
 
   const getQuestionDetailById = async () => {
-    var results: APIResults = await getQuestionById(questId!, !partId);
-    console.log("question", questId);
+    var results: APIResults = await getQuestionById(questId!, isBank == "true");
 
     if (results.code != 0) {
       return;
@@ -39,7 +41,7 @@ function EditQuestionPage({ params }: any) {
 
     router.replace(
       `/exams/details/${params.id ?? "u"}/edit/?partId=${
-        results?.data?.records[0]?.idExamQuestionPart ?? partId
+        results?.data?.records[0]?.idExamQuestionPart ?? partId ?? ""
       }&questId=${results?.data?.records[0]?.id}&question=${type}`,
     );
 

@@ -7,6 +7,7 @@ import { Collapse, Pagination, Select, Spin } from "antd";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import {
+  BaseTmasQuestionExamData,
   ExamData,
   ExamGroupData,
   ExaminationData,
@@ -179,8 +180,9 @@ function ExamTmasTab() {
         description: e?.Description,
         name: e?.Name,
         jsonExamQuestions: e?.Questions?.map((e) => {
+          var q = _.cloneDeep(e?.Base) as BaseTmasQuestionExamData;
           e.IsQuestionBank = false;
-          return JSON.stringify(mapTmasQuestionToStudioQuestion(e));
+          return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
       }),
     );
@@ -204,7 +206,17 @@ function ExamTmasTab() {
       playAudio: active?.version?.examData?.PlayAudio,
       version: active?.version?.examData?.Version,
     };
+    console.log("active part", active?.version?.examData?.Parts);
 
+    console.log(
+      "quest",
+      (partObj ?? []).reduce(
+        (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
+        [],
+      ),
+    );
+
+    // return;
     var res = await importTmasExamData({
       examFulls: [
         {
@@ -290,7 +302,7 @@ function ExamTmasTab() {
               setIndexPage(1);
             }}
             className="max-lg:mt-3"
-            placeholder={t("search_test_group")}
+            placeholder={t("enter_key_search")}
             h="h-11"
             id="search"
             name="search"
@@ -448,8 +460,8 @@ function ExamTmasTab() {
                     return null;
                   }
                   return (
-                    <div className="mb-1 flex items-center" key={i}>
-                      <div className="body_semibold_14 min-w-20">{`${t(
+                    <div className="mb-1 flex " key={i}>
+                      <div className="body_semibold_14 min-w-20 mt-[1px]">{`${t(
                         "question",
                       )} ${i + 1}: `}</div>
                       <span

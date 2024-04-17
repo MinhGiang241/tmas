@@ -390,7 +390,7 @@ export interface TmasStudioExamData {
     _id?: string;
     Description?: string;
     Name?: string;
-    Questions?: BaseTmasQuestionData[];
+    Questions?: BaseTmasQuestionExamData[];
   }[];
   PlayAudio?: "OnlyOneTime" | "MultipleTimes";
   StudioId?: string;

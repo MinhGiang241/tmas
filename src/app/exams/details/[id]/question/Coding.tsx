@@ -39,10 +39,11 @@ export default function Coding({
   deleteExamBank,
   addText,
   deleteText,
+  isBank = true,
 }: {
   addText?: string;
   deleteText?: string;
-
+  isBank?: boolean;
   isExist?: boolean;
   deleteExamBank?: Function;
   getData?: any;
@@ -214,7 +215,7 @@ export default function Coding({
                       router.push(
                         `/exams/details/${examId ?? "u"}/edit?questId=${
                           question.id
-                        }`,
+                        }&isBank=${isBank ? "true" : "false"}`,
                       );
                     }}
                   >

@@ -240,6 +240,7 @@ function ExamDetails({ params }: any) {
       setAddLoading(false);
       return;
     }
+
     const res: any = await createAExamQuestionPart({
       idExam: params.id,
       name: name,
@@ -763,6 +764,7 @@ function ExamDetails({ params }: any) {
                       if (e.questionType == "Coding") {
                         return (
                           <Coding
+                            isBank={false}
                             index={key + 1}
                             key={e.id}
                             examId={params.id}
@@ -775,6 +777,7 @@ function ExamDetails({ params }: any) {
                       if (e.questionType == "Pairing") {
                         return (
                           <Connect
+                            isBank={false}
                             index={key + 1}
                             key={e.id}
                             examId={params.id}
@@ -787,6 +790,7 @@ function ExamDetails({ params }: any) {
                       if (e.questionType == "Essay") {
                         return (
                           <Explain
+                            isBank={false}
                             index={key + 1}
                             key={e.id}
                             examId={params.id}
@@ -799,6 +803,7 @@ function ExamDetails({ params }: any) {
                       if (e.questionType == "FillBlank") {
                         return (
                           <FillBlank
+                            isBank={false}
                             index={key + 1}
                             key={e.id}
                             examId={params.id}
@@ -811,6 +816,7 @@ function ExamDetails({ params }: any) {
                       if (e.questionType == "MutilAnswer") {
                         return (
                           <ManyResult
+                            isBank={false}
                             getData={getData}
                             index={key + 1}
                             key={e.id}
@@ -823,6 +829,7 @@ function ExamDetails({ params }: any) {
                       if (e.questionType == "SQL") {
                         return (
                           <Sql
+                            isBank={false}
                             index={key + 1}
                             key={e.id}
                             examId={params.id}
@@ -835,6 +842,7 @@ function ExamDetails({ params }: any) {
                       if (e.questionType == "YesNoQuestion") {
                         return (
                           <TrueFalse
+                            isBank={false}
                             index={key + 1}
                             key={e.id}
                             examId={params.id}
@@ -846,6 +854,7 @@ function ExamDetails({ params }: any) {
                       }
                       return (
                         <Random
+                          isBank={false}
                           index={key + 1}
                           key={e.id}
                           examId={params.id}

@@ -34,10 +34,11 @@ export default function Sql({
   deleteExamBank,
   addText,
   deleteText,
+  isBank = true,
 }: {
   addText?: string;
   deleteText?: string;
-
+  isBank?: boolean;
   isExist?: boolean;
   deleteExamBank?: Function;
   examId?: any;
@@ -66,7 +67,7 @@ export default function Sql({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -136,8 +137,9 @@ export default function Sql({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -200,8 +202,9 @@ export default function Sql({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/exams/details/${examId ?? "u"}/edit?questId=${question.id
-                        }`,
+                        `/exams/details/${examId ?? "u"}/edit?questId=${
+                          question.id
+                        }&isBank=${isBank ? "true" : "false"}`,
                       );
                     }}
                   >

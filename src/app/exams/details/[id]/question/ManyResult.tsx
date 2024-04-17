@@ -35,7 +35,9 @@ export default function ManyResult({
   isExist,
   addText,
   deleteText,
+  isBank = true,
 }: {
+  isBank?: boolean;
   addText?: string;
   deleteText?: string;
   isExist?: boolean;
@@ -205,7 +207,9 @@ export default function ManyResult({
                       router.push(
                         `/exams/details/${
                           examId ?? question?.examId ?? "u"
-                        }/edit?questId=${question?.id}`,
+                        }/edit?questId=${question?.id}&isBank=${
+                          isBank ? "true" : "false"
+                        }`,
                       );
                     }}
                   >

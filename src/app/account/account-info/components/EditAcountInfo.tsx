@@ -104,6 +104,7 @@ function EditAcountInfo({ open, onCancel, onOk, data }: Props) {
         <div className="h-2" />
         {/* <MInput formik={formik} id="role" name="role" title={t("role")} /> */}
         <MDropdown
+          className="w-full dropdown-flex"
           allowClear={false}
           options={["Admin", "Member", "Owner"].map((e: any, i) => ({
             value: e,
