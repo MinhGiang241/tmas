@@ -15,9 +15,10 @@ import Group from "@/app/components/icons/group.svg";
 import { Collapse } from "antd";
 import { getQuestionGroups } from "@/services/api_services/exam_api";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { ExamGroupData, QuestionGroupData } from "@/data/exam";
+import { ExamData, ExamGroupData, QuestionGroupData } from "@/data/exam";
 import { RootState } from "@/redux/store";
 import {
+  fetchDataExamGroup,
   setquestionGroupLoading,
 } from "@/redux/exam_group/examGroupSlice";
 import { APIResults } from "@/data/api_results";
@@ -30,9 +31,12 @@ import Sql from "./question/Sql";
 import TrueFalse from "./question/TrueFalse";
 import ManyResult from "./question/ManyResult";
 import Random from "./question/Random";
+import { getExamById } from "@/services/api_services/examination_api";
+import { errorToast } from "@/app/components/toast/customToast";
 
-function DetailsPage() {
+function DetailsPage({ params }: any) {
   const [data, setData] = useState<any>();
+  const [exam, setExam] = useState<ExamData | undefined>();
   // console.log(params, "params");
   const search = useSearchParams();
   // Id đợt
@@ -41,7 +45,8 @@ function DetailsPage() {
   // id đề
   const examId = search.get('examId')
   // console.log(examId, "examId")
-  const { t } = useTranslation("question");
+  // const { t } = useTranslation("question");
+
   const user: UserData | undefined = useAppSelector(
     (state: RootState) => state?.user?.user,
   );
@@ -67,8 +72,45 @@ function DetailsPage() {
     }
   };
 
+  useEffect(() => {
+    if (user?.studio?._id) {
+      dispatchGroup(
+        fetchDataExamGroup(async () => loadQuestionGroupList(true)),
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+  const { t } = useTranslation("question");
+  // const common = useTranslation();
+  const loadExamById = async () => {
+    var res = await getExamById(params?.id);
+    if (res?.code != 0) {
+      return;
+    }
+
+    if (res.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    // console.log(res, "exam");
+
+    setExam(res?.data?.records[0]);
+  };
+
+  // console.log("exam", exam);
+
+  useEffect(() => {
+    loadExamById();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
+
   const getDataDetail = async () => {
-    const res = await getExamTestId(examTestId)
+    const res = await getExamTestId({
+      IdExamTests: [examTestId],
+      "Paging.StartIndex": 1,
+      "Paging.RecordPerPage": 15
+    })
     // console.log(res, "data res");
     if (res) {
       setData(res?.data?.records[0]);
@@ -85,11 +127,11 @@ function DetailsPage() {
       <>
         <MBreadcrumb
           items={[
-            { text: t("exam_list"), href: "/exams" },
+            { text: t("examTest_question"), href: "/examination" },
             // { text: exam?.name, href: `/exams/details/${exam?.id}` },
             {
               href: `/exams/details/${data?.id}`,
-              text: data?.examVersion?.exam?.name,
+              text: data?.name,
               active: true,
             },
           ]}
@@ -97,13 +139,13 @@ function DetailsPage() {
         <div className="h-2" />
         <div className="w-full max-lg:px-3 mb-5">
           <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
-            <div className="">{data?.examVersion?.exam?.name}</div>
+            <div className="">{data?.name}</div>
             <div className="flex">
             </div>
           </div>
           <div
             className="text-sm text-m_neutral_500 pt-1"
-            dangerouslySetInnerHTML={{ __html: data?.examVersion?.exam?.description || "" }}
+            dangerouslySetInnerHTML={{ __html: data?.description || "" }}
           />
           <div className="h-[1px] bg-m_neutral_200 mt-10" />
           <div className="flex justify-between items-center mt-6 mb-6">
@@ -172,7 +214,7 @@ function DetailsPage() {
                       </div>
                     }
                   >
-                    {x?.Questions
+                    {data?.examQuestions
                       ?.sort((a: any, b: any) =>
                         a.createdTime < b.createdTime
                           ? -1
@@ -181,12 +223,13 @@ function DetailsPage() {
                             : 0,
                       )
                       .map((e: any, key: any) => {
-                        var questionGroup = questionGroups?.find(
-                          (v: any) => v.id === e.IdGroupQuestion,
-                        );
-                        // console.log(questionGroup, "questionGroup");
 
-                        if (e.QuestionType == "Coding") {
+                        var questionGroup = questionGroups?.find(
+                          (v: any) => v.id === e.idGroupQuestion,
+                        );
+                        // console.log(questionGroups, "questionGroup");
+
+                        if (e.questionType == "Coding") {
                           return (
                             <Coding
                               index={key + 1}
@@ -198,7 +241,7 @@ function DetailsPage() {
                             />
                           );
                         }
-                        if (e.QuestionType == "Pairing") {
+                        if (e.questionType == "Pairing") {
                           return (
                             <Connect
                               index={key + 1}
@@ -210,7 +253,7 @@ function DetailsPage() {
                             />
                           );
                         }
-                        if (e.QuestionType == "Essay") {
+                        if (e.questionType == "Essay") {
                           return (
                             <Explain
                               index={key + 1}
@@ -222,7 +265,7 @@ function DetailsPage() {
                             />
                           );
                         }
-                        if (e.QuestionType == "FillBlank") {
+                        if (e.questionType == "FillBlank") {
                           return (
                             <FillBlank
                               index={key + 1}
@@ -234,7 +277,7 @@ function DetailsPage() {
                             />
                           );
                         }
-                        if (e.QuestionType == "MutilAnswer") {
+                        if (e.questionType == "MutilAnswer") {
                           return (
                             <ManyResult
                               getData={getDataDetail}
@@ -246,7 +289,7 @@ function DetailsPage() {
                             />
                           );
                         }
-                        if (e.QuestionType == "SQL") {
+                        if (e.questionType == "SQL") {
                           return (
                             <Sql
                               index={key + 1}
@@ -258,7 +301,7 @@ function DetailsPage() {
                             />
                           );
                         }
-                        if (e.QuestionType == "YesNoQuestion") {
+                        if (e.questionType == "YesNoQuestion") {
                           return (
                             <TrueFalse
                               index={key + 1}

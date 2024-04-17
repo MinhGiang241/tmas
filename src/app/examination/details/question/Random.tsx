@@ -46,7 +46,6 @@ function Random({
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
-
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
@@ -134,7 +133,7 @@ function Random({
                   {`${t("quest")} ${index}`}:
                   <span
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
+                    dangerouslySetInnerHTML={{ __html: question?.question }}
                   />
                 </span>
               </div>
@@ -169,25 +168,25 @@ function Random({
           </div>
           <div className="flex">
             <div className="text-sm pr-2 font-semibold">{t("quest_type")}:</div>
-            <span>{t(question?.QuestionType)}</span>
+            <span>{t(question?.questionType)}</span>
           </div>
           <div className="flex">
             <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-            <span>{question.Base.NumberPoint}</span>
+            <span>{question?.numberPoint}</span>
           </div>
           <div className="flex">
             <div className="text-sm pr-2 font-semibold">
               {t("created_date")}:
             </div>
             <FormattedDate
-              value={question?.CreatedTime}
+              value={question?.createdTime}
               day="2-digit"
               month="2-digit"
               year="numeric"
             />
             <div className="w-2" />
             <FormattedTime
-              value={question?.CreatedTime}
+              value={question?.createdTime}
               hour="2-digit"
               minute="2-digit"
               second="2-digit"

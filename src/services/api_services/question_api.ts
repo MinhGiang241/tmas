@@ -395,12 +395,20 @@ export const importTmasExamData = async (data: ImportTmasExamParams) => {
   return results;
 };
 
-export const getExamTestId = async (Id?: string | null) => {
-  const results = await callStudioAPI.get(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/${Id}`,
-    { params: { IsIncludeExamVersion: true } },
+// export const getExamTestId = async (Id?: string | null) => {
+//   const results = await callStudioAPI.get(
+//     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/${Id}`,
+//     { params: { IsIncludeExamVersion: true } },
+//   );
+
+//   return results;
+// };
+
+export const getExamTestId = async (params: any) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/GetExamVersion`,
+    { ...params }, { params }
   );
 
   return results;
 };
-

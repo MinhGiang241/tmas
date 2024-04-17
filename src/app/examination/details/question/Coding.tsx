@@ -93,7 +93,7 @@ export default function Coding({
                   <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
+                    dangerouslySetInnerHTML={{ __html: question?.question }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -137,25 +137,25 @@ export default function Coding({
           </div>
           <div className="flex">
             <div className="body_semibold_14 pr-2">{t("quest_type")}: </div>
-            <span>{t(question?.QuestionType)}</span>
+            <span>{t(question?.questionType)}</span>
           </div>
           <div className="flex">
             <div className="body_semibold_14 pr-2">{t("point")}: </div>
-            <span>{question.Base.NumberPoint}</span>
+            <span>{question?.numberPoint}</span>
           </div>
           <div className="flex">
             <div className="text-sm pr-2 font-semibold">
               {t("created_date")}:
             </div>
             <FormattedDate
-              value={question?.CreatedTime}
+              value={question?.createdTime}
               day="2-digit"
               month="2-digit"
               year="numeric"
             />
             <div className="w-2" />
             <FormattedTime
-              value={question?.CreatedTime}
+              value={question?.createdTime}
               hour="2-digit"
               minute="2-digit"
               second="2-digit"

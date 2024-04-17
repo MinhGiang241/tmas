@@ -50,6 +50,8 @@ export default function ManyResult({
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
+  // console.log("question", question);
+  // console.log("questionGroup", questionGroup);
 
 
   useEffect(() => {
@@ -89,7 +91,7 @@ export default function ManyResult({
                   <div
                     ref={contentRef}
                     className={`body_regular_14 pl-2 `}
-                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
+                    dangerouslySetInnerHTML={{ __html: question?.question }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -140,25 +142,25 @@ export default function ManyResult({
                 <div className="text-sm pr-2 font-semibold">
                   {t("quest_type")}:
                 </div>
-                <span>{t(question?.QuestionType)}</span>
+                <span>{t(question?.questionType)}</span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-                <span>{question.Base.NumberPoint}</span>
+                <span>{question.numberPoint}</span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">
                   {t("created_date")}:
                 </div>
                 <FormattedDate
-                  value={question?.CreatedTime}
+                  value={question?.createdTime}
                   day="2-digit"
                   month="2-digit"
                   year="numeric"
                 />
                 <div className="w-2" />
                 <FormattedTime
-                  value={question?.CreatedTime}
+                  value={question?.createdTime}
                   hour="2-digit"
                   minute="2-digit"
                   second="2-digit"
@@ -171,23 +173,23 @@ export default function ManyResult({
               </div>
               <div>
                 <div>
-                  {question?.Base?.Content?.Answers?.map((x: any, key: any) =>
-                    x.IsCorrectAnswer === false ? (
+                  {question?.content?.answers?.map((x: any, key: any) =>
+                    x.isCorrectAnswer === false ? (
                       <div className="flex" key={key}>
-                        <div className="body_semibold_14">{x.Label}</div>
+                        <div className="body_semibold_14">{x.label}</div>
                         <div
                           className="body_regular_14 pl-2"
-                          dangerouslySetInnerHTML={{ __html: x.Text }}
+                          dangerouslySetInnerHTML={{ __html: x.text }}
                         />
                       </div>
                     ) : (
                       <div className="flex" key={key}>
                         <div className="body_semibold_14 text-green-500">
-                          {x.Label}
+                          {x.label}
                         </div>
                         <div
                           className="body_regular_14 pl-2 text-green-500 pr-2"
-                          dangerouslySetInnerHTML={{ __html: x.Text }}
+                          dangerouslySetInnerHTML={{ __html: x.text }}
                         />
                         <Tick />
                       </div>

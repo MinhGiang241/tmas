@@ -146,7 +146,7 @@ export default function FillBlank({
                     ref={contentRef}
                     className="body_regular_14 pl-2"
                     // dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank,}}
-                    dangerouslySetInnerHTML={{ __html: question?.Base?.Content?.FormatBlank }}
+                    dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -196,25 +196,25 @@ export default function FillBlank({
                 <div className="text-sm pr-2 font-semibold">
                   {t("quest_type")}:
                 </div>
-                <span>{t(question?.QuestionType)}</span>
+                <span>{t(question?.questionType)}</span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-                <span>{question.Base.NumberPoint}</span>
+                <span>{question?.numberPoint}</span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">
                   {t("created_date")}:
                 </div>
                 <FormattedDate
-                  value={question?.CreatedTime}
+                  value={question?.createdTime}
                   day="2-digit"
                   month="2-digit"
                   year="numeric"
                 />
                 <div className="w-2" />
                 <FormattedTime
-                  value={question?.CreatedTime}
+                  value={question?.createdTime}
                   hour="2-digit"
                   minute="2-digit"
                   second="2-digit"
@@ -226,15 +226,15 @@ export default function FillBlank({
                 <div className="text-m_primary_500 text-sm font-semibold mb-2">
                   {t("result")}
                 </div>
-                {(question?.Base?.Content?.AnwserItems ?? []).map(
+                {(question?.content?.anwserItems ?? []).map(
                   (x: any, key: any) => {
                     return (
                       <div key={key}>
                         <div className="flex items-center">
                           <div className="body_semibold_14 pr-2">
-                            ({x.Label})
+                            ({x.label})
                           </div>
-                          <span className="pr-2">{x?.Anwsers?.join("/")}</span>
+                          <span className="pr-2">{x?.anwsers?.join("/")}</span>
                           <Tick />
                         </div>
                         {/* <div className="flex items-center">
@@ -253,7 +253,7 @@ export default function FillBlank({
                 <span
                   className="body_semibold_14"
                   dangerouslySetInnerHTML={{
-                    __html: question?.Base?.Content?.ExplainAnswer,
+                    __html: question?.content?.explainAnswer,
                   }}
                 />
               </div>

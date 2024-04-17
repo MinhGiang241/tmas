@@ -148,7 +148,7 @@ export default function Connect({
                   <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
+                    dangerouslySetInnerHTML={{ __html: question?.question }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -198,25 +198,25 @@ export default function Connect({
                 <div className="text-sm pr-2 font-semibold">
                   {t("quest_type")}:{" "}
                 </div>
-                <span>{t(question?.QuestionType)}</span>
+                <span>{t(question?.questionType)}</span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-                <span>{question.Base.NumberPoint}</span>
+                <span>{question?.numberPoint}</span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">
                   {t("created_date")}:{" "}
                 </div>
                 <FormattedDate
-                  value={question?.CreatedTime}
+                  value={question?.createdTime}
                   day="2-digit"
                   month="2-digit"
                   year="numeric"
                 />
                 <div className="w-2" />
                 <FormattedTime
-                  value={question?.CreatedTime}
+                  value={question?.createdTime}
                   hour="2-digit"
                   minute="2-digit"
                   second="2-digit"
@@ -229,19 +229,21 @@ export default function Connect({
               </div>
               <div className="flex justify-start items-center">
                 <div>
-                  {question?.Base?.Content?.Pairings?.map((e: any, key: any) => {
-                    var ques = question?.Base?.Content?.Questions?.find(
-                      (q: any) => q._id == e.IdQuestion,
+                  {question?.content?.pairings?.map((e: any, key: any) => {
+                    console.log(question?.content?.pairings, "zxczxc");
+                    console.log(question?.content?.questions, "123123");
+                    var ques = question?.content?.questions?.find(
+                      (q: any) => q.id == e.idQuestion,
                     );
-                    var ans = question?.Base?.Content?.Answers?.find(
-                      (a: any) => a._id == e.IdAnswer,
+                    var ans = question?.content?.answers?.find(
+                      (a: any) => a.id == e.idAnswer,
                     );
                     return (
                       <div
                         key={key}
                         className="flex font-semibold items-center"
                       >
-                        {`${ques?.Label} : ${ans?.Label}`}
+                        {`${ques?.label} : ${ans?.label}`}
                         <Tick className="ml-2" />
                       </div>
                     );
