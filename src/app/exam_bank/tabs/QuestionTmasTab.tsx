@@ -392,7 +392,6 @@ function QuestionTmasTab() {
               "Pairing",
               "Coding",
               "Essay",
-              "Random",
               "",
             ].map((e: string) => ({
               value: e,
