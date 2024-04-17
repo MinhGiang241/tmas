@@ -66,8 +66,19 @@ function MyQuestionTab() {
       isQuestionBank: true,
       searchQuestion: search,
       andIdGroupQuestions: questGroupId ? [questGroupId] : undefined,
+      studioSorters: [
+        sort != "A-Z"
+          ? {
+              name: "CreatedTime",
+              isAsc: false,
+            }
+          : {
+              name: "Question",
+              isAsc: true,
+            },
+      ],
       sorters: [
-        sort === "A-Z"
+        sort != "A-Z"
           ? {
               name: "CreatedTime",
               isAsc: false,

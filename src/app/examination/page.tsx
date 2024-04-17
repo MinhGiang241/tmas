@@ -498,15 +498,17 @@ function ExaminationPage() {
                     </div>
 
                     <div className=" flex body_semibold_14 lg:items-center w-full justify-between max-lg:flex-col">
-                      <div>
-                        <span className="body_regular_14 mr-2">
-                          {t("approved_date")}:
-                        </span>
-                        {v?.stateInfo?.lastApproveAt &&
-                          dayjs(v?.stateInfo?.lastApproveAt ?? "").format(
-                            dateFormat,
-                          )}
-                      </div>
+                      {v?.sharingSetting != "Private" && (
+                        <div>
+                          <span className="body_regular_14 mr-2">
+                            {t("approved_date")}:
+                          </span>
+                          {v?.stateInfo?.lastApproveAt &&
+                            dayjs(v?.stateInfo?.lastApproveAt ?? "").format(
+                              dateFormat,
+                            )}
+                        </div>
+                      )}
 
                       {v?.sharingSetting && v?.sharingSetting != "Private" && (
                         <div className="flex items-center lg:mr-20 max-lg:mt-2">

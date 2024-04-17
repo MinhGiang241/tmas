@@ -301,9 +301,10 @@ function ConnectQuestion({
           <span className="text-m_error_500"> *</span>
         </div>
         <div className="mb-3 body_regular_14">{t("many_result_intro")}</div>
-        {((loadAs && question) || !question) && (
-          <div className="border rounded-lg p-4">
-            <div className="w-full flex relative z-10">
+
+        <div className="border rounded-lg p-4">
+          <div className="w-full flex relative z-10">
+            {((loadAs && question) || !question) && (
               <div className="w-1/2">
                 {questionList?.map((s: ConnectQuestAns, i: number) => (
                   <div key={s.id} className="flex items-start mb-2">
@@ -320,7 +321,10 @@ function ConnectQuestion({
                         error={formik.errors[`ques-${s?.id}`] as any}
                         setValue={(name: any, val: any) => {
                           dispatch(
-                            updateTextConnectQuestion({ index: i, value: val }),
+                            updateTextConnectQuestion({
+                              index: i,
+                              value: val,
+                            }),
                           );
                           formik.validateForm();
                         }}
@@ -353,104 +357,103 @@ function ConnectQuestion({
                   <div className="w-8" />
                 </div>
               </div>
-              <div className="w-6" />
-              <div className="w-1/2">
-                {answerList?.map((s: ConnectQuestAns, i: number) => (
-                  <div key={s.id} className="flex items-start mb-2">
-                    <p className="min-w-4 mt-2 mr-2  body_semibold_14">
-                      {String.fromCharCode(65 + i)}.
-                    </p>
-                    <div className="w-[calc(100%-4rem)]">
-                      <EditorHook
-                        onBlur={async () => {
-                          await formik.setFieldTouched(`ans-${s?.id}`, true);
-                          formik.validateForm();
-                        }}
-                        touch={formik.touched[`ans-${s?.id}`] as any}
-                        error={formik.errors[`ans-${s?.id}`] as any}
-                        setValue={async (name: any, val: any) => {
-                          dispatch(
-                            updateTextConnectAnswer({ index: i, value: val }),
-                          );
-                          await formik.setFieldValue(`result-${s?.id}`, val);
-                          formik.validateForm();
-                        }}
-                        value={s.content}
-                        isCount={false}
-                        isBubble={true}
-                        id={`result-${s?.id}`}
-                        name={`result-${s?.id}`}
-                      />
-                    </div>
-                    <button
-                      onClick={() => {
-                        dispatch(deleteConnectAnswer(i));
+            )}
+            <div className="w-6" />
+            <div className="w-1/2">
+              {answerList?.map((s: ConnectQuestAns, i: number) => (
+                <div key={s.id} className="flex items-start mb-2">
+                  <p className="min-w-4 mt-2 mr-2  body_semibold_14">
+                    {String.fromCharCode(65 + i)}.
+                  </p>
+                  <div className="w-[calc(100%-4rem)]">
+                    <EditorHook
+                      onBlur={async () => {
+                        await formik.setFieldTouched(`ans-${s?.id}`, true);
+                        formik.validateForm();
                       }}
-                      className=" text-neutral-500 text-2xl mt-1 ml-2 "
-                    >
-                      <CloseCircleOutlined />
-                    </button>
+                      touch={formik.touched[`ans-${s?.id}`] as any}
+                      error={formik.errors[`ans-${s?.id}`] as any}
+                      setValue={async (name: any, val: any) => {
+                        dispatch(
+                          updateTextConnectAnswer({ index: i, value: val }),
+                        );
+                        await formik.setFieldValue(`result-${s?.id}`, val);
+                        formik.validateForm();
+                      }}
+                      value={s.content}
+                      isCount={false}
+                      isBubble={true}
+                      id={`result-${s?.id}`}
+                      name={`result-${s?.id}`}
+                    />
                   </div>
-                ))}
-                <div className="w-full flex justify-end  ">
                   <button
                     onClick={() => {
-                      dispatch(addMoreConnectAnswer(0));
+                      dispatch(deleteConnectAnswer(i));
                     }}
-                    className="underline body_regular_14 underline-offset-4"
+                    className=" text-neutral-500 text-2xl mt-1 ml-2 "
                   >
-                    <PlusOutlined /> {t("add_result")}
+                    <CloseCircleOutlined />
                   </button>
-                  <div className="w-8" />
                 </div>
-              </div>
-            </div>
-            <div className="body_semibold_14 mt-5">{t("select_result")}</div>
-            <div className="body_regular_14 mb-2">
-              {t("select_result_intro")}
-            </div>
-            {questionList?.map((a: ConnectQuestAns, i: number) => (
-              <div className="flex" key={a.id}>
-                <p className="w-14 body_semibold_14 mr-3 ">{i + 1}.</p>
-                <CheckboxGroup
-                  value={
-                    (pairingList
-                      ?.filter((q) => q.idQuestion === a.id)
-                      ?.map((s) => s.idAnswer) ?? []) as any
-                  }
-                  rootClassName="flex items-center "
-                  onChange={(va) => {
-                    console.log("va", va);
-                    console.log("questionList", questionList);
-                    console.log("parinng", pairingList);
+              ))}
+              <div className="w-full flex justify-end  ">
+                <button
+                  onClick={() => {
+                    dispatch(addMoreConnectAnswer(0));
                   }}
+                  className="underline body_regular_14 underline-offset-4"
                 >
-                  {answerList.map((b: ConnectQuestAns, ind: number) => (
-                    <>
-                      <p className="body_semibold_14 relative z-0">
-                        {String.fromCharCode(65 + ind)}.
-                      </p>
-                      <Checkbox
-                        onChange={(val) => {
-                          dispatch(
-                            updateCheckConnectPairing({
-                              check: val.target.checked,
-                              idAnswer: b.id,
-                              idQuestion: a.id,
-                            }),
-                          );
-                        }}
-                        key={b.id}
-                        value={b.id}
-                      ></Checkbox>
-                      <div className="w-2" />
-                    </>
-                  ))}
-                </CheckboxGroup>
+                  <PlusOutlined /> {t("add_result")}
+                </button>
+                <div className="w-8" />
               </div>
-            ))}
+            </div>
           </div>
-        )}
+          <div className="body_semibold_14 mt-5">{t("select_result")}</div>
+          <div className="body_regular_14 mb-2">{t("select_result_intro")}</div>
+          {questionList?.map((a: ConnectQuestAns, i: number) => (
+            <div className="flex" key={a.id}>
+              <p className="w-14 body_semibold_14 mr-3 ">{i + 1}.</p>
+              <CheckboxGroup
+                value={
+                  (pairingList
+                    ?.filter((q) => q.idQuestion === a.id)
+                    ?.map((s) => s.idAnswer) ?? []) as any
+                }
+                rootClassName="flex items-center "
+                onChange={(va) => {
+                  console.log("va", va);
+                  console.log("questionList", questionList);
+                  console.log("parinng", pairingList);
+                }}
+              >
+                {answerList.map((b: ConnectQuestAns, ind: number) => (
+                  <>
+                    <p className="body_semibold_14 relative z-0">
+                      {String.fromCharCode(65 + ind)}.
+                    </p>
+                    <Checkbox
+                      onChange={(val) => {
+                        dispatch(
+                          updateCheckConnectPairing({
+                            check: val.target.checked,
+                            idAnswer: b.id,
+                            idQuestion: a.id,
+                          }),
+                        );
+                      }}
+                      key={b.id}
+                      value={b.id}
+                    ></Checkbox>
+                    <div className="w-2" />
+                  </>
+                ))}
+              </CheckboxGroup>
+            </div>
+          ))}
+        </div>
+
         <div className="h-4" />
         <EditorHook
           placeholder={t("enter_content")}

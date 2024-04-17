@@ -37,7 +37,7 @@ const ExamQuestion = ({
     switch (ques.questionType) {
       case QuestionType.MutilAnswer:
       case QuestionType.YesNoQuestion: {
-        const { answers, isChangePosition, explainAnswer } = ques.content;
+        const { answers, isChangePosition, explainAnswer } = ques.content ?? {};
         const sufferAnswers = isChangePosition ? shuffle(answers) : answers;
         return (
           <div className="flex flex-col gap-2 p-4">
@@ -57,7 +57,7 @@ const ExamQuestion = ({
         );
       }
       case QuestionType.SQL: {
-        const { explainAnswer } = ques.content;
+        const { explainAnswer } = ques.content ?? {};
         return (
           <div className="flex flex-col gap-1 p-4">
             <ResultSkeleton numOfLine={3} />
@@ -65,7 +65,7 @@ const ExamQuestion = ({
         );
       }
       case QuestionType.FillBlank: {
-        const { formatBlank, anwserItems } = ques.content;
+        const { formatBlank, anwserItems } = ques.content ?? {};
         return (
           <div className="flex flex-col gap-4 p-4">
             <div
@@ -89,7 +89,7 @@ const ExamQuestion = ({
         );
       }
       case QuestionType.Pairing: {
-        const { explainAnswer, answers, questions } = ques.content;
+        const { explainAnswer, answers, questions } = ques.content ?? {};
         return (
           <div className="flex flex-col gap-2 p-4">
             <div className="grid grid-cols-2">
@@ -120,7 +120,7 @@ const ExamQuestion = ({
         );
       }
       case QuestionType.Coding: {
-        const { template } = ques.content;
+        const { template } = ques.content ?? {};
         return (
           <div className="flex flex-col gap-1 p-4">
             <div dangerouslySetInnerHTML={{ __html: template }} />
