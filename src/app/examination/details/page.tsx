@@ -42,38 +42,25 @@ function DetailsPage() {
   const examId = search.get('examId')
   // console.log(examId, "examId")
   const { t } = useTranslation("question");
-  const user: UserData | undefined = useAppSelector(
-    (state: RootState) => state?.user?.user,
-  );
-  const dispatchGroup = useAppDispatch();
+  // const user: UserData | undefined = useAppSelector(
+  //   (state: RootState) => state?.user?.user,
+  // );
+  // const dispatchGroup = useAppDispatch();
   const questionGroups: ExamGroupData[] | undefined = useAppSelector(
     (state: RootState) => state?.examGroup?.list,
   );
-  const loadQuestionGroupList = async (init?: boolean) => {
-    if (init) {
-      dispatchGroup(setquestionGroupLoading(true));
-    }
-
-    var dataResults: APIResults = await getQuestionGroups(
-      "",
-      user?.studio?._id,
-    );
-
-    if (dataResults.code != 0) {
-      return [];
-    } else {
-      var data = dataResults?.data as QuestionGroupData[];
-      return data;
-    }
-  };
 
   const getDataDetail = async () => {
-    const res = await getExamTestId(examTestId)
-    // console.log(res, "data res");
-    if (res) {
-      setData(res?.data?.records[0]);
-      console.log(res?.data?.records[0], "data res");
-    }
+    const res = await getExamTestId({
+      IdExamTests: [examTestId],
+      "Paging.StartIndex": 1,
+      "Paging.RecordPerPage": 15
+    })
+    console.log(res, "data res");
+    // if (res) {
+    //   setData(res?.data?.records[0]);
+    //   // console.log(res?.data?.records[0], "data res");
+    // }
   }
   useEffect(() => {
     getDataDetail()
