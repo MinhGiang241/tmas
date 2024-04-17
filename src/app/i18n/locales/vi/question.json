@@ -56,5 +56,6 @@
   "keep_quest_order": "Giữ thứ tự câu hỏi",
   "change_quest_order": "Đổi vị trí câu hỏi",
   "delete_bank": "Xóa câu hỏi khỏi đề thi",
-  "examTest_question": "Danh sách đợt thi"
+  "examTest_question": "Danh sách đợt thi",
+  "print": "In"
 }

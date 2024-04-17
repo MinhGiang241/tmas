@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import { Checkbox, Radio, Space, Switch } from "antd";
@@ -70,8 +70,10 @@ function ConnectQuestion({
     question && question?.questionType === "Pairing"
       ? (question as ConnectQuestionFormData)
       : undefined;
+
   useOnMountUnsafe(() => {
     console.log("re load");
+    setLoadAs(true);
     if (existedQuest) {
       setPairingScroringMethod(
         existedQuest?.content?.pairingScroringMethod ?? undefined,
@@ -301,9 +303,10 @@ function ConnectQuestion({
           <span className="text-m_error_500"> *</span>
         </div>
         <div className="mb-3 body_regular_14">{t("many_result_intro")}</div>
-        {((loadAs && question) || !question) && (
-          <div className="border rounded-lg p-4">
-            <div className="w-full flex relative z-10">
+
+        <div className="border rounded-lg p-4">
+          <div className="w-full flex relative z-10">
+            {((loadAs && question) || !question) && (
               <div className="w-1/2">
                 {questionList?.map((s: ConnectQuestAns, i: number) => (
                   <div key={s.id} className="flex items-start mb-2">
@@ -320,7 +323,10 @@ function ConnectQuestion({
                         error={formik.errors[`ques-${s?.id}`] as any}
                         setValue={(name: any, val: any) => {
                           dispatch(
-                            updateTextConnectQuestion({ index: i, value: val }),
+                            updateTextConnectQuestion({
+                              index: i,
+                              value: val,
+                            }),
                           );
                           formik.validateForm();
                         }}
@@ -353,7 +359,9 @@ function ConnectQuestion({
                   <div className="w-8" />
                 </div>
               </div>
-              <div className="w-6" />
+            )}
+            <div className="w-6" />
+            {((loadAs && question) || !question) && (
               <div className="w-1/2">
                 {answerList?.map((s: ConnectQuestAns, i: number) => (
                   <div key={s.id} className="flex items-start mb-2">
@@ -404,53 +412,52 @@ function ConnectQuestion({
                   <div className="w-8" />
                 </div>
               </div>
-            </div>
-            <div className="body_semibold_14 mt-5">{t("select_result")}</div>
-            <div className="body_regular_14 mb-2">
-              {t("select_result_intro")}
-            </div>
-            {questionList?.map((a: ConnectQuestAns, i: number) => (
-              <div className="flex" key={a.id}>
-                <p className="w-14 body_semibold_14 mr-3 ">{i + 1}.</p>
-                <CheckboxGroup
-                  value={
-                    (pairingList
-                      ?.filter((q) => q.idQuestion === a.id)
-                      ?.map((s) => s.idAnswer) ?? []) as any
-                  }
-                  rootClassName="flex items-center "
-                  onChange={(va) => {
-                    console.log("va", va);
-                    console.log("questionList", questionList);
-                    console.log("parinng", pairingList);
-                  }}
-                >
-                  {answerList.map((b: ConnectQuestAns, ind: number) => (
-                    <>
-                      <p className="body_semibold_14 relative z-0">
-                        {String.fromCharCode(65 + ind)}.
-                      </p>
-                      <Checkbox
-                        onChange={(val) => {
-                          dispatch(
-                            updateCheckConnectPairing({
-                              check: val.target.checked,
-                              idAnswer: b.id,
-                              idQuestion: a.id,
-                            }),
-                          );
-                        }}
-                        key={b.id}
-                        value={b.id}
-                      ></Checkbox>
-                      <div className="w-2" />
-                    </>
-                  ))}
-                </CheckboxGroup>
-              </div>
-            ))}
+            )}
           </div>
-        )}
+          <div className="body_semibold_14 mt-5">{t("select_result")}</div>
+          <div className="body_regular_14 mb-2">{t("select_result_intro")}</div>
+          {questionList?.map((a: ConnectQuestAns, i: number) => (
+            <div className="flex" key={a.id}>
+              <p className="w-14 body_semibold_14 mr-3 ">{i + 1}.</p>
+              <CheckboxGroup
+                value={
+                  (pairingList
+                    ?.filter((q) => q.idQuestion === a.id)
+                    ?.map((s) => s.idAnswer) ?? []) as any
+                }
+                rootClassName="flex items-center "
+                onChange={(va) => {
+                  console.log("va", va);
+                  console.log("questionList", questionList);
+                  console.log("parinng", pairingList);
+                }}
+              >
+                {answerList.map((b: ConnectQuestAns, ind: number) => (
+                  <>
+                    <p className="body_semibold_14 relative z-0">
+                      {String.fromCharCode(65 + ind)}.
+                    </p>
+                    <Checkbox
+                      onChange={(val) => {
+                        dispatch(
+                          updateCheckConnectPairing({
+                            check: val.target.checked,
+                            idAnswer: b.id,
+                            idQuestion: a.id,
+                          }),
+                        );
+                      }}
+                      key={b.id}
+                      value={b.id}
+                    ></Checkbox>
+                    <div className="w-2" />
+                  </>
+                ))}
+              </CheckboxGroup>
+            </div>
+          ))}
+        </div>
+
         <div className="h-4" />
         <EditorHook
           placeholder={t("enter_content")}

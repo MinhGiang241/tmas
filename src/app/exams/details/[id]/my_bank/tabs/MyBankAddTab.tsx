@@ -13,6 +13,8 @@ import { ExamData, QuestionGroupData } from "@/data/exam";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import {
+  cloneQuestionFromTmas,
+  createBatchQuestion,
   deleteManyQuestion,
   deleteQuestionById,
   deleteQuestionPartById,
@@ -27,7 +29,7 @@ import MInput from "@/app/components/config/MInput";
 import { SearchOutlined } from "@ant-design/icons";
 import DeleteIcon from "@/app/components/icons/trash-red.svg";
 import AddIcon from "@/app/components/icons/add.svg";
-import _ from "lodash";
+import _, { parseInt } from "lodash";
 import {
   fetchDataQuestionGroup,
   setquestionGroupLoading,
@@ -100,17 +102,29 @@ function MyBankAddTab({
       isQuestionBank: true,
       searchQuestion: search,
       andIdGroupQuestions: questGroupId ? [questGroupId] : undefined,
-      sorters: [
-        sort === "A-Z"
+      studioSorters: [
+        sort != "A-Z"
           ? {
               name: "CreatedTime",
               isAsc: false,
             }
           : {
-              name: "Question",
+              name: "UnsignedName",
               isAsc: true,
             },
       ],
+      sorters: [
+        sort != "A-Z"
+          ? {
+              name: "CreatedTime",
+              isAsc: false,
+            }
+          : {
+              name: "UnsignedName",
+              isAsc: true,
+            },
+      ],
+
       andQuestionTypes: questionType ? [questionType] : undefined,
       // andIdExamQuestionParts: "",
       // andQuestionTypes: "",
@@ -130,11 +144,16 @@ function MyBankAddTab({
   };
 
   const addExamBank = async (__: any, question: BaseQuestionData) => {
-    const res = await duplicateQuestion({
-      idExams: exam?.id ? [exam?.id] : undefined,
-      ids: question?.id ? [question.id] : undefined,
-      newIdExamQuestionPart: partId,
-    });
+    var cloneQuestion = _.cloneDeep(question);
+    cloneQuestion.idExam = exam?.id;
+    cloneQuestion.idExamQuestionPart = partId;
+    cloneQuestion.isQuestionBank = false;
+    const res = await cloneQuestionFromTmas(
+      cloneQuestion,
+      // {idExams: exam?.id ? [exam?.id] : undefined,
+      // ids: question?.id ? [question.id] : undefined,
+      // newIdExamQuestionPart: partId,}
+    );
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
       return;
@@ -143,9 +162,9 @@ function MyBankAddTab({
 
     successToast(t("success_add_into_exam"));
     const isAddClone = _.cloneDeep(isAdd);
-    for (let i of res.data) {
-      isAddClone[question?.id as string] = i;
-    }
+
+    isAddClone[question?.id as string] = res.data;
+
     setIsAdd(isAddClone);
     setSelectedList([]);
   };
@@ -358,6 +377,8 @@ function MyBankAddTab({
         ids.push(isAdd[i]);
       }
     }
+    console.log("is add", isAdd);
+
     const res = await deleteManyQuestion({
       ids,
     });
@@ -367,6 +388,7 @@ function MyBankAddTab({
       errorToast(res?.message ?? "");
       return;
     }
+    setIsAdd({});
     successToast(t("success_delete_from_exam"));
     setSelectedList([]);
     setCheckedAll(false);
@@ -374,19 +396,35 @@ function MyBankAddTab({
 
   const addManyQuestion = async (e: any) => {
     setLoadingMany(true);
-    const res = await duplicateQuestion({
-      ids: [...selectedList],
-      idExams: exam?.id ? [exam?.id] : undefined,
-      newIdExamQuestionPart: partId,
+    var list = questionList.filter((d) =>
+      selectedList.some((s: any) => s === d.id),
+    );
+    var cloneQuestions = _.cloneDeep(list);
+    var cloneQuestionList = cloneQuestions.map((k) => {
+      k.isQuestionBank = false;
+      k.idExamQuestionPart = partId;
+      k.idExam = exam?.id;
+      (k as any).content = JSON.stringify((k as any)?.content);
+      return k;
     });
+    console.log("cloneQuestionList", cloneQuestionList);
+
+    const res = await createBatchQuestion(cloneQuestionList);
+    // {ids: [...selectedList],
+    // idExams: exam?.id ? [exam?.id] : undefined,
+    // newIdExamQuestionPart: partId,}
     setLoadingMany(false);
+    console.log("res", res);
 
     if (res.code != 0) {
       errorToast(res?.message ?? "");
       return;
     }
-    for (let i of res.data) {
-      isAdd[i] = undefined;
+    for (let i in res.data) {
+      var index = parseInt(i);
+      var q = cloneQuestionList[index];
+
+      isAdd[q.id!] = res.data[index]?.idQuestionCreated;
     }
     successToast(t("success_add_quest_to_exam"));
     setSelectedList([]);

@@ -65,7 +65,7 @@ function DetailsPage({ params }: any) {
     );
 
     if (dataResults.code != 0) {
-      return [];
+      return []; loadQuestionGroupList
     } else {
       var data = dataResults?.data as QuestionGroupData[];
       return data;
@@ -93,7 +93,7 @@ function DetailsPage({ params }: any) {
       errorToast(res?.message ?? "");
       return;
     }
-    // console.log(res, "exam");
+    console.log(res, "exam");
 
     setExam(res?.data?.records[0]);
   };
@@ -116,6 +116,7 @@ function DetailsPage({ params }: any) {
       setData(res?.data?.records[0]);
       console.log(res?.data?.records[0], "data res");
     }
+
   }
   useEffect(() => {
     getDataDetail()

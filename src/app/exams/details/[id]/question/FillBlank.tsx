@@ -68,7 +68,7 @@ export default function FillBlank({
 
   useEffect(() => {
     setIsOverflowing(
-      ((contentRef as any).current?.scrollHeight ?? 0) >
+      ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
         ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

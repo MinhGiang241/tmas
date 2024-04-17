@@ -56,7 +56,6 @@ function MyQuestionTab() {
   const loadQuestionList = async (init: boolean) => {
     if (init) {
       setLoadingPage(true);
-      setIndexPage(1);
     }
     const res = await getQuestionList({
       paging: {
@@ -66,14 +65,25 @@ function MyQuestionTab() {
       isQuestionBank: true,
       searchQuestion: search,
       andIdGroupQuestions: questGroupId ? [questGroupId] : undefined,
-      sorters: [
-        sort === "A-Z"
+      studioSorters: [
+        sort != "A-Z"
           ? {
               name: "CreatedTime",
               isAsc: false,
             }
           : {
-              name: "Question",
+              name: "UnsignedName",
+              isAsc: true,
+            },
+      ],
+      sorters: [
+        sort != "A-Z"
+          ? {
+              name: "CreatedTime",
+              isAsc: false,
+            }
+          : {
+              name: "UnsignedName",
               isAsc: true,
             },
       ],
