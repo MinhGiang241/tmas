@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import { Checkbox, Radio, Space, Switch } from "antd";
@@ -70,8 +70,10 @@ function ConnectQuestion({
     question && question?.questionType === "Pairing"
       ? (question as ConnectQuestionFormData)
       : undefined;
+
   useOnMountUnsafe(() => {
     console.log("re load");
+    setLoadAs(true);
     if (existedQuest) {
       setPairingScroringMethod(
         existedQuest?.content?.pairingScroringMethod ?? undefined,
@@ -359,56 +361,58 @@ function ConnectQuestion({
               </div>
             )}
             <div className="w-6" />
-            <div className="w-1/2">
-              {answerList?.map((s: ConnectQuestAns, i: number) => (
-                <div key={s.id} className="flex items-start mb-2">
-                  <p className="min-w-4 mt-2 mr-2  body_semibold_14">
-                    {String.fromCharCode(65 + i)}.
-                  </p>
-                  <div className="w-[calc(100%-4rem)]">
-                    <EditorHook
-                      onBlur={async () => {
-                        await formik.setFieldTouched(`ans-${s?.id}`, true);
-                        formik.validateForm();
+            {((loadAs && question) || !question) && (
+              <div className="w-1/2">
+                {answerList?.map((s: ConnectQuestAns, i: number) => (
+                  <div key={s.id} className="flex items-start mb-2">
+                    <p className="min-w-4 mt-2 mr-2  body_semibold_14">
+                      {String.fromCharCode(65 + i)}.
+                    </p>
+                    <div className="w-[calc(100%-4rem)]">
+                      <EditorHook
+                        onBlur={async () => {
+                          await formik.setFieldTouched(`ans-${s?.id}`, true);
+                          formik.validateForm();
+                        }}
+                        touch={formik.touched[`ans-${s?.id}`] as any}
+                        error={formik.errors[`ans-${s?.id}`] as any}
+                        setValue={async (name: any, val: any) => {
+                          dispatch(
+                            updateTextConnectAnswer({ index: i, value: val }),
+                          );
+                          await formik.setFieldValue(`result-${s?.id}`, val);
+                          formik.validateForm();
+                        }}
+                        value={s.content}
+                        isCount={false}
+                        isBubble={true}
+                        id={`result-${s?.id}`}
+                        name={`result-${s?.id}`}
+                      />
+                    </div>
+                    <button
+                      onClick={() => {
+                        dispatch(deleteConnectAnswer(i));
                       }}
-                      touch={formik.touched[`ans-${s?.id}`] as any}
-                      error={formik.errors[`ans-${s?.id}`] as any}
-                      setValue={async (name: any, val: any) => {
-                        dispatch(
-                          updateTextConnectAnswer({ index: i, value: val }),
-                        );
-                        await formik.setFieldValue(`result-${s?.id}`, val);
-                        formik.validateForm();
-                      }}
-                      value={s.content}
-                      isCount={false}
-                      isBubble={true}
-                      id={`result-${s?.id}`}
-                      name={`result-${s?.id}`}
-                    />
+                      className=" text-neutral-500 text-2xl mt-1 ml-2 "
+                    >
+                      <CloseCircleOutlined />
+                    </button>
                   </div>
+                ))}
+                <div className="w-full flex justify-end  ">
                   <button
                     onClick={() => {
-                      dispatch(deleteConnectAnswer(i));
+                      dispatch(addMoreConnectAnswer(0));
                     }}
-                    className=" text-neutral-500 text-2xl mt-1 ml-2 "
+                    className="underline body_regular_14 underline-offset-4"
                   >
-                    <CloseCircleOutlined />
+                    <PlusOutlined /> {t("add_result")}
                   </button>
+                  <div className="w-8" />
                 </div>
-              ))}
-              <div className="w-full flex justify-end  ">
-                <button
-                  onClick={() => {
-                    dispatch(addMoreConnectAnswer(0));
-                  }}
-                  className="underline body_regular_14 underline-offset-4"
-                >
-                  <PlusOutlined /> {t("add_result")}
-                </button>
-                <div className="w-8" />
               </div>
-            </div>
+            )}
           </div>
           <div className="body_semibold_14 mt-5">{t("select_result")}</div>
           <div className="body_regular_14 mb-2">{t("select_result_intro")}</div>

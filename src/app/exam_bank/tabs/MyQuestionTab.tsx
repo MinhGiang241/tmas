@@ -56,7 +56,6 @@ function MyQuestionTab() {
   const loadQuestionList = async (init: boolean) => {
     if (init) {
       setLoadingPage(true);
-      setIndexPage(1);
     }
     const res = await getQuestionList({
       paging: {
@@ -73,7 +72,7 @@ function MyQuestionTab() {
               isAsc: false,
             }
           : {
-              name: "Question",
+              name: "UnsignedName",
               isAsc: true,
             },
       ],
@@ -84,7 +83,7 @@ function MyQuestionTab() {
               isAsc: false,
             }
           : {
-              name: "Question",
+              name: "UnsignedName",
               isAsc: true,
             },
       ],

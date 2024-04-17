@@ -90,7 +90,7 @@ function ExamDetails({ params }: any) {
   const router = useRouter();
   const printRef = useRef(null);
   const examTrans = useTranslation("exam");
-
+  const common = useTranslation();
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
@@ -179,10 +179,10 @@ function ExamDetails({ params }: any) {
         }}
         className="text-left pb-1"
       >
-        Nhân bản
+        {common.t("duplicate")}
       </button>
       <ReactToPrint
-        trigger={() => <button className="text-left pb-1">In</button>}
+        trigger={() => <button className="text-left pb-1">{t("print")}</button>}
         content={() => printRef.current}
       />
       {/* <button className="text-left pb-1">In</button> */}
@@ -192,7 +192,7 @@ function ExamDetails({ params }: any) {
         }}
         className="text-left pb-1"
       >
-        Xóa
+        {t("delete")}
         <ConfirmModal
           onOk={async () => {
             await deleteQuestionPart(params.id);
@@ -536,7 +536,7 @@ function ExamDetails({ params }: any) {
             {data?.records?.reduce(function (total: any, question: any) {
               return total + question?.examQuestions?.length;
             }, 0)}{" "}
-            {t("quest")}
+            {t("question")}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Cup className="mr-1 scale-75" />
