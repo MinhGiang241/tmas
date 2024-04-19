@@ -59,5 +59,9 @@
   "act": "Hành động",
   "success": "Thành công",
   "processing": "Đang xử lý",
-  "fail": "Thất bại"
+  "fail": "Thất bại",
+  "processing_time": "Thời gian thực hiện",
+  "gold_num_change": "Số gold biến động",
+  "content": "Nội dung",
+  "result": "Kết quả"
 }

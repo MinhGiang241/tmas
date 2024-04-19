@@ -36,6 +36,8 @@ interface Props {
   fetching?: boolean;
   onOk?: any;
   formatter?: string;
+  isTextRequire?: boolean;
+  showTime?: boolean;
 }
 
 function MDateTimeSelect({
@@ -64,6 +66,8 @@ function MDateTimeSelect({
   h,
   defaultValue,
   fetching = false,
+  isTextRequire = true,
+  showTime = true,
   onOk,
 }: Props) {
   var np;
@@ -115,7 +119,7 @@ function MDateTimeSelect({
           placeholder={placeholder}
           format={[formatter]}
           showSecond={false}
-          showTime
+          showTime={showTime}
           status={error && touch ? `error` : ""}
           onChange={(value: any, dateString: string) => {
             if (setValue) {
@@ -167,7 +171,9 @@ function MDateTimeSelect({
             <div className={`text-m_error_500 body_regular_14`}>{t(er)}</div>
           </div>
         ) : null}
-        {extend && !(er && touch) && <div className="h-[20px]" />}
+        {extend && !(er && touch) && isTextRequire && (
+          <div className="h-[20px]" />
+        )}
       </div>
     </div>
   );
