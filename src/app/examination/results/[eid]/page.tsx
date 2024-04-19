@@ -284,8 +284,8 @@ function ResultPage({ params }: any) {
       <FilterModal
         clearFieldValue={async (fields: any) => {
           await formik.setFieldValue(fields, undefined);
-          var cloneFilter = _.cloneDeep(filterValues);
-          cloneFilter[fields] = undefined;
+          var cloneFilter: FormFilterValue = _.cloneDeep(filterValues);
+          (cloneFilter as any)[fields] = undefined;
           setFilterValues(cloneFilter);
         }}
         formik={formik}
@@ -403,7 +403,7 @@ function ResultPage({ params }: any) {
         <div className="h-5" />
         <div className="flex flex-wrap">
           {Object.keys(filterValues).map((e) => {
-            if (!filterValues[e]) {
+            if (!(filterValues as any)[e]) {
               return null;
             }
             return (
@@ -412,13 +412,16 @@ function ResultPage({ params }: any) {
                 className="flex py-2 px-3 border border-m_neutral_200 ml-2 mb-2 rounded-lg items-center bg-m_primary_100"
               >
                 <span className="body_semibold_14 mr-1">{`${t(e)}: `}</span>
-                <span className="body_regular_14"> {`${filterValues[e]}`}</span>
+                <span className="body_regular_14">
+                  {" "}
+                  {`${(filterValues as any)[e]}`}
+                </span>
                 <button
                   className="ml-2"
                   onClick={async () => {
                     const formikValue = _.cloneDeep(formik.values);
                     await formik.setFieldValue(e, undefined);
-                    formikValue[e] = undefined;
+                    (formikValue as any)[e] = undefined;
                     await setFilterValues(formikValue);
                   }}
                 >
