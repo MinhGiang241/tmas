@@ -93,5 +93,7 @@
   "edit": "Chỉnh sửa",
   "duplicate": "Nhân bản",
   "delete_success_examination": "Xóa đợt thi thành công",
-  "back": "Quay lại"
+  "back": "Quay lại",
+  "start_date": "Ngày bắt đầu",
+  "end_date": "Ngày kết thúc"
 }

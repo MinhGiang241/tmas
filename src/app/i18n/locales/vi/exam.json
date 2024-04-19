@@ -316,5 +316,8 @@
   "essay_num": "Số lượng câu tự luận",
   "detail_timeline": "Timeline chi tiết",
   "save_as": "Lưu lại",
-  "mark_max": "Chấm điểm (tối đa {{num}})"
+  "mark_max": "Chấm điểm (tối đa {{num}})",
+  "not_answer_quest": "Câu không trả lời",
+  "advance_filter": "Bộ lọc nâng cao",
+  "download_file": "Tải File"
 }

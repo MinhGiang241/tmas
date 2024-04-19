@@ -45,5 +45,6 @@
   "join_now": "Tham gia ngay",
   "owner": "Chủ sở hữu",
   "warning_verify_account": "Tài khoản của bạn chưa được xác minh. Chúng tôi đã gửi 1 email xác minh về email của bạn, Vui lòng kiểm tra email và xác minh tài khoản!",
-  "please_verify": "Bạn vui lòng xác minh tài khoản để có thể truy cập tính năng này."
+  "please_verify": "Bạn vui lòng xác minh tài khoản để có thể truy cập tính năng này.",
+  "gold_manage": "Quản lý Gold"
 }

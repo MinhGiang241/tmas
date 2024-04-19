@@ -207,7 +207,7 @@ export default function Explain({
                       router.push(
                         `/exams/details/${examId ?? "u"}/edit?questId=${
                           question.id
-                        }&isBank=${isBank}`,
+                        }&isBank=${isBank ? "true" : "false"}`,
                       );
                     }}
                   >

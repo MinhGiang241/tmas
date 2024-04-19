@@ -410,7 +410,7 @@ function Header({ path }: { path?: string }) {
                 <button
                   onClick={() => {
                     setOpenPop(false);
-                    router.push("/?tab=1");
+                    router.push("/?tab=2");
                   }}
                   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >
@@ -419,7 +419,7 @@ function Header({ path }: { path?: string }) {
                 <button
                   onClick={() => {
                     setOpenPop(false);
-                    router.push("/?tab=2");
+                    router.push("/?tab=3");
                   }}
                   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >

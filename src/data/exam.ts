@@ -210,6 +210,9 @@ export interface TmasData {
   version?: TmasExamVersion;
   versionId?: string;
   visibleState?: string;
+  usage?: {
+    total?: number;
+  };
 }
 
 export interface TmasVersionData {

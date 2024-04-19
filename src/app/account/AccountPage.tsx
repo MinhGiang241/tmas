@@ -12,6 +12,7 @@ import { RootState } from "@/redux/store";
 import { setHomeIndex } from "@/redux/home/homeSlice";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import Gold from "./gold/Gold";
 
 function AccountPage() {
   const index = useSelector((state: RootState) => state.home.index);
@@ -22,7 +23,9 @@ function AccountPage() {
   const router = useRouter();
   useEffect(() => {
     dispatch(
-      setHomeIndex(["0", "1", "2"].includes(indexTab ?? "") ? indexTab : "0"),
+      setHomeIndex(
+        ["0", "1", "2", "3"].includes(indexTab ?? "") ? indexTab : "0",
+      ),
     );
   }, [dispatch, indexTab]);
 
@@ -55,15 +58,28 @@ function AccountPage() {
             } flex items-center justify-start rounded-lg w-full pl-1`}
           >
             <Avatar className="min-w-5" />
-            <p className="mx-2">{t("personal_information")}</p>
+            <p className="mx-2">{t("gold_manage")}</p>
           </button>
-
           <button
             onClick={() => {
               router.push("/?tab=2");
             }}
             className={`h-[52px] ${
               index === "2"
+                ? "bg-m_primary_100 body_semibold_14"
+                : "body_regular_14"
+            } flex items-center justify-start rounded-lg w-full pl-1`}
+          >
+            <Avatar className="min-w-5" />
+            <p className="mx-2">{t("personal_information")}</p>
+          </button>
+
+          <button
+            onClick={() => {
+              router.push("/?tab=3");
+            }}
+            className={`h-[52px] ${
+              index === "3"
                 ? "bg-m_primary_100 body_semibold_14"
                 : "body_regular_14"
             } flex items-center justify-start rounded-lg w-full pl-1`}
@@ -75,8 +91,9 @@ function AccountPage() {
         <div className="hidden lg:block w-6" />
         <div className="h-screen lg:h-fit bg-white lg:w-4/5 w-full lg:mt-10 rounded-lg">
           {index === "0" && <AccountInfo />}
-          {index === "1" && <UserProfile />}
-          {index === "2" && <StudioInfo />}
+          {index === "1" && <Gold />}
+          {index === "2" && <UserProfile />}
+          {index === "3" && <StudioInfo />}
         </div>
       </div>
     </HomeLayout>

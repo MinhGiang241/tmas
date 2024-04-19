@@ -36,6 +36,7 @@ interface Props {
   extend?: boolean;
   isTextRequire?: boolean;
   defaultValue?: string;
+  onClick?: any;
 }
 
 function MInput({
@@ -68,6 +69,7 @@ function MInput({
   loadingValidate,
   defaultValue,
   extend = true,
+  onClick,
 }: Props) {
   var np;
   var er;
@@ -108,6 +110,7 @@ function MInput({
         } relative`}
       >
         <Input
+          onClick={onClick}
           autoComplete="off"
           disabled={disable}
           defaultValue={defaultValue}
