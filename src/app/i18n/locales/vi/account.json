@@ -46,5 +46,18 @@
   "owner": "Chủ sở hữu",
   "warning_verify_account": "Tài khoản của bạn chưa được xác minh. Chúng tôi đã gửi 1 email xác minh về email của bạn, Vui lòng kiểm tra email và xác minh tài khoản!",
   "please_verify": "Bạn vui lòng xác minh tài khoản để có thể truy cập tính năng này.",
-  "gold_manage": "Quản lý Gold"
+  "gold_manage": "Quản lý Gold",
+  "current_gold": "Số gold hiện tại",
+  "from_date": "Từ ngày",
+  "to_date": "Đến ngày",
+  "withdraw_gold": "Rút Gold",
+  "buy_gold": "Mua Gold",
+  "search": "Tìm kiếm",
+  "add_gold": "Cộng gold",
+  "minus_gold": "Trừ gold",
+  "transaction_history": "Lịch sử giao dịch",
+  "act": "Hành động",
+  "success": "Thành công",
+  "processing": "Đang xử lý",
+  "fail": "Thất bại"
 }
