@@ -60,6 +60,7 @@ const config: Config = {
         m_success_100: "#BAEDD0",
         m_success_50: "#E9F9F0",
         m_question: "#F4FAFB",
+        m_upgrade_300: "#F59300"
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
