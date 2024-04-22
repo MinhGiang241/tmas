@@ -1,21 +1,12 @@
 'use client'
-import React, { useState } from "react";
+import React from "react";
 import HomeLayout from '../layouts/HomeLayout'
 import Tick from "@/app/components/icons/tick-circle.svg";
-import ConfirmModal from '../components/modals/ConfirmModal';
 import { successToast } from "../components/toast/customToast";
 
 export default function Upgrage() {
-    const [open, setOpen] = useState(false)
     return (
         <HomeLayout>
-            {/* <ConfirmModal
-                text={"Gửi yêu cầu báo giá thành công"}
-                // action={t("delete")}
-                open={open}
-                onCancel={() => { setOpen(false) }}
-                onOk={() => ("")}
-            /> */}
             <div className="h-2" />
             <div className="w-full max-lg:px-3 mb-5">
                 <div className="body_semibold_20 mt-3 w-full flex justify-between items-center">

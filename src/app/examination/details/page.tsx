@@ -113,7 +113,9 @@ function DetailsPage({ params }: any) {
     })
     // console.log(res, "data res");
     if (res) {
-      setData(res?.data?.records[0]);
+      if (res?.data?.records?.length > 0) {
+        setData(res?.data?.records[0]);
+      }
       console.log(res?.data?.records[0], "data res");
     }
 
@@ -216,6 +218,7 @@ function DetailsPage({ params }: any) {
                     }
                   >
                     {data?.examQuestions
+                      ?.filter((a: any) => a.idExamQuestionPart == x.id)
                       ?.sort((a: any, b: any) =>
                         a.createdTime < b.createdTime
                           ? -1
@@ -224,7 +227,6 @@ function DetailsPage({ params }: any) {
                             : 0,
                       )
                       .map((e: any, key: any) => {
-
                         var questionGroup = questionGroups?.find(
                           (v: any) => v.id === e.idGroupQuestion,
                         );
