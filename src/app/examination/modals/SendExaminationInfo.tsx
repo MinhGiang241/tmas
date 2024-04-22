@@ -8,7 +8,7 @@ import MInput from "@/app/components/config/MInput";
 import { Pagination, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dynamic from "next/dynamic";
-import React, { HTMLAttributes, useState } from "react";
+import React, { HTMLAttributes, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TrashIcon from "@/app/components/icons/trash.svg";
 import EyeIcon from "@/app/components/icons/eye.svg";
@@ -20,6 +20,9 @@ import MButton from "@/app/components/config/MButton";
 import ContentDetailsModal from "./ContentDetailsModal";
 import AddReceiptInfo from "./AddReceiptInfo";
 import ImportReceipterList from "./ImportReceipterList";
+import MDropdown from "@/app/components/config/MDropdown";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import { getTemplateSendMail } from "@/services/api_services/examination_api";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -42,29 +45,45 @@ function SendExaminationInfo(props: Props) {
   const [openDetal, setOpenDetail] = useState<boolean>(false);
   const [openAddInfo, setOpenAddInfo] = useState<boolean>(false);
   const [openImport, setOpenImport] = useState<boolean>(false);
+  const [template, setTemplate] = useState<string | undefined>();
+  const [loadTemplate, setLoadTemplate] = useState<boolean>(false);
+
+  useOnMountUnsafe(() => {
+    getTemplateMail();
+  });
+  const getTemplateMail = async () => {
+    var res = await getTemplateSendMail();
+
+    console.log("res", res);
+
+    if (res?.code != 0) {
+      return;
+    }
+    setTemplate(res?.data);
+  };
 
   const [infos, setInfos] = useState<any>([
     {
-      info: "dung23@gmail.com",
-      approve_code: "123456",
+      mail: "dung23@gmail.com",
+      code: "123456",
       status: "Lỗi",
       send_time: "2024-04-02T09:31:13.300+0000",
     },
     {
-      info: "dung23@gmail.com",
-      approve_code: "123456",
+      mail: "dung23@gmail.com",
+      code: "123456",
       status: "Lỗi",
       send_time: "2024-04-02T09:31:13.300+0000",
     },
     {
-      info: "dung23@gmail.com",
-      approve_code: "123456",
+      mail: "dung23@gmail.com",
+      code: "123456",
       status: "Lỗi",
       send_time: "2024-04-02T09:31:13.300+0000",
     },
     {
-      info: "dung23@gmail.com",
-      approve_code: "123456",
+      mail: "dung23@gmail.com",
+      code: "123456",
       status: "Lỗi",
       send_time: "2024-04-02T09:31:13.300+0000",
     },
@@ -77,8 +96,8 @@ function SendExaminationInfo(props: Props) {
       title: (
         <div className="w-full flex justify-start">{t("personal_info")}</div>
       ),
-      dataIndex: "info",
-      key: "info",
+      dataIndex: "mail",
+      key: "mail",
       render: (text, data) => (
         <p key={text} className="w-full  min-w-11 break-all caption_regular_14">
           {text}
@@ -93,8 +112,8 @@ function SendExaminationInfo(props: Props) {
           {t("approve_code")}
         </div>
       ),
-      dataIndex: "approve_code",
-      key: "approve_code",
+      dataIndex: "code",
+      key: "code",
       render: (text) => (
         <p
           key={text}
@@ -197,14 +216,19 @@ function SendExaminationInfo(props: Props) {
         }}
       />
       <div className="w-full">
-        <div className="title_bold_24">{t("send_exam_info")}</div>
-        <MInput
+        <div className="title_bold_24 text-center w-full mt-3">
+          {t("send_exam_info")}
+        </div>
+        <MDropdown
+          className="dropdown-flex"
+          options={[{ value: "email", label: "Email" }]}
           id="media"
           name="media"
           title={t("media")}
           placeholder={t("media")}
         />
         <EditorHook
+          defaultValue={template}
           isCount={false}
           id="send_content"
           name="send_content"
@@ -253,26 +277,28 @@ function SendExaminationInfo(props: Props) {
             {t("sent")}: <span className="body_semibold_14 ">{"35/15"}</span>
           </p>
           <p className="body_regular-14 mr-3">
-            {t("sending")}:
+            {t("error")}:
             <span className="body_semibold_14 ml-1">{"35/15"}</span>
           </p>
         </div>
-        <Table
-          className="w-full"
-          bordered={false}
-          columns={columns}
-          dataSource={infos}
-          pagination={false}
-          rowKey={"id"}
-          onRow={(data: any, index: any) =>
-            ({
-              style: {
-                background: "#FFFFFF",
-                borderRadius: "20px",
-              },
-            }) as HTMLAttributes<any>
-          }
-        />
+        <div className="max-lg:overflow-scroll">
+          <Table
+            className="w-full"
+            bordered={false}
+            columns={columns}
+            dataSource={infos}
+            pagination={false}
+            rowKey={"id"}
+            onRow={(data: any, index: any) =>
+              ({
+                style: {
+                  background: "#FFFFFF",
+                  borderRadius: "20px",
+                },
+              }) as HTMLAttributes<any>
+            }
+          />
+        </div>
         <div className="w-full flex h-12 items-center  justify-center">
           <span className="body_regular_14 mr-2">{`${total} ${t(
             "result",
@@ -311,7 +337,9 @@ function SendExaminationInfo(props: Props) {
             />
           </div>
         </div>
-        <MButton h="h-9" className="w-[114px]" text={t("send")} />
+        <div className="w-full flex justify-center">
+          <MButton h="h-9" className="w-[114px] " text={t("send")} />
+        </div>
       </div>
     </BaseModal>
   );

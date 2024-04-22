@@ -3,6 +3,7 @@ import {
   ExaminationFormData,
   ExaminationListParams,
   ParamGetExamList,
+  SendRemindParams,
 } from "@/data/form_interface";
 import { callApi, callStudioAPI } from "./base_api";
 import { ExamData } from "@/data/exam";
@@ -207,6 +208,37 @@ export const getTmasExaminationList = async ({
       fields,
       tags,
     },
+  );
+  return results;
+};
+
+export const getTemplateSendMail = async () => {
+  const results = await callApi.get(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/mailtemplate.get_exam_remind_template`,
+  );
+  return results;
+};
+
+export const sendRemindEmail = async (data: SendRemindParams) => {
+  const results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examtestmaillist.send_remind`,
+    data,
+  );
+  return results;
+};
+
+export const loadRemindMailList = async (examtestId?: string) => {
+  const results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examtestmaillist.send_remind`,
+    { examtestId },
+  );
+  return results;
+};
+
+export const deleteRemindMail = async (maillistId?: string) => {
+  const results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examtestmaillist.delete`,
+    { maillistId },
   );
   return results;
 };

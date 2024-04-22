@@ -55,9 +55,13 @@ function BaseModal({
         <div
           className={`w-full ${
             offPadding ? "" : "px-2 rounded-lg"
-          }  flex flex-col items-center text-center`}
+          }  flex flex-col items-center `}
         >
-          {title && <p className="title_bold_24 my-4">{title}</p>}
+          {title && (
+            <div className="title_bold_24 my-4 w-full justify-center text-center">
+              <p>{title}</p>
+            </div>
+          )}
           {children}
         </div>
       </div>

@@ -15,6 +15,7 @@ import {
 import MButton from "@/app/components/config/MButton";
 import { FormattedNumber } from "react-intl";
 import FileIcon from "@/app/components/icons/file.svg";
+import * as XLSX from "xlsx/xlsx.mjs";
 
 interface Props extends BaseModalProps {}
 
@@ -27,15 +28,35 @@ function ImportReceipterList(props: Props) {
     { info: "dung23@gmail.com", approve_code: "123456", status: "Lỗi" },
   ]);
   const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [selectedData, setSelectedData] = useState<any[]>([]);
   const fileRef = useRef<any>(undefined);
   const handleFileChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
+      reader.onload = function (e) {
+        var data = e?.target?.result;
+        let readedData = XLSX.read(data, { type: "binary" });
+        const wsname = readedData.SheetNames[0];
+        const ws = readedData.Sheets[wsname];
+
+        /* Convert array to json*/
+        const dataParse = XLSX.utils.sheet_to_json(ws, { header: 1 });
+        console.log("dataParse", dataParse);
+        var d = dataParse
+          .slice(1)
+          .filter((k: any) => k && k.length >= 2)
+          .map((e: any) => {
+            return { mail: e[0], code: e[1], status: "new" };
+          });
+        setSelectedData(d);
+      };
+      reader.readAsBinaryString(file);
       reader.onloadend = () => {
         setSelectedFile(file);
       };
-      reader.readAsDataURL(file);
+
+      //reader.readAsDataURL(file);
     }
   };
   const handleFileClick = (e: any) => {
@@ -51,8 +72,8 @@ function ImportReceipterList(props: Props) {
       title: (
         <div className="w-full flex justify-start">{t("personal_info")}</div>
       ),
-      dataIndex: "info",
-      key: "info",
+      dataIndex: "mail",
+      key: "mail",
       render: (text, data) => (
         <p key={text} className="w-full  min-w-11 break-all caption_regular_14">
           {text}
@@ -67,8 +88,8 @@ function ImportReceipterList(props: Props) {
           {t("approve_code")}
         </div>
       ),
-      dataIndex: "approve_code",
-      key: "approve_code",
+      dataIndex: "code",
+      key: "code",
       render: (text) => (
         <p
           key={text}
@@ -167,7 +188,7 @@ function ImportReceipterList(props: Props) {
         className="w-full"
         bordered={false}
         columns={columns}
-        dataSource={infos}
+        dataSource={selectedData}
         pagination={false}
         rowKey={"id"}
         onRow={(data: any, index: any) =>

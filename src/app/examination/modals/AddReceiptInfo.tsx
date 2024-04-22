@@ -19,7 +19,7 @@ function AddReceiptInfo(props: Props) {
       <MDropdown
         id="corresponding_code"
         name="corresponding_code"
-        title={t("receipter_info")}
+        title={t("corresponding_code")}
       />
       <div className="flex w-full justify-center">
         <MButton

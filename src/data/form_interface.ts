@@ -376,3 +376,10 @@ export interface ImportTmasExamParams {
     jsonExamQuestions?: string[];
   }[];
 }
+
+export interface SendRemindParams {
+  methods?: string;
+  body?: string;
+  emails?: string[];
+  examtestId?: string;
+}
