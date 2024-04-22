@@ -63,5 +63,20 @@
   "processing_time": "Thời gian thực hiện",
   "gold_num_change": "Số gold biến động",
   "content": "Nội dung",
-  "result": "Kết quả"
+  "result": "Kết quả",
+  "gold_list": "Danh sách gói Gold",
+  "pay": "Thanh toán",
+  "pay_package": "Thanh toán gói sản phẩm",
+  "select_payment_method": "Chọn hình thức thanh toán",
+  "atm_method": "Thanh toán bằng thẻ ATM, Visa,Mastercard, JCB và tại cửa hàng tiện dụng",
+  "momo_method": "Thanh toán qua ví trả sau MoMo",
+  "shopee_method": "Thanh toán qua Shoppe Pay",
+  "qr_method": "Thanh toán qua QR Code",
+  "customer_info": "Thông tin khách hàng",
+  "order_info": "Thông tin đơn hàng",
+  "bussiness_package": "Gói sản phẩm Business",
+  "discount_price": "Giá khuyến mãi",
+  "discount_code": "Mã giảm giá từ TMAS",
+  "apply": "Áp dụng",
+  "total_pay": "Tổng thanh toán"
 }

@@ -206,10 +206,12 @@ export default function FillBlank({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      console.log("isBank", isBank);
+
                       router.push(
                         `/exams/details/${examId ?? "u"}/edit?questId=${
                           question.id
-                        }?isBank=${isBank ? "true" : "false"}`,
+                        }&isBank=${isBank ? "true" : "false"}`,
                       );
                     }}
                   >

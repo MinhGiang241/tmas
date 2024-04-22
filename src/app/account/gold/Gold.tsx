@@ -10,6 +10,8 @@ import {
 } from "../account-info/AccountInfo";
 import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 import MDropdown from "@/app/components/config/MDropdown";
+import RighIcon from "@/app/components/icons/chevron-right.svg";
+import { useRouter } from "next/navigation";
 
 function Gold() {
   const { t } = useTranslation("account");
@@ -18,6 +20,7 @@ function Gold() {
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
 
   const infos = [
     {
@@ -91,6 +94,66 @@ function Gold() {
     },
   ];
 
+  const d = [
+    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
+    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
+    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
+    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
+    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
+    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
+  ];
+
+  const [selected, setSelected] = useState<number | undefined>();
+  const router = useRouter();
+
+  if (page === 1) {
+    return (
+      <div className="w-full p-5 flex flex-col">
+        <div className="flex">
+          <button
+            className="mr-2"
+            onClick={() => {
+              setPage(0);
+            }}
+          >
+            <RighIcon />
+          </button>
+          <div className="body_semibold_20">{t("gold_list")} </div>
+        </div>
+        <div className="w-full grid grid-cols-3 gap-4 mt-4">
+          {d.map((e: any, i: number) => (
+            <button
+              onClick={() => {
+                setSelected(i);
+              }}
+              key={i}
+              className={`flex flex-col items-center border rounded-lg px-2 ${
+                selected == i ? "bg-m_primary_100 border-m_primary_300" : ""
+              }`}
+            >
+              <div className="bg-[#F4D58D] px-3 py-1 mt-3 rounded-lg body_semibold_14">
+                {e.code}
+              </div>
+              <div className="body_bold_16 mt-1">{e.decs}</div>
+              <Divider className="my-2" />
+              <div className="title_bold_20 text-m_primary_500 mb-2">
+                {e.price}
+              </div>
+            </button>
+          ))}
+        </div>
+        <div className="flex mt-5 justify-center">
+          <MButton
+            text={t("pay")}
+            onClick={() => {
+              router.push("/upgrade");
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full p-5 flex flex-col">
       <div className="w-full flex justify-between items-center">
@@ -104,7 +167,13 @@ function Gold() {
         <div className="flex">
           <MButton h="h-11" text={t("withdraw_gold")} />
           <div className="w-3" />
-          <MButton h="h-11" text={t("buy_gold")} />
+          <MButton
+            onClick={() => {
+              setPage(1);
+            }}
+            h="h-11"
+            text={t("buy_gold")}
+          />
         </div>
       </div>
       <Divider className="my-5" />

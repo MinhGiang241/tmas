@@ -319,5 +319,6 @@
   "mark_max": "Chấm điểm (tối đa {{num}})",
   "not_answer_quest": "Câu không trả lời",
   "advance_filter": "Bộ lọc nâng cao",
-  "download_file": "Tải File"
+  "download_file": "Tải File",
+  "not_clone_random_quest": "Không thêm vào được câu hỏi ngẫu nhiên"
 }
