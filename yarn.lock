@@ -2788,6 +2788,11 @@
   resolved "https://registry.npmjs.org/@types/d3-timer/-/d3-timer-3.0.2.tgz"
   integrity sha512-Ps3T8E8dZDam6fUyNiMkekK3XUsaUEik+idO9/YjPtfj2qruF8tFBXS7XhtE4iIXBLxhmLjP3SXpLhVf21I9Lw==
 
+"@types/file-saver@^2.0.7":
+  version "2.0.7"
+  resolved "https://registry.npmjs.org/@types/file-saver/-/file-saver-2.0.7.tgz"
+  integrity sha512-dNKVfHd/jk0SkR/exKGj2ggkB45MAkzvWCaqLUUgkyjITkGNzH8H+yUwr+BLJUBjZOe9w8X3wgmXhZDRg1ED6A==
+
 "@types/hoist-non-react-statics@^3.3.1":
   version "3.3.5"
   resolved "https://registry.npmjs.org/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.5.tgz"
@@ -2876,6 +2881,17 @@
   version "9.0.8"
   resolved "https://registry.npmjs.org/@types/uuid/-/uuid-9.0.8.tgz"
   integrity sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==
+
+"@types/xlsx-populate@git+https://github.com/JanLoebel/types-xlsx-populate.git":
+  version "1.19.1"
+  resolved "git+ssh://git@github.com/JanLoebel/types-xlsx-populate.git#7ef81174e495fe9ef2689bd329499f81a2a93d43"
+
+"@types/xlsx@^0.0.36":
+  version "0.0.36"
+  resolved "https://registry.npmjs.org/@types/xlsx/-/xlsx-0.0.36.tgz"
+  integrity sha512-mvfrKiKKMErQzLMF8ElYEH21qxWCZtN59pHhWGmWCWFJStYdMWjkDSAy6mGowFxHXaXZWe5/TW7pBUiWclIVOw==
+  dependencies:
+    xlsx "*"
 
 "@typescript-eslint/parser@^5.4.2 || ^6.0.0":
   version "6.19.1"
@@ -2983,6 +2999,11 @@
   version "1.2.0"
   resolved "https://registry.npmjs.org/@ungap/structured-clone/-/structured-clone-1.2.0.tgz"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
+
+"@xlsx/xlsx-populate@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.npmjs.org/@xlsx/xlsx-populate/-/xlsx-populate-0.0.3.tgz"
+  integrity sha512-sDqZVG89bgXCo/LiK30PO9SRB2/loaaSMbTzAEWuhIhqiz/XUUSOEjKydox8u4LUBrA5ksm+cubvxO3avb8ybA==
 
 acorn-jsx@^5.3.2:
   version "5.3.2"
@@ -7476,6 +7497,11 @@ xliff@6.2.0:
   dependencies:
     xml-js "1.6.11"
 
+xlsx-populate-types@^1.21.0:
+  version "1.21.1"
+  resolved "https://registry.npmjs.org/xlsx-populate-types/-/xlsx-populate-types-1.21.1.tgz"
+  integrity sha512-025JS9EjF8P64yVL7na0/00+0VGVAiAXaBLcdAWtBWrjXU6u7RvuS9ZW0nLXk5XZt0Hd2dIDJOH84UOBdDA3dA==
+
 xlsx-populate@^1.21.0:
   version "1.21.0"
   resolved "https://registry.npmjs.org/xlsx-populate/-/xlsx-populate-1.21.0.tgz"
@@ -7486,7 +7512,7 @@ xlsx-populate@^1.21.0:
     lodash "^4.17.15"
     sax "^1.2.4"
 
-xlsx@0.18.5:
+xlsx@*, xlsx@0.18.5:
   version "0.18.5"
   resolved "https://registry.npmjs.org/xlsx/-/xlsx-0.18.5.tgz"
   integrity sha512-dmg3LCjBPHZnQp5/F/+nnTa+miPJxUXB6vtk42YjBBKayDNagxGEeIdWApkYPOf3Z3pm3k62Knjzp7lMeTEtFQ==

@@ -192,7 +192,7 @@ function SendExaminationInfo(props: Props) {
   ];
 
   useEffect(() => {
-    var id;
+    var id: any;
     if (props.open) {
       id = setInterval(() => {
         getEmailList();

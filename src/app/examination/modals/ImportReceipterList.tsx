@@ -17,10 +17,11 @@ import {
 import MButton from "@/app/components/config/MButton";
 import { FormattedNumber } from "react-intl";
 import FileIcon from "@/app/components/icons/file.svg";
-import * as XLSX from "xlsx/xlsx.mjs";
+import * as XLSX from "xlsx";
 import { RemindEmailData } from "@/data/exam";
 import { v4 as uuidv4 } from "uuid";
 import { saveAs } from "file-saver";
+//@ts-ignore
 import XlsxPopulate from "xlsx-populate/browser/xlsx-populate";
 
 interface Props extends BaseModalProps {}
@@ -118,10 +119,10 @@ function ImportReceipterList(props: Props) {
     },
   ];
 
-  function getSheetData(data, header) {
+  function getSheetData(data: any, header: any) {
     var fields = Object.keys(data[0]);
-    var sheetData = data.map(function (row) {
-      return fields.map(function (fieldName) {
+    var sheetData = data.map(function (row: any) {
+      return fields.map(function (fieldName: any) {
         return row[fieldName] ? row[fieldName] : "";
       });
     });
@@ -133,7 +134,7 @@ function ImportReceipterList(props: Props) {
     var data = [{ email: "", code: "" }];
     let header = ["Email", "Code"];
 
-    XlsxPopulate.fromBlankAsync().then(async (workbook) => {
+    XlsxPopulate.fromBlankAsync().then(async (workbook: any) => {
       const sheet1 = workbook.sheet(0);
       const sheetData = getSheetData(data, header);
       const totalColumns = sheetData[0].length;
@@ -144,8 +145,8 @@ function ImportReceipterList(props: Props) {
       sheet1.row(1).style("bold", true);
       sheet1.range("A1:" + endColumn + "1").style("fill", "BFBFBF");
       range.style("border", true);
-      return workbook.outputAsync().then((res) => {
-        saveAs(res, "file.xlsx");
+      return workbook.outputAsync().then((res: any) => {
+        saveAs(res, "Sample.xlsx");
       });
     });
   }
@@ -153,7 +154,7 @@ function ImportReceipterList(props: Props) {
   return (
     <BaseModal {...props}>
       <input
-        accept=".xlsx, .pdf, .docx, ppt, pptx"
+        accept=".xlsx, .xls"
         type="file"
         ref={fileRef}
         style={{ display: "none" }}
