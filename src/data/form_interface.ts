@@ -380,6 +380,9 @@ export interface ImportTmasExamParams {
 export interface SendRemindParams {
   methods?: string;
   body?: string;
-  emails?: string[];
+  maillist?: { email?: string; passcode?: string; user_name?: string }[];
   examtestId?: string;
+  start_time?: string;
+  end_time?: string;
+  name?: string;
 }

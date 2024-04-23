@@ -269,12 +269,15 @@ function ExaminationPage() {
   return (
     <HomeLayout>
       <SendExaminationInfo
+        examination={active}
         open={openExaminationInfo}
         onCancel={() => {
+          setActive(undefined);
           setOpenExaminationInfo(false);
         }}
         onOk={() => {
           setOpenExaminationInfo(false);
+          setActive(undefined);
         }}
       />
       <ConfirmModal
@@ -391,7 +394,7 @@ function ExaminationPage() {
               }),
             )}
             h="h-11"
-            className="ml-4"
+            className="lg:ml-4"
             id="public_free"
             name="public_free"
           />
@@ -613,6 +616,9 @@ function ExaminationPage() {
                     </div>
                     <div className="flex max-lg:mt-3">
                       <MButton
+                        onBlur={() => {
+                          setOpenPop(undefined);
+                        }}
                         type="secondary"
                         text={t("result")}
                         h="h-9"
@@ -628,6 +634,7 @@ function ExaminationPage() {
                             <button
                               onClick={() => {
                                 setOpenPop(undefined);
+                                setActive(v);
                                 setOpenExaminationInfo(true);
                               }}
                               className="flex justify-start hover:bg-m_primary_100 p-1 rounded-sm w-full"

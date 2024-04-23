@@ -11,6 +11,7 @@ interface Props {
   onClick?: React.MouseEventHandler<HTMLElement>;
   icon?: React.ReactNode;
   h?: string;
+  onBlur?: any;
 }
 
 function MButton({
@@ -23,9 +24,11 @@ function MButton({
   onClick,
   icon,
   h,
+  onBlur,
 }: Props) {
   return (
     <Button
+      onBlur={onBlur}
       icon={icon}
       htmlType={htmlType}
       type="default"

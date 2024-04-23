@@ -320,5 +320,11 @@
   "not_answer_quest": "Câu không trả lời",
   "advance_filter": "Bộ lọc nâng cao",
   "download_file": "Tải File",
-  "not_clone_random_quest": "Không thêm vào được câu hỏi ngẫu nhiên"
+  "not_clone_random_quest": "Không thêm vào được câu hỏi ngẫu nhiên",
+  "success_delete_email": "Xóa email thành công",
+  "New": "Mới",
+  "Pending_2": "Đang gửi",
+  "Success": "Thành công",
+  "Failure": "Lỗi",
+  "success_send_remind": "Tiến hành gửi email thành công"
 }

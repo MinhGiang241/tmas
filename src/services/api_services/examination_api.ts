@@ -229,7 +229,7 @@ export const sendRemindEmail = async (data: SendRemindParams) => {
 
 export const loadRemindMailList = async (examtestId?: string) => {
   const results = await callApi.post(
-    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examtestmaillist.send_remind`,
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examtestmaillist.load_by_exam`,
     { examtestId },
   );
   return results;

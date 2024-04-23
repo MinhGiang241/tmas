@@ -22,7 +22,16 @@ import AddReceiptInfo from "./AddReceiptInfo";
 import ImportReceipterList from "./ImportReceipterList";
 import MDropdown from "@/app/components/config/MDropdown";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
-import { getTemplateSendMail } from "@/services/api_services/examination_api";
+import {
+  deleteRemindMail,
+  getTemplateSendMail,
+  loadRemindMailList,
+  sendRemindEmail,
+} from "@/services/api_services/examination_api";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { ExaminationData, RemindEmailData } from "@/data/exam";
+import { functions, method } from "lodash";
+import _ from "lodash";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -31,7 +40,9 @@ const EditorHook = dynamic(
   },
 );
 
-interface Props extends BaseModalProps {}
+interface Props extends BaseModalProps {
+  examination?: ExaminationData;
+}
 const dateFormat = "DD/MM/YYYY HH:mm";
 
 function SendExaminationInfo(props: Props) {
@@ -47,7 +58,7 @@ function SendExaminationInfo(props: Props) {
   const [openImport, setOpenImport] = useState<boolean>(false);
   const [template, setTemplate] = useState<string | undefined>();
   const [loadTemplate, setLoadTemplate] = useState<boolean>(false);
-
+  const [emails, setEmails] = useState<RemindEmailData[]>([]);
   useOnMountUnsafe(() => {
     getTemplateMail();
   });
@@ -60,34 +71,8 @@ function SendExaminationInfo(props: Props) {
       return;
     }
     setTemplate(res?.data);
+    setSendContent(res?.data);
   };
-
-  const [infos, setInfos] = useState<any>([
-    {
-      mail: "dung23@gmail.com",
-      code: "123456",
-      status: "Lỗi",
-      send_time: "2024-04-02T09:31:13.300+0000",
-    },
-    {
-      mail: "dung23@gmail.com",
-      code: "123456",
-      status: "Lỗi",
-      send_time: "2024-04-02T09:31:13.300+0000",
-    },
-    {
-      mail: "dung23@gmail.com",
-      code: "123456",
-      status: "Lỗi",
-      send_time: "2024-04-02T09:31:13.300+0000",
-    },
-    {
-      mail: "dung23@gmail.com",
-      code: "123456",
-      status: "Lỗi",
-      send_time: "2024-04-02T09:31:13.300+0000",
-    },
-  ]);
 
   const columns: ColumnsType<any> = [
     {
@@ -96,8 +81,8 @@ function SendExaminationInfo(props: Props) {
       title: (
         <div className="w-full flex justify-start">{t("personal_info")}</div>
       ),
-      dataIndex: "mail",
-      key: "mail",
+      dataIndex: "email",
+      key: "email",
       render: (text, data) => (
         <p key={text} className="w-full  min-w-11 break-all caption_regular_14">
           {text}
@@ -135,7 +120,7 @@ function SendExaminationInfo(props: Props) {
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {text}
+          {text == "Pending" ? t("Pending_2") : t(text)}
         </p>
       ),
     },
@@ -144,14 +129,14 @@ function SendExaminationInfo(props: Props) {
       onHeaderCell: (_) => rowStyle,
       width: "20%",
       title: <div className="w-full flex justify-start">{t("send_time")}</div>,
-      dataIndex: "send_time",
-      key: "send_time",
+      dataIndex: "sentTime",
+      key: "sentTime",
       render: (text) => (
         <p
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {dayjs(text).format(dateFormat)}
+          {text ? dayjs(text).format(dateFormat) : ""}
         </p>
       ),
     },
@@ -168,13 +153,37 @@ function SendExaminationInfo(props: Props) {
           <button
             className="ml-2"
             onClick={() => {
+              setActive(data);
               setOpenDetail(true);
             }}
           >
             <EyeIcon />
           </button>
 
-          <button className="ml-2" onClick={() => {}}>
+          <button
+            className="ml-2"
+            onClick={async () => {
+              if (data.status == "New") {
+                var cloneEmails = _.cloneDeep(emails);
+                var indexDelete = cloneEmails.findIndex(
+                  (e) => e._id === data._id,
+                );
+                cloneEmails.splice(indexDelete, 1);
+                setEmails([...cloneEmails]);
+                successToast(t("success_delete_email"));
+                console.log("cloneEmails", cloneEmails);
+              } else {
+                const res = await deleteRemindMail(data?._id);
+                if (res?.code != 0) {
+                  return;
+                }
+                setEmails([]);
+                successToast(t("success_delete_email"));
+                getEmailList();
+              }
+              setActive(data);
+            }}
+          >
             <TrashIcon />
           </button>
         </div>
@@ -182,6 +191,67 @@ function SendExaminationInfo(props: Props) {
     },
   ];
 
+  useEffect(() => {
+    var id;
+    if (props.open) {
+      id = setInterval(() => {
+        getEmailList();
+      }, 5000);
+    }
+    return () => {
+      clearInterval(id);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.open]);
+
+  const [sendEmailLoading, setSendEmailLoading] = useState<boolean>(false);
+  const [sendContent, setSendContent] = useState<string | undefined>();
+  const [mailList, setMailList] = useState<RemindEmailData[]>([]);
+  const [media, setMedia] = useState("email");
+
+  const getEmailList = async () => {
+    const res = await loadRemindMailList(props.examination?.id);
+    console.log("res list", res);
+    if (res?.code != 0) {
+      return;
+    }
+    setMailList(res?.data);
+    setTotal(
+      _.filter([...emails, ...mailList], (n: RemindEmailData) => {
+        if (search) {
+          return (
+            n.email?.toLowerCase().includes(search?.toLowerCase()) ||
+            n.code?.toLowerCase().includes(search?.toLowerCase())
+          );
+        }
+        return true;
+      })?.length,
+    );
+  };
+
+  const sendEmail = async () => {
+    setSendEmailLoading(true);
+    const res = await sendRemindEmail({
+      maillist: [
+        ...emails.map((t) => ({
+          email: t.email,
+          passcode: t.code,
+        })),
+      ],
+      methods: media,
+      examtestId: props.examination?.id,
+      body: sendContent,
+    });
+    setSendEmailLoading(false);
+    if (res.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    setEmails([]);
+    successToast(t("success_send_remind"));
+    getEmailList();
+  };
   return (
     <BaseModal {...props} width={1027}>
       <ImportReceipterList
@@ -189,24 +259,31 @@ function SendExaminationInfo(props: Props) {
         onCancel={() => {
           setOpenImport(false);
         }}
-        onOk={() => {
+        onOk={(newEmails: RemindEmailData[]) => {
+          setEmails([...newEmails, ...emails]);
           setOpenImport(false);
         }}
         open={openImport}
         width={705}
       />
       <AddReceiptInfo
+        examination={props.examination}
+        addInfo={(info: RemindEmailData) => {
+          setEmails([info, ...emails]);
+        }}
         width={564}
         title={t("add_info_receipter")}
         open={openAddInfo}
         onCancel={() => {
           setOpenAddInfo(false);
         }}
-        onOk={() => {
+        onOk={(value: RemindEmailData) => {
+          setEmails([value, ...emails]);
           setOpenAddInfo(false);
         }}
       />
       <ContentDetailsModal
+        data={active}
         open={openDetal}
         width={564}
         title={t("detail")}
@@ -220,6 +297,11 @@ function SendExaminationInfo(props: Props) {
           {t("send_exam_info")}
         </div>
         <MDropdown
+          allowClear={false}
+          value={media}
+          setValue={(name: any, val: any) => {
+            setMedia(val);
+          }}
           className="dropdown-flex"
           options={[{ value: "email", label: "Email" }]}
           id="media"
@@ -229,6 +311,10 @@ function SendExaminationInfo(props: Props) {
         />
         <EditorHook
           defaultValue={template}
+          value={sendContent}
+          setValue={(name: any, val: any) => {
+            setSendContent(val);
+          }}
           isCount={false}
           id="send_content"
           name="send_content"
@@ -242,6 +328,21 @@ function SendExaminationInfo(props: Props) {
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
+                  setTotal(
+                    _.filter([...emails, ...mailList], (n: RemindEmailData) => {
+                      if (e.target.value) {
+                        return (
+                          n.email
+                            ?.toLowerCase()
+                            .includes(e.target.value?.toLowerCase()) ||
+                          n.code
+                            ?.toLowerCase()
+                            .includes(e.target.value?.toLowerCase())
+                        );
+                      }
+                      return true;
+                    })?.length,
+                  );
                 }}
                 isTextRequire={false}
                 h="h-9"
@@ -271,14 +372,24 @@ function SendExaminationInfo(props: Props) {
         <div className="flex">
           <p className="body_regular-14 mr-3">
             {t("sending")}:
-            <span className="body_semibold_14 ml-1">{"35/15"}</span>
+            <span className="body_semibold_14 ml-1">
+              {mailList.filter((e) => e.status == "Pending").length}/
+              {[...emails, ...mailList].length}
+            </span>
           </p>
           <p className="body_regular-14 mr-3">
-            {t("sent")}: <span className="body_semibold_14 ">{"35/15"}</span>
+            {t("sent")}:{" "}
+            <span className="body_semibold_14 ">
+              {mailList.filter((e) => e.status == "Success").length}/
+              {[...emails, ...mailList].length}
+            </span>
           </p>
           <p className="body_regular-14 mr-3">
             {t("error")}:
-            <span className="body_semibold_14 ml-1">{"35/15"}</span>
+            <span className="body_semibold_14 ml-1">
+              {mailList.filter((e) => e.status == "Failure").length}/
+              {[...emails, ...mailList].length}
+            </span>
           </p>
         </div>
         <div className="max-lg:overflow-scroll">
@@ -286,7 +397,18 @@ function SendExaminationInfo(props: Props) {
             className="w-full"
             bordered={false}
             columns={columns}
-            dataSource={infos}
+            dataSource={_.filter(
+              [...emails, ...mailList],
+              (n: RemindEmailData) => {
+                if (search) {
+                  return (
+                    n.email?.toLowerCase().includes(search?.toLowerCase()) ||
+                    n.code?.toLowerCase().includes(search?.toLowerCase())
+                  );
+                }
+                return true;
+              },
+            )?.splice((indexPage - 1) * recordNum, recordNum)}
             pagination={false}
             rowKey={"id"}
             onRow={(data: any, index: any) =>
@@ -338,7 +460,13 @@ function SendExaminationInfo(props: Props) {
           </div>
         </div>
         <div className="w-full flex justify-center">
-          <MButton h="h-9" className="w-[114px] " text={t("send")} />
+          <MButton
+            loading={sendEmailLoading}
+            onClick={sendEmail}
+            h="h-9"
+            className="w-[114px] "
+            text={t("send")}
+          />
         </div>
       </div>
     </BaseModal>
