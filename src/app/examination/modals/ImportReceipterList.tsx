@@ -131,7 +131,7 @@ function ImportReceipterList(props: Props) {
   }
 
   async function saveAsExcel() {
-    var data = [{ email: "", code: "" }];
+    var data: any = [];
     let header = ["Email", "Code"];
 
     XlsxPopulate.fromBlankAsync().then(async (workbook: any) => {
