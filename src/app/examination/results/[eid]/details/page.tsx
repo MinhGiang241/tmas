@@ -5,6 +5,10 @@ import HomeLayout from '@/app/layouts/HomeLayout'
 import { Collapse } from 'antd'
 import './style.css'
 import ManyResult from './questions/ManyResult'
+import TrueFalse from './questions/TrueFalse'
+import Connect from './questions/Connect'
+import Explain from './questions/Explain'
+import Coding from './questions/Coding'
 
 export default function Result({ params }: any) {
 
@@ -47,10 +51,14 @@ export default function Result({ params }: any) {
                             }
                         >
                             <ManyResult />
+                            <TrueFalse />
+                            <Connect />
+                            <Explain />
+                            <Coding />
                         </Collapse.Panel>
                     </Collapse>
                 </div>
-                <div className="col-span-1 bg-gray-300">Cột 2</div>
+                <div className="col-span-1 bg-gray-300 h-10">Cột 2</div>
             </div>
         </HomeLayout>
     )

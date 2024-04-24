@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
-import { Checkbox, Collapse, Popover } from "antd";
+import { Checkbox, Collapse, Popover, Table } from "antd";
 import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
 import EditIcon from "@/app/components/icons/edit-black.svg";
 import CopyIcon from "@/app/components/icons/size.svg";
@@ -9,57 +9,95 @@ import BaseModal from "@/app/components/config/BaseModal";
 import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
-import NewIcon from "@/app/components/icons/export.svg";
-import Tick from "@/app/components/icons/tick-circle.svg";
-import Close from "@/app/components/icons/close-circle.svg"
 import { useRouter } from "next/navigation";
-import { FormattedDate, FormattedTime } from "react-intl";
 import {
+  createAExamQuestionPart,
+  getExamQuestionPartList,
+  deleteQuestionPartById,
   deleteQuestionById,
+  CopyQuestion,
+  updateAExamQuestionPart,
+  deleteQuestionPart,
   duplicateQuestion,
 } from "@/services/api_services/question_api";
+import { FormattedDate, FormattedTime } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
+import dayjs from "dayjs";
+import { title } from "process";
+import { result } from "lodash";
+import Close from "@/app/components/icons/close-circle.svg"
+import Tick from "@/app/components/icons/tick-circle.svg";
 
-export default function ManyResult({
+export default function Coding({
+  getData,
   examId,
   question,
   index,
-  getData,
   questionGroup,
   tmasQuest,
   addExamBank,
   canCheck,
   onChangeCheck,
 }: {
+  getData?: any;
   examId?: any;
   question?: any;
   index?: any;
-  getData?: any;
   questionGroup?: any;
   tmasQuest?: boolean;
   addExamBank?: Function;
-  onChangeCheck?: Function;
   canCheck?: boolean;
+  onChangeCheck?: Function;
 }) {
-
-  const router = useRouter();
   const { t } = useTranslation("question");
-
+  // console.log(examId);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
-  // console.log("question", question);
-  // console.log("questionGroup", questionGroup);
+  // console.log(questionGroup, "questionGroup");
+  // console.log(question, "question");
+  const columns = [
+    {
+      title: 'Testcase',
+      dataIndex: 'Testcase',
+      key: 'Testcase',
+    },
+    {
+      title: 'Đầu vào',
+      dataIndex: 'input',
+      key: 'input',
+    },
+    {
+      title: 'Đầu ra',
+      dataIndex: 'output',
+      key: 'output',
+    },
+    {
+      title: 'Kết quả',
+      dataIndex: 'result',
+      key: 'result',
+    },
+  ];
 
+  const data = [
+    {
+      key: '1',
+      Testcase: 'Testcase1',
+      input: (<a href="/">Linktext</a>),
+      output: (<a href="/">Linktext</a>),
+      result: (<div><Close /><Tick /></div>)
+    },
+  ];
 
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
       ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div>
@@ -67,7 +105,7 @@ export default function ManyResult({
         // key={key}
         ghost
         expandIconPosition="end"
-        className="mb-3 rounded-lg bg-m_question overflow-hidden"
+        className="rounded-lg bg-m_question overflow-hidden mb-3"
       >
         <Collapse.Panel
           header={
@@ -86,15 +124,14 @@ export default function ManyResult({
                       }}
                       value={question?.id}
                     />
-                  )}
-                  {`${t("quest")} 1`}
-                  :
+                  )}{" "}
+                  {`${t("quest")} 5`}:
                   {/* <div
                     ref={contentRef}
-                    className={`body_regular_14 pl-2 `}
+                    className="body_regular_14 pl-2"
                     dangerouslySetInnerHTML={{ __html: question?.question }}
                   /> */}
-                  <div>Nhiều đáp án</div>
+                  <div>Câu hỏi coding</div>
                 </span>
                 {isOverflowing ? (
                   <button
@@ -120,7 +157,6 @@ export default function ManyResult({
                   icon={<AddIcon />}
                   text={t("add_bank")}
                 />
-
               ) : (
                 <div></div>
               )}
@@ -129,56 +165,20 @@ export default function ManyResult({
           key={""}
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
-          <div className="flex">
-            <div className="w-full">
-              <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                {t("result")}
-              </div>
-              <div>
-                <div>
-                  {/* {question?.content?.answers?.map((x: any, key: any) =>
-                    x.isCorrectAnswer === false ? (
-                      <div className="flex" key={key}>
-                        <div className="body_semibold_14">{x.label}</div>
-                        <div
-                          className="body_regular_14 pl-2"
-                          dangerouslySetInnerHTML={{ __html: x.text }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex" key={key}>
-                        <div className="body_semibold_14 text-green-500">
-                          {x.label}
-                        </div>
-                        <div
-                          className="body_regular_14 pl-2 text-green-500 pr-2"
-                          dangerouslySetInnerHTML={{ __html: x.text }}
-                        />
-                        <Tick />
-                      </div>
-                    ),
-                  )} */}
-                  <div className="flex">
-                    <Tick />
-                    <div className="font-bold pr-2 pl-1">A.</div>
-                    <div>2</div>
-                  </div>
-                  <div className="flex">
-                    <Close />
-                    <div className="font-bold pr-2 pl-1">B.</div>
-                    <div>3</div>
-                  </div>
-                </div>
-              </div>
-              <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
-                Giải thích đáp án
-              </div>
-              <div>Vì 1+1=2. Bấm máy tính thì biết</div>
+          <div>
+            <Table columns={columns} dataSource={data} pagination={false} />
+            <div className="flex justify-between items-center pt-4">
+              <div className="flex">Điểm: <div className="pl-1 font-semibold">1/1</div></div>
+              <div className="flex">Cách chấm: <div className="pl-1 font-semibold">Toàn bộ</div></div>
+              <div className="flex">Tổng số cặp: <div className="pl-1 font-semibold">3</div></div>
+              <div className="flex">Số cặp ghép đúng: <div className="pl-1 font-semibold">3</div></div>
+              <div className="flex">Số cặp ghép đúng: <div className="pl-1 font-semibold">3</div></div>
             </div>
           </div>
         </Collapse.Panel>
       </Collapse>
-      {/* </Collapse.Panel> */}
+      {/* {data?.examQuestions?.map((x: any, key: any) => (
+            ))} */}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
-import { Checkbox, Collapse, Popover } from "antd";
+import { Button, Checkbox, Collapse, Popover } from "antd";
 import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
 import EditIcon from "@/app/components/icons/edit-black.svg";
 import CopyIcon from "@/app/components/icons/size.svg";
@@ -9,22 +9,23 @@ import BaseModal from "@/app/components/config/BaseModal";
 import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
-import NewIcon from "@/app/components/icons/export.svg";
-import Tick from "@/app/components/icons/tick-circle.svg";
-import { useRouter } from "next/navigation";
-import { FormattedDate, FormattedTime } from "react-intl";
 import {
+  ExamQuestionPartById,
   deleteQuestionById,
   duplicateQuestion,
 } from "@/services/api_services/question_api";
+import { useRouter } from "next/navigation";
+import { FormattedDate, FormattedTime } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
+import Edit from '@/app/components/icons/edit-black.svg'
+import { Input } from 'antd';
 
-export default function Connect({
+export default function Explain({
+  index,
   examId,
   question,
-  index,
   getData,
   questionGroup,
   tmasQuest,
@@ -46,18 +47,20 @@ export default function Connect({
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
 
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [dupLoading, setDupLoading] = useState(false);
-  const router = useRouter();
   const { t } = useTranslation("question");
 
+  const router = useRouter();
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [dupLoading, setDupLoading] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
-
-  // console.log(question, "question");
-  // console.log();
+  const { TextArea } = Input;
+  const [edit, setEdit] = useState<boolean>(false);
+  //
+  const [comment, setComment] = useState('');
+  const [point, setPoint] = useState("");
 
   useEffect(() => {
     setIsOverflowing(
@@ -87,7 +90,6 @@ export default function Connect({
           router.push(
             `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
           );
-
           await getData();
         }}
         onCancel={() => {
@@ -120,11 +122,12 @@ export default function Connect({
         text={t("confirm_delete_question")}
         open={openDeleteQuestion}
       />
+      {/* {data?.examQuestions?.map((x: any, key: any) => ( */}
       <Collapse
-        // key={v?.id}
+        // key={key}
         ghost
         expandIconPosition="end"
-        className="rounded-lg bg-m_question overflow-hidden mb-4"
+        className="mb-3 rounded-lg bg-m_question overflow-hidden"
       >
         <Collapse.Panel
           header={
@@ -144,12 +147,13 @@ export default function Connect({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} ${index}`}:
-                  <div
+                  {`${t("quest")} 4`}:
+                  {/* <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
                     dangerouslySetInnerHTML={{ __html: question?.question }}
-                  />
+                  /> */}
+                  <div>Câu hỏi tự luận</div>
                 </span>
                 {isOverflowing ? (
                   <button
@@ -183,78 +187,31 @@ export default function Connect({
           key={""}
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
-          <div className="flex">
-            <div className="w-1/2 p-4">
-              <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                {t("quest_info")}
-              </div>
-              <div className="flex">
-                <div className="text-sm pr-2 font-semibold">
-                  {t("quest_group")}:
+          <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+          {edit && <div>
+            <div className="font-semibold pt-2">Nhận xét</div>
+            <TextArea value={comment} className="rounded-md" rows={4} placeholder="Viết nhận xét" onChange={(e) => setComment(e.target.value)} />
+            <div className="font-semibold pt-2">Chấm điểm (tối đa)</div>
+            <div className="flex">
+              <Input value={point} className="rounded-md" type="number" onChange={(e) => setPoint(e.target.value)} />
+              <Button onClick={() => setEdit(!edit)} className="ml-4 w-[114px] h-[36px] rounded-md bg-m_primary_500 text-white font-semibold">Lưu lại</Button>
+            </div>
+          </div>}
+          {!edit &&
+            <div className="pt-1">
+              <div className="font-semibold py-2">Nhận xét</div>
+              <TextArea className="rounded-md" rows={4} disabled value={comment} />
+              <div className="flex justify-between items-center pt-2">
+                <div className="flex">
+                  <div>Điểm đã chấm:</div>
+                  <div className="font-semibold pl-1">{point}</div>
                 </div>
-                <span>{questionGroup?.name}</span>
-              </div>
-              <div className="flex">
-                <div className="text-sm pr-2 font-semibold">
-                  {t("quest_type")}:{" "}
-                </div>
-                <span>{t(question?.questionType)}</span>
-              </div>
-              <div className="flex">
-                <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-                <span>{question?.numberPoint}</span>
-              </div>
-              <div className="flex">
-                <div className="text-sm pr-2 font-semibold">
-                  {t("created_date")}:{" "}
-                </div>
-                <FormattedDate
-                  value={question?.createdTime}
-                  day="2-digit"
-                  month="2-digit"
-                  year="numeric"
-                />
-                <div className="w-2" />
-                <FormattedTime
-                  value={question?.createdTime}
-                  hour="2-digit"
-                  minute="2-digit"
-                  second="2-digit"
-                />
+                <Edit onClick={() => setEdit(!edit)} />
               </div>
             </div>
-            <div className="w-1/2 p-4">
-              <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                {t("result")}
-              </div>
-              <div className="flex justify-start items-center">
-                <div>
-                  {question?.content?.pairings?.map((e: any, key: any) => {
-                    // console.log(question?.content?.pairings, "zxczxc");
-                    // console.log(question?.content?.questions, "123123");
-                    var ques = question?.content?.questions?.find(
-                      (q: any) => q.id == e.idQuestion,
-                    );
-                    var ans = question?.content?.answers?.find(
-                      (a: any) => a.id == e.idAnswer,
-                    );
-                    return (
-                      <div
-                        key={key}
-                        className="flex font-semibold items-center"
-                      >
-                        {`${ques?.label} : ${ans?.label}`}
-                        <Tick className="ml-2" />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
+          }
         </Collapse.Panel>
       </Collapse>
-      {/* </Collapse.Panel> */}
     </div>
   );
 }

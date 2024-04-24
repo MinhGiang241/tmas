@@ -144,12 +144,13 @@ export default function Connect({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} ${index}`}:
-                  <div
+                  {`${t("quest")} 3`}:
+                  {/* <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
                     dangerouslySetInnerHTML={{ __html: question?.question }}
-                  />
+                  /> */}
+                  <div>Câu hỏi ghép nối</div>
                 </span>
                 {isOverflowing ? (
                   <button
@@ -184,51 +185,37 @@ export default function Connect({
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
           <div className="flex">
+            <div className="w-1/2 pl-4 flex">
+              <div className="font-semibold pr-1">1.</div>
+              <div>1+1</div>
+            </div>
+            <div className="w-1/2 pl-4 flex">
+              <div className="font-semibold pr-1">A.</div>
+              <div>2</div>
+            </div>
+          </div>
+          <div className="flex">
             <div className="w-1/2 p-4">
               <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                {t("quest_info")}
+                Trả lời
               </div>
               <div className="flex">
-                <div className="text-sm pr-2 font-semibold">
-                  {t("quest_group")}:
-                </div>
-                <span>{questionGroup?.name}</span>
+                <Tick />
+                <div className="pr-1 pl-1">1-</div>
+                <div>A</div>
               </div>
               <div className="flex">
-                <div className="text-sm pr-2 font-semibold">
-                  {t("quest_type")}:{" "}
-                </div>
-                <span>{t(question?.questionType)}</span>
-              </div>
-              <div className="flex">
-                <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-                <span>{question?.numberPoint}</span>
-              </div>
-              <div className="flex">
-                <div className="text-sm pr-2 font-semibold">
-                  {t("created_date")}:{" "}
-                </div>
-                <FormattedDate
-                  value={question?.createdTime}
-                  day="2-digit"
-                  month="2-digit"
-                  year="numeric"
-                />
-                <div className="w-2" />
-                <FormattedTime
-                  value={question?.createdTime}
-                  hour="2-digit"
-                  minute="2-digit"
-                  second="2-digit"
-                />
+                <Tick />
+                <div className="pr-1 pl-1">1-</div>
+                <div>B</div>
               </div>
             </div>
             <div className="w-1/2 p-4">
               <div className="text-m_primary_500 text-sm font-semibold mb-2">
                 {t("result")}
               </div>
-              <div className="flex justify-start items-center">
-                <div>
+              {/* <div className="flex justify-start items-center">
+              <div>
                   {question?.content?.pairings?.map((e: any, key: any) => {
                     // console.log(question?.content?.pairings, "zxczxc");
                     // console.log(question?.content?.questions, "123123");
@@ -249,8 +236,17 @@ export default function Connect({
                     );
                   })}
                 </div>
-              </div>
+              </div> */}
+              <div>1-A</div>
+              <div>1-B</div>
             </div>
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex">Điểm: <div className="pl-1 font-semibold">1/1</div></div>
+            <div className="flex">Cách chấm: <div className="pl-1 font-semibold">Toàn bộ</div></div>
+            <div className="flex">Tổng số cặp: <div className="pl-1 font-semibold">3</div></div>
+            <div className="flex">Số cặp ghép đúng: <div className="pl-1 font-semibold">3</div></div>
+            <div className="flex">Số cặp ghép đúng: <div className="pl-1 font-semibold">3</div></div>
           </div>
         </Collapse.Panel>
       </Collapse>
