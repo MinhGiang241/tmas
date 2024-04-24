@@ -97,8 +97,8 @@ function SendExaminationInfo(props: Props) {
           {t("approve_code")}
         </div>
       ),
-      dataIndex: "code",
-      key: "code",
+      dataIndex: "passcode",
+      key: "passcode",
       render: (text) => (
         <p
           key={text}
@@ -194,6 +194,7 @@ function SendExaminationInfo(props: Props) {
   useEffect(() => {
     var id: any;
     if (props.open) {
+      getEmailList();
       id = setInterval(() => {
         getEmailList();
       }, 5000);
@@ -203,7 +204,7 @@ function SendExaminationInfo(props: Props) {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.open]);
+  }, [props.open, props.examination]);
 
   const [sendEmailLoading, setSendEmailLoading] = useState<boolean>(false);
   const [sendContent, setSendContent] = useState<string | undefined>();
@@ -222,7 +223,7 @@ function SendExaminationInfo(props: Props) {
         if (search) {
           return (
             n.email?.toLowerCase().includes(search?.toLowerCase()) ||
-            n.code?.toLowerCase().includes(search?.toLowerCase())
+            n.passcode?.toLowerCase().includes(search?.toLowerCase())
           );
         }
         return true;
@@ -236,7 +237,7 @@ function SendExaminationInfo(props: Props) {
       maillist: [
         ...emails.map((t) => ({
           email: t.email,
-          passcode: t.code,
+          passcode: t.passcode,
         })),
       ],
       methods: media,
@@ -322,35 +323,34 @@ function SendExaminationInfo(props: Props) {
         />
         <div className="mt-2 body_semibold_14 flex items-center justify-between">
           <div>{t("receipt_info_list")}</div>
-          <div className="flex items-center">
-            <form>
-              <MInput
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setTotal(
-                    _.filter([...emails, ...mailList], (n: RemindEmailData) => {
-                      if (e.target.value) {
-                        return (
-                          n.email
-                            ?.toLowerCase()
-                            .includes(e.target.value?.toLowerCase()) ||
-                          n.code
-                            ?.toLowerCase()
-                            .includes(e.target.value?.toLowerCase())
-                        );
-                      }
-                      return true;
-                    })?.length,
-                  );
-                }}
-                isTextRequire={false}
-                h="h-9"
-                placeholder={t("enter_to_search")}
-                id="info"
-                name="info"
-              />
-            </form>
+          <div className="flex items-center w-1/3">
+            <MInput
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setTotal(
+                  _.filter([...emails, ...mailList], (n: RemindEmailData) => {
+                    if (e.target.value) {
+                      return (
+                        n.email
+                          ?.toLowerCase()
+                          .includes(e.target.value?.toLowerCase()) ||
+                        n.passcode
+                          ?.toLowerCase()
+                          .includes(e.target.value?.toLowerCase())
+                      );
+                    }
+                    return true;
+                  })?.length,
+                );
+              }}
+              isTextRequire={false}
+              h="h-9"
+              placeholder={t("enter_to_search")}
+              id="info"
+              name="info"
+            />
+
             <div className="w-2" />
             <button
               onClick={() => {
@@ -403,7 +403,7 @@ function SendExaminationInfo(props: Props) {
                 if (search) {
                   return (
                     n.email?.toLowerCase().includes(search?.toLowerCase()) ||
-                    n.code?.toLowerCase().includes(search?.toLowerCase())
+                    n.passcode?.toLowerCase().includes(search?.toLowerCase())
                   );
                 }
                 return true;

@@ -418,6 +418,6 @@ export interface RemindEmailData {
   sentTime?: string;
   type?: string;
   status?: "Pending" | "Success" | "Failure" | "New";
-  code?: string;
+  passcode?: string;
   errorMessage?: string;
 }

@@ -49,7 +49,7 @@ function ImportReceipterList(props: Props) {
           .slice(1)
           .filter((k: any) => k && k.length >= 2)
           .map((e: any) => {
-            return { email: e[0], code: e[1], status: t("New") };
+            return { email: e[0], passcode: e[1], status: t("New") };
           });
         setSelectedData(d);
       };
@@ -90,8 +90,8 @@ function ImportReceipterList(props: Props) {
           {t("approve_code")}
         </div>
       ),
-      dataIndex: "code",
-      key: "code",
+      dataIndex: "passcode",
+      key: "passcode",
       render: (text) => (
         <p
           key={text}
@@ -120,7 +120,7 @@ function ImportReceipterList(props: Props) {
   ];
 
   function getSheetData(data: any, header: any) {
-    var fields = Object.keys(data[0]);
+    var fields = ["Email", "Code"];
     var sheetData = data.map(function (row: any) {
       return fields.map(function (fieldName: any) {
         return row[fieldName] ? row[fieldName] : "";
@@ -255,7 +255,7 @@ function ImportReceipterList(props: Props) {
             selectedData.map<RemindEmailData>((e) => ({
               _id: uuidv4(),
               email: e.email,
-              code: e.code,
+              passcode: e.passcode,
               status: "New",
             }));
           props.onOk!(importedData);

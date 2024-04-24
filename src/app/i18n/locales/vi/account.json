@@ -78,5 +78,13 @@
   "discount_price": "Giá khuyến mãi",
   "discount_code": "Mã giảm giá từ TMAS",
   "apply": "Áp dụng",
-  "total_pay": "Tổng thanh toán"
+  "total_pay": "Tổng thanh toán",
+  "history_upgrade": "Lịch sử nâng cấp",
+  "history_pay": "Lịch sử thanh toán",
+  "current_package": "Gói hiện tại",
+  "deadline": "Thời hạn",
+  "upgrade": "Nâng cấp",
+  "upgrade_package": "Gói nâng cấp",
+  "upgrade_time": "Thời gian nâng cấp",
+  "list": "Danh sách"
 }

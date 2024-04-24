@@ -1,7 +1,7 @@
 import MButton from "@/app/components/config/MButton";
 import { Divider, Pagination, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import React, { HTMLAttributes, useState } from "react";
+import React, { HTMLAttributes, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   rowEndStyle,
@@ -12,6 +12,9 @@ import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 import MDropdown from "@/app/components/config/MDropdown";
 import RighIcon from "@/app/components/icons/chevron-right.svg";
 import { useRouter } from "next/navigation";
+import { loadGoldList } from "@/services/api_services/account_services";
+import { GoldData } from "@/data/user";
+import { FormattedNumber } from "react-intl";
 
 function Gold() {
   const { t } = useTranslation("account");
@@ -21,6 +24,20 @@ function Gold() {
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(1);
   const [page, setPage] = useState<number>(0);
+
+  useEffect(() => {
+    loadGolds();
+  }, []);
+  const [goldList, setGoldList] = useState<GoldData[]>([]);
+  const loadGolds = async () => {
+    var res = await loadGoldList({ skip: 0, limit: 100 });
+    if (res.code != 0) {
+      return;
+    }
+    setGoldList(res.data);
+
+    console.log("res", res);
+  };
 
   const infos = [
     {
@@ -121,7 +138,7 @@ function Gold() {
           <div className="body_semibold_20">{t("gold_list")} </div>
         </div>
         <div className="w-full grid grid-cols-3 gap-4 mt-4">
-          {d.map((e: any, i: number) => (
+          {goldList.map((e: GoldData, i: number) => (
             <button
               onClick={() => {
                 setSelected(i);
@@ -132,12 +149,21 @@ function Gold() {
               }`}
             >
               <div className="bg-[#F4D58D] px-3 py-1 mt-3 rounded-lg body_semibold_14">
-                {e.code}
+                <FormattedNumber
+                  value={e?.gold ?? 0}
+                  style="decimal"
+                  maximumFractionDigits={2}
+                />
               </div>
-              <div className="body_bold_16 mt-1">{e.decs}</div>
+              <div className="body_bold_16 mt-1">{e.name}</div>
               <Divider className="my-2" />
               <div className="title_bold_20 text-m_primary_500 mb-2">
-                {e.price}
+                <FormattedNumber
+                  value={e?.cost ?? 0}
+                  style="decimal"
+                  maximumFractionDigits={2}
+                />
+                {` VNĐ`}
               </div>
             </button>
           ))}

@@ -1,6 +1,7 @@
 import { UserData } from "@/data/user";
 import { callApi } from "./base_api";
 import { StudioFormData } from "@/data/form_interface";
+import { APIResults } from "@/data/api_results";
 
 export const changeStudio = async (ownerId?: string) => {
   var results = await callApi.post(
@@ -138,4 +139,13 @@ export const updateStudioInfo = async (data: StudioFormData) => {
     throw results?.message ?? "";
   }
   return results.data;
+};
+
+export const loadGoldList = async (data: { skip?: number; limit?: string }) => {
+  var results: APIResults = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/goldsetting.getGoldList`,
+    data,
+  );
+
+  return results;
 };

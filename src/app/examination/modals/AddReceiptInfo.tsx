@@ -37,7 +37,7 @@ function AddReceiptInfo(props: Props) {
       var email: RemindEmailData = {
         _id: uuidv4(),
         email: values.email,
-        code: values.code,
+        passcode: values.code,
         status: "New",
       };
       props.onOk(email);

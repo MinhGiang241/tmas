@@ -93,3 +93,17 @@ export interface Studios {
   studio_name: string;
   userId?: string;
 }
+
+export interface GoldData {
+  _id?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  cost?: number;
+  creator?: string;
+  gold?: number;
+  name?: string;
+  status?: boolean;
+  schema?: string;
+  updater?: string;
+  version_number?: number;
+}
