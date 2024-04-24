@@ -141,9 +141,39 @@ export const updateStudioInfo = async (data: StudioFormData) => {
   return results.data;
 };
 
-export const loadGoldList = async (data: { skip?: number; limit?: string }) => {
+export const loadGoldList = async (data: { skip?: number; limit?: number }) => {
   var results: APIResults = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/goldsetting.getGoldList`,
+    data,
+  );
+
+  return results;
+};
+
+export const loadHistoryGold = async (data: {
+  skip?: number;
+  limit?: number;
+  text?: string;
+  fromDate?: string;
+  toDate?: string;
+  changed?: string;
+  status?: string;
+}) => {
+  var results: APIResults = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/goldtransaction.get_by_account`,
+    data,
+  );
+
+  return results;
+};
+// https://api.tmas.demego.vn/apimodel/billtransaction.create_online_transaction
+export const makePayment = async (data: {
+  product_type?: "Package" | "Gold";
+  goldId?: string;
+  packageId?: string;
+}) => {
+  var results: APIResults = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/billtransaction.create_online_transaction`,
     data,
   );
 

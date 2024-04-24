@@ -91,9 +91,20 @@ function SendExaminationInfo(props: Props) {
     },
     {
       onHeaderCell: (_) => rowStyle,
-      width: "20%",
+      width:
+        props.examination?.accessCodeSettingType != "MultiCode" &&
+        props.examination?.sharingSetting != "Private"
+          ? "0%"
+          : "20%",
       title: (
-        <div className="w-full break-all  flex justify-start">
+        <div
+          className={`w-full break-all  ${
+            props.examination?.accessCodeSettingType === "MultiCode" &&
+            props.examination?.sharingSetting != "Private"
+              ? "flex"
+              : "hidden"
+          } justify-start`}
+        >
           {t("approve_code")}
         </div>
       ),
@@ -102,7 +113,12 @@ function SendExaminationInfo(props: Props) {
       render: (text) => (
         <p
           key={text}
-          className="w-full break-all flex  min-w-11 justify-start caption_regular_14"
+          className={` ${
+            props.examination?.accessCodeSettingType != "MultiCode" &&
+            props.examination?.sharingSetting != "Private"
+              ? "hidden"
+              : "flex"
+          } w-full break-all min-w-11 justify-start caption_regular_14`}
         >
           {text}
         </p>
@@ -111,7 +127,11 @@ function SendExaminationInfo(props: Props) {
 
     {
       onHeaderCell: (_) => rowStyle,
-      width: "20%",
+      width:
+        props.examination?.accessCodeSettingType != "MultiCode" &&
+        props.examination?.sharingSetting != "Private"
+          ? "30%"
+          : "20%",
       title: <div className="w-full flex justify-start">{t("status")}</div>,
       dataIndex: "status",
       key: "status",
@@ -127,7 +147,11 @@ function SendExaminationInfo(props: Props) {
 
     {
       onHeaderCell: (_) => rowStyle,
-      width: "20%",
+      width:
+        props.examination?.accessCodeSettingType != "MultiCode" &&
+        props.examination?.sharingSetting != "Private"
+          ? "30%"
+          : "20%",
       title: <div className="w-full flex justify-start">{t("send_time")}</div>,
       dataIndex: "sentTime",
       key: "sentTime",
@@ -304,7 +328,10 @@ function SendExaminationInfo(props: Props) {
             setMedia(val);
           }}
           className="dropdown-flex"
-          options={[{ value: "email", label: "Email" }]}
+          options={[
+            { value: "email", label: "Email" },
+            { value: "sms", label: "SMS" },
+          ]}
           id="media"
           name="media"
           title={t("media")}
@@ -422,9 +449,17 @@ function SendExaminationInfo(props: Props) {
           />
         </div>
         <div className="w-full flex h-12 items-center  justify-center">
-          <span className="body_regular_14 mr-2">{`${total} ${t(
-            "result",
-          )}`}</span>
+          <span className="body_regular_14 mr-2">{`${
+            _.filter([...emails, ...mailList], (n: RemindEmailData) => {
+              if (search) {
+                return (
+                  n.email?.toLowerCase().includes(search?.toLowerCase()) ||
+                  n.passcode?.toLowerCase().includes(search?.toLowerCase())
+                );
+              }
+              return true;
+            })?.length ?? 0
+          } ${t("result")}`}</span>
           <Pagination
             i18nIsDynamicList
             pageSize={recordNum}

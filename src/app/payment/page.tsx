@@ -6,16 +6,50 @@ import { Divider, Radio } from "antd";
 import Image from "next/image";
 import MInput from "../components/config/MInput";
 import MButton from "../components/config/MButton";
+import { useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import { FormattedNumber } from "react-intl";
+import { makePayment } from "@/services/api_services/account_services";
+import { error } from "console";
+import { errorToast } from "../components/toast/customToast";
+import { useRouter, useSearchParams } from "next/navigation";
+import { parseInt } from "lodash";
 
 function Payment() {
   const { t } = useTranslation("account");
   const [method, setMethod] = useState<string>("atm");
+  const user = useAppSelector((state: RootState) => state.user.user);
+  const payment = useAppSelector((state: RootState) => state.payment);
+  const router = useRouter();
+  const search = useSearchParams();
+  var searchType = search.get("type");
+  var searchPackageId = search.get("packageId");
+  var searchGoldId = search.get("goldId");
+  var searchPrice = search.get("price");
+
+  const pay = async () => {
+    const res = await makePayment({
+      goldId:
+        searchGoldId ?? payment.type == "Gold" ? payment?.goldId : undefined,
+      packageId:
+        searchPackageId ?? payment.type == "Package"
+          ? payment?.packageId
+          : undefined,
+      product_type: searchType ?? payment.type,
+    });
+
+    if (res?.code != 0) {
+      errorToast(res.message ?? "");
+      return;
+    }
+    router.push(res.data);
+  };
   return (
     <HomeLayout>
       <div className="body_semibold_20 my-4  max-lg:mx-5">
         {t("pay_package")}
       </div>
-      <div className="flex w-full max-lg:flex-col max-lg:mx-5">
+      <div className="flex max-lg:flex-col max-lg:mx-5">
         <div className="p-5 lg:w-3/5 bg-white rounded-lg">
           <div className="body_semibold_20 mb-4">
             {t("select_payment_method")}
@@ -101,27 +135,39 @@ function Payment() {
               <div className="body_regular_16 text-m_neutral_500">{`${t(
                 "full_name",
               )}:`}</div>
-              <div className="body_semibold_16">Dung</div>
+              <div className="body_semibold_16">{user.full_name}</div>
             </div>
             <div className="flex justify-between my-2">
               <div className="body_regular_16 text-m_neutral_500">{`${t(
                 "phone_number",
               )}:`}</div>
-              <div className="body_semibold_16">0988987643</div>
+              <div className="body_semibold_16">{user?.phone}</div>
             </div>
             <div className="flex justify-between">
               <div className="body_regular_16 text-m_neutral_500">{`${t(
                 "email",
               )}:`}</div>
-              <div className="body_semibold_16">dungntt2@gmail.com</div>
+              <div className="body_semibold_16">{user?.email}</div>
             </div>
             <Divider className="my-4" />
             <div className="body_semibold_20 mb-3">{t("order_info")}</div>
             <div className="flex justify-between">
-              <div className="body_regular_16 text-m_neutral_500">{`${t(
-                "bussiness_package",
-              )}:`}</div>
-              <div className="body_semibold_16">6.000.000 VNĐ</div>
+              <div className="body_regular_16 text-m_neutral_500">
+                {payment.type == "Gold"
+                  ? t("Thanh toán gói Gold")
+                  : `${t("bussiness_package")}`}
+                :
+              </div>
+              <div className="body_semibold_16">
+                <FormattedNumber
+                  value={
+                    searchPrice ? parseInt(searchPrice) : payment?.price ?? 0
+                  }
+                  style="decimal"
+                  maximumFractionDigits={2}
+                />
+                {` VNĐ`}
+              </div>
             </div>
             <div className="flex justify-between mt-2">
               <div className="body_regular_16 text-m_neutral_500 ">{`${t(
@@ -153,10 +199,24 @@ function Payment() {
                 {t("total_pay")}
               </div>
               <div className="title_bold_24 text-m_primary_500">
-                6.000.000 VNĐ
+                <FormattedNumber
+                  value={
+                    searchPrice ? parseInt(searchPrice) : payment?.price ?? 0
+                  }
+                  style="decimal"
+                  maximumFractionDigits={2}
+                />
+                {` VNĐ`}
               </div>
             </div>
-            <MButton h="h-11" className="w-[142px]" text={t("pay")} />
+            <MButton
+              onClick={() => {
+                pay();
+              }}
+              h="h-11"
+              className="w-[142px]"
+              text={t("pay")}
+            />
           </div>
         </div>
       </div>

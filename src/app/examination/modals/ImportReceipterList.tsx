@@ -18,13 +18,15 @@ import MButton from "@/app/components/config/MButton";
 import { FormattedNumber } from "react-intl";
 import FileIcon from "@/app/components/icons/file.svg";
 import * as XLSX from "xlsx";
-import { RemindEmailData } from "@/data/exam";
+import { ExaminationData, RemindEmailData } from "@/data/exam";
 import { v4 as uuidv4 } from "uuid";
 import { saveAs } from "file-saver";
 //@ts-ignore
 import XlsxPopulate from "xlsx-populate/browser/xlsx-populate";
 
-interface Props extends BaseModalProps {}
+interface Props extends BaseModalProps {
+  examination?: ExaminationData;
+}
 
 function ImportReceipterList(props: Props) {
   const { t } = useTranslation("exam");
@@ -84,9 +86,20 @@ function ImportReceipterList(props: Props) {
     },
     {
       onHeaderCell: (_) => rowStyle,
-      width: "33%",
+      width:
+        props.examination?.accessCodeSettingType != "MultiCode" &&
+        props.examination?.sharingSetting != "Private"
+          ? "0%"
+          : "33%",
       title: (
-        <div className="w-full break-all  flex justify-start">
+        <div
+          className={`w-full break-all  ${
+            props.examination?.accessCodeSettingType != "MultiCode" &&
+            props.examination?.sharingSetting != "Private"
+              ? "hidden"
+              : "flex"
+          } justify-start`}
+        >
           {t("approve_code")}
         </div>
       ),
@@ -95,7 +108,12 @@ function ImportReceipterList(props: Props) {
       render: (text) => (
         <p
           key={text}
-          className="w-full break-all flex  min-w-11 justify-start caption_regular_14"
+          className={` ${
+            props.examination?.accessCodeSettingType != "MultiCode" &&
+            props.examination?.sharingSetting != "Private"
+              ? "hidden"
+              : "flex"
+          } w-full break-all min-w-11 justify-start caption_regular_14`}
         >
           {text}
         </p>
@@ -172,9 +190,7 @@ function ImportReceipterList(props: Props) {
         className="mr-auto justify-start flex items-center"
       >
         <BlackImportIcon />
-        <span className="ml-2 body_semibold_14 underline underline-offset-4">
-          {t("down_sample_file")}
-        </span>
+        <span className="ml-2 body_semibold_14 ">{t("down_sample_file")}</span>
       </button>
 
       <button
@@ -182,16 +198,12 @@ function ImportReceipterList(props: Props) {
         className="mr-auto justify-start flex items-center mt-2"
       >
         <BlackExportIcon />{" "}
-        <span className="ml-2 body_semibold_14 underline underline-offset-4">
-          {t("up_list")}
-        </span>
+        <span className="ml-2 body_semibold_14 ">{t("up_list")}</span>
       </button>
 
       <button className=" flex flex-start mr-auto items-center mt-2">
         <BlackEyeIcon />
-        <span className="ml-2 body_semibold_14 underline underline-offset-4">
-          {t("preview")}
-        </span>
+        <span className="ml-2 body_semibold_14 ">{t("preview")}</span>
       </button>
       {selectedFile && (
         <div className="w-full flex flex-start my-2">

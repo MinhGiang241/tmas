@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import MButton from "@/app/components/config/MButton";
 import { Divider, Pagination, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
@@ -12,9 +13,16 @@ import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 import MDropdown from "@/app/components/config/MDropdown";
 import RighIcon from "@/app/components/icons/chevron-right.svg";
 import { useRouter } from "next/navigation";
-import { loadGoldList } from "@/services/api_services/account_services";
-import { GoldData } from "@/data/user";
+import {
+  loadGoldList,
+  loadHistoryGold,
+} from "@/services/api_services/account_services";
+import { GoldData, GoldHistoryData } from "@/data/user";
 import { FormattedNumber } from "react-intl";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import { setPayment } from "@/redux/payment/paymentSlice";
+import dayjs from "dayjs";
 
 function Gold() {
   const { t } = useTranslation("account");
@@ -24,9 +32,12 @@ function Gold() {
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(1);
   const [page, setPage] = useState<number>(0);
+  const user = useAppSelector((state: RootState) => state.user.user);
+  const [goldHis, setGoldHis] = useState<GoldHistoryData[]>([]);
 
   useEffect(() => {
     loadGolds();
+    loadHistoryGoldList();
   }, []);
   const [goldList, setGoldList] = useState<GoldData[]>([]);
   const loadGolds = async () => {
@@ -39,6 +50,25 @@ function Gold() {
     console.log("res", res);
   };
 
+  const loadHistoryGoldList = async () => {
+    var res = await loadHistoryGold({
+      skip: (indexPage - 1) * recordNum,
+      limit: recordNum,
+      changed: "up",
+      fromDate: "",
+      toDate: "",
+      text: "",
+      status: "",
+    });
+    if (res.code != 0) {
+      return;
+    }
+    setGoldHis(res.data ?? []);
+    setTotal(res.records ?? 0);
+
+    console.log("res his", res);
+  };
+
   const infos = [
     {
       act: "Nạp gold",
@@ -47,16 +77,15 @@ function Gold() {
       gold_num_change: "+300",
     },
   ];
-  const columns: ColumnsType<any> = [
+  const columns: ColumnsType<GoldHistoryData[]> = [
     {
       onHeaderCell: (_) => rowStartStyle,
-
       title: <div className="w-full flex justify-start">{t("act")}</div>,
-      dataIndex: "act",
-      key: "act",
+      dataIndex: "schema",
+      key: "schema",
       render: (text, data) => (
         <p key={text} className="w-full  min-w-11 break-all caption_regular_14">
-          {text}
+          {text == "GoldTransaction" ? "Nạp Gold" : ""}
         </p>
       ),
     },
@@ -67,8 +96,8 @@ function Gold() {
           {t("content")}
         </div>
       ),
-      dataIndex: "content",
-      key: "content",
+      dataIndex: "message",
+      key: "message",
       render: (text) => (
         <p
           key={text}
@@ -85,14 +114,14 @@ function Gold() {
       title: (
         <div className="w-full flex justify-start">{t("processing_time")}</div>
       ),
-      dataIndex: "processing_time",
-      key: "processing_time",
+      dataIndex: "createdTime",
+      key: "createdTime",
       render: (text) => (
         <p
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {text}
+          {dayjs(text).format("HH:MM DD/MM/YYYY")}
         </p>
       ),
     },
@@ -103,25 +132,19 @@ function Gold() {
           {t("gold_num_change")}
         </div>
       ),
-      dataIndex: "gold_num_change",
-      key: "gold_num_change",
+      dataIndex: "gold_changed",
+      key: "gold_changed",
       render: (text, data) => (
-        <div className="w-full flex justify-center ">{text}</div>
+        <div className="w-full flex justify-center ">
+          {text > 0 ? `+${text}` : `-${text}`}
+        </div>
       ),
     },
   ];
 
-  const d = [
-    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
-    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
-    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
-    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
-    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
-    { code: "DK80", decs: "300 Gold", price: "20.000 VNĐ" },
-  ];
-
   const [selected, setSelected] = useState<number | undefined>();
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   if (page === 1) {
     return (
@@ -137,6 +160,7 @@ function Gold() {
           </button>
           <div className="body_semibold_20">{t("gold_list")} </div>
         </div>
+        <Divider className="my-3" />
         <div className="w-full grid grid-cols-3 gap-4 mt-4">
           {goldList.map((e: GoldData, i: number) => (
             <button
@@ -170,9 +194,22 @@ function Gold() {
         </div>
         <div className="flex mt-5 justify-center">
           <MButton
+            disabled={selected === undefined || selected === null}
             text={t("pay")}
             onClick={() => {
-              router.push("/upgrade");
+              dispatch(
+                setPayment({
+                  type: "Gold",
+                  price: goldList[selected as number].cost,
+                  goldId: goldList[selected as number]._id,
+                }),
+              );
+
+              router.push(
+                `/payment?type=Gold&goldId=${
+                  goldList[selected as number]._id ?? ""
+                }&price=${goldList[selected as number].cost ?? 0}`,
+              );
             }}
           />
         </div>
@@ -186,7 +223,9 @@ function Gold() {
         <div>
           <div className="w-full title_semibold_20">{t("gold_manage")}</div>
           <div className="caption_regular_14">
-            <span>{t("current_gold")}</span>
+            <span>
+              {t("current_gold")}: {user?.gold ?? 0}
+            </span>
           </div>
         </div>
 
@@ -280,9 +319,9 @@ function Gold() {
         className="w-full"
         bordered={false}
         columns={columns}
-        dataSource={infos}
+        dataSource={goldHis}
         pagination={false}
-        rowKey={"id"}
+        rowKey={"_id"}
         onRow={(data: any, index: any) =>
           ({
             style: {

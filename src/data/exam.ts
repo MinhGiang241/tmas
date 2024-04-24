@@ -135,6 +135,7 @@ export interface ExaminationData {
   createdTime?: string;
   examVersion?: { exam?: ExamVersion };
   examTestCode?: string;
+  accessCodeSettingType?: "None" | "One" | "MultiCode";
   accessCodeSettings?: AccessCodeExaminantionSetting[];
   cheatingSetting?: {
     disableCopy?: boolean;

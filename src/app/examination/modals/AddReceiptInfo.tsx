@@ -55,16 +55,19 @@ function AddReceiptInfo(props: Props) {
         name="email"
         title={t("receipter_info")}
       />
-      <MDropdown
-        formik={formik}
-        options={props.examination?.accessCodeSettings?.map((e) => ({
-          value: e.code,
-          label: e.code,
-        }))}
-        id="code"
-        name="code"
-        title={t("corresponding_code")}
-      />
+      {props.examination?.accessCodeSettingType === "MultiCode" &&
+        props.examination?.sharingSetting == "Private" && (
+          <MDropdown
+            formik={formik}
+            options={props.examination?.accessCodeSettings?.map((e) => ({
+              value: e.code,
+              label: e.code,
+            }))}
+            id="code"
+            name="code"
+            title={t("corresponding_code")}
+          />
+        )}
       <div className="flex w-full justify-center">
         <MButton
           onClick={() => {
