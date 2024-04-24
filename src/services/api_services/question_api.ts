@@ -412,3 +412,13 @@ export const getExamTestId = async (params: any) => {
 
   return results;
 };
+
+export const getExamExport = async (data: any) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Export`,
+    data
+  );
+  // console.log(results, "result");
+
+  return results;
+};

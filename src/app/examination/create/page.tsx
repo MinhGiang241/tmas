@@ -643,7 +643,7 @@ function CreateExaminationPage({ examination }: any) {
             <div className="body_semibold_14">{t("selected_exam")}</div>
             <Link
               // Link ở đây
-              href={`/examination/details?examId=${exam?.id}&examTestId=${examination?.id}`}
+              href={`/examination/details?examId=${exam?.id}&examTestId=${examination?.id ?? ''}`}
               // href={`/exams/details/${exam?.id}`}
               className="text-[#4D7EFF] body_regular_14 underline underline-offset-4"
               target="_blank"
