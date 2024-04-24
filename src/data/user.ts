@@ -1,5 +1,6 @@
 export interface UserData {
   _id?: string;
+  gold?: number;
   accountType?: string;
   avatar?: string;
   createdTime?: string;
@@ -91,5 +92,34 @@ export interface Studios {
   ownerId?: string;
   role?: string;
   studio_name: string;
+  userId?: string;
+}
+
+export interface GoldData {
+  _id?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  cost?: number;
+  creator?: string;
+  gold?: number;
+  name?: string;
+  status?: boolean;
+  schema?: string;
+  updater?: string;
+  version_number?: number;
+}
+
+export interface GoldHistoryData {
+  _id?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  ballance?: number;
+  gold_changed?: number;
+  message?: string;
+  old_ballance?: number;
+  schema?: string;
+  source?: string;
+  sourceId?: string;
+  updater?: string;
   userId?: string;
 }

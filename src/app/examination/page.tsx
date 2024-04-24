@@ -7,7 +7,15 @@ import { useTranslation } from "react-i18next";
 import AddIcon from "../components/icons/add.svg";
 import MInput from "../components/config/MInput";
 import MDropdown from "../components/config/MDropdown";
-import { Divider, Pagination, Popover, Select, Spin, Switch } from "antd";
+import {
+  Divider,
+  Pagination,
+  Popover,
+  Select,
+  Spin,
+  Switch,
+  Tooltip,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import EditBlackIcon from "../components/icons/edit-black.svg";
 import DeleteRedIcon from "../components/icons/trash-red.svg";
@@ -261,12 +269,15 @@ function ExaminationPage() {
   return (
     <HomeLayout>
       <SendExaminationInfo
+        examination={active}
         open={openExaminationInfo}
         onCancel={() => {
+          setActive(undefined);
           setOpenExaminationInfo(false);
         }}
         onOk={() => {
           setOpenExaminationInfo(false);
+          setActive(undefined);
         }}
       />
       <ConfirmModal
@@ -383,7 +394,7 @@ function ExaminationPage() {
               }),
             )}
             h="h-11"
-            className="ml-4"
+            className="lg:ml-4"
             id="public_free"
             name="public_free"
           />
@@ -542,7 +553,9 @@ function ExaminationPage() {
                           router.push(`/examination/${v?.id}`);
                         }}
                       >
-                        <EditBlackIcon />
+                        <Tooltip placement="top" title={t("edit")}>
+                          <EditBlackIcon />
+                        </Tooltip>
                       </button>
                       <div className="w-3" />
                       <button
@@ -556,7 +569,9 @@ function ExaminationPage() {
                           setOpenDup(true);
                         }}
                       >
-                        <CopyIcon />
+                        <Tooltip placement="top" title={common.t("duplicate")}>
+                          <CopyIcon />
+                        </Tooltip>
                       </button>
                       <div className="w-3" />
 
@@ -571,32 +586,39 @@ function ExaminationPage() {
                           setOpenDelete(true);
                         }}
                       >
-                        <DeleteRedIcon />
+                        <Tooltip placement="top" title={t("delete")}>
+                          <DeleteRedIcon />
+                        </Tooltip>
                       </button>
                       <div className="mx-4">
-                        <Switch
-                          className="scale-[1.18]"
-                          onChange={async (t: any) => {
-                            console.log("t", t);
+                        <Tooltip placement="top" title={t("activate")}>
+                          <Switch
+                            className="scale-[1.18]"
+                            onChange={async (t: any) => {
+                              console.log("t", t);
 
-                            var data = await updateExamination({
-                              ...v,
-                              isActive: t,
-                            });
-                            if (data?.code != 0) {
-                              errorToast(data?.message ?? "");
-                              return;
-                            }
+                              var data = await updateExamination({
+                                ...v,
+                                isActive: t,
+                              });
+                              if (data?.code != 0) {
+                                errorToast(data?.message ?? "");
+                                return;
+                              }
 
-                            loadExamination(false);
-                          }}
-                          value={v?.isActive ?? false}
-                          size="small"
-                        />
+                              loadExamination(false);
+                            }}
+                            value={v?.isActive ?? false}
+                            size="small"
+                          />
+                        </Tooltip>
                       </div>
                     </div>
                     <div className="flex max-lg:mt-3">
                       <MButton
+                        onBlur={() => {
+                          setOpenPop(undefined);
+                        }}
                         type="secondary"
                         text={t("result")}
                         h="h-9"
@@ -612,6 +634,7 @@ function ExaminationPage() {
                             <button
                               onClick={() => {
                                 setOpenPop(undefined);
+                                setActive(v);
                                 setOpenExaminationInfo(true);
                               }}
                               className="flex justify-start hover:bg-m_primary_100 p-1 rounded-sm w-full"

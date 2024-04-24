@@ -133,11 +133,11 @@ function ExamTmasTab() {
     const data = await getTags(
       searchKey
         ? {
-          "Names.Name": "Name",
-          "Names.InValues": searchKey,
-          "Paging.StartIndex": 1,
-          "Paging.RecordPerPage": 100,
-        }
+            "Names.Name": "Name",
+            "Names.InValues": searchKey,
+            "Paging.StartIndex": 1,
+            "Paging.RecordPerPage": 100,
+          }
         : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 },
     );
     if (data?.code != 0) {
@@ -383,16 +383,18 @@ function ExamTmasTab() {
                           <div className="flex items-center mx-8">
                             <MessIcon />
                             <span className="ml-2 body_regular_14">
-                              {`${a?.version?.examData?.NumberOfQuestions ?? ""
-                                } ${t("question")?.toLowerCase()}`}
+                              {`${
+                                a?.version?.examData?.NumberOfQuestions ?? ""
+                              } ${t("question")?.toLowerCase()}`}
                             </span>
                           </div>
                           <div className="flex items-center ml-2">
                             <CupIcon />
                             <span className="mr-4 ml-2 body_regular_14">
-                              {`${(a?.version?.examData?.TotalPointsAsInt ?? 0) /
+                              {`${
+                                (a?.version?.examData?.TotalPointsAsInt ?? 0) /
                                 100
-                                } ${t("point")}`}
+                              } ${t("point")}`}
                             </span>
                           </div>
 
@@ -400,7 +402,7 @@ function ExamTmasTab() {
                             <SizeIcon />
                             <span className="ml-2 body_regular_14">
                               <FormattedNumber
-                                value={a?.version?.usage?.total ?? 0}
+                                value={a?.usage?.total ?? 0}
                                 style="decimal"
                                 maximumFractionDigits={2}
                               />

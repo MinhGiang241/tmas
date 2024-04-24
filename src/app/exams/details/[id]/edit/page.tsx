@@ -26,6 +26,8 @@ function EditQuestionPage({ params }: any) {
   const router = useRouter();
 
   const getQuestionDetailById = async () => {
+    console.log({ isBank });
+
     var results: APIResults = await getQuestionById(questId!, isBank == "true");
 
     if (results.code != 0) {

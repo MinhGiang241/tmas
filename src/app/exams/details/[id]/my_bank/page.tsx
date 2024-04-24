@@ -111,6 +111,7 @@ function AddFromMyBank({ params }: any) {
           ]}
         />
         <MButton
+          type="secondary"
           onClick={() => {
             router.back();
           }}

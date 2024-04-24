@@ -1,10 +1,11 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useRef } from "react";
 import { DatePicker } from "antd";
 import { useTranslation } from "react-i18next";
 import { CheckCircleFilled, ExclamationCircleFilled } from "@ant-design/icons";
 import NoticeIcon from "@/app/components/icons/notice.svg";
 import CalendarIcon from "@/app/components/icons/calendar-black.svg";
 import dayjs from "dayjs";
+import MInput from "./MInput";
 
 interface Props {
   onChange?: (e: React.ChangeEvent<any>) => void;
@@ -22,7 +23,7 @@ interface Props {
   touch?: Boolean;
   suffix?: ReactNode;
   prefix?: ReactNode;
-  placeholder?: string;
+  placeholder?: [string, string];
   formik?: any;
   onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
   namespace?: string;
@@ -36,11 +37,9 @@ interface Props {
   fetching?: boolean;
   onOk?: any;
   formatter?: string;
-  isTextRequire?: boolean;
-  showTime?: boolean;
 }
 
-function MDateTimeSelect({
+function MRangePicker({
   disable,
   onChange,
   required = false,
@@ -66,8 +65,6 @@ function MDateTimeSelect({
   h,
   defaultValue,
   fetching = false,
-  isTextRequire = true,
-  showTime = true,
   onOk,
 }: Props) {
   var np;
@@ -90,6 +87,8 @@ function MDateTimeSelect({
 
   const { t } = useTranslation(np);
   const common = useTranslation();
+  const { RangePicker } = DatePicker;
+  const ref = useRef(null);
 
   return (
     <div className="w-full">
@@ -107,7 +106,16 @@ function MDateTimeSelect({
           extend ? "mb-2" : "mb-[22px]"
         }`}
       >
-        <DatePicker
+        {/* <MInput */}
+        {/*   id={id} */}
+        {/*   name={name} */}
+        {/*   disable */}
+        {/*   onClick={() => { */}
+        {/*     (ref.current as any).focus(); */}
+        {/*   }} */}
+        {/* /> */}
+        <RangePicker
+          ref={ref}
           onBlur={onBlur}
           id={id}
           onKeyDown={onKeyDown}
@@ -115,13 +123,13 @@ function MDateTimeSelect({
           allowClear={allowClear ?? true}
           defaultValue={defaultValue ?? formik?.initialValues[name]}
           suffixIcon={<CalendarIcon />}
-          value={value ? dayjs(formik.values[name], formatter) : undefined}
           placeholder={placeholder}
           format={[formatter]}
           showSecond={false}
-          showTime={showTime}
           status={error && touch ? `error` : ""}
-          onChange={(value: any, dateString: string) => {
+          onChange={(value: any, dateString: any) => {
+            console.log(dateString);
+
             if (setValue) {
               setValue!(name, dateString);
             }
@@ -171,12 +179,10 @@ function MDateTimeSelect({
             <div className={`text-m_error_500 body_regular_14`}>{t(er)}</div>
           </div>
         ) : null}
-        {extend && !(er && touch) && isTextRequire && (
-          <div className="h-[20px]" />
-        )}
+        {extend && !(er && touch) && <div className="h-[20px]" />}
       </div>
     </div>
   );
 }
 
-export default MDateTimeSelect;
+export default MRangePicker;

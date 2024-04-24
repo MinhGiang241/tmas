@@ -135,6 +135,7 @@ export interface ExaminationData {
   createdTime?: string;
   examVersion?: { exam?: ExamVersion };
   examTestCode?: string;
+  accessCodeSettingType?: "None" | "One" | "MultiCode";
   accessCodeSettings?: AccessCodeExaminantionSetting[];
   cheatingSetting?: {
     disableCopy?: boolean;
@@ -210,6 +211,9 @@ export interface TmasData {
   version?: TmasExamVersion;
   versionId?: string;
   visibleState?: string;
+  usage?: {
+    total?: number;
+  };
 }
 
 export interface TmasVersionData {
@@ -401,4 +405,20 @@ export interface TmasStudioExamData {
   UpdateBy?: string;
   UpdateTime?: string;
   Version?: string;
+}
+
+export interface RemindEmailData {
+  _id?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  body?: string;
+  creator?: string;
+  email?: string;
+  examtestId?: string;
+  retry?: number;
+  sentTime?: string;
+  type?: string;
+  status?: "Pending" | "Success" | "Failure" | "New";
+  passcode?: string;
+  errorMessage?: string;
 }

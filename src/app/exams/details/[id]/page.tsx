@@ -543,7 +543,16 @@ function ExamDetails({ params }: any) {
             {/* {data?.records?.[0]?.examQuestions?.reduce(function (total: any, question: any) {
               return total + question.numberPoint;
             }, 0)} điểm */}
-            {exam?.totalPoints} {t("point")}
+            {data?.records?.reduce(function (total: any, question: any) {
+              var point = question?.examQuestions?.reduce(
+                (to: any, quest: any) => {
+                  return to + (quest?.numberPoint ?? 0);
+                },
+                0,
+              );
+              return total + point;
+            }, 0)}{" "}
+            {t("point")}
           </div>
           <div className="text-sm text-m_neutral_900 flex">
             <Time className="mr-1" />

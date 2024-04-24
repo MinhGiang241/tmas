@@ -1,8 +1,10 @@
+"use client";
 import BaseModal, { BaseModalProps } from "@/app/components/config/BaseModal";
 import React, { HTMLAttributes, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import BlueExportIcon from "@/app/components/icons/blue-export.svg";
-import BlueEyeIcon from "@/app/components/icons/blue-eye.svg";
+import BlackExportIcon from "@/app/components/icons/black-export.svg";
+import BlackEyeIcon from "@/app/components/icons/black-eye.svg";
+import BlackImportIcon from "@/app/components/icons/black-import.svg";
 import TrashIcon from "@/app/components/icons/trash.svg";
 import EyeIcon from "@/app/components/icons/eye.svg";
 import Table, { ColumnsType } from "antd/es/table";
@@ -15,27 +17,50 @@ import {
 import MButton from "@/app/components/config/MButton";
 import { FormattedNumber } from "react-intl";
 import FileIcon from "@/app/components/icons/file.svg";
+import * as XLSX from "xlsx";
+import { ExaminationData, RemindEmailData } from "@/data/exam";
+import { v4 as uuidv4 } from "uuid";
+import { saveAs } from "file-saver";
+//@ts-ignore
+import XlsxPopulate from "xlsx-populate/browser/xlsx-populate";
 
-interface Props extends BaseModalProps {}
+interface Props extends BaseModalProps {
+  examination?: ExaminationData;
+}
 
 function ImportReceipterList(props: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
-  const [infos, setinfos] = useState<any[]>([
-    { info: "dung23@gmail.com", approve_code: "123456", status: "Lỗi" },
-    { info: "dung23@gmail.com", approve_code: "123456", status: "Lỗi" },
-    { info: "dung23@gmail.com", approve_code: "123456", status: "Lỗi" },
-  ]);
   const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [selectedData, setSelectedData] = useState<any[]>([]);
   const fileRef = useRef<any>(undefined);
   const handleFileChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
+      reader.onload = function (e) {
+        var data = e?.target?.result;
+        let readedData = XLSX.read(data, { type: "binary" });
+        const wsname = readedData.SheetNames[0];
+        const ws = readedData.Sheets[wsname];
+
+        /* Convert array to json*/
+        const dataParse = XLSX.utils.sheet_to_json(ws, { header: 1 });
+        console.log("dataParse", dataParse);
+        var d = dataParse
+          .slice(1)
+          .filter((k: any) => k && k.length >= 2)
+          .map((e: any) => {
+            return { email: e[0], passcode: e[1], status: t("New") };
+          });
+        setSelectedData(d);
+      };
+      reader.readAsBinaryString(file);
       reader.onloadend = () => {
         setSelectedFile(file);
       };
-      reader.readAsDataURL(file);
+
+      //reader.readAsDataURL(file);
     }
   };
   const handleFileClick = (e: any) => {
@@ -51,8 +76,8 @@ function ImportReceipterList(props: Props) {
       title: (
         <div className="w-full flex justify-start">{t("personal_info")}</div>
       ),
-      dataIndex: "info",
-      key: "info",
+      dataIndex: "email",
+      key: "email",
       render: (text, data) => (
         <p key={text} className="w-full  min-w-11 break-all caption_regular_14">
           {text}
@@ -61,18 +86,34 @@ function ImportReceipterList(props: Props) {
     },
     {
       onHeaderCell: (_) => rowStyle,
-      width: "33%",
+      width:
+        props.examination?.accessCodeSettingType != "MultiCode" &&
+        props.examination?.sharingSetting != "Private"
+          ? "0%"
+          : "33%",
       title: (
-        <div className="w-full break-all  flex justify-start">
+        <div
+          className={`w-full break-all  ${
+            props.examination?.accessCodeSettingType != "MultiCode" &&
+            props.examination?.sharingSetting != "Private"
+              ? "hidden"
+              : "flex"
+          } justify-start`}
+        >
           {t("approve_code")}
         </div>
       ),
-      dataIndex: "approve_code",
-      key: "approve_code",
+      dataIndex: "passcode",
+      key: "passcode",
       render: (text) => (
         <p
           key={text}
-          className="w-full break-all flex  min-w-11 justify-start caption_regular_14"
+          className={` ${
+            props.examination?.accessCodeSettingType != "MultiCode" &&
+            props.examination?.sharingSetting != "Private"
+              ? "hidden"
+              : "flex"
+          } w-full break-all min-w-11 justify-start caption_regular_14`}
         >
           {text}
         </p>
@@ -96,10 +137,42 @@ function ImportReceipterList(props: Props) {
     },
   ];
 
+  function getSheetData(data: any, header: any) {
+    var fields = ["Email", "Code"];
+    var sheetData = data.map(function (row: any) {
+      return fields.map(function (fieldName: any) {
+        return row[fieldName] ? row[fieldName] : "";
+      });
+    });
+    sheetData.unshift(header);
+    return sheetData;
+  }
+
+  async function saveAsExcel() {
+    var data: any = [];
+    let header = ["Email", "Code"];
+
+    XlsxPopulate.fromBlankAsync().then(async (workbook: any) => {
+      const sheet1 = workbook.sheet(0);
+      const sheetData = getSheetData(data, header);
+      const totalColumns = sheetData[0].length;
+
+      sheet1.cell("A1").value(sheetData);
+      const range = sheet1.usedRange();
+      const endColumn = String.fromCharCode(64 + totalColumns);
+      sheet1.row(1).style("bold", true);
+      sheet1.range("A1:" + endColumn + "1").style("fill", "BFBFBF");
+      range.style("border", true);
+      return workbook.outputAsync().then((res: any) => {
+        saveAs(res, "Sample.xlsx");
+      });
+    });
+  }
+
   return (
     <BaseModal {...props}>
       <input
-        accept=".xlsx, .pdf, .docx, ppt, pptx"
+        accept=".xlsx, .xls"
         type="file"
         ref={fileRef}
         style={{ display: "none" }}
@@ -112,20 +185,25 @@ function ImportReceipterList(props: Props) {
         }}
       />
 
-      <div className="w-full flex flex-col items-start">
-        <div className="body_semibold_14">{t("down_sample_file")}</div>
-        <button onClick={handleFileClick} className="flex items-center">
-          <BlueExportIcon />{" "}
-          <span className="ml-2 text-[#4D7EFF] underline underline-offset-4">
-            {t("up_list")}
-          </span>
-        </button>
-      </div>
-      <button className="flex flex-start w-full mt-2">
-        <BlueEyeIcon />
-        <span className="ml-2 text-[#4D7EFF] underline underline-offset-4">
-          {t("preview")}
-        </span>
+      <button
+        onClick={saveAsExcel}
+        className="mr-auto justify-start flex items-center"
+      >
+        <BlackImportIcon />
+        <span className="ml-2 body_semibold_14 ">{t("down_sample_file")}</span>
+      </button>
+
+      <button
+        onClick={handleFileClick}
+        className="mr-auto justify-start flex items-center mt-2"
+      >
+        <BlackExportIcon />{" "}
+        <span className="ml-2 body_semibold_14 ">{t("up_list")}</span>
+      </button>
+
+      <button className=" flex flex-start mr-auto items-center mt-2">
+        <BlackEyeIcon />
+        <span className="ml-2 body_semibold_14 ">{t("preview")}</span>
       </button>
       {selectedFile && (
         <div className="w-full flex flex-start my-2">
@@ -152,6 +230,7 @@ function ImportReceipterList(props: Props) {
             <button
               className="mr-2"
               onClick={() => {
+                setSelectedData([]);
                 setSelectedFile(null);
               }}
             >
@@ -161,13 +240,16 @@ function ImportReceipterList(props: Props) {
         </div>
       )}
       <div className="my-3 w-full flex flex-start body_semibold_14">
-        {t("up_suceess_data", { num: "25/38" })}
+        {t("up_suceess_data", {
+          num: `${selectedData.length}/${selectedData.length}`,
+        })}
       </div>
+
       <Table
         className="w-full"
         bordered={false}
         columns={columns}
-        dataSource={infos}
+        dataSource={selectedData}
         pagination={false}
         rowKey={"id"}
         onRow={(data: any, index: any) =>
@@ -181,7 +263,14 @@ function ImportReceipterList(props: Props) {
       />
       <MButton
         onClick={() => {
-          props.onCancel();
+          var importedData: RemindEmailData[] =
+            selectedData.map<RemindEmailData>((e) => ({
+              _id: uuidv4(),
+              email: e.email,
+              passcode: e.passcode,
+              status: "New",
+            }));
+          props.onOk!(importedData);
         }}
         h="h-9"
         className="mt-4 w-[114px]"
