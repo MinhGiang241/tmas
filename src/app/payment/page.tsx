@@ -35,7 +35,7 @@ function Payment() {
         searchPackageId ?? payment.type == "Package"
           ? payment?.packageId
           : undefined,
-      product_type: searchType ?? payment.type,
+      product_type: searchType ?? (payment.type as any),
     });
 
     if (res?.code != 0) {

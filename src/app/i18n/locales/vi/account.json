@@ -86,5 +86,7 @@
   "upgrade": "Nâng cấp",
   "upgrade_package": "Gói nâng cấp",
   "upgrade_time": "Thời gian nâng cấp",
-  "list": "Danh sách"
+  "list": "Danh sách",
+  "in_gold": "Nạp Gold",
+  "out_gold": "Rút Gold"
 }

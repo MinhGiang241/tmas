@@ -56,15 +56,18 @@ export interface Package {
   packageId?: string;
   userId?: string;
   createdTime?: string;
-  schema?: string;
-  type?: string;
-  name?: string;
-  desc?: string;
-  duration?: number;
-  unit?: string;
-  custom_price?: number;
-  activate?: boolean;
+  actived?: boolean;
   max_user?: number;
+  active_date?: string;
+  expire_date?: string;
+  nonstop?: boolean;
+  payment_state?: boolean;
+  pkg_code?: string;
+  pkg_name?: string;
+  pkg_type?: string;
+  price?: number;
+  today?: string;
+  transactionId?: string;
 }
 
 export interface Studio {
@@ -113,13 +116,38 @@ export interface GoldHistoryData {
   _id?: string;
   createdTime?: string;
   updatedTime?: string;
-  ballance?: number;
+  bill_amount?: number;
+  code?: string;
+  creator?: string;
+  email?: string;
+  goldId?: string;
   gold_changed?: number;
+  goldsetting?: { _id?: string; gold?: number };
   message?: string;
-  old_ballance?: number;
-  schema?: string;
-  source?: string;
-  sourceId?: string;
-  updater?: string;
+  payment_method?: string;
+  payment_status?: "Completed" | "Pending" | "Terminated";
+  product_type?: "Gold" | "Package";
+  receipt_amount?: number;
+  total_amount?: number;
   userId?: string;
+}
+
+export interface LicenceData {
+  _id?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  active_date?: string;
+  actived?: boolean;
+  expire_date?: string;
+  key?: string;
+  max_user?: number;
+  nonstop?: boolean;
+  packageId?: string;
+  payment_state?: boolean;
+  pkg_code?: string;
+  pkg_name?: string;
+  pkg_type?: string;
+  price?: number;
+  userId?: boolean;
+  version_number?: number;
 }

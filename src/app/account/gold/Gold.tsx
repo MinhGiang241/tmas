@@ -23,6 +23,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import { setPayment } from "@/redux/payment/paymentSlice";
 import dayjs from "dayjs";
+import { log } from "console";
+import { errorToast } from "@/app/components/toast/customToast";
 
 function Gold() {
   const { t } = useTranslation("account");
@@ -32,13 +34,23 @@ function Gold() {
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(1);
   const [page, setPage] = useState<number>(0);
+  const [change, setChange] = useState<string>("");
+  const [status, setStatus] = useState<string>("Completed");
   const user = useAppSelector((state: RootState) => state.user.user);
   const [goldHis, setGoldHis] = useState<GoldHistoryData[]>([]);
+  const [goldHisloading, setGoldHisLoading] = useState<boolean>(false);
+  const [selected, setSelected] = useState<number | undefined>();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [fromDate, setFromDate] = useState<string | undefined>();
+  const [toDate, setToDate] = useState<string | undefined>();
 
   useEffect(() => {
     loadGolds();
-    loadHistoryGoldList();
   }, []);
+  useEffect(() => {
+    loadHistoryGoldList();
+  }, [indexPage, change, status, recordNum, fromDate, toDate]);
   const [goldList, setGoldList] = useState<GoldData[]>([]);
   const loadGolds = async () => {
     var res = await loadGoldList({ skip: 0, limit: 100 });
@@ -46,46 +58,40 @@ function Gold() {
       return;
     }
     setGoldList(res.data);
-
-    console.log("res", res);
   };
 
   const loadHistoryGoldList = async () => {
+    setGoldHisLoading(true);
     var res = await loadHistoryGold({
       skip: (indexPage - 1) * recordNum,
       limit: recordNum,
-      changed: "up",
-      fromDate: "",
-      toDate: "",
-      text: "",
-      status: "",
+      changed: change,
+      fromDate: fromDate,
+      toDate: toDate,
+      text: undefined,
+      payment_status: status,
     });
+    setGoldHisLoading(false);
     if (res.code != 0) {
+      errorToast(res.message ?? "");
+      setGoldHis([]);
       return;
     }
     setGoldHis(res.data ?? []);
     setTotal(res.records ?? 0);
-
-    console.log("res his", res);
   };
 
-  const infos = [
-    {
-      act: "Nạp gold",
-      content: "Nội dung",
-      processing_time: "Thời gian thực hiện",
-      gold_num_change: "+300",
-    },
-  ];
-  const columns: ColumnsType<GoldHistoryData[]> = [
+  const columns: ColumnsType<GoldHistoryData> = [
     {
       onHeaderCell: (_) => rowStartStyle,
       title: <div className="w-full flex justify-start">{t("act")}</div>,
-      dataIndex: "schema",
-      key: "schema",
+      dataIndex: "product_type",
+      key: "product_type",
       render: (text, data) => (
         <p key={text} className="w-full  min-w-11 break-all caption_regular_14">
-          {text == "GoldTransaction" ? "Nạp Gold" : ""}
+          {text == "Gold" && (data?.gold_changed ?? 0) > 0
+            ? t("in_gold")
+            : t("out_gold")}
         </p>
       ),
     },
@@ -121,7 +127,7 @@ function Gold() {
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {dayjs(text).format("HH:MM DD/MM/YYYY")}
+          {dayjs(text).format("HH:mm DD/MM/YYYY")}
         </p>
       ),
     },
@@ -141,10 +147,6 @@ function Gold() {
       ),
     },
   ];
-
-  const [selected, setSelected] = useState<number | undefined>();
-  const router = useRouter();
-  const dispatch = useAppDispatch();
 
   if (page === 1) {
     return (
@@ -244,6 +246,15 @@ function Gold() {
       <Divider className="my-5" />
       <div className="w-full items-center flex p-5 bg-m_neutral_100 mb-3 rounded-lg">
         <MDateTimeSelect
+          setValue={(name: string, value: string) => {
+            if (value) {
+              var date = dayjs(value, "DD/MM/YYYY");
+              setFromDate(date.toISOString());
+            } else {
+              setFromDate(undefined);
+            }
+            setIndexPage(1);
+          }}
           placeholder={t("from_date")}
           isTextRequire={false}
           h="h-[42px]"
@@ -253,6 +264,15 @@ function Gold() {
         />
         <div className="w-8" />
         <MDateTimeSelect
+          setValue={(name: string, value: string) => {
+            if (value) {
+              var date = dayjs(value, "DD/MM/YYYY");
+              setToDate(date.toISOString());
+            } else {
+              setToDate(undefined);
+            }
+            setIndexPage(1);
+          }}
           placeholder={t("to_date")}
           isTextRequire={false}
           h="h-[42px]"
@@ -262,14 +282,20 @@ function Gold() {
         />
         <div className="w-8" />
         <MDropdown
+          allowClear={false}
+          value={change}
+          setValue={(name: string, value: string) => {
+            setIndexPage(1);
+            setChange(value);
+          }}
           isTextRequire={false}
           h="h-[42px]"
           id="type"
           name="type"
           options={[
-            { label: common.t("all"), value: "0" },
-            { label: t("add_gold"), value: "1" },
-            { label: t("minus_gold"), value: "2" },
+            { label: common.t("all"), value: "" },
+            { label: t("add_gold"), value: "up" },
+            { label: t("minus_gold"), value: "down" },
           ]}
         />
         <div className="w-8" />
@@ -280,6 +306,7 @@ function Gold() {
         <button
           onClick={() => {
             setIndex("0");
+            setStatus("Completed");
           }}
           className={`${
             index === "0"
@@ -292,6 +319,7 @@ function Gold() {
         <button
           onClick={() => {
             setIndex("1");
+            setStatus("Pending");
           }}
           className={`${
             index === "1"
@@ -304,6 +332,7 @@ function Gold() {
         <button
           onClick={() => {
             setIndex("2");
+            setStatus("Terminated");
           }}
           className={`${
             index === "2"
@@ -316,6 +345,7 @@ function Gold() {
       </div>
       <div className="h-3" />
       <Table
+        loading={goldHisloading}
         className="w-full"
         bordered={false}
         columns={columns}
