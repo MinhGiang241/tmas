@@ -4,6 +4,7 @@ interface PaymentState {
   loading?: boolean;
   type?: "Gold" | "Package";
   price?: number;
+  name?: string;
   goldId?: string;
   packageId?: string;
 }

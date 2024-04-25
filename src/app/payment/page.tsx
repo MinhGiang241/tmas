@@ -26,15 +26,14 @@ function Payment() {
   var searchPackageId = search.get("packageId");
   var searchGoldId = search.get("goldId");
   var searchPrice = search.get("price");
-
+  var searchName = search.get("name");
   const pay = async () => {
     const res = await makePayment({
       goldId:
-        searchGoldId ?? payment.type == "Gold" ? payment?.goldId : undefined,
+        searchGoldId ?? (payment.type == "Gold" ? payment?.goldId : undefined),
       packageId:
-        searchPackageId ?? payment.type == "Package"
-          ? payment?.packageId
-          : undefined,
+        searchPackageId ??
+        (payment.type == "Package" ? payment?.packageId : undefined),
       product_type: searchType ?? (payment.type as any),
     });
 
@@ -154,7 +153,7 @@ function Payment() {
             <div className="flex justify-between">
               <div className="body_regular_16 text-m_neutral_500">
                 {payment.type == "Gold"
-                  ? t("Thanh toán gói Gold")
+                  ? t("pay_gold", { name: searchName ?? payment?.name ?? "" })
                   : `${t("bussiness_package")}`}
                 :
               </div>

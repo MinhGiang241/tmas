@@ -5,7 +5,7 @@ import {
 } from "@/app/account/account-info/AccountInfo";
 import BaseModal, { BaseModalProps } from "@/app/components/config/BaseModal";
 import MInput from "@/app/components/config/MInput";
-import { Pagination, Select, Table } from "antd";
+import { Pagination, Select, Table, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dynamic from "next/dynamic";
 import React, { HTMLAttributes, useEffect, useState } from "react";
@@ -79,7 +79,7 @@ function SendExaminationInfo(props: Props) {
       onHeaderCell: (_) => rowStartStyle,
       width: "30%",
       title: (
-        <div className="w-full flex justify-start">{t("personal_info")}</div>
+        <div className="w-full flex justify-start">{t("receipter_info")}</div>
       ),
       dataIndex: "email",
       key: "email",
@@ -99,13 +99,13 @@ function SendExaminationInfo(props: Props) {
       title: (
         <div
           className={`w-full break-all  ${
-            props.examination?.accessCodeSettingType === "MultiCode" &&
+            props.examination?.accessCodeSettingType != "MultiCode" &&
             props.examination?.sharingSetting != "Private"
-              ? "flex"
-              : "hidden"
+              ? "hidden"
+              : "flex"
           } justify-start`}
         >
-          {t("approve_code")}
+          {t("required_code")}
         </div>
       ),
       dataIndex: "passcode",
@@ -267,6 +267,7 @@ function SendExaminationInfo(props: Props) {
       methods: media,
       examtestId: props.examination?.id,
       body: sendContent,
+      name: props.examination?.name,
     });
     setSendEmailLoading(false);
     if (res.code != 0) {
@@ -280,6 +281,8 @@ function SendExaminationInfo(props: Props) {
   return (
     <BaseModal {...props} width={1027}>
       <ImportReceipterList
+        examination={props.examination}
+        list={[...emails]}
         title={t("import_receipter_list")}
         onCancel={() => {
           setOpenImport(false);
@@ -292,6 +295,7 @@ function SendExaminationInfo(props: Props) {
         width={705}
       />
       <AddReceiptInfo
+        list={[...emails, ...mailList]}
         examination={props.examination}
         addInfo={(info: RemindEmailData) => {
           setEmails([info, ...emails]);
@@ -384,7 +388,9 @@ function SendExaminationInfo(props: Props) {
                 setOpenImport(true);
               }}
             >
-              <PushIcon />
+              <Tooltip placement="top" title={t("import")}>
+                <PushIcon />
+              </Tooltip>
             </button>
             <div className="w-2" />
             <button
@@ -392,7 +398,9 @@ function SendExaminationInfo(props: Props) {
                 setOpenAddInfo(true);
               }}
             >
-              <AddCircleIcon />
+              <Tooltip placement="top" title={t("add_info")}>
+                <AddCircleIcon />
+              </Tooltip>
             </button>
           </div>
         </div>

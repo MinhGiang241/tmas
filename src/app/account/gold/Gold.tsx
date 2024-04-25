@@ -163,7 +163,7 @@ function Gold() {
           <div className="body_semibold_20">{t("gold_list")} </div>
         </div>
         <Divider className="my-3" />
-        <div className="w-full grid grid-cols-3 gap-4 mt-4">
+        <div className="w-full grid lg:grid-cols-3 grid-cols-2 gap-4 mt-4">
           {goldList.map((e: GoldData, i: number) => (
             <button
               onClick={() => {
@@ -204,13 +204,16 @@ function Gold() {
                   type: "Gold",
                   price: goldList[selected as number].cost,
                   goldId: goldList[selected as number]._id,
+                  name: goldList[selected as number].name,
                 }),
               );
 
               router.push(
                 `/payment?type=Gold&goldId=${
                   goldList[selected as number]._id ?? ""
-                }&price=${goldList[selected as number].cost ?? 0}`,
+                }&price=${goldList[selected as number].cost ?? 0}&name=${
+                  goldList[selected as number].name ?? ""
+                }`,
               );
             }}
           />
@@ -244,7 +247,7 @@ function Gold() {
         </div>
       </div>
       <Divider className="my-5" />
-      <div className="w-full items-center flex p-5 bg-m_neutral_100 mb-3 rounded-lg">
+      <div className="w-full items-center flex max-lg:flex-col p-5 bg-m_neutral_100 mb-3 rounded-lg">
         <MDateTimeSelect
           setValue={(name: string, value: string) => {
             if (value) {
@@ -298,8 +301,8 @@ function Gold() {
             { label: t("minus_gold"), value: "down" },
           ]}
         />
-        <div className="w-8" />
-        <MButton h="h-9" className="mb-1" text={t("search")} />
+        {/* <div className="w-8" /> */}
+        {/* <MButton h="h-9 max-lg:mr-auto" className="mb-1" text={t("search")} /> */}
       </div>
       <div className="body_semibold_16 mb-2">{t("transaction_history")}</div>
       <div className="w-full flex border-b-m_neutral_200 h-11 border-b ">

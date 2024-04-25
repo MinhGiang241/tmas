@@ -88,5 +88,6 @@
   "upgrade_time": "Thời gian nâng cấp",
   "list": "Danh sách",
   "in_gold": "Nạp Gold",
-  "out_gold": "Rút Gold"
+  "out_gold": "Rút Gold",
+  "pay_gold": "Thanh toán gói Gold '{{name}}'"
 }

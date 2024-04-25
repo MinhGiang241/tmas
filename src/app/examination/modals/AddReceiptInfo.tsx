@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 interface Props extends BaseModalProps {
   addInfo?: any;
   examination?: ExaminationData;
+  list?: RemindEmailData[];
 }
 
 interface FormValues {
@@ -46,7 +47,13 @@ function AddReceiptInfo(props: Props) {
   });
   const { t } = useTranslation("exam");
   return (
-    <BaseModal {...props}>
+    <BaseModal
+      {...props}
+      onCancel={() => {
+        props.onCancel();
+        formik.resetForm();
+      }}
+    >
       <MInput
         required
         h="h-11"
@@ -62,6 +69,7 @@ function AddReceiptInfo(props: Props) {
             options={props.examination?.accessCodeSettings?.map((e) => ({
               value: e.code,
               label: e.code,
+              disabled: props.list?.some((r) => r.passcode == e.code),
             }))}
             id="code"
             name="code"
