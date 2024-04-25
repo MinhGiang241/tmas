@@ -11,6 +11,10 @@ import Explain from './questions/Explain'
 import Coding from './questions/Coding'
 import FillBlank from './questions/FillBlank'
 import Random from './questions/Random'
+import Pause from '@/app/components/icons/pause-circle.svg'
+import Edit from '@/app/components/icons/edit-2.svg'
+import Play from '@/app/components/icons/video-circle.svg'
+import Close from '@/app/components/icons/close-circle2.svg'
 
 export default function Result({ params }: any) {
 
@@ -106,29 +110,115 @@ export default function Result({ params }: any) {
                         </div>
                         <hr />
                         <div className='p-4'>
-                            <div className='pb-4'>
-                                <div className='font-semibold'>Bắt đầu làm bài</div>
-                                <div className='text-sm text-m_neutral_500'>13/04/2024 11:14:19</div>
+                            {/* <div className='pb-4'>
+                                <div className='flex items-center'>
+                                    <Play />
+                                    <div className='font-semibold pl-1'>Bắt đầu làm bài</div>
+                                </div>
+                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
                             </div>
                             <div className='pb-4'>
-                                <div className='font-semibold'>Bắt đầu làm câu hỏi số 1</div>
-                                <div className='text-sm text-m_neutral_500'>13/04/2024 11:14:19</div>
+                                <div className='flex items-center'>
+                                    <Edit />
+                                    <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 1</div>
+                                </div>
+                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
                             </div>
                             <div className='pb-4'>
-                                <div className='font-semibold'>Bắt đầu làm câu hỏi số 2</div>
-                                <div className='text-sm text-m_neutral_500'>13/04/2024 11:14:19</div>
+                                <div className='flex items-center'>
+                                    <Edit />
+                                    <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 2</div>
+                                </div>
+                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
                             </div>
                             <div className='pb-4'>
-                                <div className='font-semibold'>Thoát ra ngoài màn hình lần 1</div>
-                                <div className='text-sm text-m_neutral_500'>13/04/2024 11:14:19</div>
+                                <div className='flex items-center'>
+                                    <Close />
+                                    <div className='font-semibold pl-1'>Thoát ra ngoài màn hình lần 1</div>
+                                </div>
+                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
                             </div>
                             <div className='pb-4'>
-                                <div className='font-semibold'>Bắt đầu làm câu hỏi số 4</div>
-                                <div className='text-sm text-m_neutral_500'>13/04/2024 11:14:19</div>
+                                <div className='flex items-center'>
+                                    <Edit />
+                                    <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 4</div>
+                                </div>
+                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
                             </div>
                             <div className='pb-4'>
-                                <div className='font-semibold'>Nộp bài thi</div>
-                                <div className='text-sm text-m_neutral_500'>13/04/2024 11:14:19</div>
+                                <div className='flex items-center'>
+                                    <Pause />
+                                    <div className='font-semibold pl-1'>Nộp bài thi</div>
+                                </div>
+                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
+                            </div> */}
+                            <div className='flex-row'>
+                                <div className='flex'>
+                                    <div className='pt-[6px] mr-5'>
+                                        <div className='w-3 h-3 bg-m_primary_500 rounded-full mb-1' />
+                                        <div className='h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300' />
+                                    </div>
+                                    <div>
+                                        <div className='pb-4'>
+                                            <div className='flex items-center'>
+                                                <Play />
+                                                <div className='font-semibold pl-1'>Bắt đầu làm bài</div>
+                                            </div>
+                                            <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='flex-row'>
+                                <div className='flex'>
+                                    <div className='pt-[6px] mr-5'>
+                                        <div className='w-3 h-3 bg-m_primary_500 rounded-full mb-1' />
+                                        <div className='h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300' />
+                                    </div>
+                                    <div>
+                                        <div className='pb-4'>
+                                            <div className='flex items-center'>
+                                                <Edit />
+                                                <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 1</div>
+                                            </div>
+                                            <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='flex-row'>
+                                <div className='flex'>
+                                    <div className='pt-[6px] mr-5'>
+                                        <div className='w-3 h-3 bg-m_primary_500 rounded-full mb-1' />
+                                        <div className='h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300' />
+                                    </div>
+                                    <div>
+                                        <div className='pb-4'>
+                                            <div className='flex items-center'>
+                                                <Close />
+                                                <div className='font-semibold pl-1'>Thoát ra ngoài màn hình lần 1</div>
+                                            </div>
+                                            <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='flex-row'>
+                                <div className='flex'>
+                                    <div className='pt-[6px] mr-5'>
+                                        <div className='w-3 h-3 bg-m_primary_500 rounded-full mb-1' />
+                                        {/* <div className='h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300' /> */}
+                                    </div>
+                                    <div>
+                                        <div className='pb-4'>
+                                            <div className='flex items-center'>
+                                                <Pause />
+                                                <div className='font-semibold pl-1'>Nộp bài thi</div>
+                                            </div>
+                                            <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
