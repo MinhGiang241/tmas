@@ -151,7 +151,7 @@ function Payment() {
               >
                 <Radio value={"vnpay"}>
                   <div className="body_regular_16 w-full flex justify-start text-start">
-                    {t("qr_method")}
+                    {t("vnpay_method")}
                   </div>
                 </Radio>
                 <Image
