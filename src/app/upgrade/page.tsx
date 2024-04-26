@@ -8,13 +8,14 @@ import { useRouter } from "next/navigation";
 import { loadPackage } from "@/services/api_services/upgrade";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
+import { FormattedNumber } from "react-intl";
 
 
 export default function Upgrage() {
   const [data, setData] = useState<any>();
   const router = useRouter();
   const user = useAppSelector((state: RootState) => state.user.user)
-  // console.log('user', user);
+  console.log('user', user?.licences?.enterprise?.packageId);
 
   const load = async () => {
     const res = await loadPackage()
@@ -30,13 +31,6 @@ export default function Upgrage() {
 
   return (
     <HomeLayout>
-      {/* <ConfirmModal
-                text={"Gửi yêu cầu báo giá thành công"}
-                // action={t("delete")}
-                open={open}
-                onCancel={() => { setOpen(false) }}
-                onOk={() => ("")}
-            /> */}
       <div className="h-2" />
       <div className="w-full max-lg:px-3 mb-5">
         <div className="body_semibold_20 mt-3 w-full flex justify-between items-center">
@@ -101,11 +95,11 @@ export default function Upgrage() {
                 Miễn phí
               </button>
             </div>
-          </div>
-          <div className="max-md:col-span-1 md:col-span-2 lg:col-span-1 border border-m_upgrade_300 rounded-xl bg-white gap-6">
+          </div> */}
+          {/* <div className="max-md:col-span-1 md:col-span-2 lg:col-span-1 border border-m_upgrade_300 rounded-xl bg-white gap-6">
             <div className="flex justify-end">
               <div className="text-white text-center text-xs font-semibold h-6 bg-m_upgrade_300 w-32 rounded-bl-md rounded-tr-md flex items-center justify-center">
-                Đang xử dụng
+                Đang sử dụng
               </div>
             </div>
             <div className="p-6 pt-0 pb-0">
@@ -167,8 +161,8 @@ export default function Upgrage() {
                 Thời hạn: 12/2023 - 12/2024
               </button>
             </div>
-          </div>
-          <div className="max-md:col-span-1 md:col-span-2 lg:col-span-1 border boder-m_neutral_200 rounded-xl bg-white p-6 gap-6">
+          </div> */}
+          {/* <div className="max-md:col-span-1 md:col-span-2 lg:col-span-1 border boder-m_neutral_200 rounded-xl bg-white p-6 gap-6">
             <div className="body_bold_16">Bussiness</div>
             <div className="flex items-center">
               <div className="body_semibold_20 pr-1 title_regular_20">
@@ -232,19 +226,28 @@ export default function Upgrage() {
               </button>
             </div>
           </div> */}
-          {data?.map((x: any, key: any) => (
+          {/* {data?.map((x: any, key: any) => (
             x?.type != "Enterprise" ? (
               ""
             ) : (
               <div key={key} className="max-md:col-span-1 md:col-span-2 lg:col-span-1 border boder-m_neutral_200 rounded-xl bg-white p-6 gap-6 relative">
                 <div className="body_bold_16">{x?.name}</div>
                 <div className="flex items-center">
-                  <div className="body_semibold_20 pr-1 title_regular_20">{x?.price} VNĐ</div>
+                  <div className="body_semibold_20 title_regular_20">
+                    <FormattedNumber
+                      value={
+                        x?.price ?? 0
+                      }
+                      style="decimal"
+                      maximumFractionDigits={2}
+                    />
+                    &nbsp;VNĐ
+                  </div>
                   <div className='text-m_neutral_500 body_regular_14'>{!x?.price ? <div className="h-7" /> : x?.unit === "year" ? "/ Năm" : x?.unit === "month" ? "/ Tháng" : x?.unit === "day" ? "/ Ngày" : <div className="h-7" />}</div>
                 </div>
-                <div className="py-5 w-full  ">
+                <div className="py-5 w-full">
                   {x?.features?.map((e: any, key: any) => (
-                    <div key={key} className="flex">
+                    <div key={key} className="flex pb-3">
                       <Tick className="min-w-7" />
                       <div className="body_regular_14 text-m_neutral_900">{e?.text}</div>
                     </div>
@@ -283,7 +286,82 @@ export default function Upgrage() {
                 </div>
               </div>
             )
-          ))}
+          ))} */}
+          {data?.map((x: any, key: any) => (
+            x?.type !== "Enterprise" ? (
+              ""
+            ) : (
+              // <div key={key} className={`max-md:col-span-1 md:col-span-2 lg:col-span-1 border boder-m_neutral_200 rounded-xl bg-white p-6 gap-6 relative`}>
+              <div key={key} className={`${x?._id === user?.licences?.enterprise?.packageId ? "max-md:col-span-1 md:col-span-2 lg:col-span-1 border border-m_upgrade_300 rounded-xl bg-white gap-6 relative" : "max-md:col-span-1 md:col-span-2 lg:col-span-1 border boder-m_neutral_200 rounded-xl bg-white p-6 gap-6 relative"}`}>
+                {x?._id === user?.licences?.enterprise?.packageId
+                  ?
+                  <div className="flex justify-end">
+                    <div className="text-white text-center text-xs font-semibold h-6 bg-m_upgrade_300 w-32 rounded-bl-md rounded-tr-md flex items-center justify-center">
+                      Đang sử dụng
+                    </div>
+                  </div>
+                  : ""
+                }
+                <div className={`${x?._id === user?.licences?.enterprise?.packageId ? "p-6 pt-0 pb-0" : ""}`}>
+                  <div className="body_bold_16">{x?.name}</div>
+                  <div className="flex items-center">
+                    <div className="body_semibold_20 title_regular_20">
+                      <FormattedNumber
+                        value={
+                          x?.price ?? 0
+                        }
+                        style="decimal"
+                        maximumFractionDigits={2}
+                      />
+                      &nbsp;VNĐ
+                    </div>
+                    <div className='text-m_neutral_500 body_regular_14'>{!x?.price ? <div className="h-7" /> : x?.unit === "year" ? `/ ${x?.duration} Năm` : x?.unit === "month" ? `/ ${x?.duration} Tháng` : x?.unit === "day" ? `/ ${x?.duration} Ngày` : <div className="h-7" />}</div>
+                  </div>
+                  <div className="py-5 w-full">
+                    {x?.features?.map((e: any, key: any) => (
+                      <div key={key} className="flex pb-3">
+                        <Tick className="min-w-7" />
+                        <div className="body_regular_14 text-m_neutral_900">{e?.text}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="h-16" />
+                  <div className="absolute bottom-0 w-[222px]">
+                    <hr />
+                    {(x?.custom_price === true) ? (
+                      <button
+                        onClick={() => {
+                          successToast("Gửi yêu cầu báo giá thành công !");
+                        }}
+                        className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_primary_500 body_semibold_14 text-white my-4"
+                      >
+                        Nhận báo giá
+                      </button>
+                    ) : !x?.price ? (
+                      <button
+                        className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_neutral_200 body_semibold_14 text-m_neutral_500 my-4"
+                      >
+                        Miễn phí
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          router.push(
+                            `/payment?type=Package&packageId=${x._id ?? ""}&price=${x?.price ?? 0}&name=${x?.name ?? ""}`,
+                          );
+                        }}
+                        className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_primary_500 body_semibold_14 text-white my-4"
+                      >
+                        Đăng kí ngay
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+            )
+          )
+          )}
         </div>
       </div>
     </HomeLayout>
