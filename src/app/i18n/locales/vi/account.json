@@ -91,5 +91,6 @@
   "in_gold": "Nạp Gold",
   "out_gold": "Rút Gold",
   "pay_gold": "Thanh toán gói Gold '{{name}}'",
-  "visa_method": "Thanh toán qua visa"
+  "visa_method": "Thanh toán qua visa",
+  "no_limit_time": "Vô thời hạn"
 }

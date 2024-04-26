@@ -58,6 +58,7 @@ function ImportReceipterList(props: Props) {
           .map((e: any) => {
             return { email: e[0], passcode: e[1], status: t("New") };
           });
+
         validateImportData(d);
       };
       reader.readAsBinaryString(file);
@@ -108,33 +109,38 @@ function ImportReceipterList(props: Props) {
     var notExamTestCode: any = [];
 
     for (let j in data) {
-      if (!data[parseInt(j)].email) {
+      if (!data[parseInt(j)].email?.trim()) {
         dataMailNotExisted.push(j);
       } else if (!emailRegex.test(data[parseInt(j)].email)) {
         dataMailNotValid.push(j);
-      } else if (mailDup.includes(data[parseInt(j)].email)) {
+      } else if (mailDup.includes(data[parseInt(j)].email?.toLowerCase())) {
         dataDup.push(j);
       } else if (
-        props.list?.map((e) => e.email)?.includes(data[parseInt(j)].email)
+        props.list
+          ?.map((e) => e.email)
+          ?.includes(data[parseInt(j)].email?.toLowerCase())
       ) {
         existedMailDup.push(j);
       } else if (
         !props.examination?.accessCodeSettings
           ?.map((e) => e.code)
           .includes(data[parseInt(j)].passcode) &&
-        props.examination?.accessCodeSettingType == "MultiCode"
+        props.examination?.accessCodeSettingType == "MultiCode" &&
+        props.examination?.sharingSetting == "Private"
       ) {
         notExamTestCode.push(j);
       } else if (
         codeDup.includes(data[parseInt(j)].passcode) &&
-        props.examination?.accessCodeSettingType == "MultiCode"
+        props.examination?.accessCodeSettingType == "MultiCode" &&
+        props.examination?.sharingSetting == "Private"
       ) {
         codeDataDup.push(j);
       } else if (
         props.list
           ?.map((e) => e.passcode)
           ?.includes(data[parseInt(j)].passcode) &&
-        props.examination?.accessCodeSettingType == "MultiCode"
+        props.examination?.accessCodeSettingType == "MultiCode" &&
+        props.examination?.sharingSetting == "Private"
       ) {
         existedCodeDup.push(j);
       } else {
@@ -216,21 +222,24 @@ function ImportReceipterList(props: Props) {
     },
     {
       onHeaderCell: (_) => rowStyle,
-      width:
-        props?.examination?.accessCodeSettingType != "MultiCode" &&
-        props?.examination?.sharingSetting != "Private"
-          ? "0%"
-          : "33%",
+      width: !(
+        props.examination?.accessCodeSettingType === "MultiCode" &&
+        props.examination?.sharingSetting == "Private"
+      )
+        ? "0%"
+        : "33%",
       title: (
         <div
           className={`w-full break-all  ${
-            props.examination?.accessCodeSettingType != "MultiCode" &&
-            props.examination?.sharingSetting != "Private"
+            !(
+              props.examination?.accessCodeSettingType === "MultiCode" &&
+              props.examination?.sharingSetting == "Private"
+            )
               ? "hidden"
               : "flex"
           } justify-start`}
         >
-          {t("required_code")}
+          {t("access_code")}
         </div>
       ),
       dataIndex: "passcode",
@@ -239,8 +248,10 @@ function ImportReceipterList(props: Props) {
         <p
           key={text}
           className={` ${
-            props.examination?.accessCodeSettingType != "MultiCode" &&
-            props.examination?.sharingSetting != "Private"
+            !(
+              props.examination?.accessCodeSettingType === "MultiCode" &&
+              props.examination?.sharingSetting == "Private"
+            )
               ? "hidden"
               : "flex"
           } w-full break-all min-w-11 justify-start caption_regular_14`}
@@ -268,7 +279,11 @@ function ImportReceipterList(props: Props) {
   ];
 
   function getSheetData(data: any, header: any) {
-    var fields = ["Email", "Code"];
+    var fields =
+      props.examination?.accessCodeSettingType === "MultiCode" &&
+      props.examination?.sharingSetting == "Private"
+        ? ["Email", "Code"]
+        : ["Email"];
     var sheetData = data.map(function (row: any) {
       return fields.map(function (fieldName: any) {
         return row[fieldName] ? row[fieldName] : "";
@@ -290,7 +305,11 @@ function ImportReceipterList(props: Props) {
 
   async function saveAsExcel() {
     var data: any = [];
-    let header = ["Email", "Code"];
+    let header =
+      props.examination?.accessCodeSettingType === "MultiCode" &&
+      props.examination?.sharingSetting == "Private"
+        ? ["Email", "Code"]
+        : ["Email"];
 
     XlsxPopulate.fromBlankAsync().then(async (workbook: any) => {
       const sheet1 = workbook.sheet(0);
@@ -361,11 +380,6 @@ function ImportReceipterList(props: Props) {
         <BlackExportIcon />{" "}
         <span className="ml-2 body_semibold_14 ">{t("up_list")}</span>
       </button>
-
-      <button className=" flex flex-start mr-auto items-center mt-2">
-        <BlackEyeIcon />
-        <span className="ml-2 body_semibold_14 ">{t("preview")}</span>
-      </button>
       {selectedFile && (
         <div className="w-full flex flex-start my-2">
           <div className="flex items-center bg-m_neutral_100 rounded-md">
@@ -376,16 +390,6 @@ function ImportReceipterList(props: Props) {
               <p className="body_semibold_14 text-wrap overflow-clip max-w-[230px]">
                 {selectedFile?.name}
               </p>
-              {/* <p className="caption_regular_14"> */}
-              {/*   { */}
-              {/*     <FormattedNumber */}
-              {/*       value={(selectedFile?.size ?? 0) / (1024 * 1024)} */}
-              {/*       style="decimal" */}
-              {/*       maximumFractionDigits={2} */}
-              {/*     /> */}
-              {/*   }{" "} */}
-              {/*   MB */}
-              {/* </p> */}
             </div>
 
             <button
@@ -402,6 +406,11 @@ function ImportReceipterList(props: Props) {
           </div>
         </div>
       )}
+      <button className=" flex flex-start mr-auto items-center mt-2">
+        <BlackEyeIcon />
+        <span className="ml-2 body_semibold_14 ">{t("preview")}</span>
+      </button>
+
       <div className="my-3 w-full flex justify-between ">
         <div className="body_semibold_14">
           {t("up_suceess_data", {

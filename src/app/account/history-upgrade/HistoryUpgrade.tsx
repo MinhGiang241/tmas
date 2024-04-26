@@ -37,7 +37,7 @@ function HistoryUpgrade() {
     setLicences(res.data);
   };
 
-  const columns: ColumnsType<any> = [
+  const columns: ColumnsType<LicenceData> = [
     {
       onHeaderCell: (_) => rowStartStyle,
       title: <div className="flex justify-start">{t("upgrade_package")}</div>,
@@ -67,7 +67,9 @@ function HistoryUpgrade() {
       key: "expire_date",
       render: (text, data) => (
         <p key={text} className="w-full caption_regular_14">
-          {dayjs(text).format("DD/MM/YYYY HH:mm")}
+          {data?.pkg_type == "Individual"
+            ? t("no_limit_time")
+            : dayjs(text).format("DD/MM/YYYY HH:mm")}
         </p>
       ),
     },
@@ -105,15 +107,19 @@ function HistoryUpgrade() {
           <div className="flex caption_regular_14">
             <span className="text-m_neutral_500 mr-1">{t("deadline")}:</span>
             <span>
-              {dayjs(
+              {`${dayjs(
                 user?.licences?.enterprise?.active_date ??
                   user?.licences?.individual?.active_date,
               ).format(dateFormat)}
               -
-              {dayjs(
-                user?.licences?.enterprise?.expire_date ??
-                  user?.licences?.individual?.expire_date,
-              ).format(dateFormat)}
+              ${
+                !user?.licences?.enterprise
+                  ? t("no_limit_time")
+                  : dayjs(
+                      user?.licences?.enterprise?.expire_date ??
+                        user?.licences?.individual?.expire_date,
+                    ).format(dateFormat)
+              }`}
             </span>
           </div>
         </div>

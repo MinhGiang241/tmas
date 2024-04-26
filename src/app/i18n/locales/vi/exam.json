@@ -330,5 +330,7 @@
   "add_info": "Thêm thông tin",
   "import": "Tải lên",
   "download_error_list": "Tải danh sách lỗi",
-  "required_code": "Mã yêu cầu"
+  "required_code": "Mã yêu cầu",
+  "access_code": "Mã truy cập",
+  "dup_email": "Email bị trùng"
 }
