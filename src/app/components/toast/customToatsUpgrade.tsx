@@ -7,8 +7,9 @@ import {
 } from "@ant-design/icons";
 import MButton from "../config/MButton";
 import { useTranslation } from "react-i18next";
+import React from "react";
 
-enum ToastType {
+export enum ToastType {
     SUCCESS,
     ERROR,
     INFORM,
@@ -20,12 +21,14 @@ const CustomToast = ({
     c,
     namespace,
     text,
+    node
 }: {
     type: ToastType;
-    content: string;
+    content?: string;
     c: any;
     namespace?: string;
     text?: string;
+    node?: React.ReactNode
 }) => {
     const { t } = useTranslation("question");
 
@@ -48,7 +51,7 @@ const CustomToast = ({
                     className={`${c.visible ? "animate-enter" : "animate-leave"
                         } h-fit mt-40 relative max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 justify-center`}
                 >
-                    <div className="px-10 w-full relative z-50">
+                    <div className="p-5 w-full relative z-50">
                         <div className="flex justify-center mt-6 mb-4">
                             {type == ToastType.SUCCESS && (
                                 <CheckCircleFilled className="text-[5rem] text-m_success_500" />
@@ -70,6 +73,7 @@ const CustomToast = ({
                             </h4>
                             <p>{content}</p>
                         </div>
+                        <>{node}</>
                         <div className="flex justify-center my-6">
                             <MButton
                                 className="w-36"
@@ -107,5 +111,12 @@ export const errorToast = (content: string) => {
 export const notifyToast = (content: string) => {
     toast.custom((e) => (
         <CustomToast type={ToastType.INFORM} content={content} c={e} />
+    ));
+};
+
+
+export const modifyToast = (node: React.ReactNode, type: ToastType) => {
+    toast.custom((e) => (
+        <CustomToast type={type} node={node} c={e} />
     ));
 };

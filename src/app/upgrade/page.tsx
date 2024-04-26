@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import HomeLayout from "../layouts/HomeLayout";
 import Tick from "@/app/components/icons/tick-circle.svg";
-import { successToast } from "../components/toast/customToast";
+import { ToastType, modifyToast, successToast } from "../components/toast/customToatsUpgrade";
 import { useRouter } from "next/navigation";
 import { loadPackage } from "@/services/api_services/upgrade";
 import { useAppSelector } from "@/redux/hooks";
@@ -80,7 +80,13 @@ export default function Upgrage() {
                     {(x?.custom_price === true) ? (
                       <button
                         onClick={() => {
-                          successToast("Gửi yêu cầu báo giá thành công !");
+                          modifyToast(
+                            <div className="text-center text-m_neutral_500 font-normal text-sm">
+                              Bộ phận CSKH TMAS sẽ liên hệ lại bạn qua số điện thoại của bạn trong vòng 24 tiếng kể từ thời điểm tiếp nhận yêu cầu nhận báo giá.Tổng đài chăm CSKH TMAS: <a className="border-black border-b text-black font-normal text-sm" href="tel:+">1900 1221</a>
+                            </div>
+                            ,
+                            ToastType.SUCCESS
+                          );
                         }}
                         className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_primary_500 body_semibold_14 text-white my-4"
                       >
@@ -98,9 +104,9 @@ export default function Upgrage() {
                           className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_neutral_200 body_semibold_14 text-m_neutral_500 my-4"
                         >
                           Thời hạn:&nbsp;
-                          {dayjs(user?.licences?.enterprise?.active_date).format('MM/YYYY')}
+                          {dayjs(user?.licences?.enterprise?.active_date).format('DD/MM/YYYY')}
                           -
-                          {dayjs(user?.licences?.enterprise?.expire_date).format('MM/YYYY')}
+                          {dayjs(user?.licences?.enterprise?.expire_date).format('DD/MM/YYYY')}
                         </button>
                       ) : (
                         <button
