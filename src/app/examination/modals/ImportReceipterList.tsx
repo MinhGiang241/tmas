@@ -19,21 +19,27 @@ import { FormattedNumber } from "react-intl";
 import FileIcon from "@/app/components/icons/file.svg";
 import * as XLSX from "xlsx";
 import { ExaminationData, RemindEmailData } from "@/data/exam";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4, validate } from "uuid";
 import { saveAs } from "file-saver";
+import _, { parseInt } from "lodash";
 //@ts-ignore
 import XlsxPopulate from "xlsx-populate/browser/xlsx-populate";
+import { parse } from "path";
+import { emailRegex } from "@/services/validation/regex";
 
 interface Props extends BaseModalProps {
   examination?: ExaminationData;
+  list?: RemindEmailData[];
 }
 
 function ImportReceipterList(props: Props) {
   const { t } = useTranslation("exam");
+  const [errorList, setErrorList] = useState<any[]>([]);
   const common = useTranslation();
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [selectedData, setSelectedData] = useState<any[]>([]);
   const fileRef = useRef<any>(undefined);
+  const [dataList, setDataList] = useState<any[]>([]);
   const handleFileChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
@@ -46,14 +52,13 @@ function ImportReceipterList(props: Props) {
 
         /* Convert array to json*/
         const dataParse = XLSX.utils.sheet_to_json(ws, { header: 1 });
-        console.log("dataParse", dataParse);
         var d = dataParse
           .slice(1)
           .filter((k: any) => k && k.length >= 2)
           .map((e: any) => {
             return { email: e[0], passcode: e[1], status: t("New") };
           });
-        setSelectedData(d);
+        validateImportData(d);
       };
       reader.readAsBinaryString(file);
       reader.onloadend = () => {
@@ -63,6 +68,131 @@ function ImportReceipterList(props: Props) {
       //reader.readAsDataURL(file);
     }
   };
+
+  const validateImportData = (data: any) => {
+    // bắt trùng mail
+    setDataList(data);
+    var map: any = {};
+    for (let i in data) {
+      map[data[parseInt(i)].email] = map[data[parseInt(i)].email]
+        ? map[data[parseInt(i)].email] + 1
+        : 1;
+    }
+    const mailDup: any = [];
+    Object.keys(map).map((e) => {
+      if (map[e] >= 2) {
+        mailDup.push(e);
+      }
+    });
+    // bắt trùng code
+    var codes: any = {};
+    for (let i in data) {
+      map[data[parseInt(i)].passcode] = map[data[parseInt(i)].passcode]
+        ? map[data[parseInt(i)].passcode] + 1
+        : 1;
+    }
+    const codeDup: any = [];
+    Object.keys(codes).map((e) => {
+      if (codes[e] >= 2) {
+        codeDup.push(e);
+      }
+    });
+
+    var dataDup: any = [];
+    var dataNotDup: any = [];
+    var dataMailNotExisted: any = [];
+    var dataMailNotValid: any = [];
+    var existedMailDup: any = [];
+    var existedCodeDup: any = [];
+    var codeDataDup: any = [];
+    var notExamTestCode: any = [];
+
+    for (let j in data) {
+      if (!data[parseInt(j)].email) {
+        dataMailNotExisted.push(j);
+      } else if (!emailRegex.test(data[parseInt(j)].email)) {
+        dataMailNotValid.push(j);
+      } else if (mailDup.includes(data[parseInt(j)].email)) {
+        dataDup.push(j);
+      } else if (
+        props.list?.map((e) => e.email)?.includes(data[parseInt(j)].email)
+      ) {
+        existedMailDup.push(j);
+      } else if (
+        !props.examination?.accessCodeSettings
+          ?.map((e) => e.code)
+          .includes(data[parseInt(j)].passcode) &&
+        props.examination?.accessCodeSettingType == "MultiCode"
+      ) {
+        notExamTestCode.push(j);
+      } else if (
+        codeDup.includes(data[parseInt(j)].passcode) &&
+        props.examination?.accessCodeSettingType == "MultiCode"
+      ) {
+        codeDataDup.push(j);
+      } else if (
+        props.list
+          ?.map((e) => e.passcode)
+          ?.includes(data[parseInt(j)].passcode) &&
+        props.examination?.accessCodeSettingType == "MultiCode"
+      ) {
+        existedCodeDup.push(j);
+      } else {
+        dataNotDup.push(data[parseInt(j)]);
+      }
+    }
+
+    var notExamTestEx = notExamTestCode.map((d: any) => ({
+      index: parseInt(d) + 2,
+      mess: "Code không tồn tại trong đợt thi",
+      value: data[parseInt(d)].passcode,
+    }));
+
+    var existedCodeEx = existedCodeDup.map((d: any) => ({
+      index: parseInt(d) + 2,
+      mess: "Code đã tồn tại",
+      value: data[parseInt(d)].passcode,
+    }));
+
+    var codDupEx = codeDataDup.map((d: any) => ({
+      index: parseInt(d) + 2,
+      mess: "Bị trùng code trong file excel",
+      value: data[parseInt(d)].passcode,
+    }));
+
+    var notMailEx = dataMailNotExisted.map((d: any) => ({
+      index: parseInt(d) + 2,
+      mess: "Trường email bị trống",
+      value: data[parseInt(d)].email,
+    }));
+    var invalidMailEx = dataMailNotValid.map((d: any) => ({
+      index: parseInt(d) + 2,
+      mess: "Email không đúng định dạng",
+      value: data[parseInt(d)].email,
+    }));
+
+    var fileDupEx = dataDup.map((d: any) => ({
+      index: parseInt(d) + 2,
+      mess: "Bị trùng email trong file excel",
+      value: data[parseInt(d)].email,
+    }));
+    var exiestDupEx = existedMailDup.map((t: any) => ({
+      index: parseInt(t) + 2,
+      mess: "Email đã tồn tại",
+      value: data[parseInt(t)].email,
+    }));
+    setErrorList([
+      ...notExamTestEx,
+      ...existedCodeEx,
+      ...codDupEx,
+      ...notMailEx,
+      ...invalidMailEx,
+      ...fileDupEx,
+      ...exiestDupEx,
+    ]);
+    setSelectedData(dataNotDup);
+  };
+
   const handleFileClick = (e: any) => {
     e.stopPropagation();
     if (fileRef) {
@@ -74,7 +204,7 @@ function ImportReceipterList(props: Props) {
       onHeaderCell: (_) => rowStartStyle,
       width: "34%",
       title: (
-        <div className="w-full flex justify-start">{t("personal_info")}</div>
+        <div className="w-full flex justify-start">{t("receipter_info")}</div>
       ),
       dataIndex: "email",
       key: "email",
@@ -87,8 +217,8 @@ function ImportReceipterList(props: Props) {
     {
       onHeaderCell: (_) => rowStyle,
       width:
-        props.examination?.accessCodeSettingType != "MultiCode" &&
-        props.examination?.sharingSetting != "Private"
+        props?.examination?.accessCodeSettingType != "MultiCode" &&
+        props?.examination?.sharingSetting != "Private"
           ? "0%"
           : "33%",
       title: (
@@ -100,7 +230,7 @@ function ImportReceipterList(props: Props) {
               : "flex"
           } justify-start`}
         >
-          {t("approve_code")}
+          {t("required_code")}
         </div>
       ),
       dataIndex: "passcode",
@@ -147,6 +277,16 @@ function ImportReceipterList(props: Props) {
     sheetData.unshift(header);
     return sheetData;
   }
+  function getErrorSheetData(data: any, header: any) {
+    var fields = ["index", "mess", "value"];
+    var sheetData = data.map(function (row: any) {
+      return fields.map(function (fieldName: any) {
+        return row[fieldName] ? row[fieldName] : "";
+      });
+    });
+    sheetData.unshift(header);
+    return sheetData;
+  }
 
   async function saveAsExcel() {
     var data: any = [];
@@ -168,6 +308,27 @@ function ImportReceipterList(props: Props) {
       });
     });
   }
+
+  const saveErrorExcel = () => {
+    let header = ["Dòng", "Lỗi", "Giá trị"];
+    console.log("err", errorList);
+
+    XlsxPopulate.fromBlankAsync().then(async (workbook: any) => {
+      const sheet1 = workbook.sheet(0);
+      const sheetData = getErrorSheetData(errorList, header);
+      const totalColumns = sheetData[0].length;
+
+      sheet1.cell("A1").value(sheetData);
+      const range = sheet1.usedRange();
+      const endColumn = String.fromCharCode(64 + totalColumns);
+      sheet1.row(1).style("bold", true);
+      sheet1.range("A1:" + endColumn + "1").style("fill", "BFBFBF");
+      range.style("border", true);
+      return workbook.outputAsync().then((res: any) => {
+        saveAs(res, "Error.xlsx");
+      });
+    });
+  };
 
   return (
     <BaseModal {...props}>
@@ -231,6 +392,8 @@ function ImportReceipterList(props: Props) {
               className="mr-2"
               onClick={() => {
                 setSelectedData([]);
+                setErrorList([]);
+                setDataList([]);
                 setSelectedFile(null);
               }}
             >
@@ -239,10 +402,22 @@ function ImportReceipterList(props: Props) {
           </div>
         </div>
       )}
-      <div className="my-3 w-full flex flex-start body_semibold_14">
-        {t("up_suceess_data", {
-          num: `${selectedData.length}/${selectedData.length}`,
-        })}
+      <div className="my-3 w-full flex justify-between ">
+        <div className="body_semibold_14">
+          {t("up_suceess_data", {
+            num: `${selectedData.length}/${dataList.length}`,
+          })}
+        </div>
+        {errorList.length > 0 && (
+          <button
+            onClick={() => {
+              saveErrorExcel();
+            }}
+            className="text-m_neutral_900 italic underline underline-offset-4"
+          >
+            {t("download_error_list")}
+          </button>
+        )}
       </div>
 
       <Table

@@ -157,7 +157,7 @@ export const loadHistoryGold = async (data: {
   fromDate?: string;
   toDate?: string;
   changed?: string;
-  status?: string;
+  payment_status?: string;
 }) => {
   var results: APIResults = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/goldtransaction.get_by_account`,
@@ -175,6 +175,25 @@ export const makePayment = async (data: {
   var results: APIResults = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/billtransaction.create_online_transaction`,
     data,
+  );
+
+  return results;
+};
+
+export const loadHistoryUpgrade = async (data: {
+  skip?: number;
+  limit?: number;
+}) => {
+  var results: APIResults = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/licence.get_by_account`,
+    data,
+  );
+
+  return results;
+};
+export const loadConfig = async () => {
+  var results: APIResults = await callApi.get(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/studiosetting.load`,
   );
 
   return results;

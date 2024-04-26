@@ -72,9 +72,10 @@
   "momo_method": "Thanh toán qua ví trả sau MoMo",
   "shopee_method": "Thanh toán qua Shoppe Pay",
   "qr_method": "Thanh toán qua QR Code",
+  "vnpay_method": "Thanh toán qua VNPAY",
   "customer_info": "Thông tin khách hàng",
   "order_info": "Thông tin đơn hàng",
-  "bussiness_package": "Gói sản phẩm Business",
+  "bussiness_package": "Gói sản phẩm {{name}}",
   "discount_price": "Giá khuyến mãi",
   "discount_code": "Mã giảm giá từ TMAS",
   "apply": "Áp dụng",
@@ -86,5 +87,9 @@
   "upgrade": "Nâng cấp",
   "upgrade_package": "Gói nâng cấp",
   "upgrade_time": "Thời gian nâng cấp",
-  "list": "Danh sách"
+  "list": "Danh sách",
+  "in_gold": "Nạp Gold",
+  "out_gold": "Rút Gold",
+  "pay_gold": "Thanh toán gói Gold '{{name}}'",
+  "visa_method": "Thanh toán qua visa"
 }
