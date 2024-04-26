@@ -89,7 +89,6 @@ function HistoryUpgrade() {
             style="decimal"
             maximumFractionDigits={2}
           />
-          {` VNĐ`}
         </p>
       ),
     },
