@@ -35,9 +35,11 @@ function HistoryUpgrade() {
       return;
     }
     setLicences(
-      res.data?.sort(
-        (a: any, b: any) => b?.active_date?.localeCompare(a?.active_date),
-      ),
+      res.data
+        ?.filter((s: any) => s?.pkg_type != "Individual")
+        .sort(
+          (a: any, b: any) => b?.active_date?.localeCompare(a?.active_date),
+        ),
     );
   };
 
@@ -71,9 +73,7 @@ function HistoryUpgrade() {
       key: "expire_date",
       render: (text, data) => (
         <p key={text} className="w-full caption_regular_14">
-          {data?.pkg_type == "Individual"
-            ? t("no_limit_time")
-            : dayjs(text).format("DD/MM/YYYY HH:mm")}
+          {!text ? t("no_limit_time") : dayjs(text).format("DD/MM/YYYY HH:mm")}
         </p>
       ),
     },
@@ -118,11 +118,16 @@ function HistoryUpgrade() {
               -
               ${
                 !user?.licences?.enterprise
-                  ? t("no_limit_time")
-                  : dayjs(
-                      user?.licences?.enterprise?.expire_date ??
-                        user?.licences?.individual?.expire_date,
-                    ).format(dateFormat)
+                  ? !user?.licences?.individual?.expire_date
+                    ? t("no_limit_time")
+                    : dayjs(user?.licences?.individual?.expire_date).format(
+                        dateFormat,
+                      )
+                  : !user?.licences?.enterprise?.expire_date
+                    ? t("no_limit_time")
+                    : dayjs(user?.licences?.enterprise?.expire_date).format(
+                        dateFormat,
+                      )
               }`}
             </span>
           </div>
