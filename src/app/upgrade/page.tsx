@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { loadPackage } from "@/services/api_services/upgrade";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
+import { FormattedNumber } from "react-intl";
 
 
 export default function Upgrage() {
@@ -239,12 +240,21 @@ export default function Upgrage() {
               <div key={key} className="max-md:col-span-1 md:col-span-2 lg:col-span-1 border boder-m_neutral_200 rounded-xl bg-white p-6 gap-6 relative">
                 <div className="body_bold_16">{x?.name}</div>
                 <div className="flex items-center">
-                  <div className="body_semibold_20 pr-1 title_regular_20">{x?.price} VNĐ</div>
+                  <div className="body_semibold_20 title_regular_20">
+                    <FormattedNumber
+                      value={
+                        x?.price ?? 0
+                      }
+                      style="decimal"
+                      maximumFractionDigits={2}
+                    />
+                    &nbsp;VNĐ
+                  </div>
                   <div className='text-m_neutral_500 body_regular_14'>{!x?.price ? <div className="h-7" /> : x?.unit === "year" ? "/ Năm" : x?.unit === "month" ? "/ Tháng" : x?.unit === "day" ? "/ Ngày" : <div className="h-7" />}</div>
                 </div>
-                <div className="py-5 w-full  ">
+                <div className="py-5 w-full">
                   {x?.features?.map((e: any, key: any) => (
-                    <div key={key} className="flex">
+                    <div key={key} className="flex pb-3">
                       <Tick className="min-w-7" />
                       <div className="body_regular_14 text-m_neutral_900">{e?.text}</div>
                     </div>
