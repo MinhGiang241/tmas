@@ -104,21 +104,24 @@ function SendExaminationInfo(props: Props) {
     },
     {
       onHeaderCell: (_) => rowStyle,
-      width:
-        props.examination?.accessCodeSettingType != "MultiCode" &&
-        props.examination?.sharingSetting != "Private"
-          ? "0%"
-          : "20%",
+      width: !(
+        props.examination?.accessCodeSettingType === "MultiCode" &&
+        props.examination?.sharingSetting == "Private"
+      )
+        ? "0%"
+        : "20%",
       title: (
         <div
           className={`w-full break-all  ${
-            props.examination?.accessCodeSettingType != "MultiCode" &&
-            props.examination?.sharingSetting != "Private"
+            !(
+              props.examination?.accessCodeSettingType === "MultiCode" &&
+              props.examination?.sharingSetting == "Private"
+            )
               ? "hidden"
               : "flex"
           } justify-start`}
         >
-          {t("required_code")}
+          {t("access_code")}
         </div>
       ),
       dataIndex: "passcode",
@@ -127,8 +130,10 @@ function SendExaminationInfo(props: Props) {
         <p
           key={text}
           className={` ${
-            props.examination?.accessCodeSettingType != "MultiCode" &&
-            props.examination?.sharingSetting != "Private"
+            !(
+              props.examination?.accessCodeSettingType === "MultiCode" &&
+              props.examination?.sharingSetting == "Private"
+            )
               ? "hidden"
               : "flex"
           } w-full break-all min-w-11 justify-start caption_regular_14`}
@@ -140,11 +145,12 @@ function SendExaminationInfo(props: Props) {
 
     {
       onHeaderCell: (_) => rowStyle,
-      width:
-        props.examination?.accessCodeSettingType != "MultiCode" &&
-        props.examination?.sharingSetting != "Private"
-          ? "30%"
-          : "20%",
+      width: !(
+        props.examination?.accessCodeSettingType === "MultiCode" &&
+        props.examination?.sharingSetting == "Private"
+      )
+        ? "30%"
+        : "20%",
       title: <div className="w-full flex justify-start">{t("status")}</div>,
       dataIndex: "status",
       key: "status",
@@ -160,11 +166,12 @@ function SendExaminationInfo(props: Props) {
 
     {
       onHeaderCell: (_) => rowStyle,
-      width:
-        props.examination?.accessCodeSettingType != "MultiCode" &&
-        props.examination?.sharingSetting != "Private"
-          ? "30%"
-          : "20%",
+      width: !(
+        props.examination?.accessCodeSettingType === "MultiCode" &&
+        props.examination?.sharingSetting == "Private"
+      )
+        ? "30%"
+        : "20%",
       title: <div className="w-full flex justify-start">{t("send_time")}</div>,
       dataIndex: "sentTime",
       key: "sentTime",
@@ -186,7 +193,7 @@ function SendExaminationInfo(props: Props) {
       dataIndex: "schema",
       key: "schema",
       render: (action, data) => (
-        <div className="w-full flex justify-center ">
+        <div className="w-full flex justify-start ">
           <button
             className="ml-2"
             onClick={() => {
@@ -197,32 +204,34 @@ function SendExaminationInfo(props: Props) {
             <EyeIcon />
           </button>
 
-          <button
-            className="ml-2"
-            onClick={async () => {
-              if (data.status == "New") {
-                var cloneEmails = _.cloneDeep(emails);
-                var indexDelete = cloneEmails.findIndex(
-                  (e) => e._id === data._id,
-                );
-                cloneEmails.splice(indexDelete, 1);
-                setEmails([...cloneEmails]);
-                successToast(t("success_delete_email"));
-                console.log("cloneEmails", cloneEmails);
-              } else {
-                const res = await deleteRemindMail(data?._id);
-                if (res?.code != 0) {
-                  return;
+          {data?.status == "New" && (
+            <button
+              className="ml-2"
+              onClick={async () => {
+                if (data.status == "New") {
+                  var cloneEmails = _.cloneDeep(emails);
+                  var indexDelete = cloneEmails.findIndex(
+                    (e) => e._id === data._id,
+                  );
+                  cloneEmails.splice(indexDelete, 1);
+                  setEmails([...cloneEmails]);
+                  successToast(t("success_delete_email"));
+                  console.log("cloneEmails", cloneEmails);
+                } else {
+                  const res = await deleteRemindMail(data?._id);
+                  if (res?.code != 0) {
+                    return;
+                  }
+                  setEmails([]);
+                  successToast(t("success_delete_email"));
+                  getEmailList();
                 }
-                setEmails([]);
-                successToast(t("success_delete_email"));
-                getEmailList();
-              }
-              setActive(data);
-            }}
-          >
-            <TrashIcon />
-          </button>
+                setActive(data);
+              }}
+            >
+              <TrashIcon />
+            </button>
+          )}
         </div>
       ),
     },
@@ -274,7 +283,14 @@ function SendExaminationInfo(props: Props) {
       maillist: [
         ...emails.map((t) => ({
           email: t.email,
-          passcode: t.passcode,
+          passcode:
+            props.examination?.sharingSetting === "Private" &&
+            props.examination?.accessCodeSettingType == "One"
+              ? props.examination?.accessCodeSettings![0].code
+              : props.examination?.sharingSetting === "Private" &&
+                  props.examination?.accessCodeSettingType == "MultiCode"
+                ? t.passcode
+                : undefined,
         })),
       ],
       methods: media,
@@ -310,7 +326,7 @@ function SendExaminationInfo(props: Props) {
         width={705}
       />
       <AddReceiptInfo
-        list={[...emails, ...mailList]}
+        list={[...emails]}
         examination={props.examination}
         addInfo={(info: RemindEmailData) => {
           setEmails([info, ...emails]);
@@ -360,18 +376,23 @@ function SendExaminationInfo(props: Props) {
           title={t("media")}
           placeholder={t("media")}
         />
-        <EditorHook
-          disabled
-          defaultValue={template}
-          value={sendContent}
-          setValue={(name: any, val: any) => {
-            setSendContent(val);
-          }}
-          isCount={false}
-          id="send_content"
-          name="send_content"
-          title={t("send_content")}
+        <div className="text-sm font-semibold">{t("send_content")}</div>
+        <div
+          className="min-h-40 mt-2 border rounded-lg bg-m_neutral_100 p-5"
+          dangerouslySetInnerHTML={{ __html: template ?? "" }}
         />
+        {/* <EditorHook */}
+        {/*   disabled */}
+        {/*   defaultValue={template} */}
+        {/*   value={sendContent} */}
+        {/*   setValue={(name: any, val: any) => { */}
+        {/*     setSendContent(val); */}
+        {/*   }} */}
+        {/*   isCount={false} */}
+        {/*   id="send_content" */}
+        {/*   name="send_content" */}
+        {/*   title={t("send_content")} */}
+        {/* /> */}
         <div className="mt-2 body_semibold_14 flex items-center justify-between">
           <div>{t("receipt_info_list")}</div>
           <div className="flex items-center w-1/3">
@@ -476,6 +497,7 @@ function SendExaminationInfo(props: Props) {
             }
           />
         </div>
+        <div className="h-4" />
         <div className="w-full flex h-12 items-center  justify-center">
           <span className="body_regular_14 mr-2">{`${
             _.filter([...emails, ...mailList], (n: RemindEmailData) => {

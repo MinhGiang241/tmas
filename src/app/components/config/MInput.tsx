@@ -5,6 +5,7 @@ import CloseEye from "@/app/components/icons/close_eye.svg";
 import OpenEye from "@/app/components/icons/open_eye.svg";
 import { useTranslation } from "react-i18next";
 import { CheckCircleFilled, ExclamationCircleFilled } from "@ant-design/icons";
+import { toString } from "lodash";
 
 interface Props {
   onChange?: (e: React.ChangeEvent<any>) => void;
@@ -37,6 +38,7 @@ interface Props {
   isTextRequire?: boolean;
   defaultValue?: string;
   onClick?: any;
+  touchedNotFormik?: boolean;
 }
 
 function MInput({
@@ -70,6 +72,7 @@ function MInput({
   defaultValue,
   extend = true,
   onClick,
+  touchedNotFormik = false,
 }: Props) {
   var np;
   var er;
@@ -79,6 +82,9 @@ function MInput({
     touch = formik.touched[name];
     onBlur = formik.handleBlur;
     value = formik.values[name];
+  }
+  if (touchedNotFormik) {
+    touch = true;
   }
 
   if (error && error?.startsWith("common")) {

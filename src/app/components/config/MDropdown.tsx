@@ -42,6 +42,7 @@ interface Props {
   fetching?: boolean;
   onSearch?: any;
   isTextRequire?: boolean;
+  touchedNotFormik?: boolean;
   dropdownRender?:
     | ((
         menu: React.ReactElement<
@@ -85,6 +86,7 @@ function MDropdown({
   onSearch,
   isTextRequire = true,
   dropdownRender,
+  touchedNotFormik = false,
 }: Props) {
   var np;
   var er;
@@ -102,6 +104,9 @@ function MDropdown({
   } else {
     er = error;
     np = namespace;
+  }
+  if (touchedNotFormik) {
+    touch = true;
   }
 
   const { t } = useTranslation(np);

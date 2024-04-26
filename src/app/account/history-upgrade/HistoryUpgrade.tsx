@@ -34,10 +34,16 @@ function HistoryUpgrade() {
     if (res.code != 0) {
       return;
     }
-    setLicences(res.data);
+    setLicences(
+      res.data
+        ?.filter((s: any) => s?.pkg_type != "Individual")
+        .sort(
+          (a: any, b: any) => b?.active_date?.localeCompare(a?.active_date),
+        ),
+    );
   };
 
-  const columns: ColumnsType<any> = [
+  const columns: ColumnsType<LicenceData> = [
     {
       onHeaderCell: (_) => rowStartStyle,
       title: <div className="flex justify-start">{t("upgrade_package")}</div>,
@@ -52,8 +58,8 @@ function HistoryUpgrade() {
     {
       onHeaderCell: (_) => rowStyle,
       title: <div className=" flex justify-start">{t("upgrade_time")}</div>,
-      dataIndex: "createdTime",
-      key: "createdTime",
+      dataIndex: "active_date",
+      key: "active_date",
       render: (text, data) => (
         <p key={text} className="w-full caption_regular_14">
           {dayjs(text).format("DD/MM/YYYY HH:mm")}
@@ -67,7 +73,7 @@ function HistoryUpgrade() {
       key: "expire_date",
       render: (text, data) => (
         <p key={text} className="w-full caption_regular_14">
-          {dayjs(text).format("DD/MM/YYYY HH:mm")}
+          {!text ? t("no_limit_time") : dayjs(text).format("DD/MM/YYYY HH:mm")}
         </p>
       ),
     },
@@ -105,15 +111,24 @@ function HistoryUpgrade() {
           <div className="flex caption_regular_14">
             <span className="text-m_neutral_500 mr-1">{t("deadline")}:</span>
             <span>
-              {dayjs(
+              {`${dayjs(
                 user?.licences?.enterprise?.active_date ??
                   user?.licences?.individual?.active_date,
               ).format(dateFormat)}
               -
-              {dayjs(
-                user?.licences?.enterprise?.expire_date ??
-                  user?.licences?.individual?.expire_date,
-              ).format(dateFormat)}
+              ${
+                !user?.licences?.enterprise
+                  ? !user?.licences?.individual?.expire_date
+                    ? t("no_limit_time")
+                    : dayjs(user?.licences?.individual?.expire_date).format(
+                        dateFormat,
+                      )
+                  : !user?.licences?.enterprise?.expire_date
+                    ? t("no_limit_time")
+                    : dayjs(user?.licences?.enterprise?.expire_date).format(
+                        dateFormat,
+                      )
+              }`}
             </span>
           </div>
         </div>
