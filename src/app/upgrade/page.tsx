@@ -14,7 +14,7 @@ export default function Upgrage() {
   const [data, setData] = useState<any>();
   const router = useRouter();
   const user = useAppSelector((state: RootState) => state.user.user)
-  console.log('user', user);
+  // console.log('user', user);
 
   const load = async () => {
     const res = await loadPackage()
@@ -239,7 +239,7 @@ export default function Upgrage() {
               <div key={key} className="max-md:col-span-1 md:col-span-2 lg:col-span-1 border boder-m_neutral_200 rounded-xl bg-white p-6 gap-6 relative">
                 <div className="body_bold_16">{x?.name}</div>
                 <div className="flex items-center">
-                  <div className="body_semibold_20 pr-1 title_regular_20">{x?.price}</div>
+                  <div className="body_semibold_20 pr-1 title_regular_20">{x?.price} VNĐ</div>
                   <div className='text-m_neutral_500 body_regular_14'>{!x?.price ? <div className="h-7" /> : x?.unit === "year" ? "/ Năm" : x?.unit === "month" ? "/ Tháng" : x?.unit === "day" ? "/ Ngày" : <div className="h-7" />}</div>
                 </div>
                 <div className="py-5 w-full  ">
@@ -253,47 +253,6 @@ export default function Upgrage() {
                 <div className="h-16" />
                 <div className="absolute bottom-0 w-[222px]">
                   <hr />
-                  {/* <button
-                    onClick={() => {
-                      successToast("Gửi yêu cầu báo giá thành công !");
-                    }}
-                    className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_primary_500 body_semibold_14 text-white my-4"
-                  >
-                    Nhận báo giá
-                  </button> */}
-                  {/* {!x?.price && <button className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_neutral_200 body_semibold_14 text-m_neutral_500 my-4">
-                    Miễn phí
-                  </button>}
-                  {x?.price && <button
-                    onClick={() => {
-                      router.push("/payment");
-                    }}
-                    className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_primary_500 body_semibold_14 text-white my-4"
-                  >
-                    Đăng kí ngay
-                  </button>} */}
-                  {/* {!x?.price ? (
-                    <button
-                      className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_neutral_200 body_semibold_14 text-m_neutral_500 my-4"
-                    >
-                      Miễn phí
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        router.push(
-                          `/payment?type=Package&packageIdId=${x._id ?? ""
-                          }&price=${x?.price ?? 0}&name=${x?.name ?? ""
-                          }`,
-                        );
-                      }}
-                      className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_primary_500 body_semibold_14 text-white my-4"
-                    >
-                      Đăng kí ngay
-                    </button>
-                  )
-                    // (!x?.price && custom_price === true)
-                  } */}
                   {(x?.custom_price === true) ? (
                     <button
                       onClick={() => {
@@ -313,7 +272,7 @@ export default function Upgrage() {
                     <button
                       onClick={() => {
                         router.push(
-                          `/payment?type=Package&packageIdId=${x._id ?? ""}&price=${x?.price ?? 0}&name=${x?.name ?? ""}`,
+                          `/payment?type=Package&packageId=${x._id ?? ""}&price=${x?.price ?? 0}&name=${x?.name ?? ""}`,
                         );
                       }}
                       className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_primary_500 body_semibold_14 text-white my-4"
