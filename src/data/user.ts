@@ -148,6 +148,7 @@ export interface LicenceData {
   pkg_name?: string;
   pkg_type?: string;
   price?: number;
+  custom_price?: boolean;
   userId?: boolean;
   version_number?: number;
 }

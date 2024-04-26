@@ -73,7 +73,9 @@ function HistoryUpgrade() {
       key: "expire_date",
       render: (text, data) => (
         <p key={text} className="w-full caption_regular_14">
-          {!text ? t("no_limit_time") : dayjs(text).format("DD/MM/YYYY HH:mm")}
+          {data?.nonstop
+            ? t("no_limit_time")
+            : dayjs(text).format("DD/MM/YYYY HH:mm")}
         </p>
       ),
     },
@@ -84,11 +86,15 @@ function HistoryUpgrade() {
       key: "price",
       render: (text, data) => (
         <p key={text} className="w-full caption_regular_14">
-          <FormattedNumber
-            value={text ?? 0}
-            style="decimal"
-            maximumFractionDigits={2}
-          />
+          {data?.custom_price
+            ? t("contact")
+            : !data?.nonstop && (
+                <FormattedNumber
+                  value={text ?? 0}
+                  style="decimal"
+                  maximumFractionDigits={2}
+                />
+              )}
         </p>
       ),
     },
@@ -117,12 +123,12 @@ function HistoryUpgrade() {
               -
               ${
                 !user?.licences?.enterprise
-                  ? !user?.licences?.individual?.expire_date
+                  ? user?.licences?.enterprise?.nonstop
                     ? t("no_limit_time")
-                    : dayjs(user?.licences?.individual?.expire_date).format(
+                    : dayjs(user?.licences?.enterprise?.expire_date).format(
                         dateFormat,
                       )
-                  : !user?.licences?.enterprise?.expire_date
+                  : user?.licences?.individual?.nonstop
                     ? t("no_limit_time")
                     : dayjs(user?.licences?.enterprise?.expire_date).format(
                         dateFormat,
