@@ -9,64 +9,59 @@ import BaseModal from "@/app/components/config/BaseModal";
 import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
+import Tick from "@/app/components/icons/tick-circle.svg";
 import { useRouter } from "next/navigation";
+import { FormattedDate, FormattedTime } from "react-intl";
+import { FillBlankQuestionFormData } from "@/data/form_interface";
 import {
-  createAExamQuestionPart,
-  getExamQuestionPartList,
-  deleteQuestionPartById,
   deleteQuestionById,
-  CopyQuestion,
-  updateAExamQuestionPart,
-  deleteQuestionPart,
   duplicateQuestion,
 } from "@/services/api_services/question_api";
-import { FormattedDate, FormattedTime } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
-import dayjs from "dayjs";
-import { title } from "process";
-import { result } from "lodash";
 import Close from "@/app/components/icons/close-circle.svg"
-import Tick from "@/app/components/icons/tick-circle.svg";
-import CodeMirror from "@uiw/react-codemirror";
-import { dracula } from "@uiw/codemirror-theme-dracula";
-import { renderExtension } from "@/services/ui/coding_services";
 
-export default function Coding({
-  getData,
+export default function FillBlank({
+  index,
   examId,
   question,
-  index,
+  getData,
   questionGroup,
   tmasQuest,
   addExamBank,
   canCheck,
   onChangeCheck,
 }: {
-  getData?: any;
   examId?: any;
   question?: any;
   index?: any;
+  getData?: any;
   questionGroup?: any;
   tmasQuest?: boolean;
   addExamBank?: Function;
   canCheck?: boolean;
   onChangeCheck?: Function;
 }) {
+  const [openEditQuestion, setOpenEditQuestion] = useState(false);
+  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
+  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
+  const [dupLoading, setDupLoading] = useState(false);
+  const [active, setActive] = useState("");
+  const router = useRouter();
   const { t } = useTranslation("question");
-  // console.log(examId);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  // console.log("question", question);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
-  // console.log(questionGroup, "questionGroup");
-  // console.log(question, "question");
+
   const columns = [
     {
-      title: 'Testcase',
-      dataIndex: 'Testcase',
-      key: 'Testcase',
+      title: 'Chỗ trống',
+      dataIndex: 'empty',
+      key: 'empty',
     },
     {
       title: 'Đầu vào',
@@ -88,10 +83,20 @@ export default function Coding({
   const data = [
     {
       key: '1',
-      Testcase: 'Testcase1',
-      input: (<a href="/">Linktext</a>),
-      output: (<a href="/">Linktext</a>),
-      result: (<div><Close /><Tick /></div>)
+      empty: '1',
+      input: (
+        <div className="flex">
+          <div className="border flex justify-center mr-1 px-1">Sơn</div>
+        </div>
+      ),
+      output: (
+        <div className="flex">
+          <div className="border flex justify-center mr-1 px-1">Sơn</div>
+          <div className="border flex justify-center mr-1 px-1">Son</div>
+          <div className="border flex justify-center mr-1 px-1">son</div>
+        </div>
+      ),
+      result: (<div><Tick /><Close /></div>)
     },
   ];
 
@@ -102,13 +107,64 @@ export default function Coding({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <div>
+      <ConfirmModal
+        loading={dupLoading}
+        onOk={async () => {
+          setDupLoading(true);
+          var res: APIResults = await duplicateQuestion({
+            newIdExamQuestionPart: question?.idExamQuestionPart,
+            ids: [question?.id],
+            idExams: examId ? [examId] : [],
+          });
+          setDupLoading(false);
+          if (res.code != 0) {
+            errorToast(res?.message ?? "");
+            return;
+          }
+          successToast(t("sucess_duplicate_question"));
+          setOpenCopyQuestion(false);
+          router.push(
+            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
+          );
+          await getData();
+        }}
+        onCancel={() => {
+          setOpenCopyQuestion(false);
+        }}
+        action={t("copy")}
+        text={t("confirm_copy")}
+        open={openCopyQuestion}
+      />
+
+      <ConfirmModal
+        loading={deleteLoading}
+        onOk={async () => {
+          setDeleteLoading(true);
+          var res = await deleteQuestionById(question?.id);
+          setDeleteLoading(false);
+          if (res.code != 0) {
+            errorToast(res?.message ?? "");
+            return;
+          }
+          successToast(t("success_delete_question"));
+          setOpenDeleteQuestion(false);
+          await getData();
+        }}
+        onCancel={() => {
+          setOpenDeleteQuestion(false);
+        }}
+        action={t("delete_question")}
+        text={t("confirm_delete_question")}
+        open={openDeleteQuestion}
+      />
       <Collapse
         // key={key}
         ghost
         expandIconPosition="end"
-        className="rounded-lg bg-m_question overflow-hidden mb-3"
+        className="rounded-lg bg-m_question overflow-hidden mb-4"
       >
         <Collapse.Panel
           header={
@@ -128,13 +184,14 @@ export default function Coding({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} 5`}:
+                  {`${t("quest")} 6`}:
                   {/* <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
+                    // dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank,}}
+                    dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank }}
                   /> */}
-                  <div>Câu hỏi coding</div>
+                  <div>Điền vào chỗ trống</div>
                 </span>
                 {isOverflowing ? (
                   <button
@@ -168,33 +225,20 @@ export default function Coding({
           key={""}
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
-          <div>
-            <Table columns={columns} dataSource={data} pagination={false} />
-            <div className="flex justify-between items-center pt-4">
-              <div className="flex">Điểm: <div className="pl-1 font-semibold">1/1</div></div>
-              <div className="flex">Cách chấm: <div className="pl-1 font-semibold">Toàn bộ</div></div>
-              <div className="flex">Tổng số cặp: <div className="pl-1 font-semibold">3</div></div>
-              <div className="flex">Số cặp ghép đúng: <div className="pl-1 font-semibold">3</div></div>
-              <div className="flex">Số cặp ghép đúng: <div className="pl-1 font-semibold">3</div></div>
+          <div className="">
+            <div>
+              <Table columns={columns} dataSource={data} pagination={false} />
+              <div className="flex justify-between items-center pt-4">
+                <div className="flex">Điểm: <div className="pl-1 font-semibold">1/1</div></div>
+                <div className="flex">Cách chấm: <div className="pl-1 font-semibold">Từng phần</div></div>
+                <div className="flex">Tổng số chỗ trống: <div className="pl-1 font-semibold">3</div></div>
+                <div className="flex">Số chỗ trống đúng: <div className="pl-1 font-semibold">3</div></div>
+                <div className="flex">Số chỗ trống sai: <div className="pl-1 font-semibold">3</div></div>
+              </div>
             </div>
-            <CodeMirror
-              onBlur={async () => {
-
-              }}
-              // value={code}
-              // lang={lang}
-              theme={dracula}
-              height="300px"
-              extensions={[renderExtension("javascript") as any]}
-              onChange={(v) => {
-
-              }}
-            />
           </div>
         </Collapse.Panel>
       </Collapse>
-      {/* {data?.examQuestions?.map((x: any, key: any) => (
-            ))} */}
     </div>
   );
 }
