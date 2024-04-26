@@ -8,14 +8,15 @@ import { useRouter } from "next/navigation";
 import { loadPackage } from "@/services/api_services/upgrade";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import { FormattedNumber } from "react-intl";
+import { FormattedNumber, FormattedTime } from "react-intl";
+import dayjs from "dayjs";
 
 
 export default function Upgrage() {
   const [data, setData] = useState<any>();
   const router = useRouter();
   const user = useAppSelector((state: RootState) => state.user.user)
-  console.log('user', user?.licences?.enterprise?.packageId);
+  // console.log('user', user?.licences?.enterprise?.packageId);
 
   const load = async () => {
     const res = await loadPackage()
@@ -343,18 +344,28 @@ export default function Upgrage() {
                       >
                         Miễn phí
                       </button>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          router.push(
-                            `/payment?type=Package&packageId=${x._id ?? ""}&price=${x?.price ?? 0}&name=${x?.name ?? ""}`,
-                          );
-                        }}
-                        className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_primary_500 body_semibold_14 text-white my-4"
-                      >
-                        Đăng kí ngay
-                      </button>
-                    )}
+                    ) : x?._id === user?.licences?.enterprise?.packageId ?
+                      (
+                        <button
+                          className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_neutral_200 body_semibold_14 text-m_neutral_500 my-4"
+                        >
+                          Thời hạn:&nbsp;
+                          {dayjs(user?.licences?.enterprise?.active_date).format('MM/YYYY')}
+                          -
+                          {dayjs(user?.licences?.enterprise?.expire_date).format('MM/YYYY')}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            router.push(
+                              `/payment?type=Package&packageId=${x._id ?? ""}&price=${x?.price ?? 0}&name=${x?.name ?? ""}`,
+                            );
+                          }}
+                          className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_primary_500 body_semibold_14 text-white my-4"
+                        >
+                          Đăng kí ngay
+                        </button>
+                      )}
                   </div>
                 </div>
 
