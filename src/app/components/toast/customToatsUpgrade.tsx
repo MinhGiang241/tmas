@@ -27,7 +27,7 @@ const CustomToast = ({
     namespace?: string;
     text?: string;
 }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation("question");
 
     return (
         <>
