@@ -283,7 +283,14 @@ function SendExaminationInfo(props: Props) {
       maillist: [
         ...emails.map((t) => ({
           email: t.email,
-          passcode: t.passcode,
+          passcode:
+            props.examination?.sharingSetting === "Private" &&
+            props.examination?.accessCodeSettingType == "One"
+              ? props.examination?.accessCodeSettings![0].code
+              : props.examination?.sharingSetting === "Private" &&
+                  props.examination?.accessCodeSettingType == "MultiCode"
+                ? t.passcode
+                : undefined,
         })),
       ],
       methods: media,
