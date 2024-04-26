@@ -34,7 +34,11 @@ function HistoryUpgrade() {
     if (res.code != 0) {
       return;
     }
-    setLicences(res.data);
+    setLicences(
+      res.data?.sort(
+        (a: any, b: any) => b?.active_date?.localeCompare(a?.active_date),
+      ),
+    );
   };
 
   const columns: ColumnsType<LicenceData> = [
@@ -52,8 +56,8 @@ function HistoryUpgrade() {
     {
       onHeaderCell: (_) => rowStyle,
       title: <div className=" flex justify-start">{t("upgrade_time")}</div>,
-      dataIndex: "createdTime",
-      key: "createdTime",
+      dataIndex: "active_date",
+      key: "active_date",
       render: (text, data) => (
         <p key={text} className="w-full caption_regular_14">
           {dayjs(text).format("DD/MM/YYYY HH:mm")}
