@@ -32,6 +32,8 @@ import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { ExaminationData, RemindEmailData } from "@/data/exam";
 import { functions, method } from "lodash";
 import _ from "lodash";
+import { SettingData } from "@/data/user";
+import { loadConfig } from "@/services/api_services/account_services";
 
 const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
@@ -59,8 +61,19 @@ function SendExaminationInfo(props: Props) {
   const [template, setTemplate] = useState<string | undefined>();
   const [loadTemplate, setLoadTemplate] = useState<boolean>(false);
   const [emails, setEmails] = useState<RemindEmailData[]>([]);
+  const [config, setConfig] = useState<SettingData | undefined>();
+
+  const getSetting = async () => {
+    var res = await loadConfig();
+    if (res.code != 0) {
+      return;
+    }
+    setConfig(res.data);
+  };
+
   useOnMountUnsafe(() => {
     getTemplateMail();
+    getSetting();
   });
   const getTemplateMail = async () => {
     var res = await getTemplateSendMail();
@@ -268,6 +281,8 @@ function SendExaminationInfo(props: Props) {
       examtestId: props.examination?.id,
       body: sendContent,
       name: props.examination?.name,
+      start_time: props.examination?.validAccessSetting?.validFrom,
+      end_time: props.examination?.validAccessSetting?.validTo,
     });
     setSendEmailLoading(false);
     if (res.code != 0) {
@@ -333,8 +348,12 @@ function SendExaminationInfo(props: Props) {
           }}
           className="dropdown-flex"
           options={[
-            { value: "email", label: "Email" },
-            { value: "sms", label: "SMS" },
+            {
+              value: "email",
+              label: "Email",
+              disabled: !config?.send_method?.email,
+            },
+            { value: "sms", label: "SMS", disabled: !config?.send_method?.sms },
           ]}
           id="media"
           name="media"
@@ -342,6 +361,7 @@ function SendExaminationInfo(props: Props) {
           placeholder={t("media")}
         />
         <EditorHook
+          disabled
           defaultValue={template}
           value={sendContent}
           setValue={(name: any, val: any) => {
@@ -502,7 +522,7 @@ function SendExaminationInfo(props: Props) {
             />
           </div>
         </div>
-        <div className="w-full flex justify-center">
+        <div className="w-full mt-4 flex justify-center">
           <MButton
             loading={sendEmailLoading}
             onClick={sendEmail}

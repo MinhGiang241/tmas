@@ -151,3 +151,42 @@ export interface LicenceData {
   userId?: boolean;
   version_number?: number;
 }
+
+export interface SettingData {
+  _id?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  fraud?: {
+    anti_copy?: boolean;
+    anti_paste?: boolean;
+    exist_screen?: boolean;
+    full_screen?: boolean;
+  };
+  package?: {
+    def_ent_id?: string;
+    def_ind_id?: string;
+    enable_trial_ent?: boolean;
+    enable_trial_ind?: boolean;
+    trial_ent_day?: number;
+    trial_ent_id?: string;
+    trial_ind_day?: number;
+    trial_ind_id?: string;
+  };
+  send_method?: {
+    email?: boolean;
+    sms?: boolean;
+  };
+  schema?: string;
+  tmas_info?: {
+    address?: string;
+    business?: string;
+    email?: string;
+    phone?: string;
+  };
+  payment?: {
+    bank?: boolean;
+    momo?: boolean;
+    visa?: boolean;
+    vnpay?: boolean;
+  };
+}

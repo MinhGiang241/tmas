@@ -191,3 +191,10 @@ export const loadHistoryUpgrade = async (data: {
 
   return results;
 };
+export const loadConfig = async () => {
+  var results: APIResults = await callApi.get(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/studiosetting.load`,
+  );
+
+  return results;
+};

@@ -32,9 +32,11 @@ interface Props {
   isBubble?: boolean;
   isCount?: boolean;
   setValue?: any;
+  disabled?: boolean;
 }
 
 const Editor = ({
+  disabled = false,
   formik,
   className,
   namespace,
@@ -100,6 +102,7 @@ const Editor = ({
           formik?.initialValues[name] ?? defaultValue ?? value ?? "",
         ),
       );
+      quill.enable(!disabled);
       quill.on("text-change", (delta, oldContents) => {
         if (quill.getLength() > maxLength) {
           quill.deleteText(maxLength, quill.getLength());
@@ -135,15 +138,15 @@ const Editor = ({
         )}
       </div>
       <div
-        className={`${
-          !isBubble
-            ? "custom-ql-snow "
-            : "custom-ql-bubble border rounded-lg p-2"
-        } ${er && touch ? "ql-error" : ""}  `}
+        className={`
+${disabled ? "bg-m_neutral_100" : ""}
+${!isBubble ? "custom-ql-snow " : "custom-ql-bubble border rounded-lg p-2"} ${
+          er && touch ? "ql-error" : ""
+        }  `}
       >
         <div
           id={id}
-          className={`${montserrat.className}`}
+          className={`${montserrat.className} `}
           ref={quillRef}
           onBlur={async () => {
             if (formik) {

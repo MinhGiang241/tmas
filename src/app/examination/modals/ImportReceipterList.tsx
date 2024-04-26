@@ -145,19 +145,19 @@ function ImportReceipterList(props: Props) {
     var notExamTestEx = notExamTestCode.map((d: any) => ({
       index: parseInt(d) + 2,
       mess: "Code không tồn tại trong đợt thi",
-      value: data[parseInt(d)].code,
+      value: data[parseInt(d)].passcode,
     }));
 
     var existedCodeEx = existedCodeDup.map((d: any) => ({
       index: parseInt(d) + 2,
       mess: "Code đã tồn tại",
-      value: data[parseInt(d)].code,
+      value: data[parseInt(d)].passcode,
     }));
 
     var codDupEx = codeDataDup.map((d: any) => ({
       index: parseInt(d) + 2,
       mess: "Bị trùng code trong file excel",
-      value: data[parseInt(d)].code,
+      value: data[parseInt(d)].passcode,
     }));
 
     var notMailEx = dataMailNotExisted.map((d: any) => ({
