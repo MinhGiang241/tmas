@@ -1,16 +1,8 @@
-# Install dependencies only when needed
-FROM node:21.6-alpine AS deps
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-COPY package.json  ./
-RUN npm install  --frozen-lockfile
-
-# Rebuild the source code only when needed
 FROM node:21.6-alpine AS builder
 
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY  /node_modules ./node_modules
 
 COPY . .
 
@@ -44,6 +36,4 @@ ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
 CMD ["node", "server.js"]
-
-
 
