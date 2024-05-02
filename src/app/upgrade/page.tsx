@@ -21,7 +21,7 @@ export default function Upgrage() {
     const res = await loadPackage()
     if (res) {
       setData(res?.data)
-      console.log("res", res?.data);
+      // console.log("res", res?.data);
     }
   }
 
@@ -41,7 +41,7 @@ export default function Upgrage() {
             x?.type !== "Enterprise" ? (
               ""
             ) : (
-              <div key={key} className={`${x?._id === user?.licences?.enterprise?.packageId ? "max-md:col-span-1 md:col-span-2 lg:col-span-1 border border-m_upgrade_300 rounded-xl bg-white gap-6 relative" : "max-md:col-span-1 md:col-span-2 lg:col-span-1 border boder-m_neutral_200 rounded-xl bg-white p-6 gap-6 relative"}`}>
+              <div key={key} className={`${x?._id === user?.licences?.enterprise?.packageId ? "max-md:col-span-1 md:col-span-2 lg:col-span-1 border border-m_upgrade_300 rounded-xl bg-white gap-6 relative" : "max-md:col-span-1 md:col-span-2 lg:col-span-1 border boder-m_neutral_200 rounded-xl bg-white py-6 gap-6 relative"}`}>
                 {x?._id === user?.licences?.enterprise?.packageId
                   ?
                   <div className="flex justify-end">
@@ -51,22 +51,24 @@ export default function Upgrage() {
                   </div>
                   : ""
                 }
-                <div className={`${x?._id === user?.licences?.enterprise?.packageId ? "p-6 pt-0 pb-0" : ""}`}>
-                  <div className="body_bold_16">{x?.name}</div>
-                  <div className="flex items-center">
-                    <div className="body_semibold_20 title_regular_20">
-                      <FormattedNumber
+                <div className={`${x?._id === user?.licences?.enterprise?.packageId ? "pt-0 pb-0" : ""}`}>
+                  <div className="body_bold_16 pl-6">{x?.name}</div>
+                  <div className="flex items-center pl-6">
+                    <div className="body_semibold_20 title_regular_20 ">
+                      {x?.price === 0 ? <div className="flex">Liên hệ</div> : <FormattedNumber
                         value={
                           x?.price ?? 0
                         }
                         style="decimal"
                         maximumFractionDigits={2}
-                      />
-                      &nbsp;VNĐ
+                      />}
+                    </div>
+                    <div>
+                      {x?.price === 0 ? "" : <div className="pl-1 body_semibold_20 title_regular_20">VNĐ</div>}
                     </div>
                     <div className='text-m_neutral_500 body_regular_14'>{!x?.price ? <div className="h-7" /> : x?.unit === "year" ? `/ ${x?.duration} Năm` : x?.unit === "month" ? `/ ${x?.duration} Tháng` : x?.unit === "day" ? `/ ${x?.duration} Ngày` : <div className="h-7" />}</div>
                   </div>
-                  <div className="py-5 w-full">
+                  <div className="py-5 w-full px-6">
                     {x?.features?.map((e: any, key: any) => (
                       <div key={key} className="flex pb-3">
                         <Tick className="min-w-7" />
@@ -75,7 +77,7 @@ export default function Upgrage() {
                     ))}
                   </div>
                   <div className="h-16" />
-                  <div className="absolute bottom-0 w-[222px]">
+                  <div className="absolute bottom-0 w-[222px] left-6 max-md:w-[350px]">
                     <hr />
                     {(x?.custom_price === true) ? (
                       <button
