@@ -198,3 +198,14 @@ export const loadConfig = async () => {
 
   return results;
 };
+
+export const loadResultTransaction = async (vnp_TxnRef?: string) => {
+  var results: APIResults = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/vnpay.get_payment_result`,
+    {
+      vnp_TxnRef,
+    },
+  );
+
+  return results;
+};

@@ -93,5 +93,15 @@
   "pay_gold": "Thanh toán gói Gold '{{name}}'",
   "visa_method": "Thanh toán qua visa",
   "no_limit_time": "Vô thời hạn",
-  "contact": "Liên hệ"
+  "contact": "Liên hệ",
+  "pay_success": "Giao dịch thành công!",
+  "pay_fail": "Giao dịch thất bại!",
+  "homepage": "Trang chủ",
+  "num_gold_add": "Số gold cộng vào tài khoản",
+  "market_gold": "Bạn có thể sử dụng gold trên Tmas Market",
+  "upgraded_package": "Tài khoản đã được nâng cấp gói",
+  "deadline_package": "Hạn sử dụng gói",
+  "buy_gold_fail": "Nạp Gold không thành công.",
+  "upgrade_package_fail": "Nâng cấp gói doanh nghiệp không thành công.",
+  "re_pay": "Vui lòng thanh toán lại!"
 }
