@@ -191,3 +191,23 @@ export interface SettingData {
     vnpay?: boolean;
   };
 }
+
+export interface TransactionData {
+  bill_amount?: number;
+  code?: string;
+  createdTime?: string;
+  creator?: string;
+  email?: string;
+  gold?: number;
+  goldId?: string;
+  message?: string;
+  payment_method?: string;
+  payment_status?: string;
+  product_type?: "Gold" | "Package";
+  receipt_amount?: number;
+  schema?: string;
+  updatedTime?: string;
+  userId?: string;
+  version_number?: number;
+  _id?: string;
+}

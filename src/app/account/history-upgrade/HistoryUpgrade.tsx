@@ -86,15 +86,15 @@ function HistoryUpgrade() {
       key: "price",
       render: (text, data) => (
         <p key={text} className="w-full caption_regular_14">
-          {data?.custom_price
-            ? t("contact")
-            : !data?.nonstop && (
-                <FormattedNumber
-                  value={text ?? 0}
-                  style="decimal"
-                  maximumFractionDigits={2}
-                />
-              )}
+          {data?.custom_price ? (
+            t("contact")
+          ) : (
+            <FormattedNumber
+              value={text ?? 0}
+              style="decimal"
+              maximumFractionDigits={2}
+            />
+          )}
         </p>
       ),
     },
@@ -122,7 +122,7 @@ function HistoryUpgrade() {
               ).format(dateFormat)}
               -
               ${
-                !user?.licences?.enterprise
+                user?.licences?.enterprise
                   ? user?.licences?.enterprise?.nonstop
                     ? t("no_limit_time")
                     : dayjs(user?.licences?.enterprise?.expire_date).format(

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import HomeLayout from "../layouts/HomeLayout";
 import SecurityAvatar from "../components/icons/security-user.svg";
@@ -15,6 +16,11 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Gold from "./gold/Gold";
 import HistoryUpgrade from "./history-upgrade/HistoryUpgrade";
+import SuccessPayModal, { PayModalType } from "./modals/SuccessPayModal";
+import { loadResultTransaction } from "@/services/api_services/account_services";
+import { LicenceData, TransactionData } from "@/data/user";
+import { FormattedNumber } from "react-intl";
+import dayjs from "dayjs";
 
 function AccountPage() {
   const index = useSelector((state: RootState) => state.home.index);
@@ -23,7 +29,37 @@ function AccountPage() {
   const search = useSearchParams();
   const indexTab = search.get("tab");
   const router = useRouter();
+  const vnp_Amount = search.get("vnp_Amount");
+
+  const vnp_BankTranNo = search.get("vnp_BankTranNo");
+  const vnp_BankCode = search.get("vnp_BankCode");
+  const vnp_CardType = search.get("vnp_CardType");
+  const vnp_OrderInfo = search.get("vnp_OrderInfo");
+  const vnp_PayDate = search.get("vnp_PayDate");
+  const vnp_ResponseCode = search.get("vnp_ResponseCode");
+  const vnp_TmnCode = search.get("vnp_TmnCode");
+  const vnp_TransactionNo = search.get("vnp_TransactionNo");
+  const vnp_TransactionStatus = search.get("vnp_TransactionStatus");
+  const vnp_TxnRef = search.get("vnp_TxnRef");
+  const vnp_SecureHash = search.get("vnp_SecureHash");
+
+  console.log("vnp_Amount", vnp_Amount);
+  console.log("vnp_BankCode", vnp_BankCode);
+  console.log("vnp_BankTranNo", vnp_BankTranNo);
+  console.log("vnp_CardType", vnp_CardType);
+  console.log("vnp_OrderInfo", vnp_OrderInfo);
+  console.log("vnp_PayDate", vnp_PayDate);
+  console.log("vnp_ResponseCode", vnp_ResponseCode);
+  console.log("vnp_TmnCode", vnp_TmnCode);
+  console.log("vnp_TransactionNo", vnp_TransactionNo);
+  console.log("vnp_TransactionStatus", vnp_TransactionStatus);
+  console.log("vnp_TxnRef", vnp_TxnRef);
+  console.log("vnp_SecureHash", vnp_SecureHash);
+
   useEffect(() => {
+    if (vnp_TxnRef) {
+      loadTransaction(vnp_TxnRef);
+    }
     dispatch(
       setHomeIndex(
         ["0", "1", "2", "3", "4"].includes(indexTab ?? "") ? indexTab : "0",
@@ -31,8 +67,105 @@ function AccountPage() {
     );
   }, [dispatch, indexTab]);
 
+  const [transaction, setTransaction] = useState<TransactionData | undefined>();
+  const [licence, setLicence] = useState<LicenceData | undefined>();
+
+  const loadTransaction = async (ref: string) => {
+    const res = await loadResultTransaction(ref);
+    if (res?.code != 0) {
+      return;
+    }
+    var trans: TransactionData = (res?.data as any).transaction;
+    setTransaction(trans);
+    if (trans.product_type == "Gold") {
+      router.push(`/?tab=1&vnp_ResponseCode=${vnp_ResponseCode}`);
+    }
+    if (trans.product_type == "Package") {
+      setLicence((res?.data as any).licence);
+      router.push(`/?tab=4&vnp_ResponseCode=${vnp_ResponseCode}`);
+    }
+    setOpenModal(true);
+    console.log("reff", res);
+  };
+
+  const [openModal, setOpenModal] = useState(false);
+
   return (
     <HomeLayout>
+      <SuccessPayModal
+        width={450}
+        type={
+          vnp_ResponseCode === "00" ? PayModalType.SUCCESS : PayModalType.ERROR
+        }
+        open={openModal}
+        onCancel={() => setOpenModal(false)}
+        onOk={() => {
+          setOpenModal(false);
+          router.push("/");
+        }}
+        content={
+          vnp_ResponseCode != "00" ? (
+            <div className="w-full">
+              <div>
+                {transaction?.product_type == "Gold"
+                  ? t("buy_gold_fail")
+                  : t("upgrade_package_fail")}
+              </div>
+              <div>{t("re_pay")}</div>
+            </div>
+          ) : transaction?.product_type == "Gold" ? (
+            <div className="w-full">
+              <div>
+                {t("num_gold_add")}:
+                <span className="font-semibold ml-1">
+                  {transaction?.gold} gold
+                </span>
+              </div>
+
+              <div>
+                {t("total_pay")}:
+                <span className="font-semibold ml-1 text-m_primary_500">
+                  <FormattedNumber
+                    value={transaction?.bill_amount ?? 0}
+                    style="decimal"
+                    maximumFractionDigits={2}
+                  />{" "}
+                  đ
+                </span>
+              </div>
+
+              <div className="mt-2">{t("market_gold")}</div>
+            </div>
+          ) : (
+            <div className="w-full">
+              <div>
+                {t("upgraded_package")}:
+                <span className="font-semibold ml-1">{licence?.pkg_name}</span>
+              </div>
+
+              <div>
+                {t("total_pay")}:
+                <span className="font-semibold ml-1">
+                  <FormattedNumber
+                    value={transaction?.bill_amount ?? 0}
+                    style="decimal"
+                    maximumFractionDigits={2}
+                  />{" "}
+                  đ
+                </span>
+              </div>
+              <div className="mt-2">
+                {t("deadline_package")}:{" "}
+                {dayjs(licence?.active_date).format("DD/MM/YYYY")} -
+                {licence?.nonstop
+                  ? t("no_limit_time")
+                  : dayjs(licence?.expire_date).format("DD/MM/YYYY")}
+              </div>
+            </div>
+          )
+        }
+      />
+
       <div className="w-full flex justify-center mt-3">
         <div className="lg:block hidden max-h-[400px] bg-white w-[267px] mt-10 rounded-lg p-4">
           <button
