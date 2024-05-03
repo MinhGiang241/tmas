@@ -21,7 +21,7 @@ export default function Upgrage() {
     const res = await loadPackage()
     if (res) {
       setData(res?.data)
-      // console.log("res", res?.data);
+      console.log("res", res?.data);
     }
   }
 
@@ -66,7 +66,7 @@ export default function Upgrage() {
                     <div>
                       {x?.price === 0 ? "" : <div className="pl-1 body_semibold_20 title_regular_20">VNĐ</div>}
                     </div>
-                    <div className='text-m_neutral_500 body_regular_14'>{!x?.price ? <div className="h-7" /> : x?.unit === "year" ? `/ ${x?.duration} Năm` : x?.unit === "month" ? `/ ${x?.duration} Tháng` : x?.unit === "day" ? `/ ${x?.duration} Ngày` : <div className="h-7" />}</div>
+                    <div className='text-m_neutral_500 body_regular_14'>{x?.nonstop ? '/ Vô thời hạn' : !x?.price ? <div className="h-7" /> : x?.unit === "year" ? `/ ${x?.duration} Năm` : x?.unit === "month" ? `/ ${x?.duration} Tháng` : x?.unit === "day" ? `/ ${x?.duration} Ngày` : <div className="h-7" />}</div>
                   </div>
                   <div className="py-5 w-full px-6">
                     {x?.features?.map((e: any, key: any) => (
@@ -84,7 +84,7 @@ export default function Upgrage() {
                         onClick={() => {
                           modifyToast(
                             <div className="text-center text-m_neutral_500 font-normal text-sm">
-                              Bộ phận CSKH TMAS sẽ liên hệ lại bạn qua số điện thoại của bạn trong vòng 24 tiếng kể từ thời điểm tiếp nhận yêu cầu nhận báo giá.Tổng đài chăm CSKH TMAS: <a className="border-black border-b text-black font-normal text-sm" href="tel:+">1900 1221</a>
+                              Bộ phận CSKH TMAS sẽ liên hệ lại bạn qua số điện thoại của bạn trong vòng 24 tiếng kể từ thời điểm tiếp nhận yêu cầu nhận báo giá.Tổng đài chăm CSKH TMAS: <a className="border-black border-b text-black font-semibold text-sm" href="tel:+">1900 1221</a>
                             </div>
                             ,
                             ToastType.SUCCESS
