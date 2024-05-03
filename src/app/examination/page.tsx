@@ -495,7 +495,7 @@ function ExaminationPage() {
                             copy(v?.linkJoinTest ?? "");
                             toast(common?.t("success_copy"));
                           }}
-                          className="ml-2 body_regular_14 cursor-copy break-all"
+                          className="ml-2 body_regular_14 text-nowrap cursor-copy max-w-96 overflow-hidden text-ellipsis"
                         >
                           {v?.linkJoinTest ?? ""}
                         </button>

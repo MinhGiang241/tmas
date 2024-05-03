@@ -61,7 +61,9 @@ function SuccessPayModal(props: Props) {
           />
           <div className="w-5" />
           <MButton
-            text={t("homepage")}
+            text={
+              props.type == PayModalType.SUCCESS ? t("homepage") : t("repay")
+            }
             className="h-12 w-36 bg-m_primary_500 text-white"
             onClick={() => {
               props.onOk!();

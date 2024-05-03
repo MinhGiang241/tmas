@@ -18,7 +18,12 @@ import Gold from "./gold/Gold";
 import HistoryUpgrade from "./history-upgrade/HistoryUpgrade";
 import SuccessPayModal, { PayModalType } from "./modals/SuccessPayModal";
 import { loadResultTransaction } from "@/services/api_services/account_services";
-import { LicenceData, TransactionData } from "@/data/user";
+import {
+  GoldData,
+  LicenceData,
+  PackageData,
+  TransactionData,
+} from "@/data/user";
 import { FormattedNumber } from "react-intl";
 import dayjs from "dayjs";
 
@@ -69,6 +74,8 @@ function AccountPage() {
 
   const [transaction, setTransaction] = useState<TransactionData | undefined>();
   const [licence, setLicence] = useState<LicenceData | undefined>();
+  const [packageData, setPackageData] = useState<PackageData | undefined>();
+  const [goldSetting, setGoldSetting] = useState<GoldData | undefined>();
 
   const loadTransaction = async (ref: string) => {
     const res = await loadResultTransaction(ref);
@@ -78,9 +85,11 @@ function AccountPage() {
     var trans: TransactionData = (res?.data as any).transaction;
     setTransaction(trans);
     if (trans.product_type == "Gold") {
+      setGoldSetting((res?.data as any).goldsetting);
       router.push(`/?tab=1&vnp_ResponseCode=${vnp_ResponseCode}`);
     }
     if (trans.product_type == "Package") {
+      setPackageData((res?.data as any).package);
       setLicence((res?.data as any).licence);
       router.push(`/?tab=4&vnp_ResponseCode=${vnp_ResponseCode}`);
     }
@@ -101,7 +110,25 @@ function AccountPage() {
         onCancel={() => setOpenModal(false)}
         onOk={() => {
           setOpenModal(false);
-          router.push("/");
+          if (vnp_ResponseCode === "00") {
+            router.push("/");
+          } else {
+            if (transaction?.product_type === "Gold") {
+              router.push(
+                `/payment?type=Gold&goldId=${transaction?.goldId ?? ""}&price=${
+                  goldSetting?.cost ?? 0
+                }&name=${goldSetting?.name}`,
+              );
+            } else {
+              router.push(
+                `/payment?type=Package&packageId=${
+                  packageData?._id ?? ""
+                }&price=${packageData?.price ?? 0}&name=${
+                  packageData?.name ?? ""
+                }`,
+              );
+            }
+          }
         }}
         content={
           vnp_ResponseCode != "00" ? (

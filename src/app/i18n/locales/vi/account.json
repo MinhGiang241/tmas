@@ -103,5 +103,6 @@
   "deadline_package": "Hạn sử dụng gói",
   "buy_gold_fail": "Nạp Gold không thành công.",
   "upgrade_package_fail": "Nâng cấp gói doanh nghiệp không thành công.",
-  "re_pay": "Vui lòng thanh toán lại!"
+  "re_pay": "Vui lòng thanh toán lại!",
+  "repay": "Thanh toán lại"
 }

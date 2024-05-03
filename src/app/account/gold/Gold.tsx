@@ -25,6 +25,7 @@ import { setPayment } from "@/redux/payment/paymentSlice";
 import dayjs from "dayjs";
 import { log } from "console";
 import { errorToast } from "@/app/components/toast/customToast";
+import Image from "next/image";
 
 function Gold() {
   const { t } = useTranslation("account");
@@ -175,13 +176,16 @@ function Gold() {
               }`}
             >
               <div className="bg-[#F4D58D] px-3 py-1 mt-3 rounded-lg body_semibold_14">
+                {e.name}
+              </div>
+              <div className="body_bold_16 mt-1">
                 <FormattedNumber
                   value={e?.gold ?? 0}
                   style="decimal"
                   maximumFractionDigits={2}
-                />
+                />{" "}
+                Gold
               </div>
-              <div className="body_bold_16 mt-1">{e.name}</div>
               <Divider className="my-2" />
               <div className="title_bold_20 text-m_primary_500 mb-2">
                 <FormattedNumber
@@ -227,10 +231,12 @@ function Gold() {
       <div className="w-full flex justify-between items-center">
         <div>
           <div className="w-full title_semibold_20">{t("gold_manage")}</div>
-          <div className="caption_regular_14">
+          <div className="caption_regular_14 flex items-center">
             <span>
               {t("current_gold")}: {user?.gold ?? 0}
             </span>
+            <div className="w-1" />
+            <Image alt="coin" src="/images/coin.png" width={25} height={25} />
           </div>
         </div>
 

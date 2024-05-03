@@ -363,14 +363,17 @@ function SendExaminationInfo(props: Props) {
             setMedia(val);
           }}
           className="dropdown-flex"
-          options={[
-            {
-              value: "email",
-              label: "Email",
-              disabled: !config?.send_method?.email,
-            },
-            { value: "sms", label: "SMS", disabled: !config?.send_method?.sms },
-          ]}
+          options={["SMS", "Email"]
+            .filter((s: any) => {
+              return (
+                config?.send_method &&
+                (config?.send_method as any)[s?.toLowerCase()]
+              );
+            })
+            .map((e: any) => ({
+              value: e?.toLowerCase(),
+              label: e,
+            }))}
           id="media"
           name="media"
           title={t("media")}
