@@ -1,11 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import BaseModal, { BaseModalProps } from "@/app/components/config/BaseModal";
 import MButton from "@/app/components/config/MButton";
 import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import { ExaminationData, RemindEmailData } from "@/data/exam";
 import { emailRegex } from "@/services/validation/regex";
+import { error } from "console";
 import { FormikErrors, useFormik } from "formik";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
 
@@ -19,6 +21,7 @@ interface FormValues {
   email?: string;
   code?: string;
 }
+var key = uuidv4();
 
 function AddReceiptInfo(props: Props) {
   const initialValues: FormValues = {};
@@ -42,6 +45,8 @@ function AddReceiptInfo(props: Props) {
 
     return errors;
   };
+  console.log("reset");
+
   const formik = useFormik({
     initialValues,
     validate,
@@ -57,9 +62,9 @@ function AddReceiptInfo(props: Props) {
     },
   });
   const { t } = useTranslation("exam");
-
   return (
     <BaseModal
+      key={key}
       {...props}
       onCancel={() => {
         props.onCancel();
@@ -69,14 +74,15 @@ function AddReceiptInfo(props: Props) {
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-          await formik.setFieldTouched("email", true);
           formik.handleSubmit();
+          await formik.setFieldTouched("email", true);
+          await formik.setFieldTouched("code", true);
         }}
         className="w-full"
       >
         <MInput
           namespace="exam"
-          touchedNotFormik={true}
+          // touchedNotFormik={true}
           required
           h="h-11"
           formik={formik}
@@ -87,7 +93,7 @@ function AddReceiptInfo(props: Props) {
         {props.examination?.accessCodeSettingType === "MultiCode" &&
           props.examination?.sharingSetting == "Private" && (
             <MDropdown
-              touchedNotFormik={true}
+              // touchedNotFormik={true}
               formik={formik}
               options={props.examination?.accessCodeSettings
                 ?.filter((r) => !props.list?.some((l) => l.passcode === r.code))

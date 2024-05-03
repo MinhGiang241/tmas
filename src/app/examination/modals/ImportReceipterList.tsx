@@ -406,10 +406,10 @@ function ImportReceipterList(props: Props) {
           </div>
         </div>
       )}
-      <button className=" flex flex-start mr-auto items-center mt-2">
-        <BlackEyeIcon />
-        <span className="ml-2 body_semibold_14 ">{t("preview")}</span>
-      </button>
+      {/* <button className=" flex flex-start mr-auto items-center mt-2"> */}
+      {/*   <BlackEyeIcon /> */}
+      {/*   <span className="ml-2 body_semibold_14 ">{t("preview")}</span> */}
+      {/* </button> */}
 
       <div className="my-3 w-full flex justify-between ">
         <div className="body_semibold_14">
