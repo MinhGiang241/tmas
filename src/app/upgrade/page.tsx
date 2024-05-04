@@ -37,7 +37,7 @@ export default function Upgrage() {
         </div>
         <div className="pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {data?.map((x: any, key: any) =>
-            x?.type !== "Enterprise" ? (
+            (!x?.active || x?.type != "Enterprise") ? (
               ""
             ) : (
               <div
@@ -62,9 +62,9 @@ export default function Upgrage() {
                     : ""
                     }`}
                 >
-                  <div className="body_bold_16 pl-6">{x?.name}</div>
+                  <div className="body_semibold_16 pl-6">{x?.name}</div>
                   <div className="flex items-center pl-6">
-                    <div className="body_semibold_20 title_regular_20 ">
+                    <div className="body_bold_20 title_semibold_20">
                       {x?.price === 0 ? (
                         <div className="flex">Liên hệ</div>
                       ) : (
@@ -79,8 +79,8 @@ export default function Upgrage() {
                       {x?.price === 0 ? (
                         ""
                       ) : (
-                        <div className="pl-1 body_semibold_20 title_regular_20">
-                          VNĐ
+                        <div className="pl-1 body_bold_20">
+                          VNĐ&nbsp;
                         </div>
                       )}
                     </div>
@@ -103,9 +103,14 @@ export default function Upgrage() {
                       <button
                         onClick={() => {
                           modifyToast(
-                            <div className="text-center text-m_neutral_500 font-normal text-sm">
-                              Bộ phận CSKH TMAS sẽ liên hệ lại bạn qua số điện thoại của bạn trong vòng 24 tiếng kể từ thời điểm tiếp nhận yêu cầu nhận báo giá.Tổng đài chăm CSKH TMAS: <a className="border-black border-b text-black font-semibold text-sm" href="tel:+">1900 1221</a>
-                            </div >
+                            <div>
+                              <div className="text-center text-m_neutral_500 font-normal text-sm">
+                                Bộ phận CSKH TMAS sẽ liên hệ lại bạn qua số điện thoại của bạn trong vòng 24 tiếng kể từ thời điểm tiếp nhận yêu cầu nhận báo giá.
+                              </div >
+                              <div className="text-center text-m_neutral_500 font-normal text-sm">
+                                Tổng đài chăm CSKH TMAS: <a className="border-black border-b text-black font-semibold text-sm" href="tel:+">1900 1221</a>
+                              </div>
+                            </div>
                             ,
                             ToastType.SUCCESS
                           );
@@ -124,7 +129,9 @@ export default function Upgrage() {
                         {dayjs(user?.licences?.enterprise?.active_date).format(
                           "DD/MM/YYYY",
                         )}
+                        &nbsp;
                         -
+                        &nbsp;
                         {dayjs(user?.licences?.enterprise?.expire_date).format(
                           "DD/MM/YYYY",
                         )}
@@ -139,7 +146,7 @@ export default function Upgrage() {
                         }}
                         className="flex justify-center items-center rounded-lg w-full h-[44px] bg-m_primary_500 body_semibold_14 text-white my-4"
                       >
-                        Đăng kí ngay
+                        Đăng ký ngay
                       </button>
                     )}
                   </div >
