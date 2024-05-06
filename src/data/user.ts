@@ -212,6 +212,7 @@ export interface SettingData {
 }
 
 export interface TransactionData {
+  packageId?: string;
   bill_amount?: number;
   code?: string;
   createdTime?: string;

@@ -122,7 +122,7 @@ function AccountPage() {
             } else {
               router.push(
                 `/payment?type=Package&packageId=${
-                  packageData?._id ?? ""
+                  transaction?.packageId ?? ""
                 }&price=${packageData?.price ?? 0}&name=${
                   packageData?.name ?? ""
                 }`,
