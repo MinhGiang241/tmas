@@ -393,6 +393,7 @@ function Gold() {
             value={recordNum}
             onChange={(v) => {
               setRecordNum(v);
+              setIndexPage(1);
             }}
             options={[
               ...[15, 25, 30, 50, 100].map((i: number) => ({

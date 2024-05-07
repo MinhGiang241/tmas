@@ -143,14 +143,14 @@ function AccountPage() {
           ) : transaction?.product_type == "Gold" ? (
             <div className="w-full">
               <div>
-                {t("num_gold_add")}:
+                <span className="text-m_neutral_700">{t("num_gold_add")}:</span>
                 <span className="font-semibold ml-1">
                   {transaction?.gold} gold
                 </span>
               </div>
 
               <div>
-                {t("total_pay")}:
+                <span className="text-m_neutral_700">{t("total_pay")}:</span>
                 <span className="font-semibold ml-1 text-m_primary_500">
                   <FormattedNumber
                     value={transaction?.bill_amount ?? 0}
@@ -166,13 +166,16 @@ function AccountPage() {
           ) : (
             <div className="w-full">
               <div>
-                {t("upgraded_package")}:
+                <span className="text-m_neutral_700">
+                  {t("upgraded_package")}:
+                </span>
                 <span className="font-semibold ml-1">{licence?.pkg_name}</span>
               </div>
 
               <div>
-                {t("total_pay")}:
-                <span className="font-semibold ml-1">
+                <span className="text-m_neutral_700">{t("total_pay")}:</span>
+
+                <span className="font-semibold ml-1 text-m_primary_500">
                   <FormattedNumber
                     value={transaction?.bill_amount ?? 0}
                     style="decimal"

@@ -310,7 +310,14 @@ function SendExaminationInfo(props: Props) {
     getEmailList();
   };
   return (
-    <BaseModal {...props} width={1027}>
+    <BaseModal
+      {...props}
+      width={1027}
+      onCancel={() => {
+        props.onCancel();
+        setEmails([]);
+      }}
+    >
       <ImportReceipterList
         examination={props.examination}
         list={[...emails]}
@@ -531,6 +538,7 @@ function SendExaminationInfo(props: Props) {
               rootClassName="m-0 p-0"
               onChange={(v) => {
                 setRecordNum(v);
+                setIndexPage(1);
               }}
               defaultValue={15}
               options={[

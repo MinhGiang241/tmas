@@ -482,6 +482,10 @@ function ImportReceipterList(props: Props) {
               status: "New",
             }));
           props.onOk!(importedData);
+          setSelectedData([]);
+          setErrorList([]);
+          setDataList([]);
+          setSelectedFile(null);
         }}
         h="h-9"
         className="mt-4 w-[114px]"
