@@ -39,7 +39,7 @@ export const mapStudioToTmaslanguage = (index: number) => {
     case 0:
       return "PHP"; // "php";
     case 1:
-      return "Javascrip"; //"javascript";
+      return "Javascript"; //"javascript";
     case 2:
       return "Java"; //"java";
     case 3:
@@ -47,7 +47,7 @@ export const mapStudioToTmaslanguage = (index: number) => {
     case 4:
       return "Ruby"; //"ruby";
     case 5:
-      return "CShape"; //"c#";
+      return "CSharp"; //"c#";
   }
 };
 // | "PHP"
@@ -62,7 +62,7 @@ export const mapLanguage = (lang?: string) => {
     case "php":
       return "PHP";
     case "javascript":
-      return "Javascrip";
+      return "Javascript";
     case "java":
       return "Java";
     case "python":
@@ -70,7 +70,7 @@ export const mapLanguage = (lang?: string) => {
     case "ruby":
       return "Ruby";
     case "c#":
-      return "CShape";
+      return "CSharp";
     default:
       return "";
   }
@@ -88,7 +88,7 @@ export const revertLanguage = (lang?: string) => {
       return "python";
     case "Ruby":
       return "ruby";
-    case "CShape":
+    case "CSharp":
       return "c#";
     default:
       return undefined;

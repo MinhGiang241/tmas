@@ -220,11 +220,11 @@ export interface CodingQuestionFormData extends BaseQuestionFormData {
     codeLanguages:
       | any
       | "PHP"
-      | "Javascrip"
+      | "Javascript"
       | "Java"
       | "Python"
       | "Ruby"
-      | "CShape"[];
+      | "CSharp"[];
     testcases: {
       name?: string;
       inputData?: string;
