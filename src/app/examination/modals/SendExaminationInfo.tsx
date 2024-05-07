@@ -310,7 +310,14 @@ function SendExaminationInfo(props: Props) {
     getEmailList();
   };
   return (
-    <BaseModal {...props} width={1027}>
+    <BaseModal
+      {...props}
+      width={1027}
+      onCancel={() => {
+        props.onCancel();
+        setEmails([]);
+      }}
+    >
       <ImportReceipterList
         examination={props.examination}
         list={[...emails]}
@@ -363,14 +370,17 @@ function SendExaminationInfo(props: Props) {
             setMedia(val);
           }}
           className="dropdown-flex"
-          options={[
-            {
-              value: "email",
-              label: "Email",
-              disabled: !config?.send_method?.email,
-            },
-            { value: "sms", label: "SMS", disabled: !config?.send_method?.sms },
-          ]}
+          options={["SMS", "Email"]
+            .filter((s: any) => {
+              return (
+                config?.send_method &&
+                (config?.send_method as any)[s?.toLowerCase()]
+              );
+            })
+            .map((e: any) => ({
+              value: e?.toLowerCase(),
+              label: e,
+            }))}
           id="media"
           name="media"
           title={t("media")}
@@ -528,6 +538,7 @@ function SendExaminationInfo(props: Props) {
               rootClassName="m-0 p-0"
               onChange={(v) => {
                 setRecordNum(v);
+                setIndexPage(1);
               }}
               defaultValue={15}
               options={[

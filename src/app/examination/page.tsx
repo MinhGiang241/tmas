@@ -474,7 +474,7 @@ function ExaminationPage() {
                         </span>
                       </div>
                       <div className="flex mx-4 items-center">
-                        <span className="mx-4 body_regular_14">
+                        <span className="mx-4 body_regular_14 text-nowrap">
                           {!v?.validAccessSetting?.validFrom &&
                           !v?.validAccessSetting?.validTo
                             ? t("no_limit_time")
@@ -495,7 +495,7 @@ function ExaminationPage() {
                             copy(v?.linkJoinTest ?? "");
                             toast(common?.t("success_copy"));
                           }}
-                          className="ml-2 body_regular_14 cursor-copy break-all"
+                          className="ml-2 body_regular_14 text-nowrap cursor-copy max-w-60 overflow-hidden text-ellipsis"
                         >
                           {v?.linkJoinTest ?? ""}
                         </button>
@@ -690,6 +690,7 @@ function ExaminationPage() {
                 rootClassName="m-0 p-0"
                 onChange={(v) => {
                   setRecordNum(v);
+                  setIndexPage(1);
                 }}
                 defaultValue={15}
                 options={[

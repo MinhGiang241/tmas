@@ -132,6 +132,25 @@ export interface GoldHistoryData {
   userId?: string;
 }
 
+export interface PackageData {
+  _id?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  schema?: string;
+  creator?: string;
+  updater?: string;
+  version_number?: number;
+  type?: string;
+  name?: string;
+  duration?: number;
+  nonstop?: boolean;
+  unit?: string;
+  custom_price?: boolean;
+  price?: number;
+  active?: boolean;
+  code?: string;
+}
+
 export interface LicenceData {
   _id?: string;
   createdTime?: string;
@@ -193,6 +212,7 @@ export interface SettingData {
 }
 
 export interface TransactionData {
+  packageId?: string;
   bill_amount?: number;
   code?: string;
   createdTime?: string;

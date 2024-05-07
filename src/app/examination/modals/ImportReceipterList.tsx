@@ -52,9 +52,10 @@ function ImportReceipterList(props: Props) {
 
         /* Convert array to json*/
         const dataParse = XLSX.utils.sheet_to_json(ws, { header: 1 });
+        console.log("dataparse", dataParse);
         var d = dataParse
           .slice(1)
-          .filter((k: any) => k && k.length >= 2)
+          .filter((k: any) => k)
           .map((e: any) => {
             return { email: e[0], passcode: e[1], status: t("New") };
           });
@@ -71,6 +72,7 @@ function ImportReceipterList(props: Props) {
   };
 
   const validateImportData = (data: any) => {
+    console.log("data", data);
     // bắt trùng mail
     setDataList(data);
     var map: any = {};
@@ -88,8 +90,8 @@ function ImportReceipterList(props: Props) {
     // bắt trùng code
     var codes: any = {};
     for (let i in data) {
-      map[data[parseInt(i)].passcode] = map[data[parseInt(i)].passcode]
-        ? map[data[parseInt(i)].passcode] + 1
+      codes[data[parseInt(i)].passcode] = codes[data[parseInt(i)].passcode]
+        ? codes[data[parseInt(i)].passcode] + 1
         : 1;
     }
     const codeDup: any = [];
@@ -98,6 +100,7 @@ function ImportReceipterList(props: Props) {
         codeDup.push(e);
       }
     });
+    console.log("codeDup", codeDup, codes);
 
     var dataDup: any = [];
     var dataNotDup: any = [];
@@ -107,6 +110,7 @@ function ImportReceipterList(props: Props) {
     var existedCodeDup: any = [];
     var codeDataDup: any = [];
     var notExamTestCode: any = [];
+    var notHasCode: any = [];
 
     for (let j in data) {
       if (!data[parseInt(j)].email?.trim()) {
@@ -121,6 +125,12 @@ function ImportReceipterList(props: Props) {
           ?.includes(data[parseInt(j)].email?.toLowerCase())
       ) {
         existedMailDup.push(j);
+      } else if (
+        !data[parseInt(j)].passcode &&
+        props.examination?.accessCodeSettingType == "MultiCode" &&
+        props.examination?.sharingSetting == "Private"
+      ) {
+        notHasCode.push(j);
       } else if (
         !props.examination?.accessCodeSettings
           ?.map((e) => e.code)
@@ -147,6 +157,11 @@ function ImportReceipterList(props: Props) {
         dataNotDup.push(data[parseInt(j)]);
       }
     }
+    var notHasCodeEx = notHasCode.map((d: any) => ({
+      index: parseInt(d) + 2,
+      mess: "Code không được để trống",
+      value: data[parseInt(d)].passcode,
+    }));
 
     var notExamTestEx = notExamTestCode.map((d: any) => ({
       index: parseInt(d) + 2,
@@ -187,15 +202,18 @@ function ImportReceipterList(props: Props) {
       mess: "Email đã tồn tại",
       value: data[parseInt(t)].email,
     }));
-    setErrorList([
-      ...notExamTestEx,
-      ...existedCodeEx,
-      ...codDupEx,
-      ...notMailEx,
-      ...invalidMailEx,
-      ...fileDupEx,
-      ...exiestDupEx,
-    ]);
+    setErrorList(
+      [
+        ...notExamTestEx,
+        ...existedCodeEx,
+        ...codDupEx,
+        ...notMailEx,
+        ...invalidMailEx,
+        ...fileDupEx,
+        ...exiestDupEx,
+        ...notHasCodeEx,
+      ].sort((a: any, b: any) => parseInt(a) - parseInt(b)),
+    );
     setSelectedData(dataNotDup);
   };
 
@@ -350,7 +368,16 @@ function ImportReceipterList(props: Props) {
   };
 
   return (
-    <BaseModal {...props}>
+    <BaseModal
+      {...props}
+      onCancel={() => {
+        setSelectedData([]);
+        setErrorList([]);
+        setDataList([]);
+        setSelectedFile(null);
+        props.onCancel();
+      }}
+    >
       <input
         accept=".xlsx, .xls"
         type="file"
@@ -455,6 +482,10 @@ function ImportReceipterList(props: Props) {
               status: "New",
             }));
           props.onOk!(importedData);
+          setSelectedData([]);
+          setErrorList([]);
+          setDataList([]);
+          setSelectedFile(null);
         }}
         h="h-9"
         className="mt-4 w-[114px]"
