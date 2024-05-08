@@ -12,7 +12,6 @@ import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import Tick from "@/app/components/icons/tick-circle.svg";
 import { useRouter } from "next/navigation";
 import { FormattedDate, FormattedTime } from "react-intl";
-import { FillBlankQuestionFormData } from "@/data/form_interface";
 import {
   deleteQuestionById,
   duplicateQuestion,
@@ -20,12 +19,15 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
-import Close from "@/app/components/icons/close-circle.svg"
+import CodeMirror from "@uiw/react-codemirror";
+import { dracula } from "@uiw/codemirror-theme-dracula";
+import { renderExtension } from "@/services/ui/coding_services";
+import { Label } from "recharts";
 
-export default function FillBlank({
-  index,
+export default function Sql({
   examId,
   question,
+  index,
   getData,
   questionGroup,
   tmasQuest,
@@ -46,12 +48,11 @@ export default function FillBlank({
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-  const [dupLoading, setDupLoading] = useState(false);
-  const [active, setActive] = useState("");
+
   const router = useRouter();
   const { t } = useTranslation("question");
   const [deleteLoading, setDeleteLoading] = useState(false);
-  // console.log("question", question);
+  const [dupLoading, setDupLoading] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
@@ -59,44 +60,34 @@ export default function FillBlank({
 
   const columns = [
     {
-      title: 'Chỗ trống',
-      dataIndex: 'empty',
-      key: 'empty',
+      title: 'Cột 1',
+      dataIndex: 'Testcase1',
+      key: 'Testcase1',
     },
     {
-      title: 'Đầu vào',
-      dataIndex: 'input',
-      key: 'input',
+      title: 'Cột 2',
+      dataIndex: 'Testcase2',
+      key: 'Testcase2',
     },
     {
-      title: 'Đầu ra',
-      dataIndex: 'output',
-      key: 'output',
+      title: 'Cột 3',
+      dataIndex: 'Testcase3',
+      key: 'Testcase3',
     },
     {
-      title: 'Kết quả',
-      dataIndex: 'result',
-      key: 'result',
+      title: 'Cột 4',
+      dataIndex: 'Testcase4',
+      key: 'Testcase4',
     },
   ];
 
   const data = [
     {
       key: '1',
-      empty: '1',
-      input: (
-        <div className="flex">
-          <div className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100">Sơn</div>
-        </div>
-      ),
-      output: (
-        <div className="flex">
-          <div className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100">Sơn</div>
-          <div className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100">Son</div>
-          <div className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100">son</div>
-        </div>
-      ),
-      result: (<div><Tick /><Close /></div>)
+      Testcase1: 'abc',
+      Testcase2: 'abc',
+      Testcase3: (<div>2024-05-12  18:05:30</div>),
+      Testcase4: '10',
     },
   ];
 
@@ -150,6 +141,7 @@ export default function FillBlank({
             return;
           }
           successToast(t("success_delete_question"));
+
           setOpenDeleteQuestion(false);
           await getData();
         }}
@@ -161,7 +153,7 @@ export default function FillBlank({
         open={openDeleteQuestion}
       />
       <Collapse
-        // key={key}
+        // key={v?.id}
         ghost
         expandIconPosition="end"
         className="rounded-lg bg-m_question overflow-hidden mb-4"
@@ -184,14 +176,13 @@ export default function FillBlank({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("question")} 6`}:
+                  {`${t("question")} 7`}:
                   {/* <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    // dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank,}}
-                    dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank }}
+                    dangerouslySetInnerHTML={{ __html: question?.question }}
                   /> */}
-                  <div className="text-sm font-normal">Điền vào chỗ trống</div>
+                  <div className="text-sm font-normal">Câu hỏi SQL</div>
                 </span>
                 {isOverflowing ? (
                   <button
@@ -225,18 +216,71 @@ export default function FillBlank({
           key={""}
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
-          <div className="">
-            <div>
-              <Table columns={columns} dataSource={data} pagination={false} />
-              <div className="flex justify-between items-center pt-4">
-                <div className="flex">Điểm: <div className="pl-1 font-semibold">1/1</div></div>
-                <div className="flex">Cách chấm: <div className="pl-1 font-semibold">Từng phần</div></div>
-                <div className="flex">Tổng số chỗ trống: <div className="pl-1 font-semibold">3</div></div>
-                <div className="flex">Số chỗ trống đúng: <div className="pl-1 font-semibold">3</div></div>
-                <div className="flex">Số chỗ trống sai: <div className="pl-1 font-semibold">3</div></div>
-              </div>
+          <div className="bg-m_neutral_100 p-3 font-semibold text-sm rounded-lg">my SQL</div>
+          <CodeMirror
+            onBlur={async () => {
+            }}
+            // value={code}
+            // lang={lang}
+            theme={dracula}
+            height="300px"
+            extensions={[renderExtension("SQL") as any]}
+            onChange={(v) => {
+
+            }}
+          />
+          <div className="pt-3">
+            <div className="flex pb-2">
+              <div className="pr-2 font-semibold text-sm">Kết quả</div>
+              <Tick />
             </div>
+            <Table columns={columns} dataSource={data} pagination={false} />
           </div>
+          <div className="py-3">
+            <div className="pr-2 font-semibold text-sm pb-2">Đáp án</div>
+            <Table columns={columns} dataSource={data} pagination={false} />
+          </div>
+          <div>
+            <div className="text-m_primary_500 text-sm font-semibold my-2">
+              Giải thích đáp án
+            </div>
+            <div>Lorem ipsum chỉ đơn giản là một đoạn văn b</div>
+          </div>
+          {/* <div className="text-m_primary_500 text-sm font-semibold mb-2">
+            {t("quest_info")}
+          </div> */}
+          {/* <div className="flex">
+            <div className="text-sm pr-2 font-semibold">
+              {t("quest_group")}:
+            </div>
+            <span>{questionGroup?.name}</span>
+          </div>
+          <div className="flex">
+            <div className="text-sm pr-2 font-semibold">{t("quest_type")}:</div>
+            <span>{t(question?.questionType)}</span>
+          </div>
+          <div className="flex">
+            <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
+            <span>{question?.numberPoint}</span>
+          </div>
+          <div className="flex">
+            <div className="text-sm pr-2 font-semibold">
+              {t("created_date")}:{" "}
+            </div>
+            <FormattedDate
+              value={question?.createdTime}
+              day="2-digit"
+              month="2-digit"
+              year="numeric"
+            />
+            <div className="w-2" />
+            <FormattedTime
+              value={question?.createdTime}
+              hour="2-digit"
+              minute="2-digit"
+              second="2-digit"
+            />
+          </div> */}
         </Collapse.Panel>
       </Collapse>
     </div>
