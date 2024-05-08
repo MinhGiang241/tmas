@@ -204,7 +204,7 @@ function CreateExaminationPage({ examination }: any) {
     description: examination?.description,
     turn_per_code:
       examination?.accessCodeSettings &&
-      examination?.accessCodeSettingType == "MultiCode"
+        examination?.accessCodeSettingType == "MultiCode"
         ? examination?.accessCodeSettings[0]?.limitOfAccess?.toString()
         : undefined,
   };
@@ -300,26 +300,26 @@ function CreateExaminationPage({ examination }: any) {
             ? []
             : code == "One"
               ? [
-                  {
-                    //TODO: sửa sau cái này để vì _id trong studio là ownerId
-                    studioId: studio?._id,
-                    ownerId: user?._id,
-                    code: formik.values["one_code"],
-                    numberOfAccess: 0,
-                  },
-                ]
+                {
+                  //TODO: sửa sau cái này để vì _id trong studio là ownerId
+                  studioId: studio?._id,
+                  ownerId: user?._id,
+                  code: formik.values["one_code"],
+                  numberOfAccess: 0,
+                },
+              ]
               : [
-                  ...codeList.map((e: any) => ({
-                    //TODO: sửa sau cái này để vì _id trong studio là ownerId
-                    studioId: studio?._id,
-                    ownerId: user?._id,
-                    code: e.code,
-                    limitOfAccess: formik.values["turn_per_code"]
-                      ? parseInt(formik.values["turn_per_code"])
-                      : undefined,
-                    numberOfAccess: 0,
-                  })),
-                ],
+                ...codeList.map((e: any) => ({
+                  //TODO: sửa sau cái này để vì _id trong studio là ownerId
+                  studioId: studio?._id,
+                  ownerId: user?._id,
+                  code: e.code,
+                  limitOfAccess: formik.values["turn_per_code"]
+                    ? parseInt(formik.values["turn_per_code"])
+                    : undefined,
+                  numberOfAccess: 0,
+                })),
+              ],
         cheatingSetting,
         description: values?.description?.trim(),
         name: values?.examination_name?.trim(),
@@ -339,14 +339,14 @@ function CreateExaminationPage({ examination }: any) {
           share === "Public"
             ? {}
             : {
-                ipWhiteLists: formik.values["ips"],
-                validFrom: values.start_time
-                  ? dayjs(values?.start_time, dateFormat).toISOString()
-                  : undefined,
-                validTo: values?.end_time
-                  ? dayjs(values?.end_time, dateFormat).toISOString()
-                  : undefined,
-              },
+              ipWhiteLists: formik.values["ips"],
+              validFrom: values.start_time
+                ? dayjs(values?.start_time, dateFormat).toISOString()
+                : undefined,
+              validTo: values?.end_time
+                ? dayjs(values?.end_time, dateFormat).toISOString()
+                : undefined,
+            },
         idExam:
           exam?.id ?? examination?.id ?? search.get("examId") ?? undefined,
         idSession: sessionId,
@@ -355,11 +355,11 @@ function CreateExaminationPage({ examination }: any) {
           share === "Private"
             ? {}
             : {
-                goldPrice: values?.gold_price
-                  ? parseInt(values?.gold_price)
-                  : undefined,
-                isEnable: true,
-              },
+              goldPrice: values?.gold_price
+                ? parseInt(values?.gold_price)
+                : undefined,
+              isEnable: true,
+            },
       };
 
       console.log("submitData", submitData);
@@ -443,11 +443,10 @@ function CreateExaminationPage({ examination }: any) {
                 </button>
               ) : (
                 <Link
-                  className={`${
-                    pathname.includes("/examination/create")
-                      ? "text-m_neutral_900"
-                      : ""
-                  } body_regular_14`}
+                  className={`${pathname.includes("/examination/create")
+                    ? "text-m_neutral_900"
+                    : ""
+                    } body_regular_14`}
                   href={"/examination/create"}
                 >
                   {t("create_examination")}
@@ -643,9 +642,8 @@ function CreateExaminationPage({ examination }: any) {
             <div className="body_semibold_14">{t("selected_exam")}</div>
             <Link
               // Link ở đây
-              href={`/examination/details?examId=${exam?.id}&examTestId=${
-                examination?.id ?? ""
-              }`}
+              href={`/examination/details?examId=${exam?.id}&examTestId=${examination?.id ?? ""
+                }`}
               // href={`/exams/details/${exam?.id}`}
               className="text-[#4D7EFF] body_regular_14 underline underline-offset-4"
               target="_blank"

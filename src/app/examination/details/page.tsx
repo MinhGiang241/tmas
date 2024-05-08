@@ -95,7 +95,7 @@ function DetailsPage({ params }: any) {
       errorToast(res?.message ?? "");
       return;
     }
-    console.log(res, "exam");
+    // console.log(res, "exam");
 
     setExam(res?.data?.records[0]);
   };
@@ -154,7 +154,7 @@ function DetailsPage({ params }: any) {
       <>
         <MBreadcrumb
           items={[
-            { text: t("examTest_question"), href: "/examination" },
+            { text: t("examTest_question"), href: `/examination/${examTestId}` },
             // { text: exam?.name, href: `/exams/details/${exam?.id}` },
             {
               href: `/exams/details/${data?.id}`,
