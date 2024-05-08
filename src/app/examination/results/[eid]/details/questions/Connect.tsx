@@ -144,13 +144,13 @@ export default function Connect({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} 3`}:
+                  {`${t("question")} 3`}:
                   {/* <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
                     dangerouslySetInnerHTML={{ __html: question?.question }}
                   /> */}
-                  <div>Câu hỏi ghép nối</div>
+                  <div className="text-sm font-normal">Câu hỏi ghép nối</div>
                 </span>
                 {isOverflowing ? (
                   <button

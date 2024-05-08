@@ -32,9 +32,11 @@ export default function Home() {
 }
 
 function PushSubscriptionToggleButton() {
+
   const [hasActivePushSubscription, setHasActivePushSubscription] = useState<
     boolean | undefined
   >();
+
 
   useEffect(() => {
     async function getActivePushSubscription() {

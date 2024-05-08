@@ -91,13 +91,13 @@ export default function TrueFalse({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} 2`}:
+                  {`${t("question")} 2`}:
                   {/* <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
                     dangerouslySetInnerHTML={{ __html: question?.question }}
                   /> */}
-                  <div>Đúng sai</div>
+                  <div className="text-sm font-normal">Đúng sai</div>
                 </span>
                 {isOverflowing ? (
                   <button
@@ -131,7 +131,7 @@ export default function TrueFalse({
           key={""}
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
-          <div className="text-m_primary_500 text-sm font-semibold mb-2">
+          <div className="text-m_primary_500 text-sm font-semibold mb-2 pl-6">
             {t("result")}
           </div>
           <div>

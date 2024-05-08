@@ -147,13 +147,13 @@ export default function Explain({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} 4`}:
+                  {`${t("question")} 4`}:
                   {/* <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
                     dangerouslySetInnerHTML={{ __html: question?.question }}
                   /> */}
-                  <div>Câu hỏi tự luận</div>
+                  <div className="text-sm font-normal">Câu hỏi tự luận</div>
                 </span>
                 {isOverflowing ? (
                   <button
@@ -188,16 +188,16 @@ export default function Explain({
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
           <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-          {edit && <div>
+          {!edit && <div>
             <div className="font-semibold pt-2">Nhận xét</div>
             <TextArea value={comment} className="rounded-md" rows={4} placeholder="Viết nhận xét" onChange={(e) => setComment(e.target.value)} />
             <div className="font-semibold pt-2">Chấm điểm (tối đa)</div>
-            <div className="flex">
-              <Input value={point} className="rounded-md" type="number" onChange={(e) => setPoint(e.target.value)} />
+            <div className="flex items-end">
+              <Input value={point} className="rounded-md h-[50px]" type="number" onChange={(e) => setPoint(e.target.value)} />
               <Button onClick={() => setEdit(!edit)} className="ml-4 w-[114px] h-[36px] rounded-md bg-m_primary_500 text-white font-semibold">Lưu lại</Button>
             </div>
           </div>}
-          {!edit &&
+          {edit &&
             <div className="pt-1">
               <div className="font-semibold py-2">Nhận xét</div>
               <TextArea className="rounded-md" rows={4} disabled value={comment} />

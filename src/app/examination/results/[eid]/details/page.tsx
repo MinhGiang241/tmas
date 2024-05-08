@@ -15,11 +15,13 @@ import Pause from '@/app/components/icons/pause-circle.svg'
 import Edit from '@/app/components/icons/edit-2.svg'
 import Play from '@/app/components/icons/video-circle.svg'
 import Close from '@/app/components/icons/close-circle2.svg'
+import Sql from './questions/Sql'
 
 export default function Result({ params }: any) {
 
     return (
         <HomeLayout>
+            <div className='pt-4' />
             <MBreadcrumb
                 items={[
                     { text: "Danh sách đợt thi", href: "/" },
@@ -35,7 +37,8 @@ export default function Result({ params }: any) {
                 ]}
             />
             <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center pb-4">
-                <div className="">Chi tiết bài làm</div>
+                <div>Chi tiết bài làm</div>
+                <button className="w-[91px] h-[44px] bg-m_primary_500 rounded-lg text-white text-sm">Quay lại</button>
             </div>
             <div className="grid grid-cols-3">
                 <div className="col-span-2 mr-2">
@@ -47,7 +50,7 @@ export default function Result({ params }: any) {
                         expandIconPosition="end"
                         className="mb-5 rounded-lg bg-white overflow-hidden arrow"
                     >
-                        <div className='px-4 bg-m_warning_50 text-m_warnig_title py-2 font-semibold text-base'>Có 1 câu hỏi tự luận cần chấm điểm</div>
+                        <div className='px-4 bg-m_warning_50 text-m_warnig_title py-2 font-semibold text-sm'>Có 1 câu hỏi tự luận cần chấm điểm</div>
                         <Collapse.Panel
                             key="1"
                             header={
@@ -67,6 +70,7 @@ export default function Result({ params }: any) {
                             <Explain />
                             <Coding />
                             <FillBlank />
+                            <Sql />
                             <Random />
                         </Collapse.Panel>
                     </Collapse>
@@ -75,8 +79,8 @@ export default function Result({ params }: any) {
                     <div className='bg-white rounded-lg'>
                         <div className='flex justify-between items-center p-4'>
                             <div className='font-bold text-base text-m_primary_500'>Tên gì gì đó</div>
-                            <div className='bg-m_success_50 px-4 py-1 flex'>
-                                <div className='font-bold text-base text-m_success_600'>8</div>
+                            <div className='bg-m_success_50 px-4 py-1 flex items-center'>
+                                <div className='font-bold text-lg text-m_success_600'>8</div>
                                 <div className='text-m_success_600'>/10đ</div>
                             </div>
                         </div>
@@ -84,29 +88,29 @@ export default function Result({ params }: any) {
                         <div className='p-4'>
                             <div className='flex justify-between items-center pb-2'>
                                 <div className='text-sm'>Mốc đạt:</div>
-                                <div className='font-semibold'>80%</div>
+                                <div className='text-sm font-semibold'>80%</div>
                             </div>
                             <div className='flex justify-between items-center pb-2'>
                                 <div className='text-sm'>Phần trăm hoàn thành đúng</div>
-                                <div className='font-semibold'>80%</div>
+                                <div className='text-sm font-semibold'>80%</div>
                             </div>
                             <div className='flex justify-between items-center pb-2'>
                                 <div className='text-sm'>Số câu đúng (chưa tính câu tự luận)</div>
-                                <div className='font-semibold'>8/9</div>
+                                <div className='text-sm font-semibold'>8/9</div>
                             </div>
                             <div className='flex justify-between items-center pb-2'>
                                 <div className='text-sm'>Số lượng câu tự luận</div>
-                                <div className='font-semibold'>1</div>
+                                <div className='text-sm font-semibold'>1</div>
                             </div>
                             <div className='flex justify-between items-center pb-2'>
                                 <div className='text-sm'>Thời gian làm bài</div>
-                                <div className='font-semibold'>00:30:15</div>
+                                <div className='text-sm font-semibold'>00:30:15</div>
                             </div>
                         </div>
                     </div>
                     <div className='bg-white rounded-lg mt-4'>
                         <div className='p-4'>
-                            <div className='font-bold text-base'>Timeline chi tiết</div>
+                            <div className='font-semibold text-base'>Timeline chi tiết</div>
                         </div>
                         <hr />
                         <div className='p-4'>
@@ -162,7 +166,7 @@ export default function Result({ params }: any) {
                                         <div className='pb-4'>
                                             <div className='flex items-center'>
                                                 <Play />
-                                                <div className='font-semibold pl-1'>Bắt đầu làm bài</div>
+                                                <div className='font-semibold pl-1 text-sm'>Bắt đầu làm bài</div>
                                             </div>
                                             <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
                                         </div>
@@ -179,7 +183,7 @@ export default function Result({ params }: any) {
                                         <div className='pb-4'>
                                             <div className='flex items-center'>
                                                 <Edit />
-                                                <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 1</div>
+                                                <div className='font-semibold pl-1 text-sm'>Bắt đầu làm câu hỏi số 1</div>
                                             </div>
                                             <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
                                         </div>
@@ -196,7 +200,7 @@ export default function Result({ params }: any) {
                                         <div className='pb-4'>
                                             <div className='flex items-center'>
                                                 <Close />
-                                                <div className='font-semibold pl-1'>Thoát ra ngoài màn hình lần 1</div>
+                                                <div className='font-semibold pl-1 text-sm'>Thoát ra ngoài màn hình lần 1</div>
                                             </div>
                                             <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
                                         </div>
@@ -213,7 +217,7 @@ export default function Result({ params }: any) {
                                         <div className='pb-4'>
                                             <div className='flex items-center'>
                                                 <Pause />
-                                                <div className='font-semibold pl-1'>Nộp bài thi</div>
+                                                <div className='font-semibold pl-1 text-sm'>Nộp bài thi</div>
                                             </div>
                                             <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
                                         </div>

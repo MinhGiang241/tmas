@@ -87,14 +87,14 @@ export default function ManyResult({
                       value={question?.id}
                     />
                   )}
-                  {`${t("quest")} 1`}
+                  {`${t("question")} 1`}
                   :
                   {/* <div
                     ref={contentRef}
                     className={`body_regular_14 pl-2 `}
                     dangerouslySetInnerHTML={{ __html: question?.question }}
                   /> */}
-                  <div>Nhiều đáp án</div>
+                  <div className="text-sm font-normal">Nhiều đáp án</div>
                 </span>
                 {isOverflowing ? (
                   <button
@@ -131,7 +131,7 @@ export default function ManyResult({
           <div className="h-[1px] bg-m_primary_200 mb-3" />
           <div className="flex">
             <div className="w-full">
-              <div className="text-m_primary_500 text-sm font-semibold mb-2">
+              <div className="text-m_primary_500 text-sm font-semibold mb-2 pl-6">
                 {t("result")}
               </div>
               <div>
@@ -170,10 +170,12 @@ export default function ManyResult({
                   </div>
                 </div>
               </div>
-              <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
-                Giải thích đáp án
+              <div className="pl-6">
+                <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+                  Giải thích đáp án
+                </div>
+                <div className="text-sm">Vì 1+1=2. Bấm máy tính thì biết</div>
               </div>
-              <div>Vì 1+1=2. Bấm máy tính thì biết</div>
             </div>
           </div>
         </Collapse.Panel>

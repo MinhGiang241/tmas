@@ -128,13 +128,13 @@ export default function Coding({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} 5`}:
+                  {`${t("question")} 5`}:
                   {/* <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
                     dangerouslySetInnerHTML={{ __html: question?.question }}
                   /> */}
-                  <div>Câu hỏi coding</div>
+                  <div className="text-sm font-normal">Câu hỏi coding</div>
                 </span>
                 {isOverflowing ? (
                   <button

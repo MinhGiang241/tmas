@@ -130,12 +130,12 @@ function Random({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("quest")} 7`}:
+                  {`${t("question")} 8`}:
                   {/* <span
                     className="body_regular_14 pl-2"
                     dangerouslySetInnerHTML={{ __html: question?.question }}
                   /> */}
-                  <div>Ngẫu nhiên</div>
+                  <div className="text-sm font-normal">Ngẫu nhiên</div>
                 </span>
               </div>
               {tmasQuest ? (

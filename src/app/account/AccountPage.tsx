@@ -26,7 +26,7 @@ import {
 } from "@/data/user";
 import { FormattedNumber } from "react-intl";
 import dayjs from "dayjs";
-
+import { sendNotification } from "@/notifiCations/pushService";
 function AccountPage() {
   const index = useSelector((state: RootState) => state.home.index);
   const dispatch = useDispatch();
@@ -48,18 +48,18 @@ function AccountPage() {
   const vnp_TxnRef = search.get("vnp_TxnRef");
   const vnp_SecureHash = search.get("vnp_SecureHash");
 
-  console.log("vnp_Amount", vnp_Amount);
-  console.log("vnp_BankCode", vnp_BankCode);
-  console.log("vnp_BankTranNo", vnp_BankTranNo);
-  console.log("vnp_CardType", vnp_CardType);
-  console.log("vnp_OrderInfo", vnp_OrderInfo);
-  console.log("vnp_PayDate", vnp_PayDate);
-  console.log("vnp_ResponseCode", vnp_ResponseCode);
-  console.log("vnp_TmnCode", vnp_TmnCode);
-  console.log("vnp_TransactionNo", vnp_TransactionNo);
-  console.log("vnp_TransactionStatus", vnp_TransactionStatus);
-  console.log("vnp_TxnRef", vnp_TxnRef);
-  console.log("vnp_SecureHash", vnp_SecureHash);
+  // console.log("vnp_Amount", vnp_Amount);
+  // console.log("vnp_BankCode", vnp_BankCode);
+  // console.log("vnp_BankTranNo", vnp_BankTranNo);
+  // console.log("vnp_CardType", vnp_CardType);
+  // console.log("vnp_OrderInfo", vnp_OrderInfo);
+  // console.log("vnp_PayDate", vnp_PayDate);
+  // console.log("vnp_ResponseCode", vnp_ResponseCode);
+  // console.log("vnp_TmnCode", vnp_TmnCode);
+  // console.log("vnp_TransactionNo", vnp_TransactionNo);
+  // console.log("vnp_TransactionStatus", vnp_TransactionStatus);
+  // console.log("vnp_TxnRef", vnp_TxnRef);
+  // console.log("vnp_SecureHash", vnp_SecureHash);
 
   useEffect(() => {
     if (vnp_TxnRef) {
@@ -70,6 +70,8 @@ function AccountPage() {
         ["0", "1", "2", "3", "4"].includes(indexTab ?? "") ? indexTab : "0",
       ),
     );
+    sendNotification();
+    console.log("Sendtest noti")
   }, [dispatch, indexTab]);
 
   const [transaction, setTransaction] = useState<TransactionData | undefined>();
@@ -115,16 +117,13 @@ function AccountPage() {
           } else {
             if (transaction?.product_type === "Gold") {
               router.push(
-                `/payment?type=Gold&goldId=${transaction?.goldId ?? ""}&price=${
-                  goldSetting?.cost ?? 0
+                `/payment?type=Gold&goldId=${transaction?.goldId ?? ""}&price=${goldSetting?.cost ?? 0
                 }&name=${goldSetting?.name}`,
               );
             } else {
               router.push(
-                `/payment?type=Package&packageId=${
-                  transaction?.packageId ?? ""
-                }&price=${packageData?.price ?? 0}&name=${
-                  packageData?.name ?? ""
+                `/payment?type=Package&packageId=${transaction?.packageId ?? ""
+                }&price=${packageData?.price ?? 0}&name=${packageData?.name ?? ""
                 }`,
               );
             }
