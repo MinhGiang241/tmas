@@ -56,6 +56,7 @@ import ConfirmModal from "../components/modals/ConfirmModal";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import SendExaminationInfo from "./modals/SendExaminationInfo";
+import SendExaminationResults from "./modals/SendExaminationResults";
 
 function ExaminationPage() {
   const router = useRouter();
@@ -266,8 +267,23 @@ function ExaminationPage() {
   const [openPop, setOpenPop] = useState<string | undefined>();
   const [openExaminationInfo, setOpenExaminationInfo] =
     useState<boolean>(false);
+  const [openExaminationResults, setOpenExaminationResults] =
+    useState<boolean>(false);
+
   return (
     <HomeLayout>
+      <SendExaminationResults
+        examination={active}
+        open={openExaminationResults}
+        onCancel={() => {
+          setActive(undefined);
+          setOpenExaminationResults(false);
+        }}
+        onOk={() => {
+          setOpenExaminationResults(false);
+          setActive(undefined);
+        }}
+      />
       <SendExaminationInfo
         examination={active}
         open={openExaminationInfo}
@@ -616,9 +632,9 @@ function ExaminationPage() {
                     </div>
                     <div className="flex max-lg:mt-3">
                       <MButton
-                        onBlur={() => {
-                          setOpenPop(undefined);
-                        }}
+                        onClick={() =>
+                          router.push(`/examination/results/${v?.id}`)
+                        }
                         type="secondary"
                         text={t("result")}
                         h="h-9"
@@ -632,7 +648,7 @@ function ExaminationPage() {
                         content={
                           <div className="flex flex-col items-start">
                             <button
-                              onClick={() => {
+                              onClick={(e) => {
                                 setOpenPop(undefined);
                                 setActive(v);
                                 setOpenExaminationInfo(true);
@@ -645,6 +661,8 @@ function ExaminationPage() {
                             <button
                               onClick={() => {
                                 setOpenPop(undefined);
+                                setActive(v);
+                                setOpenExaminationResults(true);
                               }}
                               className="flex justify-start hover:bg-m_primary_100 p-1 rounded-sm w-full"
                             >
@@ -654,6 +672,9 @@ function ExaminationPage() {
                         }
                       >
                         <MButton
+                          onBlur={async () => {
+                            setTimeout(() => setOpenPop(undefined), 500);
+                          }}
                           onClick={() => setOpenPop(v.id)}
                           text={t("send_info")}
                           h="h-9"

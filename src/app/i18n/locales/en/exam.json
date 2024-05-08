@@ -137,5 +137,6 @@
   "Approved": "Approved",
   "Rejected": "Rejected",
   "approve_code": "State",
-  "reason": "Reason"
+  "reason": "Reason",
+  "phone": "Số điện thoại"
 }

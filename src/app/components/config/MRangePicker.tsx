@@ -128,8 +128,6 @@ function MRangePicker({
           showSecond={false}
           status={error && touch ? `error` : ""}
           onChange={(value: any, dateString: any) => {
-            console.log(dateString);
-
             if (setValue) {
               setValue!(name, dateString);
             }
