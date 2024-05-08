@@ -21,6 +21,7 @@ export default function Result({ params }: any) {
 
     return (
         <HomeLayout>
+            <div className='pt-4' />
             <MBreadcrumb
                 items={[
                     { text: "Danh sách đợt thi", href: "/" },
@@ -36,7 +37,8 @@ export default function Result({ params }: any) {
                 ]}
             />
             <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center pb-4">
-                <div className="">Chi tiết bài làm</div>
+                <div>Chi tiết bài làm</div>
+                <button className="w-[91px] h-[44px] bg-m_primary_500 rounded-lg text-white text-sm">Quay lại</button>
             </div>
             <div className="grid grid-cols-3">
                 <div className="col-span-2 mr-2">
