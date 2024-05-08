@@ -1,4 +1,4 @@
-// @ts-check
+
 
 self.addEventListener('push', (event) => {
     console.log('push received 1');

@@ -30,7 +30,7 @@ export default function Home() {
   )
 }
 
-export function PushSubscriptionToggleButton() {
+function PushSubscriptionToggleButton() {
   const [hasActivePushSubscription, setHasActivePushSubscription] = useState<boolean>()
 
   useEffect(() => {
