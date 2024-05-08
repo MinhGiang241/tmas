@@ -2,7 +2,12 @@
 import { useEffect, useState } from "react";
 import AccountPage from "./account/AccountPage";
 import { registerServiceWorker } from "@/utils/serviceWorker";
-import { getCurrentPushSubscription, registerPushNotifications, unregisterPushNotifications } from "@/notifiCations/pushService";
+//@ts-ignore
+import {
+  getCurrentPushSubscription,
+  registerPushNotifications,
+  unregisterPushNotifications,
+} from "@/notifiCations/pushService";
 
 export default function Home() {
   useEffect(() => {
@@ -11,35 +16,35 @@ export default function Home() {
         await registerServiceWorker();
 
         await registerPushNotifications();
-
-      }
-      catch (error) {
+      } catch (error: any) {
         console.error(error);
       }
     }
     setUpServiceWorker();
-
   }, []);
-
 
   return (
     <>
       {/* <PushSubscriptionToggleButton /> */}
       <AccountPage />
     </>
-  )
+  );
 }
 
 function PushSubscriptionToggleButton() {
-  const [hasActivePushSubscription, setHasActivePushSubscription] = useState<boolean>()
+
+  const [hasActivePushSubscription, setHasActivePushSubscription] = useState<
+    boolean | undefined
+  >();
+
 
   useEffect(() => {
     async function getActivePushSubscription() {
       const subscription = await getCurrentPushSubscription();
-      setHasActivePushSubscription(!!subscription)
+      setHasActivePushSubscription(!!subscription);
     }
     getActivePushSubscription();
-  }, [])
+  }, []);
 
   async function setPushNotificationsEnabled(enabled: boolean) {
     try {
@@ -64,15 +69,24 @@ function PushSubscriptionToggleButton() {
     <div>
       {hasActivePushSubscription ? (
         <span title="Disable push notifications on this device">
-          <div onClick={() => setPushNotificationsEnabled(false)}
-            className="cursor-pointer p-2 bg-orange-500">Tắt thông báo</div>
+          <div
+            onClick={() => setPushNotificationsEnabled(false)}
+            className="cursor-pointer p-2 bg-orange-500"
+          >
+            Tắt thông báo
+          </div>
         </span>
       ) : (
         <span title="Enable push notifications on this device">
-          <div onClick={() => setPushNotificationsEnabled(true)}
-            className="cursor-pointer p-2 bg-orange-500">Hiện thông báo</div>
+          <div
+            onClick={() => setPushNotificationsEnabled(true)}
+            className="cursor-pointer p-2 bg-orange-500"
+          >
+            Hiện thông báo
+          </div>
         </span>
       )}
     </div>
   );
 }
+
