@@ -185,7 +185,7 @@ export default function Connect({
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
           <div className="flex">
-            <div className="w-1/2 pl-4 flex">
+            <div className="w-1/2 pl-10 flex">
               <div className="font-semibold pr-1">1.</div>
               <div>1+1</div>
             </div>
@@ -196,7 +196,7 @@ export default function Connect({
           </div>
           <div className="flex">
             <div className="w-1/2 p-4">
-              <div className="text-m_primary_500 text-sm font-semibold mb-2">
+              <div className="text-m_primary_500 text-sm font-semibold mb-2 pl-6">
                 Trả lời
               </div>
               <div className="flex">

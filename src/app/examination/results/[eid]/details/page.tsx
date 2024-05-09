@@ -16,21 +16,25 @@ import Edit from '@/app/components/icons/edit-2.svg'
 import Play from '@/app/components/icons/video-circle.svg'
 import Close from '@/app/components/icons/close-circle2.svg'
 import Sql from './questions/Sql'
+import { useRouter } from 'next/navigation'
 
 export default function Result({ params }: any) {
-
+    const router = useRouter();
+    const handClick = () => {
+        router.push("/examination")
+    }
     return (
         <HomeLayout>
             <div className='pt-4' />
             <MBreadcrumb
                 items={[
-                    { text: "Danh sách đợt thi", href: "/" },
+                    { text: "Danh sách đợt thi", href: "/examination" },
                     {
-                        href: `/`,
+                        href: `/examination`,
                         text: `Kết quả đợt thi`,
                     },
                     {
-                        href: `/`,
+                        // href: `/`,
                         text: `Tên gì gì đó`,
                         active: true,
                     },
@@ -38,7 +42,7 @@ export default function Result({ params }: any) {
             />
             <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center pb-4">
                 <div>Chi tiết bài làm</div>
-                <button className="w-[91px] h-[44px] bg-m_primary_500 rounded-lg text-white text-sm">Quay lại</button>
+                <button onClick={handClick} className="w-[91px] h-[44px] bg-m_primary_500 rounded-lg text-white text-sm">Quay lại</button>
             </div>
             <div className="grid grid-cols-3">
                 <div className="col-span-2 mr-2">
@@ -81,7 +85,7 @@ export default function Result({ params }: any) {
                             <div className='font-bold text-base text-m_primary_500'>Tên gì gì đó</div>
                             <div className='bg-m_success_50 px-4 py-1 flex items-center'>
                                 <div className='font-bold text-lg text-m_success_600'>8</div>
-                                <div className='text-m_success_600'>/10đ</div>
+                                <div className='text-m_success_600 text-sm'>/10&nbsp;<b>đ</b></div>
                             </div>
                         </div>
                         <hr />
