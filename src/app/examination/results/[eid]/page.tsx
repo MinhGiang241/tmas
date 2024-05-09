@@ -28,6 +28,7 @@ import dayjs from "dayjs";
 import FilterModal from "./components/FilterModal";
 import { FormikErrors, useFormik } from "formik";
 import { CloseOutlined } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
 
 function ResultPage({ params }: any) {
   const { t } = useTranslation("exam");
@@ -36,6 +37,7 @@ function ResultPage({ params }: any) {
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(1);
+  const router = useRouter();
 
   const data = [
     { label: "pass", name: t("pass"), value: 100 },
@@ -180,6 +182,20 @@ function ResultPage({ params }: any) {
         </p>
       ),
     },
+    {
+      onHeaderCell: (_) => rowStyle,
+      title: <div className="w-full flex justify-start">{t("status")}</div>,
+      dataIndex: "status",
+      key: "status",
+      render: (text) => (
+        <p
+          key={text}
+          className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
+        >
+          {text}
+        </p>
+      ),
+    },
 
     {
       onHeaderCell: (_) => rowStyle,
@@ -246,7 +262,11 @@ function ResultPage({ params }: any) {
       key: "detail",
       render: (text) => (
         <div className="w-full flex justify-center">
-          <button>
+          <button
+            onClick={() => {
+              router.push(`/examination/results/${params?.eid}/details`);
+            }}
+          >
             <EyeIcon />
           </button>
         </div>
@@ -301,7 +321,7 @@ function ResultPage({ params }: any) {
       <div className="h-3" />
       <MBreadcrumb
         items={[
-          { text: t("exam_list"), href: "/examination" },
+          { text: t("exam_test"), href: "/examination" },
           {
             href: `/examination/result/${params?.eid}`,
             text: t("examination_result"),
@@ -349,7 +369,7 @@ function ResultPage({ params }: any) {
                     <div className={`rounded w-3 h-2 bg-[#6DB3C2] mr-2`} />
                     <span className="body_regular_14">{t("pass")}</span>
                   </div>
-                  <div className="body_semibold_14">40%</div>
+                  <div className="body_semibold_14">75%</div>
                 </div>
 
                 <div className="flex mt-2 justify-between mx-2 border-b border-b-m_neutral_100">
@@ -357,7 +377,7 @@ function ResultPage({ params }: any) {
                     <div className={`rounded w-3 h-2 bg-[#FC8800] mr-2`} />
                     <span className="body_regular_14">{t("not_pass")}</span>
                   </div>
-                  <div className="body_semibold_14">60%</div>
+                  <div className="body_semibold_14">25%</div>
                 </div>
 
                 {e === 3 && (
@@ -400,8 +420,9 @@ function ResultPage({ params }: any) {
             />
           </div>
         </div>
-        <div className="h-5" />
+        {/* <div className="h-5" /> */}
         <div className="flex flex-wrap">
+          <Divider className="my-4" />
           {Object.keys(filterValues).map((e) => {
             if (!(filterValues as any)[e]) {
               return null;
@@ -414,7 +435,11 @@ function ResultPage({ params }: any) {
                 <span className="body_semibold_14 mr-1">{`${t(e)}: `}</span>
                 <span className="body_regular_14">
                   {" "}
-                  {`${(filterValues as any)[e]}`}
+                  {`${
+                    e == "test_date"
+                      ? (filterValues as any)[e].join(" - ")
+                      : (filterValues as any)[e]
+                  }`}
                 </span>
                 <button
                   className="ml-2"
@@ -433,7 +458,7 @@ function ResultPage({ params }: any) {
         </div>
         <div className="h-5" />
         <Table
-          className="w-full"
+          className="w-full max-lg:overflow-scroll"
           bordered={false}
           columns={columns}
           dataSource={infos}

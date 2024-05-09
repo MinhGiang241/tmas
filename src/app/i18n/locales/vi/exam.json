@@ -332,5 +332,6 @@
   "download_error_list": "Tải danh sách lỗi",
   "required_code": "Mã yêu cầu",
   "access_code": "Mã truy cập",
-  "dup_email": "Đã tồn tại thông tin người nhận trong danh sách mới"
+  "dup_email": "Đã tồn tại thông tin người nhận trong danh sách mới",
+  "join_date": "Ngày tham gia"
 }
