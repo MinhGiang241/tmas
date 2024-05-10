@@ -137,7 +137,7 @@ function DetailsPage({ params }: any) {
       if (res?.data?.records?.length > 0) {
         setData(res?.data?.records[0]);
       }
-      // console.log(res?.data?.records[0], "data res");
+      console.log(res?.data?.records[0], "data res");
     }
 
   }
@@ -158,7 +158,8 @@ function DetailsPage({ params }: any) {
             // { text: exam?.name, href: `/exams/details/${exam?.id}` },
             {
               href: `/exams/details/${data?.id}`,
-              text: data?.name ?? examData?.exam?.name,
+              // text: data?.name ?? examData?.exam?.name,
+              text: data?.examVersion?.exam?.name ?? examData?.exam?.name,
               active: true,
             },
           ]}
@@ -166,7 +167,8 @@ function DetailsPage({ params }: any) {
         <div className="h-2" />
         <div className="w-full max-lg:px-3 mb-5">
           <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center ">
-            <div className="">{data?.name ?? examData?.exam?.name}</div>
+            <div className="">{data?.examVersion?.exam?.name ?? examData?.exam?.name}</div>
+            {/* <div className="">{data?.name ?? examData?.exam?.name}</div> */}
             <div className="flex">
             </div>
           </div>
