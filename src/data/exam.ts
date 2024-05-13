@@ -422,3 +422,67 @@ export interface RemindEmailData {
   passcode?: string;
   errorMessage?: string;
 }
+
+export interface ExaminationResultParams {
+  id?: string;
+  idExamTest?: string;
+  joinTest?: {
+    codeJoin?: string;
+    joinCouter?: number;
+    canContinueDoTest?: boolean;
+  };
+  candidate?: {
+    ip4?: string;
+    idUser?: string;
+    fullName?: string;
+    accessCode?: string;
+    phoneNumber?: string;
+    email?: string;
+    birthDay?: string;
+    groupTest?: string;
+    jobName?: string;
+    identifier?: string;
+  };
+  candidateAnswers?: [
+    {
+      idExamQuestion?: string;
+      candidateAnswerJson?: string;
+      anwserScore?: {
+        score?: number;
+        totalScore?: number;
+        numberQuestionCorrect?: number;
+        totalQuestion?: number;
+        isAnwsered?: boolean;
+      };
+    },
+    {
+      idExamQuestion?: string;
+      candidateAnswerJson?: string;
+      anwserScore?: {
+        score?: number;
+        totalScore?: number;
+        numberQuestionCorrect?: number;
+        totalQuestion?: number;
+        isAnwsered?: boolean;
+      };
+    },
+  ];
+  timeLine?: {
+    startDoTestAt?: string;
+    mustStopDoTestAt?: string;
+    commitTestAt?: string;
+    totalTimeDoTestSeconds?: number;
+    timeLines?: [
+      {
+        createTime?: string;
+        eventType?: string;
+        message?: string;
+      },
+      {
+        createTime?: string;
+        eventType?: string;
+        message?: string;
+      },
+    ];
+  };
+}
