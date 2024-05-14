@@ -333,5 +333,12 @@
   "required_code": "Mã yêu cầu",
   "access_code": "Mã truy cập",
   "dup_email": "Đã tồn tại thông tin người nhận trong danh sách mới",
-  "join_date": "Ngày tham gia"
+  "join_date": "Ngày tham gia",
+  "essay_question": "Câu hỏi tự luận",
+  "has_essay": "Có {{num}} câu hỏi tự luận cần chấm điểm",
+  "part": "Phần",
+  "true_answer_num": "Số câu đúng (chưa tính câu tự luận)",
+  "test_time_1": "Thời gian làm bài",
+  "start_test": "Bắt đầu làm bài",
+  "submit_test": "Nộp bài thi"
 }

@@ -71,7 +71,7 @@ function AccountPage() {
       ),
     );
     sendNotification();
-    console.log("Sendtest noti")
+    console.log("Sendtest noti");
   }, [dispatch, indexTab]);
 
   const [transaction, setTransaction] = useState<TransactionData | undefined>();
@@ -113,17 +113,20 @@ function AccountPage() {
         onOk={() => {
           setOpenModal(false);
           if (vnp_ResponseCode === "00") {
-            router.push("/");
+            router.push(process.env.NEXT_PUBLIC_MARKET_URL!);
           } else {
             if (transaction?.product_type === "Gold") {
               router.push(
-                `/payment?type=Gold&goldId=${transaction?.goldId ?? ""}&price=${goldSetting?.cost ?? 0
+                `/payment?type=Gold&goldId=${transaction?.goldId ?? ""}&price=${
+                  goldSetting?.cost ?? 0
                 }&name=${goldSetting?.name}`,
               );
             } else {
               router.push(
-                `/payment?type=Package&packageId=${transaction?.packageId ?? ""
-                }&price=${packageData?.price ?? 0}&name=${packageData?.name ?? ""
+                `/payment?type=Package&packageId=${
+                  transaction?.packageId ?? ""
+                }&price=${packageData?.price ?? 0}&name=${
+                  packageData?.name ?? ""
                 }`,
               );
             }
@@ -201,10 +204,11 @@ function AccountPage() {
             onClick={() => {
               router.push("/?tab=0");
             }}
-            className={`h-[52px] ${index === "0"
-              ? "bg-m_primary_100 body_semibold_14"
-              : "body_regular_14"
-              } flex items-center justify-start rounded-lg w-full pl-1`}
+            className={`h-[52px] ${
+              index === "0"
+                ? "bg-m_primary_100 body_semibold_14"
+                : "body_regular_14"
+            } flex items-center justify-start rounded-lg w-full pl-1`}
           >
             <SecurityAvatar className="min-w-5" />
             <p className="mx-2">{t("account_management")}</p>
@@ -214,10 +218,11 @@ function AccountPage() {
             onClick={() => {
               router.push("/?tab=1");
             }}
-            className={`h-[52px] ${index === "1"
-              ? "bg-m_primary_100 body_semibold_14"
-              : "body_regular_14"
-              } flex items-center justify-start rounded-lg w-full pl-1`}
+            className={`h-[52px] ${
+              index === "1"
+                ? "bg-m_primary_100 body_semibold_14"
+                : "body_regular_14"
+            } flex items-center justify-start rounded-lg w-full pl-1`}
           >
             <Avatar className="min-w-5" />
             <p className="mx-2">{t("gold_manage")}</p>
@@ -226,10 +231,11 @@ function AccountPage() {
             onClick={() => {
               router.push("/?tab=2");
             }}
-            className={`h-[52px] ${index === "2"
-              ? "bg-m_primary_100 body_semibold_14"
-              : "body_regular_14"
-              } flex items-center justify-start rounded-lg w-full pl-1`}
+            className={`h-[52px] ${
+              index === "2"
+                ? "bg-m_primary_100 body_semibold_14"
+                : "body_regular_14"
+            } flex items-center justify-start rounded-lg w-full pl-1`}
           >
             <Avatar className="min-w-5" />
             <p className="mx-2">{t("personal_information")}</p>
@@ -239,10 +245,11 @@ function AccountPage() {
             onClick={() => {
               router.push("/?tab=3");
             }}
-            className={`h-[52px] ${index === "3"
-              ? "bg-m_primary_100 body_semibold_14"
-              : "body_regular_14"
-              } flex items-center justify-start rounded-lg w-full pl-1`}
+            className={`h-[52px] ${
+              index === "3"
+                ? "bg-m_primary_100 body_semibold_14"
+                : "body_regular_14"
+            } flex items-center justify-start rounded-lg w-full pl-1`}
           >
             <BuildingIcon className="min-w-5" />
             <p className="mx-2">{t("business_information")}</p>
@@ -252,10 +259,11 @@ function AccountPage() {
             onClick={() => {
               router.push("/?tab=4");
             }}
-            className={`h-[52px] ${index === "4"
-              ? "bg-m_primary_100 body_semibold_14"
-              : "body_regular_14"
-              } flex items-center justify-start rounded-lg w-full pl-1`}
+            className={`h-[52px] ${
+              index === "4"
+                ? "bg-m_primary_100 body_semibold_14"
+                : "body_regular_14"
+            } flex items-center justify-start rounded-lg w-full pl-1`}
           >
             <ClockIcon className="min-w-5" />
             <p className="mx-2">{t("history_upgrade")}</p>
