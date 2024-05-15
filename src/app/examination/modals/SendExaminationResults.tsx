@@ -1,13 +1,19 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   rowEndStyle,
   rowStartStyle,
   rowStyle,
 } from "@/app/account/account-info/AccountInfo";
 import BaseModal, { BaseModalProps } from "@/app/components/config/BaseModal";
-import { ExaminationData } from "@/data/exam";
+import {
+  Condition,
+  ExamTestResulstData,
+  ExaminationData,
+  RemindEmailData,
+} from "@/data/exam";
 import Table, { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import React, { HTMLAttributes, useState } from "react";
+import React, { HTMLAttributes, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import EyeIcon from "@/app/components/icons/eye.svg";
 import TrashIcon from "@/app/components/icons/trash.svg";
@@ -16,11 +22,21 @@ import MDropdown from "@/app/components/config/MDropdown";
 import { SettingData } from "@/data/user";
 import { loadConfig } from "@/services/api_services/account_services";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
-import { getTemplateSendMail } from "@/services/api_services/examination_api";
+import {
+  getTemplateSendMail,
+  loadRemindMailList,
+  sendRemindEmail,
+  sendResultEmail,
+} from "@/services/api_services/examination_api";
 import MInput from "@/app/components/config/MInput";
 import PushIcon from "@/app/components/icons/push.svg";
 import { Pagination, Select, Tooltip } from "antd";
 import AddCircleIcon from "@/app/components/icons/add-circle.svg";
+import { getPagingAdminExamTestResult } from "@/services/api_services/result_exam_api";
+import { FormattedNumber } from "react-intl";
+import { errorToast, successToast } from "@/app/components/toast/customToast";
+import _ from "lodash";
+import { useRouter } from "next/navigation";
 
 interface Props extends BaseModalProps {
   examination?: ExaminationData;
@@ -37,6 +53,9 @@ function SendExaminationResults(props: Props) {
   const [config, setConfig] = useState<SettingData | undefined>();
   const [media, setMedia] = useState("email");
   const [template, setTemplate] = useState<string | undefined>();
+  const [sendLoading, setSendLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const getSetting = async () => {
     var res = await loadConfig();
@@ -46,22 +65,85 @@ function SendExaminationResults(props: Props) {
     setConfig(res.data);
   };
   const getTemplateMail = async () => {
-    var res = await getTemplateSendMail();
-
-    console.log("res", res);
-
+    var res = await getTemplateSendMail({
+      name: props.examination?.name,
+      start_time: props.examination?.validAccessSetting?.validFrom,
+      end_time: props.examination?.validAccessSetting?.validTo,
+    });
+    console.log("res template", res);
     if (res?.code != 0) {
       return;
     }
-    setTemplate(res?.data);
+    setTemplate(res?.data?.body);
   };
 
   useOnMountUnsafe(() => {
-    getTemplateMail();
     getSetting();
   });
+  const [newData, setNewData] = useState<TableValue[]>([]);
 
-  const columns: ColumnsType<any> = [
+  const getListResults = async () => {
+    var res = await getPagingAdminExamTestResult({
+      paging: {
+        recordPerPage: 10000000, //recordNum,
+        startIndex: indexPage,
+      },
+      filters: [
+        {
+          fieldName: "idExamTest",
+          value: props.examination?.id,
+          condition: Condition.eq,
+        },
+      ],
+    });
+    if (res.code != 0) {
+      return;
+    }
+    var data: ExamTestResulstData[] = res.data?.records;
+    var news = data?.map<TableValue>((e) => ({
+      id: e.id,
+      email: e?.candidate?.email,
+      name: e?.candidate?.fullName,
+      passcode: e?.candidate?.accessCode,
+      point: e?.result?.score,
+      point_status: e?.result?.passState,
+      status: "New",
+      time: e?.timeLine?.timeLines?.find((r) => r.eventType === "Start")
+        ?.createTime,
+    }));
+
+    setNewData(news);
+    setTotal(res?.data?.totalOfRecords);
+    getEmailList(news);
+    console.log("esss", res);
+  };
+
+  useEffect(() => {
+    var id: any;
+    if (props.open) {
+      getTemplateMail();
+      getListResults();
+      id = setInterval(() => {
+        getListResults();
+      }, 5000);
+    }
+    return () => {
+      clearInterval(id);
+    };
+  }, [props.open, props.examination]);
+
+  interface TableValue {
+    id?: string;
+    name?: string;
+    email?: string;
+    passcode?: string;
+    time?: string;
+    point?: number;
+    status?: string;
+    point_status?: string;
+    send_time?: string;
+  }
+  const columns: ColumnsType<TableValue> = [
     {
       onHeaderCell: (_) => rowStartStyle,
 
@@ -156,7 +238,11 @@ function SendExaminationResults(props: Props) {
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {text ? dayjs(text).format(dateFormat) : ""}
+          <FormattedNumber
+            value={text ?? 0}
+            style="decimal"
+            maximumFractionDigits={2}
+          />
         </p>
       ),
     },
@@ -168,6 +254,49 @@ function SendExaminationResults(props: Props) {
       )
         ? "10%"
         : "10%",
+      title: (
+        <div className="w-full flex justify-start">{t("point_status")}</div>
+      ),
+      dataIndex: "point_status",
+      key: "point_status",
+      render: (text, data) => (
+        <p
+          key={text}
+          className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
+        >
+          {text == "Pass" ? t("pass") : ""}
+        </p>
+      ),
+    },
+
+    {
+      onHeaderCell: (_) => rowStyle,
+      width: !(
+        props.examination?.accessCodeSettingType === "MultiCode" &&
+        props.examination?.sharingSetting == "Private"
+      )
+        ? "10%"
+        : "10%",
+      title: <div className="w-full flex justify-start">{t("send_time")}</div>,
+      dataIndex: "send_time",
+      key: "send_time",
+      render: (text) => (
+        <p
+          key={text}
+          className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
+        >
+          {text == "Pending" ? t("Pending_2") : t(text)}
+        </p>
+      ),
+    },
+    {
+      onHeaderCell: (_) => rowStyle,
+      width: !(
+        props.examination?.accessCodeSettingType === "MultiCode" &&
+        props.examination?.sharingSetting == "Private"
+      )
+        ? "11%"
+        : "11%",
       title: <div className="w-full flex justify-start">{t("status")}</div>,
       dataIndex: "status",
       key: "status",
@@ -193,20 +322,79 @@ function SendExaminationResults(props: Props) {
             className="ml-2"
             onClick={() => {
               setActive(data);
+              router.push(
+                `/examination/results/${props.examination?.id}/details?examTestId=${data?.id}`,
+              );
             }}
           >
             <EyeIcon />
           </button>
 
-          {data?.status == "New" && (
-            <button className="ml-2" onClick={async () => {}}>
-              <TrashIcon />
-            </button>
-          )}
+          {/* {data?.status == "New" && ( */}
+          {/*   <button className="ml-2" onClick={async () => {}}> */}
+          {/*     <TrashIcon /> */}
+          {/*   </button> */}
+          {/* )} */}
         </div>
       ),
     },
   ];
+
+  const handleSendMail = async (e: any) => {
+    setSendLoading(true);
+    const res = await sendResultEmail({
+      maillist: [
+        ...newData
+          ?.filter((r) => r.status == "New")
+          .map((t) => ({
+            email: t.email,
+            passcode:
+              props.examination?.sharingSetting === "Private" &&
+              props.examination?.accessCodeSettingType == "One"
+                ? props.examination?.accessCodeSettings![0].code
+                : props.examination?.sharingSetting === "Private" &&
+                    props.examination?.accessCodeSettingType == "MultiCode"
+                  ? t.passcode
+                  : undefined,
+          })),
+      ],
+      methods: media,
+      examtestId: props.examination?.id,
+      body: template,
+      name: props.examination?.name,
+      start_time: props.examination?.validAccessSetting?.validFrom,
+      end_time: props.examination?.validAccessSetting?.validTo,
+    });
+    console.log("send result email", res);
+    setSendLoading(false);
+    if (res.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    successToast(t("success_send_remind"));
+    getEmailList(newData);
+  };
+
+  const getEmailList = async (data: TableValue[]) => {
+    const res = await loadRemindMailList(props.examination?.id, "HasResult");
+    if (res.code != 0) {
+      //errorToast(res?.message??"")
+      return;
+    }
+    var cloneData = _.cloneDeep(data);
+    var d: RemindEmailData[] = res.data;
+    var c = cloneData.map((e) => {
+      var i = d?.findIndex((k) => k?.email == e.email);
+      if (i < 0) {
+        return e;
+      }
+      var f = _.cloneDeep(e);
+      f.status = d[i as number].status;
+      f.send_time = d[i as number].sentTime;
+      return f;
+    });
+    setNewData(c);
+  };
 
   return (
     <BaseModal {...props} width={1027}>
@@ -244,7 +432,7 @@ function SendExaminationResults(props: Props) {
         />
 
         <div className="mt-2 body_semibold_14 flex items-center justify-between">
-          <div>{t("receipt_info_list")}</div>
+          <div>{t("receipt_result_list")}</div>
           <div className="flex items-center w-1/3">
             <MInput
               value={search}
@@ -261,13 +449,25 @@ function SendExaminationResults(props: Props) {
         </div>
         <div className="flex">
           <p className="body_regular-14 mr-3">
-            {t("sending")}:<span className="body_semibold_14 ml-1">0/0</span>
+            {t("sending")}:
+            <span className="body_semibold_14 ml-1">
+              {newData.filter((e) => e.status == "Pending").length}/
+              {newData.length}
+            </span>
           </p>
           <p className="body_regular-14 mr-3">
-            {t("sent")}: <span className="body_semibold_14 ">0/0</span>
+            {t("sent")}:{" "}
+            <span className="body_semibold_14 ">
+              {newData.filter((e) => e.status == "Success").length}/
+              {newData.length}
+            </span>
           </p>
           <p className="body_regular-14 mr-3">
-            {t("error")}:<span className="body_semibold_14 ml-1">0/0</span>
+            {t("error")}:
+            <span className="body_semibold_14 ml-1">
+              {newData.filter((e) => e.status == "Failure").length}/
+              {newData.length}
+            </span>
           </p>
         </div>
         <div className="max-lg:overflow-scroll">
@@ -275,7 +475,15 @@ function SendExaminationResults(props: Props) {
             className="w-full"
             bordered={false}
             columns={columns}
-            dataSource={[]}
+            dataSource={_.filter(newData, (n: RemindEmailData) => {
+              if (search) {
+                return (
+                  n.email?.toLowerCase().includes(search?.toLowerCase()) ||
+                  n.passcode?.toLowerCase().includes(search?.toLowerCase())
+                );
+              }
+              return true;
+            })?.splice((indexPage - 1) * recordNum, recordNum)}
             pagination={false}
             rowKey={"id"}
             onRow={(data: any, index: any) =>
@@ -290,7 +498,17 @@ function SendExaminationResults(props: Props) {
         </div>
         <div className="h-4" />
         <div className="w-full flex h-12 items-center  justify-center">
-          <span className="body_regular_14 mr-2">{`${0} ${t("result")}`}</span>
+          <span className="body_regular_14 mr-2">{`${
+            _.filter(newData, (n: RemindEmailData) => {
+              if (search) {
+                return (
+                  n.email?.toLowerCase().includes(search?.toLowerCase()) ||
+                  n.passcode?.toLowerCase().includes(search?.toLowerCase())
+                );
+              }
+              return true;
+            })?.length ?? 0
+          } ${t("result")}`}</span>
           <Pagination
             i18nIsDynamicList
             pageSize={recordNum}
@@ -327,7 +545,13 @@ function SendExaminationResults(props: Props) {
           </div>
         </div>
         <div className="w-full mt-4 flex justify-center">
-          <MButton h="h-9" className="w-[114px] " text={t("send")} />
+          <MButton
+            loading={sendLoading}
+            onClick={handleSendMail}
+            h="h-9"
+            className="w-[114px] "
+            text={t("send")}
+          />
         </div>
       </div>
     </BaseModal>

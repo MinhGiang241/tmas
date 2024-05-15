@@ -258,6 +258,7 @@
   "media": "Phương tiện truyền thông",
   "send_content": "Nội dung gửi",
   "receipt_info_list": "Danh sách nhận thông tin",
+  "receipt_result_list": "Danh sách nhận kết quả",
   "send_time": "Thới gian gửi",
   "sending": "Đang gửi",
   "sent": "Đã gửi",
@@ -340,5 +341,6 @@
   "true_answer_num": "Số câu đúng (chưa tính câu tự luận)",
   "test_time_1": "Thời gian làm bài",
   "start_test": "Bắt đầu làm bài",
-  "submit_test": "Nộp bài thi"
+  "submit_test": "Nộp bài thi",
+  "point_status": "Trạng thái điểm"
 }

@@ -72,19 +72,22 @@ function SendExaminationInfo(props: Props) {
   };
 
   useOnMountUnsafe(() => {
-    getTemplateMail();
     getSetting();
   });
   const getTemplateMail = async () => {
-    var res = await getTemplateSendMail();
+    var res = await getTemplateSendMail({
+      name: props.examination?.name,
+      start_time: props.examination?.validAccessSetting?.validFrom,
+      end_time: props.examination?.validAccessSetting?.validTo,
+    });
 
     console.log("res", res);
 
     if (res?.code != 0) {
       return;
     }
-    setTemplate(res?.data);
-    setSendContent(res?.data);
+    setTemplate(res?.data?.body);
+    setSendContent(res?.data?.body);
   };
 
   const columns: ColumnsType<any> = [
@@ -240,6 +243,7 @@ function SendExaminationInfo(props: Props) {
   useEffect(() => {
     var id: any;
     if (props.open) {
+      getTemplateMail();
       getEmailList();
       id = setInterval(() => {
         getEmailList();
@@ -258,7 +262,7 @@ function SendExaminationInfo(props: Props) {
   const [media, setMedia] = useState("email");
 
   const getEmailList = async () => {
-    const res = await loadRemindMailList(props.examination?.id);
+    const res = await loadRemindMailList(props.examination?.id, "Reminder");
     console.log("res list", res);
     if (res?.code != 0) {
       return;

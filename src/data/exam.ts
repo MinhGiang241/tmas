@@ -2,8 +2,10 @@ import { ExaminationVersionState } from "@/services/api_services/examination_bc_
 import {
   AccessCodeExaminantionSetting,
   CodingDataType,
+  PartObject,
 } from "./form_interface";
 import { BaseQuestionData, QuestionType } from "./question";
+import { TagData } from "./tag";
 
 export interface ExamGroupData {
   name?: string;
@@ -50,6 +52,10 @@ export interface ExamListDataResult {
 
 export interface ExamData {
   examinations?: ExaminationData[];
+  approvedState?: {
+    approvedState?: "Approved" | "Pending" | "Rejected";
+    rejectedMessage?: string;
+  };
   changePositionQuestion?: boolean;
   name?: string;
   numberOfTests?: number;
@@ -72,6 +78,7 @@ export interface ExamData {
   createdBy?: string;
   updateTime?: string;
   updateBy?: string;
+  unsignedName?: string;
   studioId?: string;
   idSession?: string;
 }
@@ -422,6 +429,35 @@ export interface RemindEmailData {
   passcode?: string;
   errorMessage?: string;
 }
+export enum Condition {
+  eq = "eq",
+  ne = "ne",
+  gt = "gt",
+  gte = "gte",
+  lt = "lt",
+  lte = "lte",
+  inArray = "inArray",
+  ninArray = "ninArray",
+}
+
+export interface PagingAdminExamTestResultParams {
+  paging?: {
+    startIndex?: number;
+    recordPerPage?: number;
+  };
+  ids?: string[];
+  studioSorters?: [
+    {
+      name?: string;
+      isAsc?: boolean;
+    },
+  ];
+  filters?: {
+    fieldName?: string;
+    condition?: Condition;
+    value?: string;
+  }[];
+}
 
 export interface ExaminationResultParams {
   id?: string;
@@ -484,5 +520,75 @@ export interface ExaminationResultParams {
         message?: string;
       },
     ];
+  };
+}
+
+export interface ExamTestResulstData {
+  candidate?: {
+    accessCode?: string;
+    birthDay?: string;
+    email?: string;
+    fullName?: string;
+    groupTest?: string;
+    idUser?: string;
+    identifier?: string;
+    ip4?: string;
+    jobName?: string;
+    phoneNumber?: string;
+  };
+  candidateAnswers?: {
+    anwserScore?: {
+      isAnwsered?: boolean;
+      numberQuestionCorrect?: number;
+      score?: number;
+      totalQuestion?: number;
+      totalScore?: number;
+    };
+    idExamQuestion?: string;
+    candidateAnswerJson?: string;
+  }[];
+  createdBy?: string;
+  createdTime?: string;
+  examTestDataCreatedWhenTest?: {
+    examTestInfo?: ExaminationData;
+    examVersion?: {
+      documents?: any[];
+      exam?: ExamData;
+      groupExams?: ExamGroupData[];
+      jsonExamQuestions?: string[];
+      parts?: PartObject[];
+      tags?: TagData[];
+    };
+  };
+  id?: string;
+  idExamTest?: string;
+  joinTest?: {
+    canContinueDoTest?: boolean;
+    codeJoin?: string;
+    joinCouter?: number;
+  };
+  ownerId?: string;
+  result?: {
+    completionState?: "Doing" | "Checking" | "Done";
+    couter?: any;
+    numberQuestionNeedCheck?: number;
+    passState?: "Pass" | "NotCheck" | "NotPass";
+    percentComplete?: number;
+    percentCorrect?: number;
+    score?: number;
+  };
+  studioId?: string;
+  updateBy?: string;
+  updateTime?: string;
+  timeLine?: {
+    commitTestAt?: any;
+    mustStopDoTestAt?: string;
+    startDoTestAt?: string;
+    timeLines?: {
+      createTime?: string;
+      eventType?: string;
+      message?: string;
+    }[];
+    totalTimeDoTestSeconds?: number;
   };
 }
