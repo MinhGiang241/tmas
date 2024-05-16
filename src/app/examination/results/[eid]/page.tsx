@@ -133,19 +133,9 @@ function ResultPage({ params }: any) {
   };
   const [filterValues, setFilterValues] = useState<FormFilterValue>({});
   const downloadExcell = () => {
-    // Tạo Blob từ dữ liệu nhị phân
-    const blob = new Blob([fileExel], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    // const obj: any = { dd: "ello" };
-    // const blob = new Blob([JSON.stringify(obj, null, 2)], {
-    //   type: "application/json",
-    // });
-    // var url = URL.createObjectURL(blob);
-    // window.open(url);
-
-    // Sử dụng FileSaver để lưu tệp
-    saveAs(blob, "output.xlsx");
+    router.replace(
+      `${process.env.NEXT_PUBLIC_API_STU}/api/studio/AdminExamTestResult/ExportExcel/${examination?.id}`,
+    );
   };
 
   useEffect(() => {
