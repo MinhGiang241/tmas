@@ -37,6 +37,7 @@ import { FormattedNumber } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import _ from "lodash";
 import { useRouter } from "next/navigation";
+import ContentDetailsModal from "./ContentDetailsModal";
 
 interface Props extends BaseModalProps {
   examination?: ExaminationData;
@@ -54,6 +55,7 @@ function SendExaminationResults(props: Props) {
   const [media, setMedia] = useState("email");
   const [template, setTemplate] = useState<string | undefined>();
   const [sendLoading, setSendLoading] = useState<boolean>(false);
+  const [openDetail, setOpenDetail] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -86,7 +88,7 @@ function SendExaminationResults(props: Props) {
     var res = await getPagingAdminExamTestResult({
       paging: {
         recordPerPage: 10000000, //recordNum,
-        startIndex: indexPage,
+        startIndex: 1,
       },
       filters: [
         {
@@ -142,6 +144,8 @@ function SendExaminationResults(props: Props) {
     status?: string;
     point_status?: string;
     send_time?: string;
+    reason_error?: string;
+    content_send?: string;
   }
   const columns: ColumnsType<TableValue> = [
     {
@@ -285,7 +289,9 @@ function SendExaminationResults(props: Props) {
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {text == "Pending" ? t("Pending_2") : t(text)}
+          {text == "Pending"
+            ? t("Pending_2")
+            : dayjs(text).format("DD/MM/YYYY HH:mm")}
         </p>
       ),
     },
@@ -322,9 +328,7 @@ function SendExaminationResults(props: Props) {
             className="ml-2"
             onClick={() => {
               setActive(data);
-              router.push(
-                `/examination/results/${props.examination?.id}/details?examTestId=${data?.id}`,
-              );
+              setOpenDetail(true);
             }}
           >
             <EyeIcon />
@@ -391,13 +395,30 @@ function SendExaminationResults(props: Props) {
       var f = _.cloneDeep(e);
       f.status = d[i as number].status;
       f.send_time = d[i as number].sentTime;
+      f.content_send = d[i as number].body;
+      f.reason_error = d[i as number].errorMessage;
       return f;
     });
+
     setNewData(c);
   };
 
   return (
     <BaseModal {...props} width={1027}>
+      <ContentDetailsModal
+        data={active}
+        open={openDetail}
+        width={564}
+        title={t("detail")}
+        onCancel={() => {
+          setActive(undefined);
+          setOpenDetail(false);
+        }}
+        onOk={() => {
+          setOpenDetail(false);
+          setActive(undefined);
+        }}
+      />
       <div className="w-full">
         <div className="title_bold_24 text-center w-full mt-3">
           {t("send_result_info")}

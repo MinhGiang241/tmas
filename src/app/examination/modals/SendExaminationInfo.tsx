@@ -354,12 +354,19 @@ function SendExaminationInfo(props: Props) {
         }}
       />
       <ContentDetailsModal
-        data={active}
+        data={{
+          content_send: active?.body,
+          reason_error: active?.errorMessage,
+        }}
         open={openDetal}
         width={564}
         title={t("detail")}
-        onCancel={() => setOpenDetail(false)}
+        onCancel={() => {
+          setActive(undefined);
+          setOpenDetail(false);
+        }}
         onOk={() => {
+          setActive(undefined);
           setOpenDetail(false);
         }}
       />

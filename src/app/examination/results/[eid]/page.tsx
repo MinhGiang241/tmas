@@ -1,19 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import MBreadcrumb from "@/app/components/config/MBreadcrumb";
 import HomeLayout from "@/app/layouts/HomeLayout";
 import { Divider, Pagination, Select, Table } from "antd";
-import React, { HTMLAttributes, useState } from "react";
+import React, { HTMLAttributes, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _, { keys } from "lodash";
-import {
-  PieChart,
-  Pie,
-  Sector,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from "recharts";
 import MButton from "@/app/components/config/MButton";
 import DownloadIcon from "@/app/components/icons/download.svg";
 import FilterIcon from "@/app/components/icons/filter.svg";
@@ -25,10 +17,26 @@ import {
 } from "@/app/account/account-info/AccountInfo";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
 import FilterModal from "./components/FilterModal";
 import { FormikErrors, useFormik } from "formik";
 import { CloseOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
+import {
+  exportExelFile,
+  getOverViewExamination,
+} from "@/services/api_services/examination_api";
+import {
+  Condition,
+  ExamCompletionState,
+  ExamTestResulstData,
+  ExaminationData,
+} from "@/data/exam";
+import Chart from "./components/Chart";
+import { getPagingAdminExamTestResult } from "@/services/api_services/result_exam_api";
+import { saveAs } from "file-saver";
+
+dayjs.extend(duration);
 
 function ResultPage({ params }: any) {
   const { t } = useTranslation("exam");
@@ -39,53 +47,113 @@ function ResultPage({ params }: any) {
   const [total, setTotal] = useState<number>(1);
   const router = useRouter();
 
-  const data = [
-    { label: "pass", name: t("pass"), value: 100 },
-    { label: "not_pass", name: t("not_pass"), value: 300 },
-  ];
+  interface TableValue {
+    id?: string;
+    full_name?: string;
+    percent_complete?: string;
+    point?: number;
+    complete_time?: string;
+    test_date?: string;
+    status?: string;
+    email?: string;
+    phone?: string;
+    group?: string;
+    identify_code?: string;
+  }
+  interface FilterObject {
+    fieldName?: string;
+    value?: any;
+    condition?: Condition;
+  }
 
-  const COLORS = ["#FC8800", "#6DB3C2", "#775DA6"];
-  const RADIAN = Math.PI / 180;
+  const [infos, setInfos] = useState<TableValue[]>([]);
+  const [filters, setFilters] = useState<FilterObject[]>([]);
 
-  const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-    index,
-  }: any) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  const [examination, setExamination] = useState<ExaminationData | undefined>();
 
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
+  const getExaminationDetail = async () => {
+    var res = await getOverViewExamination(params.eid);
+    if (res.code != 0) {
+      return;
+    }
+    setExamination(res?.data?.records[0]);
+    getListResults(res?.data?.records[0]);
   };
-  const infos = [
-    {
-      full_name: "Trương Minh Giang",
-      percent_complete: "10%",
-      point: 100,
-      complete_time: "30 phút",
-      test_date: "2024-04-19T02:11:24.096+0000",
-      status: "Chưa hoàn thành",
-      email: "minhgiang241@gmail.com",
-      phone: "0367333592",
-      group: "Chim",
-      identify_code: "5045",
-    },
-  ];
+
+  const getListResults = async (examTest?: ExaminationData) => {
+    var res = await getPagingAdminExamTestResult({
+      paging: {
+        recordPerPage: recordNum,
+        startIndex: indexPage,
+      },
+      filters: [
+        {
+          fieldName: "idExamTest",
+          value: examTest?.id,
+          condition: Condition.eq,
+        },
+        ...filters,
+      ],
+    });
+    if (res.code != 0) {
+      return;
+    }
+    var data: ExamTestResulstData[] = res.data?.records;
+    var s = data?.map<TableValue>((e) => ({
+      id: e.id,
+      email: e?.candidate?.email,
+      full_name: e?.candidate?.fullName,
+      identify_code: e?.candidate?.identifier,
+      point: e?.result?.score,
+      complete_time: e?.timeLine?.mustStopDoTestAt ?? e?.timeLine?.commitTestAt,
+      test_date: e?.timeLine?.startDoTestAt,
+      percent_complete: `${e?.result?.percentComplete} %`,
+      phone: e?.candidate?.phoneNumber,
+      status: e?.result?.completionState,
+      group: undefined,
+    }));
+
+    setTotal(res?.data?.totalOfRecords);
+    setInfos(s);
+    console.log("esss", res);
+  };
+
+  const [fileExel, setFileExcel] = useState<any>();
+
+  const exportExellFile = async () => {
+    const res = await exportExelFile(params.eid);
+    if (res?.code != 0) {
+      return;
+    }
+
+    var binaryData = Buffer.from(res.data);
+    setFileExcel(res.data);
+    console.log("binaryData", binaryData);
+    console.log("res excel", res);
+  };
+  const [filterValues, setFilterValues] = useState<FormFilterValue>({});
+  const downloadExcell = () => {
+    // Tạo Blob từ dữ liệu nhị phân
+    const blob = new Blob([fileExel], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    // const obj: any = { dd: "ello" };
+    // const blob = new Blob([JSON.stringify(obj, null, 2)], {
+    //   type: "application/json",
+    // });
+    // var url = URL.createObjectURL(blob);
+    // window.open(url);
+
+    // Sử dụng FileSaver để lưu tệp
+    saveAs(blob, "output.xlsx");
+  };
+
+  useEffect(() => {
+    exportExellFile();
+  }, []);
+  useEffect(() => {
+    getExaminationDetail();
+  }, [filters, recordNum, indexPage]);
 
   const columns: ColumnsType<any> = [
     {
@@ -159,12 +227,14 @@ function ResultPage({ params }: any) {
       ),
       dataIndex: "complete_time",
       key: "complete_time",
-      render: (text) => (
+      render: (text, data) => (
         <p
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {text}
+          {`${dayjs
+            .duration(dayjs(data.complete_time).diff(dayjs(data.test_date)))
+            .format("HH:mm:ss")}`}
         </p>
       ),
     },
@@ -192,7 +262,7 @@ function ResultPage({ params }: any) {
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {text}
+          {t(text)}
         </p>
       ),
     },
@@ -260,11 +330,11 @@ function ResultPage({ params }: any) {
       title: <div className="w-full flex justify-start">{t("detail")}</div>,
       dataIndex: "detail",
       key: "detail",
-      render: (text) => (
+      render: (text, data) => (
         <div className="w-full flex justify-center">
           <button
             onClick={() => {
-              router.push(`/examination/results/${params?.eid}/details`);
+              router.push(`/examination/results/${params?.eid}/${data?.id}`);
             }}
           >
             <EyeIcon />
@@ -281,7 +351,7 @@ function ResultPage({ params }: any) {
     full_name?: string;
     group?: string;
     phone_number?: string;
-    test_date?: string;
+    test_date?: string[];
   }
   const validate = (values: FormFilterValue) => {
     const errors: FormikErrors<FormFilterValue> = {};
@@ -294,10 +364,89 @@ function ResultPage({ params }: any) {
       console.log({ values });
 
       setFilterValues(values);
+      for (let i in values) {
+        console.log("i", i);
+        if ((values as any)[i]) {
+          switch (i) {
+            case "email":
+              setFilters([
+                ...filters,
+                {
+                  fieldName: "$candidate.email",
+                  value: values[i],
+                  condition: Condition.eq,
+                },
+              ]);
+              break;
+            case "identify_code":
+              setFilters([
+                ...filters,
+                {
+                  fieldName: "identifier",
+                  value: values[i],
+                  condition: Condition.eq,
+                },
+              ]);
+              break;
+            case "group":
+              setFilters([
+                ...filters,
+                {
+                  fieldName: "group",
+                  value: values[i],
+                  condition: Condition.eq,
+                },
+              ]);
+              break;
+            case "full_name":
+              setFilters([
+                ...filters,
+                {
+                  fieldName: "full_name",
+                  value: values[i],
+                  condition: Condition.eq,
+                },
+              ]);
+              break;
+            case "phone_number":
+              setFilters([
+                ...filters,
+                {
+                  fieldName: "phone_number",
+                  value: values[i],
+                  condition: Condition.eq,
+                },
+              ]);
+              break;
+            case "test_date":
+              setFilters([
+                ...filters,
+                {
+                  fieldName: "start_date",
+                  value:
+                    values[i] && values[i]!.length >= 1
+                      ? (values[i] as any)[0]
+                      : undefined,
+                  condition: Condition.lte,
+                },
+                {
+                  fieldName: "end_date",
+                  value:
+                    values[i] && values[i]!.length >= 2
+                      ? (values[i] as any)[2]
+                      : undefined,
+                  condition: Condition.lte,
+                },
+              ]);
+              break;
+
+            default:
+              break;
+          }
+        }
+      }
     },
   });
-
-  const [filterValues, setFilterValues] = useState<FormFilterValue>({});
 
   return (
     <HomeLayout>
@@ -330,71 +479,70 @@ function ResultPage({ params }: any) {
         ]}
       />
       <div className="flex justify-between">
-        {[1, 2, 3].map((e) => {
-          var cloneData = _.cloneDeep(data);
-          if (e === 3) {
-            cloneData.push({
+        <Chart
+          data={[
+            {
               label: "pass",
-              name: t("not_answer_quest"),
-              value: 100,
-            });
-          }
-          return (
-            <div key={e} className="w-[calc(33%-1rem)] bg-white rounded-lg">
-              <div className="h-[220px] pt-4 ">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart className="flex" width={200} height={200}>
-                    <Pie
-                      data={cloneData}
-                      dataKey="value"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={95}
-                      labelLine={false}
-                      label={renderCustomizedLabel}
-                      fill="#8884d8"
-                      isAnimationActive={false}
-                    >
-                      {data.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="w-full mb-3 px-4">
-                <div className="flex justify-between mx-2 border-b border-b-m_neutral_100">
-                  <div className="flex items-center">
-                    <div className={`rounded w-3 h-2 bg-[#6DB3C2] mr-2`} />
-                    <span className="body_regular_14">{t("pass")}</span>
-                  </div>
-                  <div className="body_semibold_14">75%</div>
-                </div>
-
-                <div className="flex mt-2 justify-between mx-2 border-b border-b-m_neutral_100">
-                  <div className="flex items-center">
-                    <div className={`rounded w-3 h-2 bg-[#FC8800] mr-2`} />
-                    <span className="body_regular_14">{t("not_pass")}</span>
-                  </div>
-                  <div className="body_semibold_14">25%</div>
-                </div>
-
-                {e === 3 && (
-                  <div className="flex mt-2 justify-between mx-2 border-b border-b-m_neutral_100">
-                    <div className="flex items-center">
-                      <div className={`rounded w-3 h-2 bg-[#775DA6] mr-2`} />
-                      <span className="body_regular_14">
-                        {t("not_answer_quest")}
-                      </span>
-                    </div>
-                    <div className="body_semibold_14">20%</div>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+              name: t("pass"),
+              value: examination?.statisticExamTest?.percentPass ?? 0,
+            },
+            {
+              label: "not_pass",
+              name: t("not_pass"),
+              value: examination?.statisticExamTest?.percentFailed ?? 0,
+            },
+          ]}
+        />
+        <Chart
+          data={[
+            {
+              label: "doing_exam",
+              name: t("doing_exam"),
+              value: examination?.statisticExamTest?.totalExamTestResult
+                ? (examination?.statisticExamTest?.totalExamTestResult as any)[
+                    ExamCompletionState.Doing
+                  ] ?? 0
+                : 0,
+            },
+            {
+              label: "checking_exam",
+              name: t("checking_exam"),
+              value: examination?.statisticExamTest?.totalExamTestResult
+                ? (examination?.statisticExamTest?.totalExamTestResult as any)[
+                    ExamCompletionState.Checking
+                  ] ?? 0
+                : 0,
+            },
+            {
+              label: "done_exam",
+              name: t("done_exam"),
+              value: examination?.statisticExamTest?.totalExamTestResult
+                ? (examination?.statisticExamTest?.totalExamTestResult as any)[
+                    ExamCompletionState.Done
+                  ] ?? 0
+                : 0,
+            },
+          ]}
+        />
+        <Chart
+          data={[
+            {
+              label: "correct_answer",
+              name: t("correct_answer"),
+              value: examination?.statisticExamTest?.percentAnwserCorrect ?? 0,
+            },
+            {
+              label: "incorrect_answer",
+              name: t("incorrect_answer"),
+              value: examination?.statisticExamTest?.percentAnwserCorrect ?? 0,
+            },
+            {
+              label: "not_answer",
+              name: t("not_answer"),
+              value: examination?.statisticExamTest?.percentNotAnwser ?? 0,
+            },
+          ]}
+        />
       </div>
       <div className="w-full p-3 bg-white rounded-lg mt-5">
         <div className="flex items-center w-full justify-between">
@@ -412,6 +560,7 @@ function ResultPage({ params }: any) {
             />
             <div className="w-3" />
             <MButton
+              onClick={downloadExcell}
               className="flex items-center"
               icon={<DownloadIcon />}
               h="h-11"
@@ -447,6 +596,46 @@ function ResultPage({ params }: any) {
                     const formikValue = _.cloneDeep(formik.values);
                     await formik.setFieldValue(e, undefined);
                     (formikValue as any)[e] = undefined;
+                    switch (e) {
+                      case "email":
+                        setFilters([
+                          ...filters?.filter((d) => d.fieldName != "email"),
+                        ]);
+                        break;
+                      case "group":
+                        setFilters([
+                          ...filters?.filter((d) => d.fieldName != "group"),
+                        ]);
+                        break;
+                      case "phone_number":
+                        setFilters([
+                          ...filters?.filter(
+                            (d) => d.fieldName != "phone_number",
+                          ),
+                        ]);
+                        break;
+                      case "full_name":
+                        setFilters([
+                          ...filters?.filter((d) => d.fieldName != "full_name"),
+                        ]);
+                        break;
+                      case "identify_code":
+                        setFilters([
+                          ...filters?.filter(
+                            (d) => d.fieldName != "identifier",
+                          ),
+                        ]);
+                        break;
+                      case "test_date":
+                        setFilters([
+                          ...filters?.filter(
+                            (d) =>
+                              d.fieldName != "start_date" &&
+                              d.fieldName != "end_date",
+                          ),
+                        ]);
+                        break;
+                    }
                     await setFilterValues(formikValue);
                   }}
                 >
@@ -495,6 +684,7 @@ function ResultPage({ params }: any) {
               value={recordNum}
               onChange={(v) => {
                 setRecordNum(v);
+                setIndexPage(1);
               }}
               options={[
                 ...[15, 25, 30, 50, 100].map((i: number) => ({

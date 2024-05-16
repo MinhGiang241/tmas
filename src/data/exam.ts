@@ -191,6 +191,7 @@ export interface ExaminationData {
     isEnable?: boolean;
     goldPrice?: number;
   };
+  statisticExamTest?: StatisticExamTest;
 }
 
 export interface TmasExamVersion {
@@ -569,10 +570,10 @@ export interface ExamTestResulstData {
   };
   ownerId?: string;
   result?: {
-    completionState?: "Doing" | "Checking" | "Done";
+    completionState?: ExamCompletionState;
     couter?: any;
     numberQuestionNeedCheck?: number;
-    passState?: "Pass" | "NotCheck" | "NotPass";
+    passState?: ExamPassState;
     percentComplete?: number;
     percentCorrect?: number;
     score?: number;
@@ -591,4 +592,26 @@ export interface ExamTestResulstData {
     }[];
     totalTimeDoTestSeconds?: number;
   };
+}
+
+export enum ExamPassState {
+  Pass = "Pass",
+  NotCheck = "NotCheck",
+  NotPass = "NotPass",
+}
+
+export enum ExamCompletionState {
+  Doing = "Doing",
+  Checking = "Checking",
+  Done = "Done",
+}
+
+export interface StatisticExamTest {
+  totalExamTestResult?: number;
+  percentPass?: number;
+  percentFailed?: number;
+  percentByCompletionStates?: { [key: string]: number };
+  percentAnwserCorrect?: number;
+  percentAnwserWrong?: number;
+  percentNotAnwser?: number;
 }

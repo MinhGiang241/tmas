@@ -262,3 +262,17 @@ export const deleteRemindMail = async (maillistId?: string) => {
   );
   return results;
 };
+
+export const getOverViewExamination = async (examinationId?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/${examinationId}?IsIncludeExamVersion=false`,
+  );
+  return results;
+};
+
+export const exportExelFile = async (examinationId?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/AdminExamTestResult/ExportExcel/${examinationId}`,
+  );
+  return results;
+};
