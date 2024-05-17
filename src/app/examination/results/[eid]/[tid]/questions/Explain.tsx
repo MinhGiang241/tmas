@@ -27,6 +27,9 @@ import {
   MultiCandidateAnswer,
 } from "@/data/question";
 import { CandidateAnswers } from "@/data/exam";
+import { submitCheckingAnswer } from "@/services/api_services/result_exam_api";
+import { parse } from "path";
+import { parseInt } from "lodash";
 
 export default function Explain({
   index,
@@ -39,6 +42,7 @@ export default function Explain({
   canCheck,
   onChangeCheck,
   answers,
+  idExamTestResult,
 }: {
   examId?: any;
   question?: EssayQuestionData;
@@ -50,6 +54,7 @@ export default function Explain({
   canCheck?: boolean;
   onChangeCheck?: Function;
   answers?: CandidateAnswers;
+  idExamTestResult?: string;
 }) {
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
@@ -66,7 +71,7 @@ export default function Explain({
   const contentRef = useRef(null);
   const { TextArea } = Input;
   const [edit, setEdit] = useState<boolean>(false);
-  //
+  const [loading, setLoading] = useState<boolean>(false);
   const [comment, setComment] = useState("");
   const [point, setPoint] = useState("");
   var candidateAnswer: EssayCandidateAnswer | undefined =
@@ -176,7 +181,21 @@ export default function Explain({
                   onChange={(e) => setPoint(e.target.value)}
                 />
                 <Button
-                  onClick={() => setEdit(!edit)}
+                  onClick={async () => {
+                    setLoading(true);
+                    var res = await submitCheckingAnswer({
+                      evaluatorComment: comment,
+                      score: parseInt(point ?? 0),
+                      idExamQuestion: question?.id,
+                      idExamTestResult,
+                    });
+                    setLoading(false);
+                    if (res?.code != 0) {
+                      errorToast(res?.message ?? "");
+                      return;
+                    }
+                    setEdit(!edit);
+                  }}
                   className="ml-4 w-[114px] h-[36px] rounded-md bg-m_primary_500 text-white font-semibold"
                 >
                   {t("save_as")}

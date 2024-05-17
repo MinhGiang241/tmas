@@ -1,4 +1,5 @@
 import {
+  CheckingAnswerParams,
   ExaminationResultParams,
   PagingAdminExamTestResultParams,
 } from "@/data/exam";
@@ -95,6 +96,14 @@ export const deleteListAdminExamTestResult = async (ids?: string[]) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/AdminExamTestResult/GetPaging/DeleteList`,
     { ids },
+  );
+  return results;
+};
+
+export const submitCheckingAnswer = async (data: CheckingAnswerParams) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/AdminExamTestResult/submitCheckingAnswer`,
+    data,
   );
   return results;
 };

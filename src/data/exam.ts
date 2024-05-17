@@ -460,6 +460,13 @@ export interface PagingAdminExamTestResultParams {
   }[];
 }
 
+export interface CheckingAnswerParams {
+  idExamTestResult?: string;
+  evaluatorComment?: string;
+  score?: number;
+  idExamQuestion?: string;
+}
+
 export interface ExaminationResultParams {
   id?: string;
   idExamTest?: string;

@@ -134,7 +134,14 @@ export default function Result({ params }: any) {
         return <Connect />;
 
       case QuestionType?.Essay:
-        return <Explain question={q} index={index} answers={answer} />;
+        return (
+          <Explain
+            question={q}
+            index={index}
+            answers={answer}
+            idExamTestResult={examResult?.id}
+          />
+        );
 
       case QuestionType?.Coding:
         return <Coding />;
