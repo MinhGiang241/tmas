@@ -69,9 +69,10 @@ export default function Explain({
   //
   const [comment, setComment] = useState("");
   const [point, setPoint] = useState("");
-  var candidateAnswer: EssayCandidateAnswer = JSON.parse(
-    answers?.candidateAnswerJson ?? "",
-  );
+  var candidateAnswer: EssayCandidateAnswer | undefined =
+    !answers?.candidateAnswerJson
+      ? undefined
+      : JSON.parse(answers?.candidateAnswerJson ?? "");
 
   useEffect(() => {
     setIsOverflowing(

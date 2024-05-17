@@ -19,7 +19,9 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
-import Close from "@/app/components/icons/close-circle.svg"
+import Close from "@/app/components/icons/close-circle.svg";
+import { MultiCandidateAnswer } from "@/data/question";
+import { CandidateAnswers } from "@/data/exam";
 
 export default function TrueFalse({
   examId,
@@ -31,6 +33,7 @@ export default function TrueFalse({
   addExamBank,
   canCheck,
   onChangeCheck,
+  answers,
 }: {
   examId?: any;
   question?: any;
@@ -41,26 +44,25 @@ export default function TrueFalse({
   addExamBank?: Function;
   onChangeCheck?: Function;
   canCheck?: boolean;
+  answers?: CandidateAnswers;
 }) {
-  const [openEditQuestion, setOpenEditQuestion] = useState(false);
-  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
-  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-
   const router = useRouter();
   const { t } = useTranslation("question");
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [dupLoading, setDupLoading] = useState(false);
   // console.log(question);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
-
+  var candidateAnswer: MultiCandidateAnswer | undefined =
+    !answers?.candidateAnswerJson
+      ? undefined
+      : JSON.parse(answers?.candidateAnswerJson ?? "");
+  console.log("candi", answers);
 
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -79,8 +81,9 @@ export default function TrueFalse({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -91,13 +94,14 @@ export default function TrueFalse({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("question")} 2`}:
-                  {/* <div
+                  {`${t("question")} ${index + 1}`}:
+                  <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
-                  /> */}
-                  <div className="text-sm font-normal">Đúng sai</div>
+                    dangerouslySetInnerHTML={{
+                      __html: question?.question ?? "",
+                    }}
+                  />
                 </span>
                 {isOverflowing ? (
                   <button
@@ -111,21 +115,6 @@ export default function TrueFalse({
                   </button>
                 ) : null}
               </div>
-              {tmasQuest ? (
-                <MButton
-                  className="flex items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addExamBank!(e, question);
-                  }}
-                  h="h-11"
-                  type="secondary"
-                  icon={<AddIcon />}
-                  text={t("add_bank")}
-                />
-              ) : (
-                <div></div>
-              )}
             </div>
           }
           key={""}
@@ -135,40 +124,31 @@ export default function TrueFalse({
             {t("result")}
           </div>
           <div>
-            <div className="flex">
-              <Tick />
-              <div className="font-bold pr-2 pl-1">A.</div>
-              <div>2</div>
-            </div>
-            <div className="flex">
-              <Close />
-              <div className="font-bold pr-2 pl-1">B.</div>
-              <div>3</div>
-            </div>
-            {/* <div>
-              {question?.content?.answers?.map((x: any, key: any) =>
-                x.isCorrectAnswer === false ? (
-                  <div className="flex" key={key}>
-                    <div className="body_semibold_14">{x.label}</div>
-                    <div
-                      className="body_regular_14 pl-2"
-                      dangerouslySetInnerHTML={{ __html: x.text }}
-                    />
-                  </div>
-                ) : (
-                  <div className="flex" key={key}>
-                    <div className="body_semibold_14 text-green-500">
-                      {x.label}
-                    </div>
-                    <div
-                      className="body_regular_14 pl-2 text-green-500 pr-2"
-                      dangerouslySetInnerHTML={{ __html: x.text }}
-                    />
+            {question?.content?.answers?.map((x: any, key: any) =>
+              !x.isCorrectAnswer ? (
+                <div className="flex" key={key}>
+                  <div className="body_semibold_14">{x.label}</div>
+                  <div
+                    className="body_regular_14 pl-2"
+                    dangerouslySetInnerHTML={{ __html: x.text ?? "" }}
+                  />
+                </div>
+              ) : (
+                <div className="flex" key={key}>
+                  {candidateAnswer?.answers?.some((u) => u.label == x.label) ? (
                     <Tick />
-                  </div>
-                ),
-              )}
-            </div> */}
+                  ) : (
+                    <Close />
+                  )}
+
+                  <div className="body_semibold_14 pl-1">{x.label}</div>
+                  <div
+                    className="body_regular_14 pl-2 pr-2"
+                    dangerouslySetInnerHTML={{ __html: x.text ?? "" }}
+                  />
+                </div>
+              ),
+            )}
           </div>
         </Collapse.Panel>
       </Collapse>

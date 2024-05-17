@@ -22,6 +22,7 @@ import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import {
   CandidateAnswers,
   Condition,
+  ExamCompletionState,
   ExamTestResulstData,
   ExaminationData,
 } from "@/data/exam";
@@ -127,7 +128,7 @@ export default function Result({ params }: any) {
         return <ManyResult question={q} index={index} answers={answer} />;
 
       case QuestionType?.YesNoQuestion:
-        return <TrueFalse question={q} index={index} />;
+        return <TrueFalse question={q} index={index} answers={answer} />;
 
       case QuestionType?.Pairing:
         return <Connect />;
@@ -240,16 +241,22 @@ export default function Result({ params }: any) {
           <div className="bg-white rounded-lg">
             <div
               className={`w-full h-10 ${
-                !examResult?.timeLine?.commitTestAt &&
-                !examResult?.timeLine?.mustStopDoTestAt
+                examResult?.result?.completionState ==
+                ExamCompletionState.Checking
                   ? `bg-m_primary_100 text-m_primary_500`
-                  : `bg-m_success_50 text-m_success_500`
+                  : examResult?.result?.completionState ==
+                      ExamCompletionState.Done
+                    ? `bg-m_success_50 text-m_success_500`
+                    : `bg-m_warning_50 text-m_warning_500`
               } flex justify-center items-center py-auto rounded-t-lg body_bold_14`}
             >
-              {!examResult?.timeLine?.commitTestAt &&
-              !examResult?.timeLine?.mustStopDoTestAt
+              {examResult?.result?.completionState ==
+              ExamCompletionState.Checking
                 ? t("in_testing")?.toUpperCase()
-                : common.t("complete")?.toUpperCase()}
+                : examResult?.result?.completionState ==
+                    ExamCompletionState.Done
+                  ? common.t("complete")?.toUpperCase()
+                  : t("checking").toUpperCase()}
             </div>
             <div className="flex justify-between items-center p-4">
               <div className="font-bold text-base text-m_primary_500">
@@ -320,37 +327,39 @@ export default function Result({ params }: any) {
             </div>
             <hr />
             <div className="p-4">
-              {examResult?.timeLine?.timeLines?.map((e, k) => (
-                <div key={k} className="flex-row">
-                  <div className="flex">
-                    <div className="pt-[6px] mr-5">
-                      <div className="w-3 h-3 bg-m_primary_500 rounded-full mb-1" />
-                      {e?.eventType != "End" && (
-                        <div className="h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300" />
-                      )}
-                    </div>
-                    <div>
-                      <div className="pb-4">
-                        <div className="flex items-center">
-                          {e?.eventType == "Start" ? (
-                            <Play />
-                          ) : e?.eventType == "Rejoin" ? (
-                            <Close />
-                          ) : e?.eventType == "End" ? (
-                            <Pause />
-                          ) : null}
-                          <div className="font-semibold pl-1 text-sm">
-                            {e?.message}
+              {examResult?.timeLine?.timeLines
+                ?.sort((a, b) => dayjs(a?.createTime).diff(b.createTime))
+                .map((e, k) => (
+                  <div key={k} className="flex-row">
+                    <div className="flex">
+                      <div className="pt-[6px] mr-5">
+                        <div className="w-3 h-3 bg-m_primary_500 rounded-full mb-1" />
+                        {e?.eventType != "End" && (
+                          <div className="h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300" />
+                        )}
+                      </div>
+                      <div>
+                        <div className="pb-4">
+                          <div className="flex items-center">
+                            {e?.eventType == "Start" ? (
+                              <Play />
+                            ) : e?.eventType == "Rejoin" ? (
+                              <Close />
+                            ) : e?.eventType == "End" ? (
+                              <Pause />
+                            ) : null}
+                            <div className="font-semibold pl-1 text-sm">
+                              {e?.message}
+                            </div>
                           </div>
-                        </div>
-                        <div className="text-sm text-m_neutral_500 pl-5">
-                          {dayjs(e?.createTime).format("DD/MM/YYYY HH:mm:ss")}
+                          <div className="text-sm text-m_neutral_500 pl-5">
+                            {dayjs(e?.createTime).format("DD/MM/YYYY HH:mm:ss")}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </div>

@@ -54,9 +54,10 @@ export default function ManyResult({
 }) {
   const router = useRouter();
   const { t } = useTranslation("question");
-  var candidateAnswer: MultiCandidateAnswer = JSON.parse(
-    answers?.candidateAnswerJson ?? "",
-  );
+  var candidateAnswer: MultiCandidateAnswer | undefined =
+    !answers?.candidateAnswerJson
+      ? undefined
+      : JSON.parse(answers?.candidateAnswerJson ?? "");
   console.log("candidateAnswer", candidateAnswer);
 
   const [expanded, setExpanded] = useState<boolean>(false);

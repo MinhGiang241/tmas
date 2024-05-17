@@ -361,5 +361,6 @@
   "comment": "Nhận xét",
   "match_max": "Chấm điểm (tối đa {{num}})",
   "enter_comment": "Viết nhận xét",
-  "scored_point": "Điểm đã chấm"
+  "scored_point": "Điểm đã chấm",
+  "checking": "Đang chấm"
 }
