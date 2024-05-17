@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
@@ -11,7 +12,7 @@ import MTextArea from "@/app/components/config/MTextArea";
 import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import NewIcon from "@/app/components/icons/export.svg";
 import Tick from "@/app/components/icons/tick-circle.svg";
-import Close from "@/app/components/icons/close-circle.svg"
+import Close from "@/app/components/icons/close-circle.svg";
 import { useRouter } from "next/navigation";
 import { FormattedDate, FormattedTime } from "react-intl";
 import {
@@ -21,6 +22,12 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
+import {
+  BaseQuestionData,
+  MultiAnswerQuestionData,
+  MultiCandidateAnswer,
+} from "@/data/question";
+import { CandidateAnswers } from "@/data/exam";
 
 export default function ManyResult({
   examId,
@@ -32,9 +39,10 @@ export default function ManyResult({
   addExamBank,
   canCheck,
   onChangeCheck,
+  answers,
 }: {
   examId?: any;
-  question?: any;
+  question?: MultiAnswerQuestionData;
   index?: any;
   getData?: any;
   questionGroup?: any;
@@ -42,23 +50,24 @@ export default function ManyResult({
   addExamBank?: Function;
   onChangeCheck?: Function;
   canCheck?: boolean;
+  answers?: CandidateAnswers;
 }) {
-
   const router = useRouter();
   const { t } = useTranslation("question");
+  var candidateAnswer: MultiCandidateAnswer = JSON.parse(
+    answers?.candidateAnswerJson ?? "",
+  );
+  console.log("candidateAnswer", candidateAnswer);
 
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
-  // console.log("question", question);
-  // console.log("questionGroup", questionGroup);
-
 
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
   }, []);
   return (
@@ -75,8 +84,9 @@ export default function ManyResult({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -87,14 +97,14 @@ export default function ManyResult({
                       value={question?.id}
                     />
                   )}
-                  {`${t("question")} 1`}
-                  :
-                  {/* <div
+                  {`${t("question")} ${index + 1}`}:
+                  <div
                     ref={contentRef}
                     className={`body_regular_14 pl-2 `}
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
-                  /> */}
-                  <div className="text-sm font-normal">Nhiều đáp án</div>
+                    dangerouslySetInnerHTML={{
+                      __html: question?.question ?? "",
+                    }}
+                  />
                 </span>
                 {isOverflowing ? (
                   <button
@@ -120,7 +130,6 @@ export default function ManyResult({
                   icon={<AddIcon />}
                   text={t("add_bank")}
                 />
-
               ) : (
                 <div></div>
               )}
@@ -136,45 +145,42 @@ export default function ManyResult({
               </div>
               <div>
                 <div>
-                  {/* {question?.content?.answers?.map((x: any, key: any) =>
-                    x.isCorrectAnswer === false ? (
+                  {question?.content?.answers?.map((x, key: any) =>
+                    !x.isCorrectAnswer ? (
                       <div className="flex" key={key}>
                         <div className="body_semibold_14">{x.label}</div>
                         <div
                           className="body_regular_14 pl-2"
-                          dangerouslySetInnerHTML={{ __html: x.text }}
+                          dangerouslySetInnerHTML={{ __html: x.text ?? "" }}
                         />
                       </div>
                     ) : (
                       <div className="flex" key={key}>
-                        <div className="body_semibold_14 text-green-500">
-                          {x.label}
-                        </div>
+                        {candidateAnswer?.answers?.some(
+                          (u) => u.label == x.label,
+                        ) ? (
+                          <Tick />
+                        ) : (
+                          <Close />
+                        )}
+
+                        <div className="body_semibold_14 pl-1">{x.label}</div>
                         <div
-                          className="body_regular_14 pl-2 text-green-500 pr-2"
-                          dangerouslySetInnerHTML={{ __html: x.text }}
+                          className="body_regular_14 pl-2 pr-2"
+                          dangerouslySetInnerHTML={{ __html: x.text ?? "" }}
                         />
-                        <Tick />
                       </div>
                     ),
-                  )} */}
-                  <div className="flex">
-                    <Tick />
-                    <div className="font-bold pr-2 pl-1">A.</div>
-                    <div>2</div>
-                  </div>
-                  <div className="flex">
-                    <Close />
-                    <div className="font-bold pr-2 pl-1">B.</div>
-                    <div>3</div>
-                  </div>
+                  )}
                 </div>
               </div>
               <div className="pl-6">
                 <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
-                  Giải thích đáp án
+                  {t("explain_result")}
                 </div>
-                <div className="text-sm">Vì 1+1=2. Bấm máy tính thì biết</div>
+                <div className="text-sm">
+                  {question?.content?.explainAnswer}
+                </div>
               </div>
             </div>
           </div>

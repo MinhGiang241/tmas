@@ -273,6 +273,9 @@ export const getOverViewExamination = async (examinationId?: string) => {
 export const exportExelFile = async (examinationId?: string) => {
   const results = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/AdminExamTestResult/ExportExcel/${examinationId}`,
+    {
+      responseType: "blob",
+    },
   );
   return results;
 };

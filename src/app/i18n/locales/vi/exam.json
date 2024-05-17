@@ -356,5 +356,10 @@
   "NotPass": "Không đạt",
   "Doing": "Bài đang làm",
   "Checking": "Bài đang chấm",
-  "Done": "Bài hoàn thành"
+  "Done": "Bài hoàn thành",
+  "in_testing": "Đang thi",
+  "comment": "Nhận xét",
+  "match_max": "Chấm điểm (tối đa {{num}})",
+  "enter_comment": "Viết nhận xét",
+  "scored_point": "Điểm đã chấm"
 }

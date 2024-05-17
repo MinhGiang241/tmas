@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import { ConnectQuestAns } from "./question";
+import { BaseQuestionData, ConnectQuestAns } from "./question";
 import { AppovedState, ExamData } from "./exam";
 import { TagParams } from "./tag";
 
@@ -364,6 +364,7 @@ export interface PartObject {
   description?: string;
   idExam?: string;
   jsonExamQuestions?: string[];
+  questions?: BaseQuestionData[];
 }
 
 export interface ImportTmasExamParams {

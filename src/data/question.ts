@@ -120,3 +120,15 @@ export interface SqlQuestionData extends BaseQuestionData {
     expectedOutput?: string;
   };
 }
+
+export interface MultiCandidateAnswer {
+  answers?: {
+    label?: string;
+    isCorrect?: boolean;
+  }[];
+}
+
+export interface EssayCandidateAnswer {
+  anwserHtml?: string;
+  idFiles?: any[];
+}

@@ -41,7 +41,7 @@ function Chart({ data, examination }: Props) {
   };
 
   return (
-    <div className="w-[calc(33%-1rem)] bg-white rounded-lg">
+    <div className=" w-full lg:w-[calc(33%-1rem)] bg-white rounded-lg">
       <div className="h-[220px] pt-4 ">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart className="flex" width={200} height={200}>

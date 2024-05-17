@@ -35,6 +35,8 @@ import {
 import Chart from "./components/Chart";
 import { getPagingAdminExamTestResult } from "@/services/api_services/result_exam_api";
 import { saveAs } from "file-saver";
+import axios from "axios";
+import { errorToast } from "@/app/components/toast/customToast";
 
 dayjs.extend(duration);
 
@@ -59,6 +61,7 @@ function ResultPage({ params }: any) {
     phone?: string;
     group?: string;
     identify_code?: string;
+    seconds?: number;
   }
   interface FilterObject {
     fieldName?: string;
@@ -110,6 +113,7 @@ function ResultPage({ params }: any) {
       percent_complete: `${e?.result?.percentComplete} %`,
       phone: e?.candidate?.phoneNumber,
       status: e?.result?.completionState,
+      seconds: e?.timeLine?.totalTimeDoTestSeconds,
       group: undefined,
     }));
 
@@ -118,29 +122,16 @@ function ResultPage({ params }: any) {
     console.log("esss", res);
   };
 
-  const [fileExel, setFileExcel] = useState<any>();
-
-  const exportExellFile = async () => {
-    const res = await exportExelFile(params.eid);
+  const [filterValues, setFilterValues] = useState<FormFilterValue>({});
+  const downloadExcell = async () => {
+    var res = await exportExelFile(params.eid);
     if (res?.code != 0) {
+      errorToast(res?.message ?? "");
       return;
     }
-
-    var binaryData = Buffer.from(res.data);
-    setFileExcel(res.data);
-    console.log("binaryData", binaryData);
-    console.log("res excel", res);
-  };
-  const [filterValues, setFilterValues] = useState<FormFilterValue>({});
-  const downloadExcell = () => {
-    router.replace(
-      `${process.env.NEXT_PUBLIC_API_STU}/api/studio/AdminExamTestResult/ExportExcel/${examination?.id}`,
-    );
+    saveAs(res?.data, "data.xlsx");
   };
 
-  useEffect(() => {
-    exportExellFile();
-  }, []);
   useEffect(() => {
     getExaminationDetail();
   }, [filters, recordNum, indexPage]);
@@ -222,9 +213,7 @@ function ResultPage({ params }: any) {
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {`${dayjs
-            .duration(dayjs(data.complete_time).diff(dayjs(data.test_date)))
-            .format("HH:mm:ss")}`}
+          {`${dayjs.duration((data?.seconds ?? 0) * 1000).format("HH:mm:ss")}`}
         </p>
       ),
     },
@@ -468,7 +457,7 @@ function ResultPage({ params }: any) {
           },
         ]}
       />
-      <div className="flex justify-between">
+      <div className="flex justify-between  max-lg:flex-col max-lg:gap-3 max-lg:items-center max-lg:mx-5">
         <Chart
           data={[
             {

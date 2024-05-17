@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import MBreadcrumb from "@/app/components/config/MBreadcrumb";
 import MButton from "@/app/components/config/MButton";
@@ -77,8 +78,7 @@ function ExamDetails({ params }: any) {
   const [idUpdate, setIdUpdate] = useState<any>();
   const [loadDataQuestion, setLoadDataQuestion] = useState<any>(null);
   const [addLoading, setAddLoading] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [list, setList] = useState<ExamData[]>([]);
+
   //
   const [name, setName] = React.useState<string>("");
   const [nameError, setNameError] = useState<string>();
@@ -134,7 +134,7 @@ function ExamDetails({ params }: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
   const { t } = useTranslation("question");
-  // const common = useTranslation();
+
   const loadExamById = async () => {
     var res = await getExamById(params?.id);
     if (res?.code != 0) {
@@ -145,12 +145,9 @@ function ExamDetails({ params }: any) {
       errorToast(res?.message ?? "");
       return;
     }
-    // console.log(res, "exam");
 
     setExam(res?.data?.records[0]);
   };
-
-  // console.log("exam", exam);
 
   useEffect(() => {
     loadExamById();
@@ -185,7 +182,7 @@ function ExamDetails({ params }: any) {
         trigger={() => <button className="text-left pb-1">{t("print")}</button>}
         content={() => printRef.current}
       />
-      {/* <button className="text-left pb-1">In</button> */}
+
       <button
         onClick={() => {
           setDeleteExamQuestions(true);
@@ -209,22 +206,6 @@ function ExamDetails({ params }: any) {
       </button>
     </div>
   );
-
-  // const handleUpdate = async () => {
-  //   console.log(idUpdate);
-
-  //   const res = await updateAExamQuestionPart({
-  //     idExam: params.id,
-  //     name: customName,
-  //     description: customNote,
-  //   })
-  //   console.log("res", res);
-  //   if (res && res.code !== 0) {
-  //     errorToast(res.message || "");
-  //     return;
-  //   }
-  //   getData();
-  // }
 
   const handleNameChangeValid = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -252,27 +233,16 @@ function ExamDetails({ params }: any) {
       errorToast(res.message || "");
       return;
     }
-    // console.log(res);
-    // const newObjectId = res.data;
+
     successToast(t("success_add_question"));
-    // setLoadDataQuestion(res);
+
     setOpen(false);
     setName("");
     setNote("");
     await getData();
-    // const newData = { idExam: newObjectId, name: name, description: note };
-    // setData((prevData: any) => {
-    //   if (!prevData || !prevData.records) {
-    //     return [newData];
-    //   } else {
-    //     const newRecords = [newData, ...prevData.records];
-    //     return { ...prevData, records: newRecords };
-    //   }
-    // });
   };
 
   const handleDelete = async () => {
-    // console.log(idDelete)
     const res = await deleteQuestionPartById(idDelete);
     if (res && res.code !== 0) {
       errorToast(res.message || "");
@@ -286,8 +256,7 @@ function ExamDetails({ params }: any) {
     const res = await getExamQuestionPartList({
       paging: { startIndex: 1, recordPerPage: 1000 },
       studioSorters: [{ name: "createdTime", isAsc: true }],
-      // truyền idexam thay vì ids
-      // ids: [params.id],
+
       idExams: [params.id],
     });
     const data = res.data;
@@ -306,24 +275,12 @@ function ExamDetails({ params }: any) {
     }
   };
 
-  // const getListQuestion = () => {
-  //   const res = getQuestionList({
-  //     paging: { startIndex: 0, recordPerPage: 100 },
-  //     studioSorters: [{ name: "createdTime", isAsc: true }],
-  //   })
-  //   console.log(res, "res");
-  // }
-
   useEffect(() => {
     setLoadDataQuestion([]);
     getData();
     // getListQuestion()
   }, []);
-  // const filteredData = data.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id));
-  // const filteredData = data?.records.filter((x: any) => x.examQuestions.some((y: any) => y.idExamQuestionPart === x.id)
-  // console.log(filteredData, "filteredData");
-  // console.log(exam, "exam");
-  const defaultActiveKeys = ["1"];
+
   const [activeDelete, setActiveDelete] = useState<any>();
   return (
     <HomeLayout>

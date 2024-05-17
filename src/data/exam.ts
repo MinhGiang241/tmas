@@ -524,6 +524,18 @@ export interface ExaminationResultParams {
   };
 }
 
+export interface CandidateAnswers {
+  anwserScore?: {
+    isAnwsered?: boolean;
+    numberQuestionCorrect?: number;
+    score?: number;
+    totalQuestion?: number;
+    totalScore?: number;
+  };
+  idExamQuestion?: string;
+  candidateAnswerJson?: string;
+}
+
 export interface ExamTestResulstData {
   candidate?: {
     accessCode?: string;
@@ -537,17 +549,7 @@ export interface ExamTestResulstData {
     jobName?: string;
     phoneNumber?: string;
   };
-  candidateAnswers?: {
-    anwserScore?: {
-      isAnwsered?: boolean;
-      numberQuestionCorrect?: number;
-      score?: number;
-      totalQuestion?: number;
-      totalScore?: number;
-    };
-    idExamQuestion?: string;
-    candidateAnswerJson?: string;
-  }[];
+  candidateAnswers?: CandidateAnswers[];
   createdBy?: string;
   createdTime?: string;
   examTestDataCreatedWhenTest?: {

@@ -18,6 +18,26 @@ import Close from "@/app/components/icons/close-circle2.svg";
 import Sql from "./questions/Sql";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import {
+  CandidateAnswers,
+  Condition,
+  ExamTestResulstData,
+  ExaminationData,
+} from "@/data/exam";
+import { getOverViewExamination } from "@/services/api_services/examination_api";
+import {
+  getAdminExamTestResultById,
+  getPagingAdminExamTestResult,
+} from "@/services/api_services/result_exam_api";
+import { errorToast } from "@/app/components/toast/customToast";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import _ from "lodash";
+import { PartObject } from "@/data/form_interface";
+import { BaseQuestionData, QuestionType } from "@/data/question";
+
+dayjs.extend(duration);
 
 export default function Result({ params }: any) {
   const router = useRouter();
@@ -25,6 +45,108 @@ export default function Result({ params }: any) {
   const common = useTranslation();
   const handClick = () => {
     router.back();
+  };
+  const [examination, setExamination] = useState<ExaminationData | undefined>();
+  const [examResult, setExamResult] = useState<
+    ExamTestResulstData | undefined
+  >();
+
+  const [parts, setParts] = useState<PartObject[]>([]);
+  const [questions, setQuestions] = useState<BaseQuestionData[]>([]);
+  const [yEssay, setYEssay] = useState<boolean>(false);
+
+  const getExamResultDetails = async () => {
+    const res = await getAdminExamTestResultById(params?.tid);
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    setExamResult(res?.data.records[0]);
+    var r = res?.data.records[0] as ExamTestResulstData;
+    var quests =
+      r?.examTestDataCreatedWhenTest?.examVersion?.jsonExamQuestions?.map((o) =>
+        JSON.parse(o),
+      );
+    var p = r?.examTestDataCreatedWhenTest?.examVersion?.parts?.map((e) => {
+      var d = _.cloneDeep(e);
+      d.questions = quests?.filter((t) => t.idExamQuestionPart == e?.id);
+      return d;
+    });
+    setQuestions(quests ?? []);
+    setParts(p ?? []);
+  };
+
+  const getExaminationDetail = async () => {
+    var res = await getOverViewExamination(params.eid);
+    if (res.code != 0) {
+      return;
+    }
+    setExamination(res?.data?.records[0]);
+  };
+
+  const filterEssay = (e: any) => {
+    console.log("question", questions);
+    console.log("ans", examResult?.candidateAnswers);
+    e?.stopPropagation();
+    if (!yEssay) {
+      var partClone = parts?.map((p) => {
+        var cloneP = _.cloneDeep(p);
+        cloneP.questions = questions?.filter(
+          (que) =>
+            que?.idExamQuestionPart == p?.id &&
+            que?.questionType == QuestionType?.Essay,
+        );
+        return cloneP;
+      });
+
+      setParts(partClone);
+    } else {
+      var partClone = parts?.map((p) => {
+        var cloneP = _.cloneDeep(p);
+        cloneP.questions = questions?.filter(
+          (que) => que?.idExamQuestionPart == p?.id,
+        );
+        return cloneP;
+      });
+      setParts(partClone);
+    }
+    setYEssay(!yEssay);
+  };
+  useOnMountUnsafe(() => {
+    getExaminationDetail();
+    getExamResultDetails();
+  });
+
+  const genQuestion = (
+    q: BaseQuestionData,
+    index: number,
+    answer?: CandidateAnswers,
+  ) => {
+    switch (q?.questionType) {
+      case QuestionType?.MutilAnswer:
+        return <ManyResult question={q} index={index} answers={answer} />;
+
+      case QuestionType?.YesNoQuestion:
+        return <TrueFalse question={q} index={index} />;
+
+      case QuestionType?.Pairing:
+        return <Connect />;
+
+      case QuestionType?.Essay:
+        return <Explain question={q} index={index} answers={answer} />;
+
+      case QuestionType?.Coding:
+        return <Coding />;
+
+      case QuestionType?.Random:
+        return <Random />;
+
+      case QuestionType?.FillBlank:
+        return <FillBlank />;
+
+      case QuestionType?.SQL:
+        return <Sql />;
+    }
   };
   return (
     <HomeLayout>
@@ -38,7 +160,7 @@ export default function Result({ params }: any) {
           },
           {
             // href: `/`,
-            text: `Tên gì gì đó`,
+            text: examResult?.examTestDataCreatedWhenTest?.examTestInfo?.name,
             active: true,
           },
         ]}
@@ -63,7 +185,11 @@ export default function Result({ params }: any) {
             className="mb-5 rounded-lg bg-white overflow-hidden arrow"
           >
             <div className="px-4 bg-m_warning_50 text-m_warnig_title py-2 font-semibold text-sm">
-              {t("has_essay", { num: "1" })}
+              {t("has_essay", {
+                num: `${questions?.filter(
+                  (quest) => quest?.questionType == QuestionType?.Essay,
+                )?.length}`,
+              })}
             </div>
             <Collapse.Panel
               key="1"
@@ -71,36 +197,73 @@ export default function Result({ params }: any) {
                 <div>
                   <div className="my-3 flex justify-between items-center">
                     <div className="">
-                      <div className="text-base font-semibold">{t("part")}</div>
+                      <div className="text-base font-semibold">
+                        {t("exam_list")}
+                      </div>
                     </div>
-                    <Button className="w-[163px] h-[36px] bg-m_primary_500 rounded-lg font-semibold text-sm text-white">
+                    <Button
+                      onClick={filterEssay}
+                      className="w-[163px] h-[36px] bg-m_primary_500 rounded-lg font-semibold text-sm text-white"
+                    >
                       {t("essay_question")}
                     </Button>
                   </div>
                 </div>
               }
             >
-              <ManyResult />
-              <TrueFalse />
-              <Connect />
-              <Explain />
-              <Coding />
-              <FillBlank />
-              <Sql />
-              <Random />
+              {parts.map((r, i) => {
+                return (
+                  <div key={r?.id}>
+                    <div className="body_semibold_16 my-2">{r?.name}</div>
+                    {r?.questions?.map((q) => {
+                      var answerIndex = examResult?.candidateAnswers?.findIndex(
+                        (l) => l.idExamQuestion == q.id,
+                      );
+                      var ans =
+                        answerIndex! < 0
+                          ? undefined
+                          : examResult?.candidateAnswers![
+                              answerIndex as number
+                            ];
+
+                      return genQuestion(q, i, ans);
+                    })}
+                  </div>
+                );
+              })}
             </Collapse.Panel>
           </Collapse>
         </div>
+        {!examResult?.timeLine?.commitTestAt &&
+          !examResult?.timeLine?.mustStopDoTestAt}
         <div className="col-span-1 h-fit ml-2">
           <div className="bg-white rounded-lg">
+            <div
+              className={`w-full h-10 ${
+                !examResult?.timeLine?.commitTestAt &&
+                !examResult?.timeLine?.mustStopDoTestAt
+                  ? `bg-m_primary_100 text-m_primary_500`
+                  : `bg-m_success_50 text-m_success_500`
+              } flex justify-center items-center py-auto rounded-t-lg body_bold_14`}
+            >
+              {!examResult?.timeLine?.commitTestAt &&
+              !examResult?.timeLine?.mustStopDoTestAt
+                ? t("in_testing")?.toUpperCase()
+                : common.t("complete")?.toUpperCase()}
+            </div>
             <div className="flex justify-between items-center p-4">
               <div className="font-bold text-base text-m_primary_500">
-                Tên gì gì đó
+                {examResult?.candidate?.fullName}
               </div>
               <div className="bg-m_success_50 px-4 py-1 flex items-center">
-                <div className="font-bold text-lg text-m_success_600">8</div>
+                <div className="font-bold text-lg text-m_success_600">
+                  {(examResult?.result?.score ?? 0) / 100}
+                </div>
                 <div className="text-m_success_600 text-sm">
-                  /10&nbsp;<b>đ</b>
+                  /
+                  {examResult?.examTestDataCreatedWhenTest?.examVersion?.exam
+                    ?.totalPoints ?? 0}
+                  &nbsp;<b>đ</b>
                 </div>
               </div>
             </div>
@@ -108,15 +271,29 @@ export default function Result({ params }: any) {
             <div className="p-4">
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("pass_point")}:</div>
-                <div className="text-sm font-semibold">80%</div>
+                <div className="text-sm font-semibold">
+                  {examResult?.examTestDataCreatedWhenTest?.examTestInfo
+                    ?.passingSetting?.passPointPercent ?? 0}
+                  %
+                </div>
               </div>
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("percent_complete_true")}</div>
-                <div className="text-sm font-semibold">80%</div>
+                <div className="text-sm font-semibold">
+                  {examResult?.result?.percentCorrect ?? 0}%
+                </div>
               </div>
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("true_answer_num")}</div>
-                <div className="text-sm font-semibold">8/9</div>
+                <div className="text-sm font-semibold">
+                  {((examResult?.result?.percentCorrect ?? 0) *
+                    (examResult?.examTestDataCreatedWhenTest?.examVersion?.exam
+                      ?.numberOfQuestions ?? 0)) /
+                    100}
+                  /
+                  {examResult?.examTestDataCreatedWhenTest?.examVersion?.exam
+                    ?.numberOfQuestions ?? 0}
+                </div>
               </div>
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("essay_num")}</div>
@@ -124,7 +301,14 @@ export default function Result({ params }: any) {
               </div>
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("test_time_1")}</div>
-                <div className="text-sm font-semibold">00:30:15</div>
+                <div className="text-sm font-semibold">
+                  {dayjs
+                    .duration(
+                      1000 *
+                        (examResult?.timeLine?.totalTimeDoTestSeconds ?? 0),
+                    )
+                    .format("HH:mm:ss")}
+                </div>
               </div>
             </div>
           </div>
@@ -136,132 +320,37 @@ export default function Result({ params }: any) {
             </div>
             <hr />
             <div className="p-4">
-              {/* <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Play />
-                                    <div className='font-semibold pl-1'>Bắt đầu làm bài</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div>
-                            <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Edit />
-                                    <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 1</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div>
-                            <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Edit />
-                                    <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 2</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div>
-                            <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Close />
-                                    <div className='font-semibold pl-1'>Thoát ra ngoài màn hình lần 1</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div>
-                            <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Edit />
-                                    <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 4</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div>
-                            <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Pause />
-                                    <div className='font-semibold pl-1'>Nộp bài thi</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div> */}
-              <div className="flex-row">
-                <div className="flex">
-                  <div className="pt-[6px] mr-5">
-                    <div className="w-3 h-3 bg-m_primary_500 rounded-full mb-1" />
-                    <div className="h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300" />
-                  </div>
-                  <div>
-                    <div className="pb-4">
-                      <div className="flex items-center">
-                        <Play />
-                        <div className="font-semibold pl-1 text-sm">
-                          {t("start_test")}
+              {examResult?.timeLine?.timeLines?.map((e, k) => (
+                <div key={k} className="flex-row">
+                  <div className="flex">
+                    <div className="pt-[6px] mr-5">
+                      <div className="w-3 h-3 bg-m_primary_500 rounded-full mb-1" />
+                      {e?.eventType != "End" && (
+                        <div className="h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="pb-4">
+                        <div className="flex items-center">
+                          {e?.eventType == "Start" ? (
+                            <Play />
+                          ) : e?.eventType == "Rejoin" ? (
+                            <Close />
+                          ) : e?.eventType == "End" ? (
+                            <Pause />
+                          ) : null}
+                          <div className="font-semibold pl-1 text-sm">
+                            {e?.message}
+                          </div>
                         </div>
-                      </div>
-                      <div className="text-sm text-m_neutral_500 pl-5">
-                        13/04/2024 11:14:19
+                        <div className="text-sm text-m_neutral_500 pl-5">
+                          {dayjs(e?.createTime).format("DD/MM/YYYY HH:mm:ss")}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex-row">
-                <div className="flex">
-                  <div className="pt-[6px] mr-5">
-                    <div className="w-3 h-3 bg-m_primary_500 rounded-full mb-1" />
-                    <div className="h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300" />
-                  </div>
-                  <div>
-                    <div className="pb-4">
-                      <div className="flex items-center">
-                        <Edit />
-                        <div className="font-semibold pl-1 text-sm">
-                          Bắt đầu làm câu hỏi số 1
-                        </div>
-                      </div>
-                      <div className="text-sm text-m_neutral_500 pl-5">
-                        13/04/2024 11:14:19
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex-row">
-                <div className="flex">
-                  <div className="pt-[6px] mr-5">
-                    <div className="w-3 h-3 bg-m_primary_500 rounded-full mb-1" />
-                    <div className="h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300" />
-                  </div>
-                  <div>
-                    <div className="pb-4">
-                      <div className="flex items-center">
-                        <Close />
-                        <div className="font-semibold pl-1 text-sm">
-                          Thoát ra ngoài màn hình lần 1
-                        </div>
-                      </div>
-                      <div className="text-sm text-m_neutral_500 pl-5">
-                        13/04/2024 11:14:19
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex-row">
-                <div className="flex">
-                  <div className="pt-[6px] mr-5">
-                    <div className="w-3 h-3 bg-m_primary_500 rounded-full mb-1" />
-                    {/* <div className='h-10 ml-[5px] border-dotted border-l-2 border-m_neutral_300' /> */}
-                  </div>
-                  <div>
-                    <div className="pb-4">
-                      <div className="flex items-center">
-                        <Pause />
-                        <div className="font-semibold pl-1 text-sm">
-                          {t("submit_test")}
-                        </div>
-                      </div>
-                      <div className="text-sm text-m_neutral_500 pl-5">
-                        13/04/2024 11:14:19
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
