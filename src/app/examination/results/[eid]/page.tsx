@@ -151,9 +151,8 @@ function ResultPage({ params }: any) {
     },
     {
       onHeaderCell: (_) => rowStyle,
-
       title: (
-        <div className="w-full break-all  flex justify-start">
+        <div className="min-w-36 w-full break-all  flex justify-start">
           {t("full_name")}
         </div>
       ),
@@ -171,9 +170,10 @@ function ResultPage({ params }: any) {
 
     {
       onHeaderCell: (_) => rowStyle,
-
       title: (
-        <div className="w-full flex justify-start">{t("percent_complete")}</div>
+        <div className="min-w-32 w-full flex justify-start">
+          {t("percent_complete")}
+        </div>
       ),
       dataIndex: "percent_complete",
       key: "complete_percent",
@@ -204,7 +204,7 @@ function ResultPage({ params }: any) {
       onHeaderCell: (_) => rowStyle,
 
       title: (
-        <div className="w-full flex justify-start">{t("complete_time")}</div>
+        <div className="min-w-32 flex justify-start">{t("complete_time")}</div>
       ),
       dataIndex: "complete_time",
       key: "complete_time",
@@ -219,7 +219,11 @@ function ResultPage({ params }: any) {
     },
     {
       onHeaderCell: (_) => rowStyle,
-      title: <div className="w-full flex justify-start">{t("test_date")}</div>,
+      title: (
+        <div className="min-w-32 w-full flex justify-start">
+          {t("test_date")}
+        </div>
+      ),
       dataIndex: "test_date",
       key: "test_date",
       render: (text) => (
@@ -233,7 +237,9 @@ function ResultPage({ params }: any) {
     },
     {
       onHeaderCell: (_) => rowStyle,
-      title: <div className="w-full flex justify-start">{t("status")}</div>,
+      title: (
+        <div className="min-w-32 w-full flex justify-start">{t("status")}</div>
+      ),
       dataIndex: "status",
       key: "status",
       render: (text) => (
@@ -248,7 +254,9 @@ function ResultPage({ params }: any) {
 
     {
       onHeaderCell: (_) => rowStyle,
-      title: <div className="w-full flex justify-start">{t("email")}</div>,
+      title: (
+        <div className="min-w-36 w-full flex justify-start">{t("email")}</div>
+      ),
       dataIndex: "email",
       key: "email",
       render: (text) => (
@@ -262,7 +270,9 @@ function ResultPage({ params }: any) {
     },
     {
       onHeaderCell: (_) => rowEndStyle,
-      title: <div className="w-full flex justify-start">{t("phone")}</div>,
+      title: (
+        <div className="min-w-32 w-full flex justify-start">{t("phone")}</div>
+      ),
       dataIndex: "phone",
       key: "phone",
       render: (text) => (
@@ -276,7 +286,9 @@ function ResultPage({ params }: any) {
     },
     {
       onHeaderCell: (_) => rowEndStyle,
-      title: <div className="w-full flex justify-start">{t("group")}</div>,
+      title: (
+        <div className="min-w-24 w-full flex justify-start">{t("group")}</div>
+      ),
       dataIndex: "group",
       key: "group",
       render: (text) => (
@@ -291,7 +303,9 @@ function ResultPage({ params }: any) {
     {
       onHeaderCell: (_) => rowEndStyle,
       title: (
-        <div className="w-full flex justify-start">{t("identify_code")}</div>
+        <div className="min-w-24 w-full flex justify-start">
+          {t("identify_code")}
+        </div>
       ),
       dataIndex: "identify_code",
       key: "identify-code",
@@ -306,11 +320,13 @@ function ResultPage({ params }: any) {
     },
     {
       onHeaderCell: (_) => rowEndStyle,
-      title: <div className="w-full flex justify-start">{t("detail")}</div>,
+      title: (
+        <div className="min-w-24 w-full flex justify-start">{t("detail")}</div>
+      ),
       dataIndex: "detail",
       key: "detail",
       render: (text, data) => (
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-start">
           <button
             onClick={() => {
               router.push(`/examination/results/${params?.eid}/${data?.id}`);
@@ -351,7 +367,7 @@ function ResultPage({ params }: any) {
               setFilters([
                 ...filters,
                 {
-                  fieldName: "$candidate.email",
+                  fieldName: "candidate.email",
                   value: values[i],
                   condition: Condition.eq,
                 },
@@ -361,7 +377,7 @@ function ResultPage({ params }: any) {
               setFilters([
                 ...filters,
                 {
-                  fieldName: "identifier",
+                  fieldName: "candidate.identifier",
                   value: values[i],
                   condition: Condition.eq,
                 },
@@ -371,7 +387,7 @@ function ResultPage({ params }: any) {
               setFilters([
                 ...filters,
                 {
-                  fieldName: "group",
+                  fieldName: "candidate.groupTest",
                   value: values[i],
                   condition: Condition.eq,
                 },
@@ -381,7 +397,7 @@ function ResultPage({ params }: any) {
               setFilters([
                 ...filters,
                 {
-                  fieldName: "full_name",
+                  fieldName: "candidate.fullName",
                   value: values[i],
                   condition: Condition.eq,
                 },
@@ -391,7 +407,7 @@ function ResultPage({ params }: any) {
               setFilters([
                 ...filters,
                 {
-                  fieldName: "phone_number",
+                  fieldName: "phoneNumber",
                   value: values[i],
                   condition: Condition.eq,
                 },
@@ -401,15 +417,15 @@ function ResultPage({ params }: any) {
               setFilters([
                 ...filters,
                 {
-                  fieldName: "start_date",
+                  fieldName: "createdTime",
                   value:
                     values[i] && values[i]!.length >= 1
                       ? (values[i] as any)[0]
                       : undefined,
-                  condition: Condition.lte,
+                  condition: Condition.gte,
                 },
                 {
-                  fieldName: "end_date",
+                  fieldName: "createdTime",
                   value:
                     values[i] && values[i]!.length >= 2
                       ? (values[i] as any)[2]
@@ -578,39 +594,43 @@ function ResultPage({ params }: any) {
                     switch (e) {
                       case "email":
                         setFilters([
-                          ...filters?.filter((d) => d.fieldName != "email"),
+                          ...filters?.filter(
+                            (d) => d.fieldName != "candidate.email",
+                          ),
                         ]);
                         break;
                       case "group":
                         setFilters([
-                          ...filters?.filter((d) => d.fieldName != "group"),
+                          ...filters?.filter(
+                            (d) => d.fieldName != "candidate.groupTest",
+                          ),
                         ]);
                         break;
                       case "phone_number":
                         setFilters([
                           ...filters?.filter(
-                            (d) => d.fieldName != "phone_number",
+                            (d) => d.fieldName != "candidate.phoneNumber",
                           ),
                         ]);
                         break;
                       case "full_name":
                         setFilters([
-                          ...filters?.filter((d) => d.fieldName != "full_name"),
+                          ...filters?.filter(
+                            (d) => d.fieldName != "candidate.fullName",
+                          ),
                         ]);
                         break;
                       case "identify_code":
                         setFilters([
                           ...filters?.filter(
-                            (d) => d.fieldName != "identifier",
+                            (d) => d.fieldName != "candidate.identifier",
                           ),
                         ]);
                         break;
                       case "test_date":
                         setFilters([
                           ...filters?.filter(
-                            (d) =>
-                              d.fieldName != "start_date" &&
-                              d.fieldName != "end_date",
+                            (d) => d.fieldName != "createdTime",
                           ),
                         ]);
                         break;
@@ -625,22 +645,24 @@ function ResultPage({ params }: any) {
           })}
         </div>
         <div className="h-5" />
-        <Table
-          className="w-full max-lg:overflow-scroll"
-          bordered={false}
-          columns={columns}
-          dataSource={infos}
-          pagination={false}
-          rowKey={"id"}
-          onRow={(data: any, index: any) =>
-            ({
-              style: {
-                background: "#FFFFFF",
-                borderRadius: "20px",
-              },
-            }) as HTMLAttributes<any>
-          }
-        />
+        <div className="overflow-scroll ">
+          <Table
+            className="w-full max-lg:overflow-scroll"
+            bordered={false}
+            columns={columns}
+            dataSource={infos}
+            pagination={false}
+            rowKey={"id"}
+            onRow={(data: any, index: any) =>
+              ({
+                style: {
+                  background: "#FFFFFF",
+                  borderRadius: "20px",
+                },
+              }) as HTMLAttributes<any>
+            }
+          />
+        </div>
         <div className="w-full flex items-center justify-center mt-5">
           <span className="body_regular_14 mr-2">{`${total} ${t(
             "result",

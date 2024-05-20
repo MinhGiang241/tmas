@@ -23,6 +23,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 import { renderExtension } from "@/services/ui/coding_services";
 import { Label } from "recharts";
+import { CandidateAnswers } from "@/data/exam";
 
 export default function Sql({
   examId,
@@ -34,6 +35,7 @@ export default function Sql({
   addExamBank,
   canCheck,
   onChangeCheck,
+  answers,
 }: {
   examId?: any;
   question?: any;
@@ -44,13 +46,14 @@ export default function Sql({
   addExamBank?: Function;
   canCheck?: boolean;
   onChangeCheck?: Function;
+  answers?: CandidateAnswers;
 }) {
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
   const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
 
   const router = useRouter();
-  const { t } = useTranslation("question");
+  const { t } = useTranslation("exam");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [dupLoading, setDupLoading] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -58,100 +61,57 @@ export default function Sql({
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
+  var candidateAnswer: any | undefined = !answers?.candidateAnswerJson
+    ? undefined
+    : JSON.parse(answers?.candidateAnswerJson ?? "");
+
+  console.log("candidateAnswer sql", candidateAnswer);
+  console.log("sql ans", answers);
+  console.log("que sql", question);
+
   const columns = [
     {
-      title: 'Cột 1',
-      dataIndex: 'Testcase1',
-      key: 'Testcase1',
+      title: "Cột 1",
+      dataIndex: "Testcase1",
+      key: "Testcase1",
     },
     {
-      title: 'Cột 2',
-      dataIndex: 'Testcase2',
-      key: 'Testcase2',
+      title: "Cột 2",
+      dataIndex: "Testcase2",
+      key: "Testcase2",
     },
     {
-      title: 'Cột 3',
-      dataIndex: 'Testcase3',
-      key: 'Testcase3',
+      title: "Cột 3",
+      dataIndex: "Testcase3",
+      key: "Testcase3",
     },
     {
-      title: 'Cột 4',
-      dataIndex: 'Testcase4',
-      key: 'Testcase4',
+      title: "Cột 4",
+      dataIndex: "Testcase4",
+      key: "Testcase4",
     },
   ];
 
   const data = [
     {
-      key: '1',
-      Testcase1: 'abc',
-      Testcase2: 'abc',
-      Testcase3: (<div>2024-05-12  18:05:30</div>),
-      Testcase4: '10',
+      key: "1",
+      Testcase1: "abc",
+      Testcase2: "abc",
+      Testcase3: <div>2024-05-12 18:05:30</div>,
+      Testcase4: "10",
     },
   ];
 
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div>
-      <ConfirmModal
-        loading={dupLoading}
-        onOk={async () => {
-          setDupLoading(true);
-          var res: APIResults = await duplicateQuestion({
-            newIdExamQuestionPart: question?.idExamQuestionPart,
-            ids: [question?.id],
-            idExams: examId ? [examId] : [],
-          });
-          setDupLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("sucess_duplicate_question"));
-          setOpenCopyQuestion(false);
-          router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
-          );
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenCopyQuestion(false);
-        }}
-        action={t("copy")}
-        text={t("confirm_copy")}
-        open={openCopyQuestion}
-      />
-
-      <ConfirmModal
-        loading={deleteLoading}
-        onOk={async () => {
-          setDeleteLoading(true);
-          var res = await deleteQuestionById(question?.id);
-          setDeleteLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("success_delete_question"));
-
-          setOpenDeleteQuestion(false);
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenDeleteQuestion(false);
-        }}
-        action={t("delete_question")}
-        text={t("confirm_delete_question")}
-        open={openDeleteQuestion}
-      />
       <Collapse
         // key={v?.id}
         ghost
@@ -164,25 +124,18 @@ export default function Sql({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
-                  {canCheck && (
-                    <Checkbox
-                      onChange={onChangeCheck as any}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                      value={question?.id}
-                    />
-                  )}{" "}
-                  {`${t("question")} 7`}:
-                  {/* <div
+                  {`${t("question")} ${index + 1}`}:
+                  <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
-                  /> */}
-                  <div className="text-sm font-normal">Câu hỏi SQL</div>
+                    dangerouslySetInnerHTML={{
+                      __html: question?.question ?? "",
+                    }}
+                  />
                 </span>
                 {isOverflowing ? (
                   <button
@@ -216,35 +169,36 @@ export default function Sql({
           key={""}
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
-          <div className="bg-m_neutral_100 p-3 font-semibold text-sm rounded-lg">my SQL</div>
+          <div className="bg-m_neutral_100 p-3 font-semibold text-sm rounded-lg">
+            {"my SQl"}
+          </div>
           <CodeMirror
-            onBlur={async () => {
-            }}
+            onBlur={async () => {}}
             // value={code}
             // lang={lang}
             theme={dracula}
             height="300px"
             extensions={[renderExtension("SQL") as any]}
-            onChange={(v) => {
-
-            }}
+            onChange={(v) => {}}
           />
           <div className="pt-3">
             <div className="flex pb-2">
-              <div className="pr-2 font-semibold text-sm">Kết quả</div>
+              <div className="pr-2 font-semibold text-sm">{t("result")}</div>
               <Tick />
             </div>
             <Table columns={columns} dataSource={data} pagination={false} />
           </div>
           <div className="py-3">
-            <div className="pr-2 font-semibold text-sm pb-2">Đáp án</div>
+            <div className="pr-2 font-semibold text-sm pb-2">
+              {t("result0")}
+            </div>
             <Table columns={columns} dataSource={data} pagination={false} />
           </div>
           <div>
             <div className="text-m_primary_500 text-sm font-semibold my-2">
-              Giải thích đáp án
+              {t("explain_result")}
             </div>
-            <div>Lorem ipsum chỉ đơn giản là một đoạn văn b</div>
+            <div dangerouslySetInnerHTML={{ __html: "" }} />
           </div>
           {/* <div className="text-m_primary_500 text-sm font-semibold mb-2">
             {t("quest_info")}

@@ -73,7 +73,9 @@ export default function Explain({
   const [edit, setEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [comment, setComment] = useState("");
-  const [point, setPoint] = useState("");
+  const [point, setPoint] = useState(
+    (answers?.anwserScore?.score ?? 0)?.toString(),
+  );
   var candidateAnswer: EssayCandidateAnswer | undefined =
     !answers?.candidateAnswerJson
       ? undefined
@@ -163,13 +165,13 @@ export default function Explain({
           {!edit && (
             <div>
               <div className="font-semibold pt-2">{t("comment")}</div>
-              <TextArea
-                value={comment}
-                className="rounded-md"
-                rows={4}
+              <MTextArea
+                name="comment"
+                id="comment"
+                onChange={(e) => setComment(e.target.value?.trim())}
                 placeholder={t("enter_comment")}
-                onChange={(e) => setComment(e.target.value)}
               />
+
               <div className="font-semibold pt-2">
                 {t("match_max", { num: question?.numberPoint })}
               </div>
@@ -178,7 +180,7 @@ export default function Explain({
                   value={point}
                   className="rounded-md h-[50px]"
                   type="number"
-                  onChange={(e) => setPoint(e.target.value)}
+                  onChange={(e) => setPoint(e.target.value?.trim())}
                 />
                 <Button
                   onClick={async () => {
@@ -206,18 +208,21 @@ export default function Explain({
           {edit && (
             <div className="pt-1">
               <div className="font-semibold py-2">{t("comment")}</div>
-              <TextArea
-                className="rounded-md"
-                rows={4}
-                disabled
-                value={comment}
+              <MTextArea
+                name="comment"
+                id="comment"
+                onChange={(e) => setComment(e.target.value?.trim())}
+                disable
               />
+
               <div className="flex justify-between items-center pt-2">
                 <div className="flex">
                   <div>{t("scored_point")}:</div>
                   <div className="font-semibold pl-1">{point}</div>
                 </div>
-                <Edit onClick={() => setEdit(!edit)} />
+                <button onClick={() => setEdit(!edit)}>
+                  <Edit />
+                </button>
               </div>
             </div>
           )}

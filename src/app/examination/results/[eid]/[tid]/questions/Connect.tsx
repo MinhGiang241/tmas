@@ -20,6 +20,8 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
+import { CandidateAnswers } from "@/data/exam";
+import { ConnectCandidateAnswer, ConnectQuestionData } from "@/data/question";
 
 export default function Connect({
   examId,
@@ -31,9 +33,11 @@ export default function Connect({
   addExamBank,
   canCheck,
   onChangeCheck,
+  answers,
 }: {
+  answers?: CandidateAnswers;
   examId?: any;
-  question?: any;
+  question?: ConnectQuestionData;
   index?: any;
   getData?: any;
   questionGroup?: any;
@@ -49,79 +53,29 @@ export default function Connect({
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [dupLoading, setDupLoading] = useState(false);
   const router = useRouter();
-  const { t } = useTranslation("question");
+  const { t } = useTranslation("exam");
 
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
-  // console.log(question, "question");
-  // console.log();
+  var candidateAnswer: ConnectCandidateAnswer | undefined =
+    !answers?.candidateAnswerJson
+      ? undefined
+      : JSON.parse(answers?.candidateAnswerJson ?? "");
 
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div>
-      <ConfirmModal
-        loading={dupLoading}
-        onOk={async () => {
-          setDupLoading(true);
-          var res: APIResults = await duplicateQuestion({
-            newIdExamQuestionPart: question?.idExamQuestionPart,
-            ids: [question?.id],
-            idExams: examId ? [examId] : [],
-          });
-          setDupLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("sucess_duplicate_question"));
-          setOpenCopyQuestion(false);
-          router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
-          );
-
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenCopyQuestion(false);
-        }}
-        action={t("copy")}
-        text={t("confirm_copy")}
-        open={openCopyQuestion}
-      />
-
-      <ConfirmModal
-        loading={deleteLoading}
-        onOk={async () => {
-          setDeleteLoading(true);
-          var res = await deleteQuestionById(question?.id);
-          setDeleteLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("success_delete_question"));
-
-          setOpenDeleteQuestion(false);
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenDeleteQuestion(false);
-        }}
-        action={t("delete_question")}
-        text={t("confirm_delete_question")}
-        open={openDeleteQuestion}
-      />
       <Collapse
-        // key={v?.id}
+        key={question?.id}
         ghost
         expandIconPosition="end"
         className="rounded-lg bg-m_question overflow-hidden mb-4"
@@ -132,8 +86,9 @@ export default function Connect({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -144,13 +99,14 @@ export default function Connect({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("question")} 3`}:
-                  {/* <div
+                  {`${t("question")} ${index + 1}`}:
+                  <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
-                  /> */}
-                  <div className="text-sm font-normal">Câu hỏi ghép nối</div>
+                    dangerouslySetInnerHTML={{
+                      __html: question?.question ?? "",
+                    }}
+                  />
                 </span>
                 {isOverflowing ? (
                   <button
@@ -185,68 +141,113 @@ export default function Connect({
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
           <div className="flex">
-            <div className="w-1/2 pl-10 flex">
-              <div className="font-semibold pr-1">1.</div>
-              <div>1+1</div>
+            <div className="flex w-1/2 flex-col">
+              {question?.content?.questions?.map((e) => (
+                <div key={e.id} className=" pl-10 flex">
+                  <div className="font-semibold pr-1">{e?.label}.</div>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: e.content ?? "" }}
+                  ></div>
+                </div>
+              ))}
             </div>
-            <div className="w-1/2 pl-4 flex">
-              <div className="font-semibold pr-1">A.</div>
-              <div>2</div>
+            <div className="flex w-1/2 flex-col">
+              {question?.content?.answers?.map((e) => (
+                <div key={e.id} className=" pl-10 flex">
+                  <div className="font-semibold pr-1">{e?.label}.</div>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: e.content ?? "" }}
+                  ></div>
+                </div>
+              ))}
             </div>
           </div>
+
           <div className="flex">
             <div className="w-1/2 p-4">
               <div className="text-m_primary_500 text-sm font-semibold mb-2 pl-6">
-                Trả lời
+                {t("answer")}
               </div>
-              <div className="flex">
-                <Tick />
-                <div className="pr-1 pl-1">1-</div>
-                <div>A</div>
-              </div>
-              <div className="flex">
-                <Tick />
-                <div className="pr-1 pl-1">1-</div>
-                <div>B</div>
-              </div>
+              {candidateAnswer?.anwserPairings?.map((k, j) => {
+                var q = question?.content?.questions?.find(
+                  (t) => t.id == k.idQuestion,
+                );
+                var a = question?.content?.answers?.find(
+                  (t) => t.id == k.idAnswer,
+                );
+
+                return (
+                  <div key={j} className="flex">
+                    {question?.content?.pairings?.some(
+                      (g) =>
+                        g.idAnswer == k.idAnswer &&
+                        g.idQuestion == k.idQuestion,
+                    ) ? (
+                      <Tick />
+                    ) : (
+                      <div className="w-5" />
+                    )}
+                    <div className="pr-1 pl-1">{q?.label}-</div>
+                    <div>{a?.label}</div>
+                  </div>
+                );
+              })}
             </div>
             <div className="w-1/2 p-4">
               <div className="text-m_primary_500 text-sm font-semibold mb-2">
                 {t("result")}
               </div>
-              {/* <div className="flex justify-start items-center">
-              <div>
-                  {question?.content?.pairings?.map((e: any, key: any) => {
-                    // console.log(question?.content?.pairings, "zxczxc");
-                    // console.log(question?.content?.questions, "123123");
-                    var ques = question?.content?.questions?.find(
-                      (q: any) => q.id == e.idQuestion,
-                    );
-                    var ans = question?.content?.answers?.find(
-                      (a: any) => a.id == e.idAnswer,
-                    );
-                    return (
-                      <div
-                        key={key}
-                        className="flex font-semibold items-center"
-                      >
-                        {`${ques?.label} : ${ans?.label}`}
-                        <Tick className="ml-2" />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div> */}
-              <div>1-A</div>
-              <div>1-B</div>
+              {question?.content?.pairings?.map((p, ii) => {
+                var q = question?.content?.questions?.find(
+                  (t) => t.id == p.idQuestion,
+                );
+                var a = question?.content?.answers?.find(
+                  (t) => t.id == p.idAnswer,
+                );
+
+                return (
+                  <div key={ii}>
+                    {q?.label}-{a?.label}
+                  </div>
+                );
+              })}
             </div>
           </div>
-          <div className="flex justify-between items-center">
-            <div className="flex">Điểm: <div className="pl-1 font-semibold">1/1</div></div>
-            <div className="flex">Cách chấm: <div className="pl-1 font-semibold">Toàn bộ</div></div>
-            <div className="flex">Tổng số cặp: <div className="pl-1 font-semibold">3</div></div>
-            <div className="flex">Số cặp ghép đúng: <div className="pl-1 font-semibold">3</div></div>
-            <div className="flex">Số cặp ghép đúng: <div className="pl-1 font-semibold">3</div></div>
+          <div className="max-lg:flex-col flex justify-between lg:items-center">
+            <div className="flex">
+              {t("point")}:{" "}
+              <div className="pl-1 font-semibold">
+                {(answers?.anwserScore?.score ?? 0) / 100}/
+                {question?.numberPoint ?? 0}
+              </div>
+            </div>
+            <div className="flex">
+              {t("method_match")}:
+              <div className="pl-1 font-semibold">
+                {question?.content?.pairingScroringMethod == "CorrectAll"
+                  ? t("all_match")
+                  : t("part_match")}
+              </div>
+            </div>
+            <div className="flex">
+              {t("sum_pair")}:{" "}
+              <div className="pl-1 font-semibold">
+                {answers?.anwserScore?.totalQuestion ?? 0}
+              </div>
+            </div>
+            <div className="flex">
+              {t("num_true_pair")}:{" "}
+              <div className="pl-1 font-semibold">
+                {answers?.anwserScore?.numberQuestionCorrect ?? 0}
+              </div>
+            </div>
+            <div className="flex">
+              {t("num_false_pair")}:{" "}
+              <div className="pl-1 font-semibold">
+                {(answers?.anwserScore?.totalQuestion ?? 0) -
+                  (answers?.anwserScore?.numberQuestionCorrect ?? 0)}
+              </div>
+            </div>
           </div>
         </Collapse.Panel>
       </Collapse>

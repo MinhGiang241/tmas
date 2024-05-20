@@ -362,5 +362,21 @@
   "match_max": "Chấm điểm (tối đa {{num}})",
   "enter_comment": "Viết nhận xét",
   "scored_point": "Điểm đã chấm",
-  "checking": "Đang chấm"
+  "checking": "Đang chấm",
+  "select_question": "Câu hỏi trắc nghiệm",
+  "all": "Tất cả",
+  "answer": "Trả lời",
+  "method_match": "Cách chấm",
+  "all_match": "Toàn bộ",
+  "part_match": "Từng phần",
+  "sum_pair": "Tổng số cặp",
+  "num_true_pair": "Số cặp ghép đúng",
+  "num_false_pair": "Số cặp ghép sai",
+  "inputT": "Đầu vào",
+  "outputT": "Đầu ra",
+  "blank": "Chỗ trống",
+  "sum_blank": "Tổng số chỗ trống",
+  "true_blank_num": "Số chỗ trống đúng",
+  "false_blank_num": "Số chỗ trống sai",
+  "coding_question": "Câu hỏi coding"
 }

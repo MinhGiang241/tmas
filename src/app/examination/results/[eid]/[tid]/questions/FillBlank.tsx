@@ -20,7 +20,18 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
-import Close from "@/app/components/icons/close-circle.svg"
+import Close from "@/app/components/icons/close-circle.svg";
+import { CandidateAnswers } from "@/data/exam";
+import {
+  FillBlankCandidateAnswer,
+  FillBlankQuestionData,
+} from "@/data/question";
+import {
+  rowEndStyle,
+  rowStartStyle,
+  rowStyle,
+} from "@/app/account/account-info/AccountInfo";
+import { ColumnsType } from "antd/es/table";
 
 export default function FillBlank({
   index,
@@ -32,9 +43,10 @@ export default function FillBlank({
   addExamBank,
   canCheck,
   onChangeCheck,
+  answers,
 }: {
   examId?: any;
-  question?: any;
+  question?: FillBlankQuestionData;
   index?: any;
   getData?: any;
   questionGroup?: any;
@@ -42,126 +54,107 @@ export default function FillBlank({
   addExamBank?: Function;
   canCheck?: boolean;
   onChangeCheck?: Function;
+  answers?: CandidateAnswers;
 }) {
-  const [openEditQuestion, setOpenEditQuestion] = useState(false);
-  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
-  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-  const [dupLoading, setDupLoading] = useState(false);
-  const [active, setActive] = useState("");
   const router = useRouter();
-  const { t } = useTranslation("question");
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const { t } = useTranslation("exam");
   // console.log("question", question);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
+  var candidateAnswer: FillBlankCandidateAnswer | undefined =
+    !answers?.candidateAnswerJson
+      ? undefined
+      : JSON.parse(answers?.candidateAnswerJson ?? "");
 
-  const columns = [
+  const columns: ColumnsType<TableValue> = [
     {
-      title: 'Chỗ trống',
-      dataIndex: 'empty',
-      key: 'empty',
+      onHeaderCell: (_) => rowStartStyle,
+      title: t("blank"),
+      dataIndex: "blank",
+      key: "blank",
+      render: (text, data, ind) => (
+        <p key={text} className="w-full  min-w-11 break-all caption_regular_14">
+          {text}
+        </p>
+      ),
     },
     {
-      title: 'Đầu vào',
-      dataIndex: 'input',
-      key: 'input',
-    },
-    {
-      title: 'Đầu ra',
-      dataIndex: 'output',
-      key: 'output',
-    },
-    {
-      title: 'Kết quả',
-      dataIndex: 'result',
-      key: 'result',
-    },
-  ];
-
-  const data = [
-    {
-      key: '1',
-      empty: '1',
-      input: (
+      onHeaderCell: (_) => rowStyle,
+      title: t("inputT"),
+      dataIndex: "input",
+      key: "input",
+      render: (text, data, ind) => (
         <div className="flex">
-          <div className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100">Sơn</div>
+          {text?.map((t: any, i: any) => (
+            <div
+              key={i}
+              className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100"
+            >
+              {t}
+            </div>
+          ))}
         </div>
       ),
-      output: (
+    },
+    {
+      onHeaderCell: (_) => rowStyle,
+      title: t("outputT"),
+      dataIndex: "output",
+      key: "output",
+      render: (text, data, ind) => (
         <div className="flex">
-          <div className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100">Sơn</div>
-          <div className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100">Son</div>
-          <div className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100">son</div>
+          {text?.map((t: any, i: any) => (
+            <div
+              key={i}
+              className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100"
+            >
+              {t}
+            </div>
+          ))}
         </div>
       ),
-      result: (<div><Tick /><Close /></div>)
+    },
+    {
+      onHeaderCell: (_) => rowEndStyle,
+      title: t("result"),
+      dataIndex: "result",
+      key: "result",
+      render: (text, data) => <div>{text ? <Tick /> : <Close />}</div>,
     },
   ];
+  interface TableValue {
+    blank?: string;
+    input?: string[];
+    output?: string[];
+    result?: boolean;
+  }
+  const data: TableValue[] =
+    candidateAnswer?.anwserItems?.map<TableValue>((y) => {
+      var blank = question?.content?.anwserItems?.find(
+        (i) => i.label === y.label,
+      );
+      return {
+        blank: blank?.label,
+        input: blank?.anwsers,
+        output: y?.anwsers,
+        result: answers?.anwserScore?.isAnwsered,
+      };
+    }) ?? [];
 
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div>
-      <ConfirmModal
-        loading={dupLoading}
-        onOk={async () => {
-          setDupLoading(true);
-          var res: APIResults = await duplicateQuestion({
-            newIdExamQuestionPart: question?.idExamQuestionPart,
-            ids: [question?.id],
-            idExams: examId ? [examId] : [],
-          });
-          setDupLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("sucess_duplicate_question"));
-          setOpenCopyQuestion(false);
-          router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
-          );
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenCopyQuestion(false);
-        }}
-        action={t("copy")}
-        text={t("confirm_copy")}
-        open={openCopyQuestion}
-      />
-
-      <ConfirmModal
-        loading={deleteLoading}
-        onOk={async () => {
-          setDeleteLoading(true);
-          var res = await deleteQuestionById(question?.id);
-          setDeleteLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("success_delete_question"));
-          setOpenDeleteQuestion(false);
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenDeleteQuestion(false);
-        }}
-        action={t("delete_question")}
-        text={t("confirm_delete_question")}
-        open={openDeleteQuestion}
-      />
       <Collapse
-        // key={key}
+        key={question?.id}
         ghost
         expandIconPosition="end"
         className="rounded-lg bg-m_question overflow-hidden mb-4"
@@ -172,8 +165,9 @@ export default function FillBlank({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -184,14 +178,16 @@ export default function FillBlank({
                       value={question?.id}
                     />
                   )}{" "}
-                  {`${t("question")} 6`}:
-                  {/* <div
+                  {`${t("question")} ${index + 1}`}:
+                  <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
                     // dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank,}}
-                    dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank }}
-                  /> */}
-                  <div className="text-sm font-normal">Điền vào chỗ trống</div>
+                    dangerouslySetInnerHTML={{
+                      __html: question?.content?.formatBlank ?? "",
+                    }}
+                  />
+                  <div className="text-sm font-normal">{t("fill_blank")}</div>
                 </span>
                 {isOverflowing ? (
                   <button
@@ -205,21 +201,6 @@ export default function FillBlank({
                   </button>
                 ) : null}
               </div>
-              {tmasQuest ? (
-                <MButton
-                  className="flex items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addExamBank!(e, question);
-                  }}
-                  h="h-11"
-                  type="secondary"
-                  icon={<AddIcon />}
-                  text={t("add_bank")}
-                />
-              ) : (
-                <div></div>
-              )}
             </div>
           }
           key={""}
@@ -228,12 +209,43 @@ export default function FillBlank({
           <div className="">
             <div>
               <Table columns={columns} dataSource={data} pagination={false} />
-              <div className="flex justify-between items-center pt-4">
-                <div className="flex">Điểm: <div className="pl-1 font-semibold">1/1</div></div>
-                <div className="flex">Cách chấm: <div className="pl-1 font-semibold">Từng phần</div></div>
-                <div className="flex">Tổng số chỗ trống: <div className="pl-1 font-semibold">3</div></div>
-                <div className="flex">Số chỗ trống đúng: <div className="pl-1 font-semibold">3</div></div>
-                <div className="flex">Số chỗ trống sai: <div className="pl-1 font-semibold">3</div></div>
+              <div className="max-lg:flex-col lg:items-center flex justify-between items-center pt-4">
+                <div className="flex">
+                  {t("point")}:{" "}
+                  <div className="pl-1 font-semibold">
+                    {(answers?.anwserScore?.score ?? 0) / 100}/
+                    {question?.numberPoint ?? 0}
+                  </div>
+                </div>
+                <div className="flex">
+                  {t("method_match")}:{" "}
+                  <div className="pl-1 font-semibold">
+                    {" "}
+                    {question?.content?.fillBlankScoringMethod ==
+                    "CorrectAllBlank"
+                      ? t("all_match")
+                      : t("part_match")}
+                  </div>
+                </div>
+                <div className="flex">
+                  {t("sum_blank")}:{" "}
+                  <div className="pl-1 font-semibold">
+                    {question?.content?.anwserItems?.length}
+                  </div>
+                </div>
+                <div className="flex">
+                  {t("true_blank_num")}:{" "}
+                  <div className="pl-1 font-semibold">
+                    {answers?.anwserScore?.numberQuestionCorrect ?? 0}
+                  </div>
+                </div>
+                <div className="flex">
+                  {t("false_blank_num")}:{" "}
+                  <div className="pl-1 font-semibold">
+                    {(answers?.anwserScore?.totalQuestion ?? 0) -
+                      (answers?.anwserScore?.numberQuestionCorrect ?? 0)}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

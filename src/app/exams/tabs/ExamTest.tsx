@@ -152,6 +152,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
       var dataResults = await getExaminationTestList({
         "FilterByExamId.Name": "Name",
         "FilterByExamId.InValues": c[0],
+        isIncludeExamVersion: false,
       });
       console.log("dataResults", dataResults);
       if (dataResults?.code != 0) {
@@ -508,6 +509,9 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    router.push(
+                                      `/examination/results/${k?.id}`,
+                                    );
                                   }}
                                   className="h-full mx-2"
                                 >

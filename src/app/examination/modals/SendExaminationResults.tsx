@@ -24,6 +24,7 @@ import { loadConfig } from "@/services/api_services/account_services";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import {
   getTemplateSendMail,
+  getTemplateSendResultMail,
   loadRemindMailList,
   sendRemindEmail,
   sendResultEmail,
@@ -67,7 +68,7 @@ function SendExaminationResults(props: Props) {
     setConfig(res.data);
   };
   const getTemplateMail = async () => {
-    var res = await getTemplateSendMail({
+    var res = await getTemplateSendResultMail({
       name: props.examination?.name,
       start_time: props.examination?.validAccessSetting?.validFrom,
       end_time: props.examination?.validAccessSetting?.validTo,
@@ -327,8 +328,12 @@ function SendExaminationResults(props: Props) {
           <button
             className="ml-2"
             onClick={() => {
-              setActive(data);
-              setOpenDetail(true);
+              router.push(
+                `/examination/results/${props.examination?.id}/${data?.id}/`,
+              );
+
+              //setActive(data);
+              //setOpenDetail(true);
             }}
           >
             <EyeIcon />

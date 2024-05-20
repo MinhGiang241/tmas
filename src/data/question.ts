@@ -121,6 +121,22 @@ export interface SqlQuestionData extends BaseQuestionData {
   };
 }
 
+export interface CodingCandidateAnswer {
+  code?: string;
+  languageSelected?: string;
+}
+
+export interface FillBlankCandidateAnswer {
+  anwserItems?: {
+    anwsers?: string[];
+    label?: string;
+  }[];
+}
+
+export interface ConnectCandidateAnswer {
+  anwserPairings: { idAnswer?: string; idQuestion?: string }[];
+}
+
 export interface MultiCandidateAnswer {
   answers?: {
     label?: string;

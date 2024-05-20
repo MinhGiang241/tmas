@@ -2,16 +2,21 @@
 import MButton from "@/app/components/config/MButton";
 import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
+import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { UserData } from "@/data/user";
 import { RootState } from "@/redux/store";
 import { setUserData } from "@/redux/user/userSlice";
-import { updatePersonalInfo } from "@/services/api_services/account_services";
+import {
+  updatePersonalInfo,
+  userDeleteAccount,
+} from "@/services/api_services/account_services";
 import { getUserMe } from "@/services/api_services/auth_service";
 import { emailRegex, phoneRegex } from "@/services/validation/regex";
 import { Divider } from "antd";
 import { FormikErrors, useFormik } from "formik";
 import i18next from "i18next";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -91,8 +96,35 @@ function UserProfile() {
     formik.handleSubmit();
   };
 
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const onDeleteAcc = async (e: any) => {
+    setOpenDelete(true);
+  };
+  const router = useRouter();
   return (
     <div className="w-full p-5 flex flex-col">
+      <ConfirmModal
+        open={openDelete}
+        text={t("confirm_delete_acc")}
+        action={t("aggree")}
+        onCancel={() => {
+          setOpenDelete(false);
+        }}
+        onOk={async () => {
+          setDeleteLoading(true);
+          var res = await userDeleteAccount();
+          setDeleteLoading(false);
+          if (res?.code != 0) {
+            errorToast(res?.message ?? "");
+            return;
+          }
+          setOpenDelete(false);
+          successToast(t("success_delete_acc"));
+          router.push("/signin");
+          localStorage.removeItem("access_token");
+        }}
+      />
       <div className="w-full mt-2 title_semibold_20">
         {t("personal_information")}
       </div>
@@ -158,12 +190,20 @@ function UserProfile() {
 
           <div />
         </div>
-        <div className="max-lg:flex justify-center">
+        <div className="flex justify-center">
           <MButton
             loading={loading}
             htmlType="submit"
             className="mt-4 w-36"
             text={common.t("update")}
+          />
+          <div className="w-3" />
+          <MButton
+            loading={deleteLoading}
+            onClick={onDeleteAcc}
+            htmlType="button"
+            text={t("delete_acc")}
+            className="bg-m_error_500 mt-4"
           />
         </div>
       </form>

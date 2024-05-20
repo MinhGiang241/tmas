@@ -149,6 +149,14 @@ export default function ManyResult({
                   {question?.content?.answers?.map((x, key: any) =>
                     !x.isCorrectAnswer ? (
                       <div className="flex" key={key}>
+                        {candidateAnswer?.answers?.some(
+                          (u) => u.label == x.label,
+                        ) ? (
+                          <Close />
+                        ) : (
+                          <div className="w-5" />
+                        )}
+
                         <div className="body_semibold_14">{x.label}</div>
                         <div
                           className="body_regular_14 pl-2"
@@ -157,13 +165,7 @@ export default function ManyResult({
                       </div>
                     ) : (
                       <div className="flex" key={key}>
-                        {candidateAnswer?.answers?.some(
-                          (u) => u.label == x.label,
-                        ) ? (
-                          <Tick />
-                        ) : (
-                          <Close />
-                        )}
+                        <Tick />
 
                         <div className="body_semibold_14 pl-1">{x.label}</div>
                         <div

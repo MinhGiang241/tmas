@@ -15,6 +15,7 @@ import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
 import MButton from "@/app/components/config/MButton";
+import { RandomQuestionData } from "@/data/question";
 
 function Random({
   getData,
@@ -29,7 +30,7 @@ function Random({
 }: {
   getData?: any;
   examId?: any;
-  question?: any;
+  question?: RandomQuestionData;
   index?: any;
   questionGroup?: any;
   tmasQuest?: boolean;
@@ -40,8 +41,7 @@ function Random({
   const router = useRouter();
   const { t } = useTranslation("question");
   const [expanded, setExpanded] = useState<boolean>(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [dupLoading, setDupLoading] = useState(false);
+
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
@@ -49,69 +49,15 @@ function Random({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
-  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-  const [active, setActive] = useState("");
+
   return (
     <div>
-      <ConfirmModal
-        loading={dupLoading}
-        onOk={async () => {
-          setDupLoading(true);
-          var res: APIResults = await duplicateQuestion({
-            newIdExamQuestionPart: question?.idExamQuestionPart,
-            ids: [question?.id],
-            idExams: examId ? [examId] : [],
-          });
-          setDupLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("sucess_duplicate_question"));
-          setOpenCopyQuestion(false);
-          router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
-          );
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenCopyQuestion(false);
-        }}
-        action={t("copy")}
-        text={t("confirm_copy")}
-        open={openCopyQuestion}
-      />
-
-      <ConfirmModal
-        loading={deleteLoading}
-        onOk={async () => {
-          setDeleteLoading(true);
-          var res = await deleteQuestionById(question?.id);
-          setDeleteLoading(false);
-          if (res.code != 0) {
-            errorToast(res?.message ?? "");
-            return;
-          }
-          successToast(t("success_delete_question"));
-
-          setOpenDeleteQuestion(false);
-          await getData();
-        }}
-        onCancel={() => {
-          setOpenDeleteQuestion(false);
-        }}
-        action={t("delete_question")}
-        text={t("confirm_delete_question")}
-        open={openDeleteQuestion}
-      />
-
       <Collapse
-        key={index}
+        key={question?.id}
         ghost
         expandIconPosition="end"
         className="mb-3 rounded-lg bg-m_question overflow-hidden"
@@ -131,11 +77,12 @@ function Random({
                     />
                   )}{" "}
                   {`${t("question")} 8`}:
-                  {/* <span
+                  <span
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.question }}
-                  /> */}
-                  <div className="text-sm font-normal">Ngẫu nhiên</div>
+                    dangerouslySetInnerHTML={{
+                      __html: question?.question ?? "",
+                    }}
+                  />
                 </span>
               </div>
               {tmasQuest ? (
@@ -158,41 +105,6 @@ function Random({
           key={""}
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
-          {/* <div className="text-m_primary_500 text-sm font-semibold mb-2">
-            {t("quest_info")}
-          </div>
-          <div className="flex">
-            <div className="text-sm pr-2 font-semibold">
-              {t("quest_group")}:
-            </div>
-            <span>{questionGroup?.name}</span>
-          </div>
-          <div className="flex">
-            <div className="text-sm pr-2 font-semibold">{t("quest_type")}:</div>
-            <span>{t(question?.questionType)}</span>
-          </div>
-          <div className="flex">
-            <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-            <span>{question?.numberPoint}</span>
-          </div>
-          <div className="flex">
-            <div className="text-sm pr-2 font-semibold">
-              {t("created_date")}:
-            </div>
-            <FormattedDate
-              value={question?.createdTime}
-              day="2-digit"
-              month="2-digit"
-              year="numeric"
-            />
-            <div className="w-2" />
-            <FormattedTime
-              value={question?.createdTime}
-              hour="2-digit"
-              minute="2-digit"
-              second="2-digit"
-            />
-          </div> */}
         </Collapse.Panel>
       </Collapse>
     </div>

@@ -228,6 +228,22 @@ export const getTemplateSendMail = async ({
   return results;
 };
 
+export const getTemplateSendResultMail = async ({
+  name,
+  start_time,
+  end_time,
+}: {
+  name?: string;
+  start_time?: string;
+  end_time?: string;
+}) => {
+  const results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/mailtemplate.generate_result_exam`,
+    { name, start_time, end_time },
+  );
+  return results;
+};
+
 export const sendRemindEmail = async (data: SendRemindParams) => {
   const results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examtestmaillist.send_remind`,

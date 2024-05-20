@@ -99,7 +99,7 @@ function ExaminationPage() {
               status === "Rejected"
                 ? status
                 : undefined,
-            isIncludeExamVersion: true,
+            isIncludeExamVersion: false,
             "FilterByName.Name": "Name",
             "FilterByName.InValues": search ?? undefined,
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
@@ -119,8 +119,7 @@ function ExaminationPage() {
               status === "Rejected"
                 ? status
                 : undefined,
-
-            isIncludeExamVersion: true,
+            isIncludeExamVersion: false,
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
             "FilterByExamGroupId.Name": "Name",
             "Paging.RecordPerPage": recordNum,

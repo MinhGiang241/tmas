@@ -104,5 +104,9 @@
   "buy_gold_fail": "Nạp Gold không thành công.",
   "upgrade_package_fail": "Nâng cấp gói doanh nghiệp không thành công.",
   "re_pay": "Vui lòng thanh toán lại!",
-  "repay": "Thanh toán lại"
+  "repay": "Thanh toán lại",
+  "confirm_delete_acc": "Khi tài khoản bị xóa, mọi giao dịch mua gói và Gold đã thực hiện trong quá khứ sẽ không còn hiệu lực. Vui lòng nhấn đồng ý để xác nhận !",
+  "delete_acc": "Xóa tài khỏan",
+  "aggree": "Đồng ý",
+  "success_delete_acc": "Xóa tài khoản thành công"
 }

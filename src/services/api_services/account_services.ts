@@ -209,3 +209,11 @@ export const loadResultTransaction = async (vnp_TxnRef?: string) => {
 
   return results;
 };
+
+export const userDeleteAccount = async () => {
+  var results: APIResults = await callApi.get(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.delete_self_account`,
+  );
+
+  return results;
+};

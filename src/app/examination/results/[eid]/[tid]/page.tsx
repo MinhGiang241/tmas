@@ -37,6 +37,7 @@ import duration from "dayjs/plugin/duration";
 import _ from "lodash";
 import { PartObject } from "@/data/form_interface";
 import { BaseQuestionData, QuestionType } from "@/data/question";
+import MDropdown from "@/app/components/config/MDropdown";
 
 dayjs.extend(duration);
 
@@ -85,34 +86,6 @@ export default function Result({ params }: any) {
     setExamination(res?.data?.records[0]);
   };
 
-  const filterEssay = (e: any) => {
-    console.log("question", questions);
-    console.log("ans", examResult?.candidateAnswers);
-    e?.stopPropagation();
-    if (!yEssay) {
-      var partClone = parts?.map((p) => {
-        var cloneP = _.cloneDeep(p);
-        cloneP.questions = questions?.filter(
-          (que) =>
-            que?.idExamQuestionPart == p?.id &&
-            que?.questionType == QuestionType?.Essay,
-        );
-        return cloneP;
-      });
-
-      setParts(partClone);
-    } else {
-      var partClone = parts?.map((p) => {
-        var cloneP = _.cloneDeep(p);
-        cloneP.questions = questions?.filter(
-          (que) => que?.idExamQuestionPart == p?.id,
-        );
-        return cloneP;
-      });
-      setParts(partClone);
-    }
-    setYEssay(!yEssay);
-  };
   useOnMountUnsafe(() => {
     getExaminationDetail();
     getExamResultDetails();
@@ -126,12 +99,11 @@ export default function Result({ params }: any) {
     switch (q?.questionType) {
       case QuestionType?.MutilAnswer:
         return <ManyResult question={q} index={index} answers={answer} />;
-
       case QuestionType?.YesNoQuestion:
         return <TrueFalse question={q} index={index} answers={answer} />;
 
       case QuestionType?.Pairing:
-        return <Connect />;
+        return <Connect question={q} index={index} answers={answer} />;
 
       case QuestionType?.Essay:
         return (
@@ -144,18 +116,23 @@ export default function Result({ params }: any) {
         );
 
       case QuestionType?.Coding:
-        return <Coding />;
+        return <Coding question={q} index={index} answers={answer} />;
 
       case QuestionType?.Random:
-        return <Random />;
+        return <Random question={q} index={index} />;
 
       case QuestionType?.FillBlank:
-        return <FillBlank />;
+        return <FillBlank question={q} index={index} answers={answer} />;
 
       case QuestionType?.SQL:
-        return <Sql />;
+        return <Sql question={q} index={index} answers={answer} />;
     }
   };
+
+  const [valueFilter, setValueFilter] = useState<
+    "all" | "select_question" | "essay_question"
+  >("all");
+
   return (
     <HomeLayout>
       <div className="pt-4" />
@@ -209,12 +186,73 @@ export default function Result({ params }: any) {
                         {t("exam_list")}
                       </div>
                     </div>
-                    <Button
-                      onClick={filterEssay}
-                      className="w-[163px] h-[36px] bg-m_primary_500 rounded-lg font-semibold text-sm text-white"
+
+                    <button
+                      className="w-[270px] flex justify-start my-auto"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
                     >
-                      {t("essay_question")}
-                    </Button>
+                      <MDropdown
+                        allowClear={false}
+                        value={valueFilter}
+                        setValue={(name: any, val: any) => {
+                          setValueFilter(val);
+                          if (val == "essay_question") {
+                            var partClone = parts?.map((p) => {
+                              var cloneP = _.cloneDeep(p);
+                              cloneP.questions = questions?.filter(
+                                (que) =>
+                                  que?.idExamQuestionPart == p?.id &&
+                                  que?.questionType == QuestionType?.Essay,
+                              );
+                              return cloneP;
+                            });
+
+                            setParts(partClone);
+                          } else if (val == "select_question") {
+                            var partClone = parts?.map((p) => {
+                              var cloneP = _.cloneDeep(p);
+                              cloneP.questions = questions?.filter(
+                                (que) =>
+                                  que?.idExamQuestionPart == p?.id &&
+                                  que?.questionType != QuestionType?.Essay,
+                              );
+                              return cloneP;
+                            });
+
+                            setParts(partClone);
+                          } else {
+                            var partClone = parts?.map((p) => {
+                              var cloneP = _.cloneDeep(p);
+                              cloneP.questions = questions?.filter(
+                                (que) => que?.idExamQuestionPart == p?.id,
+                              );
+                              return cloneP;
+                            });
+                            setParts(partClone);
+                          }
+                        }}
+                        isTextRequire={false}
+                        className="dropdown-flex"
+                        name=""
+                        id=""
+                        options={[
+                          "all",
+                          "select_question",
+                          "essay_question",
+                        ].map((a) => ({
+                          label: t(a),
+                          value: a,
+                        }))}
+                      />
+                    </button>
+                    {/* <Button */}
+                    {/*   onClick={filterEssay} */}
+                    {/*   className="w-[163px] h-[36px] bg-m_primary_500 rounded-lg font-semibold text-sm text-white" */}
+                    {/* > */}
+                    {/*   {t("essay_question")} */}
+                    {/* </Button> */}
                   </div>
                 </div>
               }
@@ -223,7 +261,7 @@ export default function Result({ params }: any) {
                 return (
                   <div key={r?.id}>
                     <div className="body_semibold_16 my-2">{r?.name}</div>
-                    {r?.questions?.map((q) => {
+                    {r?.questions?.map((q, index) => {
                       var answerIndex = examResult?.candidateAnswers?.findIndex(
                         (l) => l.idExamQuestion == q.id,
                       );
@@ -234,7 +272,7 @@ export default function Result({ params }: any) {
                               answerIndex as number
                             ];
 
-                      return genQuestion(q, i, ans);
+                      return genQuestion(q, index, ans);
                     })}
                   </div>
                 );

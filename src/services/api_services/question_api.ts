@@ -407,7 +407,8 @@ export const importTmasExamData = async (data: ImportTmasExamParams) => {
 export const getExamTestId = async (params: any) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/GetExamVersion`,
-    { ...params }, { params }
+    { ...params },
+    { params },
   );
 
   return results;
@@ -416,7 +417,7 @@ export const getExamTestId = async (params: any) => {
 export const getExamExport = async (data: any) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Export`,
-    data
+    data,
   );
   // console.log(results, "result");
 
