@@ -394,7 +394,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                           >
                             <Tooltip
                               placement="top"
-                              title={t("push_to_market")}
+                              title={t("push_exam_bank")}
                             >
                               <UploadOutlined className="text-2xl" />
                             </Tooltip>

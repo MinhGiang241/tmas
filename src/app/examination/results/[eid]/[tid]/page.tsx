@@ -286,8 +286,7 @@ export default function Result({ params }: any) {
           <div className="bg-white rounded-lg">
             <div
               className={`w-full h-10 ${
-                examResult?.result?.completionState ==
-                ExamCompletionState.Checking
+                examResult?.result?.completionState == ExamCompletionState.Doing
                   ? `bg-m_primary_100 text-m_primary_500`
                   : examResult?.result?.completionState ==
                       ExamCompletionState.Done
@@ -295,8 +294,7 @@ export default function Result({ params }: any) {
                     : `bg-m_warning_50 text-m_warning_500`
               } flex justify-center items-center py-auto rounded-t-lg body_bold_14`}
             >
-              {examResult?.result?.completionState ==
-              ExamCompletionState.Checking
+              {examResult?.result?.completionState == ExamCompletionState.Doing
                 ? t("in_testing")?.toUpperCase()
                 : examResult?.result?.completionState ==
                     ExamCompletionState.Done

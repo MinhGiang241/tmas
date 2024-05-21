@@ -249,6 +249,9 @@ body {
 .tag-big .ant-select-selector {
   min-height: 44px !important ;
 }
+div.ql-container.ql-snow > .ql-editor {
+  height: 200px !important;
+}
 
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */

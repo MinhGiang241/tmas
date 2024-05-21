@@ -61,6 +61,7 @@ function ExaminationCodePage({
       />
 
       <Collapse
+        defaultActiveKey={["1"]}
         ghost
         expandIconPosition="end"
         className="  rounded-lg bg-white overflow-hidden "

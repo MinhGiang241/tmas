@@ -44,6 +44,7 @@ function MyQuestionTab() {
   const [questGroupId, setQuestGroupId] = useState<string | undefined>();
   const [questionType, setQuestionType] = useState<string | undefined>();
   const [sort, setSort] = useState<string>("recently_create");
+  const [valueSearch, setValueSearch] = useState<string | undefined>();
 
   const dispatch = useAppDispatch();
 
@@ -150,12 +151,14 @@ function MyQuestionTab() {
             index={index + (indexPage - 1) * recordNum + 1}
             questionGroup={group}
             examId={e?.idExam}
+            isBank
             getData={() => loadQuestionList(false)}
           />
         );
       case QuestionType.YesNoQuestion:
         return (
           <TrueFalse
+            isBank
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -167,6 +170,7 @@ function MyQuestionTab() {
       case QuestionType.Essay:
         return (
           <Explain
+            isBank
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -178,6 +182,7 @@ function MyQuestionTab() {
       case QuestionType.Coding:
         return (
           <Coding
+            isBank
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -189,6 +194,7 @@ function MyQuestionTab() {
       case QuestionType.SQL:
         return (
           <Sql
+            isBank
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -200,6 +206,7 @@ function MyQuestionTab() {
       case QuestionType.Pairing:
         return (
           <Connect
+            isBank
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -211,6 +218,7 @@ function MyQuestionTab() {
       case QuestionType.FillBlank:
         return (
           <FillBlank
+            isBank
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -222,6 +230,7 @@ function MyQuestionTab() {
       case QuestionType.Random:
         return (
           <Random
+            isBank
             key={e?.id}
             question={e}
             index={index + (indexPage - 1) * recordNum + 1}
@@ -250,12 +259,13 @@ function MyQuestionTab() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            setSearch(valueSearch);
           }}
           className="flex w-full max-lg:flex-col max-lg:mx-5"
         >
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
-              setSearch(e.target.value);
+              setValueSearch(e.target.value);
             }}
             className="max-lg:mt-3"
             placeholder={t("enter_key_search")}
