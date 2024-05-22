@@ -378,5 +378,7 @@
   "sum_blank": "Tổng số chỗ trống",
   "true_blank_num": "Số chỗ trống đúng",
   "false_blank_num": "Số chỗ trống sai",
-  "coding_question": "Câu hỏi coding"
+  "coding_question": "Câu hỏi coding",
+  "select_an_exam": "Chọn một đề thi",
+  "select_exam": "Chọn đề thi"
 }

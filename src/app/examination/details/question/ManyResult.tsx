@@ -42,7 +42,6 @@ export default function ManyResult({
   onChangeCheck?: Function;
   canCheck?: boolean;
 }) {
-
   const router = useRouter();
   const { t } = useTranslation("question");
 
@@ -53,11 +52,10 @@ export default function ManyResult({
   // console.log("question", question);
   // console.log("questionGroup", questionGroup);
 
-
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
   }, []);
   return (
@@ -74,8 +72,9 @@ export default function ManyResult({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -118,7 +117,6 @@ export default function ManyResult({
                   icon={<AddIcon />}
                   text={t("add_bank")}
                 />
-
               ) : (
                 <div></div>
               )}
@@ -152,6 +150,7 @@ export default function ManyResult({
                 <div className="text-sm pr-2 font-semibold">
                   {t("created_date")}:
                 </div>
+
                 <FormattedDate
                   value={question?.createdTime}
                   day="2-digit"

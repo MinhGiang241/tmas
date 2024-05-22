@@ -57,6 +57,7 @@ import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import SendExaminationInfo from "./modals/SendExaminationInfo";
 import SendExaminationResults from "./modals/SendExaminationResults";
+import SelectExamModal from "./modals/SelectExamModal";
 
 function ExaminationPage() {
   const router = useRouter();
@@ -269,8 +270,21 @@ function ExaminationPage() {
   const [openExaminationResults, setOpenExaminationResults] =
     useState<boolean>(false);
 
+  const [openSelectExam, setOpenSelectExam] = useState<boolean>(false);
+
   return (
     <HomeLayout>
+      <SelectExamModal
+        width={1024}
+        title={t("select_an_exam")}
+        open={openSelectExam}
+        onCancel={() => {
+          setOpenSelectExam(false);
+        }}
+        onOk={(id: string) => {
+          router.push(`/examination/create?examId=${id}`);
+        }}
+      />
       <SendExaminationResults
         examination={active}
         open={openExaminationResults}
@@ -324,7 +338,8 @@ function ExaminationPage() {
           <MButton
             h="h-11"
             onClick={() => {
-              router.push("/exams");
+              //router.push("/exams");
+              setOpenSelectExam(true);
             }}
             className="flex items-center"
             icon={<AddIcon />}
