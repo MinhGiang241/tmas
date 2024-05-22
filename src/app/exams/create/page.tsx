@@ -41,12 +41,9 @@ import { title } from "process";
 import TagSearchSelect from "@/app/components/config/TagsSearch";
 import { TagData } from "@/data/tag";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
-const EditorHook = dynamic(
-  () => import("../components/react_quill/EditorWithUseQuill"),
-  {
-    ssr: false,
-  },
-);
+const EditorHook = dynamic(() => import("../components/react_quill/Editor"), {
+  ssr: false,
+});
 
 function CreatePage({ exam, isEdit }: any) {
   const { t } = useTranslation("exam");

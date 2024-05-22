@@ -13,9 +13,10 @@ function GoldPrice({ formik }: { formik: any }) {
         ghost
         expandIconPosition="end"
         className="  rounded-lg bg-white overflow-hidden "
+        defaultActiveKey={["1"]}
       >
         <Collapse.Panel
-          key=""
+          key="1"
           header={
             <div className="w-full py-4 flex flex-grow justify-between items-center">
               <div className=" body_semibold_16 text-m_neutral_900 overflow-hidden text-nowrap lg:max-w-4xl md:max-w-lg  text-ellipsis">

@@ -178,6 +178,23 @@ body {
   color: #003953 !important;
 }
 
+.ql-toolbar.ql-snow {
+  border-top-right-radius: 6px 6px !important;
+  border-top-left-radius: 6px 6px !important;
+}
+.ql-container.ql-snow {
+  border-bottom-right-radius: 6px 6px;
+  border-bottom-left-radius: 6px 6px;
+}
+
+.ql-error > .ql-toolbar.ql-snow {
+  border-color: #ea3434 !important;
+}
+
+.ql-error > .ql-container.ql-snow {
+  border-color: #ea3434 !important;
+}
+
 .custom-ql-snow .ql-toolbar {
   border-top-right-radius: 6px 6px;
   border-top-left-radius: 6px 6px;
@@ -250,7 +267,7 @@ body {
   min-height: 44px !important ;
 }
 div.ql-container.ql-snow > .ql-editor {
-  height: 200px !important;
+  min-height: 200px !important;
 }
 
 /* @font-face { */

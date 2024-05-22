@@ -78,10 +78,54 @@ const Editor = ({
   }
 
   const { t } = useTranslation(np);
-
   const { quill, quillRef, Quill } = useQuill({
     modules: {
       blotFormatter: {},
+      // toolbar:{}
+      toolbar: {
+        container: [
+          // [{ font: [] }],
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+          ["bold", "italic", "underline", "strike"],
+          [{ color: [] }, { background: [] }],
+          [{ script: "sub" }, { script: "super" }],
+          ["blockquote", "code-block"],
+          [{ list: "ordered" }, { list: "bullet" }],
+
+          [{ indent: "-1" }, { indent: "+1" }, { align: [] }],
+          [{ direction: "rtl" }],
+          [{ size: ["small", false, "large", "huge"] }],
+          ["link", "image", "video"],
+          ["clean"],
+        ],
+
+        handlers: {
+          image: function () {
+            //const editor = quillRef.current.getEditor();
+            //console.log(editor);
+            const input = document.createElement("input");
+            input.setAttribute("type", "file");
+            input.setAttribute("accept", "image/*");
+            input.click();
+
+            input.onchange = async () => {
+              const file = (input.files as any)[0];
+              if (/^image\//.test(file.type)) {
+                console.log(file);
+                const formData = new FormData();
+                formData.append("image", file);
+                const res = (formData: any) => {}; // upload data into server or aws or cloudinary
+                const url =
+                  "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg";
+
+                const quillObj = quillRef?.current?.getEditor();
+                const range = quillObj?.getSelection();
+                quillObj.insertEmbed(range, "image", url);
+              }
+            };
+          },
+        },
+      },
     },
     theme: isBubble ? "bubble" : "snow",
     placeholder: placeholder,
@@ -169,6 +213,17 @@ ${!isBubble ? "custom-ql-snow " : "custom-ql-bubble border rounded-lg p-2"} ${
         </div>
       ) : null}
       {extend && !(er && touch) && required && <div className="h-[20px]" />}
+      {/* <button */}
+      {/*   onClick={() => { */}
+      {/*     const url = */}
+      {/*       "https://letsenhance.io/stat   var selection = this.image"; */}
+      {/*     const quillObj = quillRef?.current?.getEditor(); */}
+      {/*     const range = quillObj?.getSelection(); */}
+      {/*     quillObj.editor.insertEmbed(range.index, "image", url); */}
+      {/*   }} */}
+      {/* > */}
+      {/*   insert */}
+      {/* </button> */}
     </div>
   );
 };
