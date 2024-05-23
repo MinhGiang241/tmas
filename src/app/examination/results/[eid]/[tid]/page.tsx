@@ -160,7 +160,7 @@ export default function Result({ params }: any) {
         </button>
       </div>
       <div className="grid grid-cols-3">
-        <div className="col-span-2 mr-2">
+        <div className="col-span-2 mr-2 max-lg:col-span-3">
           <Collapse
             defaultActiveKey={["1"]}
             // defaultActiveKey={defaultActiveKeys}
@@ -282,7 +282,7 @@ export default function Result({ params }: any) {
         </div>
         {!examResult?.timeLine?.commitTestAt &&
           !examResult?.timeLine?.mustStopDoTestAt}
-        <div className="col-span-1 h-fit ml-2">
+        <div className="col-span-1 h-fit ml-2 max-lg:col-span-3">
           <div className="bg-white rounded-lg">
             <div
               className={`w-full h-10 ${

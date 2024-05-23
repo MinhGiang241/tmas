@@ -29,6 +29,7 @@ import {
 import {
   Condition,
   ExamCompletionState,
+  ExamGroupData,
   ExamTestResulstData,
   ExaminationData,
 } from "@/data/exam";
@@ -37,6 +38,14 @@ import { getPagingAdminExamTestResult } from "@/services/api_services/result_exa
 import { saveAs } from "file-saver";
 import axios from "axios";
 import { errorToast } from "@/app/components/toast/customToast";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import {
+  fetchDataExamGroup,
+  setExamGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
+import { APIResults } from "@/data/api_results";
+import { getExamGroupTest } from "@/services/api_services/exam_api";
 
 dayjs.extend(duration);
 
@@ -82,7 +91,9 @@ function ResultPage({ params }: any) {
     setExamination(res?.data?.records[0]);
     getListResults(res?.data?.records[0]);
   };
-
+  const examGroups = useAppSelector(
+    (state: RootState) => state?.examGroup?.list,
+  );
   const getListResults = async (examTest?: ExaminationData) => {
     var res = await getPagingAdminExamTestResult({
       paging: {
@@ -114,7 +125,7 @@ function ResultPage({ params }: any) {
       phone: e?.candidate?.phoneNumber,
       status: e?.result?.completionState,
       seconds: e?.timeLine?.totalTimeDoTestSeconds,
-      group: undefined,
+      group: e?.examTestDataCreatedWhenTest?.examVersion?.exam?.idExamGroup,
     }));
 
     setTotal(res?.data?.totalOfRecords);
@@ -132,9 +143,45 @@ function ResultPage({ params }: any) {
     saveAs(res?.data, "data.xlsx");
   };
 
+  const user = useAppSelector((state: RootState) => state.user.user);
+  const dispatch = useAppDispatch();
+  const chilGroups = examGroups?.reduce(
+    (a: any, b: any) => [...a, ...(b.childs ?? [])],
+    [],
+  );
+
   useEffect(() => {
     getExaminationDetail();
-  }, [filters, recordNum, indexPage]);
+    if (user?._id) {
+      dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
+    }
+  }, [user, filters, recordNum, indexPage]);
+  const loadExamGroupList = async (init?: boolean) => {
+    if (init) {
+      dispatch(setExamGroupLoading(true));
+    }
+
+    var dataResults: APIResults = await getExamGroupTest({
+      text: "",
+      studioId: user?.studio?._id,
+    });
+
+    if (dataResults.code != 0) {
+      return [];
+    } else {
+      var data = dataResults?.data as ExamGroupData[];
+      var levelOne = data?.filter((v: ExamGroupData) => v.level === 0);
+      var levelTwo = data?.filter((v: ExamGroupData) => v.level === 1);
+
+      var list = levelOne.map((e: ExamGroupData) => {
+        var childs = levelTwo.filter(
+          (ch: ExamGroupData) => ch.idParent === e.id,
+        );
+        return { ...e, childs };
+      });
+      return list;
+    }
+  };
 
   const columns: ColumnsType<any> = [
     {
@@ -229,9 +276,9 @@ function ResultPage({ params }: any) {
       render: (text) => (
         <p
           key={text}
-          className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
+          className="w-full flex  min-w-32 justify-start caption_regular_14"
         >
-          {`${dayjs(text).format(dateFormat)}`}
+          {`${dayjs(text).format("HH:mm:ss DD/MM/YYYY")}`}
         </p>
       ),
     },
@@ -291,14 +338,21 @@ function ResultPage({ params }: any) {
       ),
       dataIndex: "group",
       key: "group",
-      render: (text) => (
-        <p
-          key={text}
-          className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
-        >
-          {text}
-        </p>
-      ),
+      render: (text) => {
+        var index = chilGroups?.findIndex((d: any) => d.id == text);
+
+        var group_name =
+          (index ?? -1) >= 0 ? (chilGroups ?? [])[index as number]?.name : text;
+
+        return (
+          <p
+            key={text}
+            className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
+          >
+            {group_name}
+          </p>
+        );
+      },
     },
     {
       onHeaderCell: (_) => rowEndStyle,
@@ -345,6 +399,7 @@ function ResultPage({ params }: any) {
     identify_code?: string;
     full_name?: string;
     group?: string;
+    group_name?: string;
     phone_number?: string;
     test_date?: string[];
   }
@@ -357,8 +412,22 @@ function ResultPage({ params }: any) {
     validate,
     onSubmit: (values: FormFilterValue) => {
       console.log({ values });
+      var valuesClone = _.cloneDeep(values);
+      if (values?.group) {
+        const childrenGroup = examGroups?.reduce(
+          (a: any, b: any) => [...a, ...b.childs],
+          [],
+        );
+        var index = childrenGroup?.findIndex((d: any) => d.id == values.group);
 
-      setFilterValues(values);
+        if ((index ?? -1) >= 0) {
+          valuesClone.group_name =
+            childrenGroup && childrenGroup?.length >= 0
+              ? childrenGroup![index as number].name
+              : "";
+        }
+      }
+      setFilterValues(valuesClone);
       for (let i in values) {
         console.log("i", i);
         if ((values as any)[i]) {
@@ -387,7 +456,8 @@ function ResultPage({ params }: any) {
               setFilters([
                 ...filters,
                 {
-                  fieldName: "candidate.groupTest",
+                  fieldName:
+                    "examTestDataCreatedWhenTest.examVersion.exam.idExamGroup",
                   value: values[i],
                   condition: Condition.eq,
                 },
@@ -564,25 +634,30 @@ function ResultPage({ params }: any) {
             />
           </div>
         </div>
-        {/* <div className="h-5" /> */}
+        <div className="h-2" />
         <div className="flex flex-wrap">
-          <Divider className="my-4" />
           {Object.keys(filterValues).map((e) => {
+            if (e == "group_name") {
+              return null;
+            }
             if (!(filterValues as any)[e]) {
               return null;
             }
+
             return (
               <div
                 key={e}
-                className="flex py-2 px-3 border border-m_neutral_200 ml-2 mb-2 rounded-lg items-center bg-m_primary_100"
+                className="flex py-2 px-3 border border-m_neutral_200 ml-2 rounded-lg items-center bg-m_primary_100"
               >
                 <span className="body_semibold_14 mr-1">{`${t(e)}: `}</span>
                 <span className="body_regular_14">
                   {" "}
                   {`${
-                    e == "test_date"
-                      ? (filterValues as any)[e].join(" - ")
-                      : (filterValues as any)[e]
+                    e == "group"
+                      ? filterValues?.group_name
+                      : e == "test_date"
+                        ? (filterValues as any)[e].join(" - ")
+                        : (filterValues as any)[e]
                   }`}
                 </span>
                 <button
@@ -602,7 +677,9 @@ function ResultPage({ params }: any) {
                       case "group":
                         setFilters([
                           ...filters?.filter(
-                            (d) => d.fieldName != "candidate.groupTest",
+                            (d) =>
+                              d.fieldName !=
+                              "examTestDataCreatedWhenTest.examVersion.exam.idExamGroup",
                           ),
                         ]);
                         break;
@@ -644,7 +721,7 @@ function ResultPage({ params }: any) {
             );
           })}
         </div>
-        <div className="h-5" />
+        <Divider className="mb-7" />
         <div className="overflow-scroll ">
           <Table
             className="w-full max-lg:overflow-scroll"

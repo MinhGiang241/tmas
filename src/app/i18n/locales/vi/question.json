@@ -60,6 +60,7 @@
   "print": "In",
   "success": "Gửi yêu cầu báo giá thành công !",
   "finished": "Đóng",
-  "answer": "Trả lời"
+  "answer": "Trả lời",
+  "blank": "Chỗ trống",
+  "true_answer": "Đáp án đúng"
 }
-

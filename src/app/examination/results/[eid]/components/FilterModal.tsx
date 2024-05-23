@@ -6,6 +6,10 @@ import _ from "lodash";
 import MInput from "@/app/components/config/MInput";
 import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 import MRangePicker from "@/app/components/config/MRangePicker";
+import MTreeSelect from "@/app/components/config/MTreeSelect";
+import { useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import { ExamGroupData } from "@/data/exam";
 
 interface Props extends BaseModalProps {
   loading?: boolean;
@@ -25,6 +29,21 @@ function FilterModal(props: Props) {
     { name: "phone_number", isSelect: false },
     { name: "test_date", isSelect: false },
   ]);
+
+  const examGroup = useAppSelector((state: RootState) => state.examGroup?.list);
+
+  const optionSelect = (examGroup ?? []).map((v: ExamGroupData, i: number) => ({
+    title: <p>{v?.name}</p>,
+    value: v?.id,
+    disabled: true,
+    isLeaf: false,
+    children: [
+      ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
+        title: e?.name,
+        value: e?.id,
+      })),
+    ],
+  }));
 
   return (
     <BaseModal width={612} title={t("filter_by_criteria")} {...props}>
@@ -55,6 +74,21 @@ function FilterModal(props: Props) {
       {categories?.map((a: any, i: number) => {
         if (!a?.isSelect) {
           return null;
+        }
+        if (a.name == "group") {
+          return (
+            <MTreeSelect
+              h="h-12"
+              key={a?.name}
+              options={optionSelect}
+              required
+              id="group"
+              name="group"
+              title={t("exam_group")}
+              placeholder={t("select_exam_group")}
+              formik={props.formik}
+            />
+          );
         }
         if (a.name == "test_date") {
           return (

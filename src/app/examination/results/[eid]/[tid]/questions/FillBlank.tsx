@@ -57,7 +57,8 @@ export default function FillBlank({
   answers?: CandidateAnswers;
 }) {
   const router = useRouter();
-  const { t } = useTranslation("exam");
+  const { t } = useTranslation("question");
+  const examTrans = useTranslation("exam");
   // console.log("question", question);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -82,9 +83,9 @@ export default function FillBlank({
     },
     {
       onHeaderCell: (_) => rowStyle,
-      title: t("inputT"),
-      dataIndex: "input",
-      key: "input",
+      title: t("answer"),
+      dataIndex: "answer",
+      key: "answer",
       render: (text, data, ind) => (
         <div className="flex">
           {text?.map((t: any, i: any) => (
@@ -100,9 +101,9 @@ export default function FillBlank({
     },
     {
       onHeaderCell: (_) => rowStyle,
-      title: t("outputT"),
-      dataIndex: "output",
-      key: "output",
+      title: t("true_answer"),
+      dataIndex: "true_ans",
+      key: "true_ans",
       render: (text, data, ind) => (
         <div className="flex">
           {text?.map((t: any, i: any) => (
@@ -126,8 +127,8 @@ export default function FillBlank({
   ];
   interface TableValue {
     blank?: string;
-    input?: string[];
-    output?: string[];
+    answer?: string[];
+    true_ans?: string[];
     result?: boolean;
   }
   const data: TableValue[] =
@@ -137,8 +138,8 @@ export default function FillBlank({
       );
       return {
         blank: blank?.label,
-        input: blank?.anwsers,
-        output: y?.anwsers,
+        true_ans: blank?.anwsers,
+        answer: y?.anwsers,
         result: answers?.anwserScore?.isAnwsered,
       };
     }) ?? [];
@@ -187,7 +188,7 @@ export default function FillBlank({
                       __html: question?.content?.formatBlank ?? "",
                     }}
                   />
-                  <div className="text-sm font-normal">{t("fill_blank")}</div>
+                  {/* <div className="text-sm font-normal">{t("fill_blank")}</div> */}
                 </span>
                 {isOverflowing ? (
                   <button
@@ -218,29 +219,29 @@ export default function FillBlank({
                   </div>
                 </div>
                 <div className="flex">
-                  {t("method_match")}:{" "}
+                  {examTrans.t("method_match")}:{" "}
                   <div className="pl-1 font-semibold">
                     {" "}
                     {question?.content?.fillBlankScoringMethod ==
                     "CorrectAllBlank"
-                      ? t("all_match")
-                      : t("part_match")}
+                      ? examTrans.t("all_match")
+                      : examTrans.t("part_match")}
                   </div>
                 </div>
                 <div className="flex">
-                  {t("sum_blank")}:{" "}
+                  {examTrans.t("sum_blank")}:{" "}
                   <div className="pl-1 font-semibold">
                     {question?.content?.anwserItems?.length}
                   </div>
                 </div>
                 <div className="flex">
-                  {t("true_blank_num")}:{" "}
+                  {examTrans.t("true_blank_num")}:{" "}
                   <div className="pl-1 font-semibold">
                     {answers?.anwserScore?.numberQuestionCorrect ?? 0}
                   </div>
                 </div>
                 <div className="flex">
-                  {t("false_blank_num")}:{" "}
+                  {examTrans.t("false_blank_num")}:{" "}
                   <div className="pl-1 font-semibold">
                     {(answers?.anwserScore?.totalQuestion ?? 0) -
                       (answers?.anwserScore?.numberQuestionCorrect ?? 0)}

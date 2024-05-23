@@ -19,7 +19,7 @@ function ExamBank() {
   return (
     <HomeLayout>
       <div className="h-3  lg:h-1" />
-      <div className="w-full flex border-b-m_neutral_200 h-11 border-b mt-4">
+      <div className="w-full flex border-b-m_neutral_200 h-12 border-b mt-4 items-start">
         {["my_question", "tmas_question", "tmas_exam"].map(
           (e: string, i: number) => (
             <button
@@ -31,7 +31,7 @@ function ExamBank() {
                 index === `${i}`
                   ? "text-m_primary_500 border-b-m_primary_500 border-b-[3px]"
                   : "text-m_neutral_500"
-              } h-11 text-center lg:min-w-40 px-2 body_semibold_16 lg:px-4 max-lg:w-1/2`}
+              } h-12 text-center lg:min-w-40 px-2 body_semibold_16 lg:px-4 max-lg:w-1/2 pb-1`}
             >
               {t(e)}
             </button>
