@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useQuill } from "react-quilljs";
 import BlotFormatter from "quill-blot-formatter";
 import "quill/dist/quill.snow.css";
@@ -8,6 +8,7 @@ import { FormikErrors } from "formik";
 import { Montserrat } from "next/font/google";
 import dynamic from "next/dynamic";
 import { useTranslation } from "react-i18next";
+import { uploadFile } from "@/services/api_services/account_services";
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 interface Props {
@@ -77,6 +78,12 @@ const Editor = ({
     np = namespace;
   }
 
+  const handleImageUpload = (quill: any) => {
+    var imageUrl =
+      "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg";
+    const range = quill.getEditor().getSelection();
+    quill.getEditor().insertEmbed(range.index, "image", imageUrl);
+  };
   const { t } = useTranslation(np);
   const { quill, quillRef, Quill } = useQuill({
     modules: {
@@ -101,36 +108,16 @@ const Editor = ({
 
         handlers: {
           image: function () {
-            //const editor = quillRef.current.getEditor();
-            //console.log(editor);
-            const input = document.createElement("input");
-            input.setAttribute("type", "file");
-            input.setAttribute("accept", "image/*");
-            input.click();
-
-            input.onchange = async () => {
-              const file = (input.files as any)[0];
-              if (/^image\//.test(file.type)) {
-                console.log(file);
-                const formData = new FormData();
-                formData.append("image", file);
-                const res = (formData: any) => {}; // upload data into server or aws or cloudinary
-                const url =
-                  "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg";
-
-                const quillObj = quillRef?.current?.getEditor();
-                const range = quillObj?.getSelection();
-                quillObj.insertEmbed(range, "image", url);
-              }
-            };
+            (insertImageRef?.current as any)?.click();
           },
         },
       },
     },
+
     theme: isBubble ? "bubble" : "snow",
     placeholder: placeholder,
   });
-
+  const insertImageRef = useRef(null);
   if (Quill && !quill) {
     // const BlotFormatter = require('quill-blot-formatter');
     Quill.register("modules/blotFormatter", BlotFormatter);
@@ -154,6 +141,7 @@ const Editor = ({
         if (setValue) {
           setValue!(name, quill.root.innerHTML);
         }
+
         // console.log("Text change!");
         // console.log("delta", delta);
         // console.log("Text change!");
@@ -213,17 +201,47 @@ ${!isBubble ? "custom-ql-snow " : "custom-ql-bubble border rounded-lg p-2"} ${
         </div>
       ) : null}
       {extend && !(er && touch) && required && <div className="h-[20px]" />}
-      {/* <button */}
-      {/*   onClick={() => { */}
-      {/*     const url = */}
-      {/*       "https://letsenhance.io/stat   var selection = this.image"; */}
-      {/*     const quillObj = quillRef?.current?.getEditor(); */}
-      {/*     const range = quillObj?.getSelection(); */}
-      {/*     quillObj.editor.insertEmbed(range.index, "image", url); */}
-      {/*   }} */}
-      {/* > */}
-      {/*   insert */}
-      {/* </button> */}
+      <button
+        ref={insertImageRef}
+        className="hidden"
+        onClick={() => {
+          const input = document.createElement("input");
+          input.setAttribute("type", "file");
+          input.setAttribute("accept", "image/*");
+          input.click();
+
+          input.onchange = async () => {
+            const file = (input.files as any)[0];
+            if (/^image\//.test(file.type)) {
+              console.log(file);
+              const formData = new FormData();
+              formData.append("image", file);
+              const res = (formData: any) => {}; // upload data into server or aws or cloudinary
+              var results = await uploadFile(formData);
+              const url = `${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${results}`;
+
+              quill?.clipboard?.dangerouslyPasteHTML(
+                (formik?.values[name] ?? value ?? "") + `<image src='${url}'/>`,
+              );
+              //   (insertImageRef?.current as any)?.click();
+              //quill?.insertEmbed(range as any, "image", url);
+
+              // const quillObj = quillRef?.current?.getEditor();
+              // const range = quillObj?.getSelection();
+              // quillObj.insertEmbed(range, "image", url);
+            }
+          };
+          // const url =
+          //   "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg";
+          //
+          // quill.clipboard.dangerouslyPasteHTML(
+          //   (formik?.values[name] ?? "") + `<image src='${url}'/>`,
+          // );
+          // console.log("content", quill?.getContents());
+        }}
+      >
+        insert
+      </button>
     </div>
   );
 };

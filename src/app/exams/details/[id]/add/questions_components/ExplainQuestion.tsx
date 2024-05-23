@@ -31,6 +31,13 @@ const EditorHook = dynamic(
   },
 );
 
+const Editor = dynamic(
+  () => import("@/app/exams/components/react_quill/Editor"),
+  {
+    ssr: false,
+  },
+);
+
 interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;

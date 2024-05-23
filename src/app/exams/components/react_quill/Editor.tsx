@@ -1,13 +1,26 @@
-import React, { useMemo, useRef, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import NoticeIcon from "@/app/components/icons/notice.svg";
 import ReactQuill, { Quill } from "react-quill";
 import BlotFormatter from "quill-blot-formatter";
-import "quill/dist/quill.snow.css";
-import "quill/dist/quill.bubble.css";
+// import "quill/dist/quill.snow.css";
+// import "quill/dist/quill.bubble.css";
+import "react-quill/dist/quill.snow.css";
+import "react-quill/dist/quill.bubble.css";
 import cheerio from "cheerio";
+//@ts-ignore
+import ImageResize from "quill-image-resize-module-react";
+import { uploadFile } from "@/services/api_services/account_services";
+import { Montserrat } from "next/font/google";
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 Quill.register("modules/blotFormatter", BlotFormatter);
+Quill.register("modules/imageResize", ImageResize);
+
+const Font = Quill.import("formats/font"); // <<<< ReactQuill exports it
+Font.whitelist = ["montserrat"]; // allow ONLY these fonts and the default
+Quill.register(Font, true);
 
 interface Props {
   className?: string;
@@ -60,6 +73,7 @@ function Editor({
   const quillRef = useRef();
   var np;
   var er;
+  var quill: any;
 
   if (formik) {
     onChange = formik.handleChange;
@@ -81,6 +95,11 @@ function Editor({
 
   const modules = useMemo(
     () => ({
+      imageResize: {
+        parchment: Quill.import("parchment"),
+        modules: ["Resize", "DisplaySize"],
+      },
+
       toolbar: {
         container: [
           [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -109,9 +128,8 @@ function Editor({
                 console.log(file);
                 const formData = new FormData();
                 formData.append("image", file);
-                const res = (formData: any) => {}; // upload data into server or aws or cloudinary
-                const url =
-                  "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg";
+                var results = await uploadFile(formData);
+                const url = `${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${results}`;
 
                 const quillObj = (quillRef?.current as any).getEditor();
                 const range = quillObj?.getSelection();
@@ -146,7 +164,7 @@ function Editor({
     "font",
   ];
 
-  const [code, setCode] = useState("hellllo");
+  const [code, setCode] = useState(formik?.values[name]);
   const handleProcedureContentChange = (
     content: any,
     delta: any,
@@ -154,8 +172,54 @@ function Editor({
     editor: any,
   ) => {
     //  setValue(content);
-    console.log(code);
+    console.log("content", content);
+    if (formik) {
+      formik.setFieldValue(name, content);
+    }
   };
+
+  const [count, setCount] = useState<number>(
+    formik?.initialValues[name]?.length ?? 0,
+  );
+
+  useEffect(() => {
+    if (isCount) {
+      setCount(cheerio.load(formik.values[name] ?? "")?.text()?.length);
+    }
+  }, [formik?.values]);
+
+  useEffect(() => {
+    console.log("quill effect");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    quill = (quillRef?.current as any).getEditor();
+    if (quill) {
+      //quill.clipboard.dangerouslyPasteHTML(formik?.initialValues[name] ?? "");
+      quill?.setContents(
+        quill.clipboard.convert(
+          formik?.initialValues[name] ?? defaultValue ?? value ?? "",
+        ),
+      );
+      quill.enable(!disabled);
+      quill.on("text-change", (delta: any, oldContents: any) => {
+        if (quill.getLength() > maxLength) {
+          quill.deleteText(maxLength, quill.getLength());
+        }
+        if (setValue) {
+          setValue!(name, quill.root.innerHTML);
+        }
+        // console.log("Text change!");
+        // console.log("delta", delta);
+        // console.log("Text change!");
+        // console.log("text", quill.getText()); // Get text only
+        // console.log("content", quill.getContents()); // Get delta contents
+        // console.log("rootInner", quill.root.innerHTML); // Get innerHTML using quill
+        // console.log("firstChild", quillRef.current.firstChild.innerHTML);
+        // let currrentContents = quill.getContents();
+        // console.log(currrentContents.diff(oldContents));
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Quill, quillRef, formik?.initialValues[name] ?? defaultValue]);
 
   return (
     <>
@@ -165,25 +229,30 @@ function Editor({
         </label>
         {action}
         {isCount && (
-          <div className="body_regular_14 text-m_neutral_500">{`${
-            (cheerio?.load(formik?.values[name] ?? "sdasdas")?.length ?? 0) - 1
-          }/${maxLength}`}</div>
+          <div className="body_regular_14 text-m_neutral_500">{`${count}/${maxLength}`}</div>
         )}
       </div>
-
-      <ReactQuill
-        className={`${disabled ? "bg-m_neutral_100" : ""}
+      <div className={`relative  ${montserrat.className}`}>
+        <ReactQuill
+          className={`${disabled ? "bg-m_neutral_100" : ""}
 ${!isBubble ? "custom-ql-snow " : "custom-ql-bubble border rounded-lg p-2"} ${
-          er && touch ? "ql-error" : ""
-        } `}
-        ref={quillRef as any}
-        defaultValue={defaultValue}
-        theme="snow"
-        modules={modules}
-        formats={formats}
-        value={value}
-        onChange={handleProcedureContentChange}
-      />
+            er && touch ? "ql-error" : ""
+          } `}
+          placeholder={placeholder}
+          onBlur={async () => {
+            if (formik) {
+              await formik.setFieldTouched(name, true);
+            }
+          }}
+          ref={quillRef as any}
+          defaultValue={defaultValue}
+          theme={isBubble ? "bubble" : "snow"}
+          modules={modules}
+          formats={formats}
+          value={value}
+          onChange={handleProcedureContentChange}
+        />
+      </div>
       {er && touch ? (
         <div
           className={` flex items-start ${!extend && "absolute top-[49px]"}`}
