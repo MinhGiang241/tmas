@@ -2,23 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
 import { Checkbox, Collapse, Popover } from "antd";
-import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
-import EditIcon from "@/app/components/icons/edit-black.svg";
-import CopyIcon from "@/app/components/icons/size.svg";
-import BaseModal from "@/app/components/config/BaseModal";
-import MInput from "@/app/components/config/MInput";
-import MTextArea from "@/app/components/config/MTextArea";
-import ConfirmModal from "@/app/components/modals/ConfirmModal";
-import NewIcon from "@/app/components/icons/export.svg";
 import Tick from "@/app/components/icons/tick-circle.svg";
+import Close from "@/app/components/icons/close-circle.svg";
 import { useRouter } from "next/navigation";
-import { FormattedDate, FormattedTime } from "react-intl";
-import {
-  deleteQuestionById,
-  duplicateQuestion,
-} from "@/services/api_services/question_api";
-import { errorToast, successToast } from "@/app/components/toast/customToast";
-import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
 import { CandidateAnswers } from "@/data/exam";
 import { ConnectCandidateAnswer, ConnectQuestionData } from "@/data/question";
@@ -46,12 +32,6 @@ export default function Connect({
   canCheck?: boolean;
   onChangeCheck?: Function;
 }) {
-  const [openEditQuestion, setOpenEditQuestion] = useState(false);
-  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
-  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [dupLoading, setDupLoading] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("exam");
 
@@ -143,7 +123,7 @@ export default function Connect({
           <div className="flex">
             <div className="flex w-1/2 flex-col">
               {question?.content?.questions?.map((e) => (
-                <div key={e.id} className=" pl-10 flex">
+                <div key={e.id} className=" pl-6 flex">
                   <div className="font-semibold pr-1">{e?.label}.</div>
                   <div
                     dangerouslySetInnerHTML={{ __html: e.content ?? "" }}
@@ -153,7 +133,7 @@ export default function Connect({
             </div>
             <div className="flex w-1/2 flex-col">
               {question?.content?.answers?.map((e) => (
-                <div key={e.id} className=" pl-10 flex">
+                <div key={e.id} className=" pl-4 flex">
                   <div className="font-semibold pr-1">{e?.label}.</div>
                   <div
                     dangerouslySetInnerHTML={{ __html: e.content ?? "" }}
@@ -164,7 +144,7 @@ export default function Connect({
           </div>
 
           <div className="flex">
-            <div className="w-1/2 p-4">
+            <div className="w-1/2 py-4">
               <div className="text-m_primary_500 text-sm font-semibold mb-2 pl-6">
                 {t("answer")}
               </div>
@@ -183,9 +163,9 @@ export default function Connect({
                         g.idAnswer == k.idAnswer &&
                         g.idQuestion == k.idQuestion,
                     ) ? (
-                      <Tick />
+                      <Tick className="min-w-5" />
                     ) : (
-                      <div className="w-5" />
+                      <Close className="min-w-5" />
                     )}
                     <div className="pr-1 pl-1">{q?.label}-</div>
                     <div>{a?.label}</div>
@@ -193,7 +173,7 @@ export default function Connect({
                 );
               })}
             </div>
-            <div className="w-1/2 p-4">
+            <div className="w-1/2 py-4 pl-4">
               <div className="text-m_primary_500 text-sm font-semibold mb-2">
                 {t("result")}
               </div>
@@ -213,7 +193,7 @@ export default function Connect({
               })}
             </div>
           </div>
-          <div className="max-lg:flex-col flex justify-between lg:items-center">
+          <div className="pl-6 max-lg:flex-col flex justify-between lg:items-center">
             <div className="flex">
               {t("point")}:{" "}
               <div className="pl-1 font-semibold">
@@ -248,6 +228,16 @@ export default function Connect({
                   (answers?.anwserScore?.numberQuestionCorrect ?? 0)}
               </div>
             </div>
+          </div>
+          <div className="pl-6">
+            <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+              {t("explain_result")}
+            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: question?.content?.explainAnswer ?? "",
+              }}
+            ></div>
           </div>
         </Collapse.Panel>
       </Collapse>

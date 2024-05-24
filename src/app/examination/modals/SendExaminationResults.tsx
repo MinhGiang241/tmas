@@ -73,7 +73,6 @@ function SendExaminationResults(props: Props) {
       start_time: props.examination?.validAccessSetting?.validFrom,
       end_time: props.examination?.validAccessSetting?.validTo,
     });
-    console.log("res template", res);
     if (res?.code != 0) {
       return;
     }
@@ -118,7 +117,6 @@ function SendExaminationResults(props: Props) {
     setNewData(news);
     setTotal(res?.data?.totalOfRecords);
     getEmailList(news);
-    console.log("esss", res);
   };
 
   useEffect(() => {

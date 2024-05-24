@@ -2,33 +2,15 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
 import { Button, Checkbox, Collapse, Popover } from "antd";
-import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
-import EditIcon from "@/app/components/icons/edit-black.svg";
-import CopyIcon from "@/app/components/icons/size.svg";
-import BaseModal from "@/app/components/config/BaseModal";
-import MInput from "@/app/components/config/MInput";
 import MTextArea from "@/app/components/config/MTextArea";
-import ConfirmModal from "@/app/components/modals/ConfirmModal";
-import {
-  ExamQuestionPartById,
-  deleteQuestionById,
-  duplicateQuestion,
-} from "@/services/api_services/question_api";
 import { useRouter } from "next/navigation";
-import { FormattedDate, FormattedTime } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
-import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
 import Edit from "@/app/components/icons/edit-black.svg";
 import { Input } from "antd";
-import {
-  EssayCandidateAnswer,
-  EssayQuestionData,
-  MultiCandidateAnswer,
-} from "@/data/question";
+import { EssayCandidateAnswer, EssayQuestionData } from "@/data/question";
 import { CandidateAnswers } from "@/data/exam";
 import { submitCheckingAnswer } from "@/services/api_services/result_exam_api";
-import { parse } from "path";
 import { parseInt } from "lodash";
 
 export default function Explain({
@@ -56,20 +38,12 @@ export default function Explain({
   answers?: CandidateAnswers;
   idExamTestResult?: string;
 }) {
-  const [openEditQuestion, setOpenEditQuestion] = useState(false);
-  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
-  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-
   const { t } = useTranslation("exam");
 
-  const router = useRouter();
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [dupLoading, setDupLoading] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
-  const { TextArea } = Input;
   const [edit, setEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [comment, setComment] = useState("");

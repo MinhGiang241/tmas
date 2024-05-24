@@ -28,6 +28,7 @@ import {
 } from "@/data/exam";
 import { getOverViewExamination } from "@/services/api_services/examination_api";
 import {
+  editExamTestResult,
   getAdminExamTestResultById,
   getPagingAdminExamTestResult,
 } from "@/services/api_services/result_exam_api";
@@ -38,6 +39,7 @@ import _ from "lodash";
 import { PartObject } from "@/data/form_interface";
 import { BaseQuestionData, QuestionType } from "@/data/question";
 import MDropdown from "@/app/components/config/MDropdown";
+import MButton from "@/app/components/config/MButton";
 
 dayjs.extend(duration);
 
@@ -45,8 +47,25 @@ export default function Result({ params }: any) {
   const router = useRouter();
   const { t } = useTranslation("exam");
   const common = useTranslation();
-  const handClick = () => {
-    router.back();
+  const [loadingRematch, setLoadingRematch] = useState<boolean>(false);
+
+  const reMatchOrDone = async () => {
+    // setLoadingRematch(true);
+    //
+    // var res = await editExamTestResult({
+    //   candidate: examResult?.candidate,
+    //   id: examResult?.id,
+    //   candidateAnswers: examResult?.candidateAnswers,
+    //   idExamTest: examResult?.idExamTest,
+    //   joinTest: examResult?.joinTest,
+    //   timeLine: examResult?.timeLine,
+    // });
+    // if (res?.code != 0) {
+    //   setLoadingRematch(false);
+    //   errorToast(res?.message ?? "");
+    //   return;
+    // }
+    // getExamResultDetails();
   };
   const [examination, setExamination] = useState<ExaminationData | undefined>();
   const [examResult, setExamResult] = useState<
@@ -152,12 +171,25 @@ export default function Result({ params }: any) {
       />
       <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center pb-4">
         <div>{t("test_detail")}</div>
-        <button
-          onClick={handClick}
-          className="w-[91px] h-[44px] bg-m_primary_500 rounded-lg text-white text-sm"
-        >
-          {common.t("back")}
-        </button>
+        <div className="flex">
+          <MButton
+            type="secondary"
+            text={common.t("back")}
+            h="h-11"
+            onClick={() => router.back()}
+          />
+          <div className="w-3" />
+          <MButton
+            loading={loadingRematch}
+            text={
+              examResult?.result?.completionState == ExamCompletionState.Done
+                ? t("rematch")
+                : t("match_done")
+            }
+            h="h-11"
+            onClick={reMatchOrDone}
+          />
+        </div>
       </div>
       <div className="grid grid-cols-3">
         <div className="col-span-2 mr-2 max-lg:col-span-3">
@@ -336,13 +368,8 @@ export default function Result({ params }: any) {
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("true_answer_num")}</div>
                 <div className="text-sm font-semibold">
-                  {((examResult?.result?.percentCorrect ?? 0) *
-                    (examResult?.examTestDataCreatedWhenTest?.examVersion?.exam
-                      ?.numberOfQuestions ?? 0)) /
-                    100}
-                  /
-                  {examResult?.examTestDataCreatedWhenTest?.examVersion?.exam
-                    ?.numberOfQuestions ?? 0}
+                  {examResult?.result?.couter?.numberOfQuestionCorrect}/
+                  {examResult?.result?.couter?.numberOfQuestions}
                 </div>
               </div>
               <div className="flex justify-between items-center pb-2">
@@ -386,7 +413,8 @@ export default function Result({ params }: any) {
                           <div className="flex items-center">
                             {e?.eventType == "Start" ? (
                               <Play />
-                            ) : e?.eventType == "Rejoin" ? (
+                            ) : e?.eventType == "Rejoin" ||
+                              e?.eventType == "ReJoin" ? (
                               <Close />
                             ) : e?.eventType == "End" ? (
                               <Pause />

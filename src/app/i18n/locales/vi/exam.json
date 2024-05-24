@@ -380,5 +380,9 @@
   "false_blank_num": "Số chỗ trống sai",
   "coding_question": "Câu hỏi coding",
   "select_an_exam": "Chọn một đề thi",
-  "select_exam": "Chọn đề thi"
+  "select_exam": "Chọn đề thi",
+  "match_done": "Chấm xong",
+  "rematch": "Chấm lại",
+  "collapse": "Thu gọn",
+  "read_more": "Xem thêm"
 }

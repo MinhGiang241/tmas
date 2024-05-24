@@ -30,21 +30,6 @@ function FilterModal(props: Props) {
     { name: "test_date", isSelect: false },
   ]);
 
-  const examGroup = useAppSelector((state: RootState) => state.examGroup?.list);
-
-  const optionSelect = (examGroup ?? []).map((v: ExamGroupData, i: number) => ({
-    title: <p>{v?.name}</p>,
-    value: v?.id,
-    disabled: true,
-    isLeaf: false,
-    children: [
-      ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
-        title: e?.name,
-        value: e?.id,
-      })),
-    ],
-  }));
-
   return (
     <BaseModal width={612} title={t("filter_by_criteria")} {...props}>
       <div className="flex w-full flex-wrap">
@@ -75,21 +60,21 @@ function FilterModal(props: Props) {
         if (!a?.isSelect) {
           return null;
         }
-        if (a.name == "group") {
-          return (
-            <MTreeSelect
-              h="h-12"
-              key={a?.name}
-              options={optionSelect}
-              required
-              id="group"
-              name="group"
-              title={t("exam_group")}
-              placeholder={t("select_exam_group")}
-              formik={props.formik}
-            />
-          );
-        }
+        // if (a.name == "group") {
+        //   return (
+        //     <MTreeSelect
+        //       h="h-12"
+        //       key={a?.name}
+        //       options={optionSelect}
+        //       required
+        //       id="group"
+        //       name="group"
+        //       title={t("exam_group")}
+        //       placeholder={t("select_exam_group")}
+        //       formik={props.formik}
+        //     />
+        //   );
+        // }
         if (a.name == "test_date") {
           return (
             <MRangePicker

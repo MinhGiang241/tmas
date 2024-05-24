@@ -125,7 +125,7 @@ function ResultPage({ params }: any) {
       phone: e?.candidate?.phoneNumber,
       status: e?.result?.completionState,
       seconds: e?.timeLine?.totalTimeDoTestSeconds,
-      group: e?.examTestDataCreatedWhenTest?.examVersion?.exam?.idExamGroup,
+      group: e?.candidate?.groupTest,
     }));
 
     setTotal(res?.data?.totalOfRecords);
@@ -339,17 +339,12 @@ function ResultPage({ params }: any) {
       dataIndex: "group",
       key: "group",
       render: (text) => {
-        var index = chilGroups?.findIndex((d: any) => d.id == text);
-
-        var group_name =
-          (index ?? -1) >= 0 ? (chilGroups ?? [])[index as number]?.name : text;
-
         return (
           <p
             key={text}
             className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
           >
-            {group_name}
+            {text}
           </p>
         );
       },
@@ -399,7 +394,6 @@ function ResultPage({ params }: any) {
     identify_code?: string;
     full_name?: string;
     group?: string;
-    group_name?: string;
     phone_number?: string;
     test_date?: string[];
   }
@@ -413,20 +407,6 @@ function ResultPage({ params }: any) {
     onSubmit: (values: FormFilterValue) => {
       console.log({ values });
       var valuesClone = _.cloneDeep(values);
-      if (values?.group) {
-        const childrenGroup = examGroups?.reduce(
-          (a: any, b: any) => [...a, ...b.childs],
-          [],
-        );
-        var index = childrenGroup?.findIndex((d: any) => d.id == values.group);
-
-        if ((index ?? -1) >= 0) {
-          valuesClone.group_name =
-            childrenGroup && childrenGroup?.length >= 0
-              ? childrenGroup![index as number].name
-              : "";
-        }
-      }
       setFilterValues(valuesClone);
       for (let i in values) {
         console.log("i", i);
@@ -437,8 +417,8 @@ function ResultPage({ params }: any) {
                 ...filters,
                 {
                   fieldName: "candidate.email",
-                  value: values[i],
-                  condition: Condition.eq,
+                  value: `/${values[i]?.trim()}/i`,
+                  condition: Condition.regex,
                 },
               ]);
               break;
@@ -447,7 +427,7 @@ function ResultPage({ params }: any) {
                 ...filters,
                 {
                   fieldName: "candidate.identifier",
-                  value: values[i],
+                  value: values[i]?.trim(),
                   condition: Condition.eq,
                 },
               ]);
@@ -456,10 +436,9 @@ function ResultPage({ params }: any) {
               setFilters([
                 ...filters,
                 {
-                  fieldName:
-                    "examTestDataCreatedWhenTest.examVersion.exam.idExamGroup",
-                  value: values[i],
-                  condition: Condition.eq,
+                  fieldName: "candidate.groupTest",
+                  value: `/${values[i]?.trim()}/i`,
+                  condition: Condition.regex,
                 },
               ]);
               break;
@@ -468,8 +447,8 @@ function ResultPage({ params }: any) {
                 ...filters,
                 {
                   fieldName: "candidate.fullName",
-                  value: values[i],
-                  condition: Condition.eq,
+                  value: `/${values[i]?.trim()}/i`,
+                  condition: Condition.regex,
                 },
               ]);
               break;
@@ -478,7 +457,7 @@ function ResultPage({ params }: any) {
                 ...filters,
                 {
                   fieldName: "phoneNumber",
-                  value: values[i],
+                  value: values[i]?.trim(),
                   condition: Condition.eq,
                 },
               ]);
@@ -563,29 +542,23 @@ function ResultPage({ params }: any) {
             {
               label: "doing_exam",
               name: t("doing_exam"),
-              value: examination?.statisticExamTest?.totalExamTestResult
-                ? (examination?.statisticExamTest?.totalExamTestResult as any)[
-                    ExamCompletionState.Doing
-                  ] ?? 0
-                : 0,
+              value:
+                examination?.statisticExamTest?.completionByState
+                  ?.percentDoing ?? 0,
             },
             {
               label: "checking_exam",
               name: t("checking_exam"),
-              value: examination?.statisticExamTest?.totalExamTestResult
-                ? (examination?.statisticExamTest?.totalExamTestResult as any)[
-                    ExamCompletionState.Checking
-                  ] ?? 0
-                : 0,
+              value:
+                examination?.statisticExamTest?.completionByState
+                  ?.percentChecking ?? 0,
             },
             {
               label: "done_exam",
               name: t("done_exam"),
-              value: examination?.statisticExamTest?.totalExamTestResult
-                ? (examination?.statisticExamTest?.totalExamTestResult as any)[
-                    ExamCompletionState.Done
-                  ] ?? 0
-                : 0,
+              value:
+                examination?.statisticExamTest?.completionByState
+                  ?.percentDone ?? 0,
             },
           ]}
         />
@@ -599,7 +572,7 @@ function ResultPage({ params }: any) {
             {
               label: "incorrect_answer",
               name: t("incorrect_answer"),
-              value: examination?.statisticExamTest?.percentAnwserCorrect ?? 0,
+              value: examination?.statisticExamTest?.percentAnwserWrong ?? 0,
             },
             {
               label: "not_answer",
@@ -637,9 +610,6 @@ function ResultPage({ params }: any) {
         <div className="h-2" />
         <div className="flex flex-wrap">
           {Object.keys(filterValues).map((e) => {
-            if (e == "group_name") {
-              return null;
-            }
             if (!(filterValues as any)[e]) {
               return null;
             }
@@ -647,17 +617,15 @@ function ResultPage({ params }: any) {
             return (
               <div
                 key={e}
-                className="flex py-2 px-3 border border-m_neutral_200 ml-2 rounded-lg items-center bg-m_primary_100"
+                className="flex mb-1 py-2 px-3 border border-m_neutral_200 ml-2 rounded-lg items-center bg-m_primary_100"
               >
                 <span className="body_semibold_14 mr-1">{`${t(e)}: `}</span>
                 <span className="body_regular_14">
                   {" "}
                   {`${
-                    e == "group"
-                      ? filterValues?.group_name
-                      : e == "test_date"
-                        ? (filterValues as any)[e].join(" - ")
-                        : (filterValues as any)[e]
+                    e == "test_date"
+                      ? (filterValues as any)[e].join(" - ")
+                      : (filterValues as any)[e]
                   }`}
                 </span>
                 <button
@@ -677,9 +645,7 @@ function ResultPage({ params }: any) {
                       case "group":
                         setFilters([
                           ...filters?.filter(
-                            (d) =>
-                              d.fieldName !=
-                              "examTestDataCreatedWhenTest.examVersion.exam.idExamGroup",
+                            (d) => d.fieldName != "candidate.groupTest",
                           ),
                         ]);
                         break;

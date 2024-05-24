@@ -152,12 +152,12 @@ export default function ManyResult({
                         {candidateAnswer?.answers?.some(
                           (u) => u.label == x.label,
                         ) ? (
-                          <Close />
+                          <Close className="min-w-5" />
                         ) : (
-                          <div className="w-5" />
+                          <div className="min-w-5" />
                         )}
 
-                        <div className="body_semibold_14">{x.label}</div>
+                        <div className="body_semibold_14 pl-1">{x.label}</div>
                         <div
                           className="body_regular_14 pl-2"
                           dangerouslySetInnerHTML={{ __html: x.text ?? "" }}
@@ -165,7 +165,7 @@ export default function ManyResult({
                       </div>
                     ) : (
                       <div className="flex" key={key}>
-                        <Tick />
+                        <Tick className="min-w-5" />
 
                         <div className="body_semibold_14 pl-1">{x.label}</div>
                         <div

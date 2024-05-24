@@ -296,7 +296,7 @@ export default function FillBlank({
                             ({x.label})
                           </div>
                           <span className="pr-2">{x?.anwsers?.join("/")}</span>
-                          <Tick />
+                          <Tick className="min-w-5" />
                         </div>
                         {/* <div className="flex items-center">
                                         <div className="body_semibold_14 pr-2">(2)</div><span className="pr-2">Nghĩa mẹ</span>

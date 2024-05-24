@@ -56,11 +56,10 @@ export default function FillBlank({
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
-
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -129,8 +128,9 @@ export default function FillBlank({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -146,7 +146,9 @@ export default function FillBlank({
                     ref={contentRef}
                     className="body_regular_14 pl-2"
                     // dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank,}}
-                    dangerouslySetInnerHTML={{ __html: question?.Base?.Content?.FormatBlank }}
+                    dangerouslySetInnerHTML={{
+                      __html: question?.Base?.Content?.FormatBlank,
+                    }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -235,7 +237,7 @@ export default function FillBlank({
                             ({x.Label})
                           </div>
                           <span className="pr-2">{x?.Anwsers?.join("/")}</span>
-                          <Tick />
+                          <Tick className="min-w-5" />
                         </div>
                         {/* <div className="flex items-center">
                                         <div className="body_semibold_14 pr-2">(2)</div><span className="pr-2">Nghĩa mẹ</span>

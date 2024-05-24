@@ -62,7 +62,7 @@ export default function Connect({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -132,8 +132,9 @@ export default function Connect({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -148,7 +149,9 @@ export default function Connect({
                   <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
+                    dangerouslySetInnerHTML={{
+                      __html: question?.Base?.Question,
+                    }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -229,23 +232,25 @@ export default function Connect({
               </div>
               <div className="flex justify-start items-center">
                 <div>
-                  {question?.Base?.Content?.Pairings?.map((e: any, key: any) => {
-                    var ques = question?.Base?.Content?.Questions?.find(
-                      (q: any) => q._id == e.IdQuestion,
-                    );
-                    var ans = question?.Base?.Content?.Answers?.find(
-                      (a: any) => a._id == e.IdAnswer,
-                    );
-                    return (
-                      <div
-                        key={key}
-                        className="flex font-semibold items-center"
-                      >
-                        {`${ques?.Label} : ${ans?.Label}`}
-                        <Tick className="ml-2" />
-                      </div>
-                    );
-                  })}
+                  {question?.Base?.Content?.Pairings?.map(
+                    (e: any, key: any) => {
+                      var ques = question?.Base?.Content?.Questions?.find(
+                        (q: any) => q._id == e.IdQuestion,
+                      );
+                      var ans = question?.Base?.Content?.Answers?.find(
+                        (a: any) => a._id == e.IdAnswer,
+                      );
+                      return (
+                        <div
+                          key={key}
+                          className="flex font-semibold items-center"
+                        >
+                          {`${ques?.Label} : ${ans?.Label}`}
+                          <Tick className="ml-2 min-w-5" />
+                        </div>
+                      );
+                    },
+                  )}
                 </div>
               </div>
             </div>

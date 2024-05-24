@@ -301,7 +301,7 @@ export default function TrueFalse({
                           className="body_regular_14 pl-2 text-green-500 pr-2"
                           dangerouslySetInnerHTML={{ __html: x.text }}
                         />
-                        <Tick />
+                        <Tick className="min-w-5" />
                       </div>
                     ),
                   )}

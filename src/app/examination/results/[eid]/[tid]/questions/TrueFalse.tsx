@@ -127,11 +127,11 @@ export default function TrueFalse({
               !x.isCorrectAnswer ? (
                 <div className="flex" key={key}>
                   {candidateAnswer?.answers?.some((u) => u.label == x.label) ? (
-                    <Close />
+                    <Close className="min-w-5" />
                   ) : (
-                    <div className="w-5" />
+                    <div className="min-w-5" />
                   )}
-                  <div className="body_semibold_14">{x.label}</div>
+                  <div className="body_semibold_14 pl-1">{x.label}</div>
                   <div
                     className="body_regular_14 pl-2"
                     dangerouslySetInnerHTML={{ __html: x.text ?? "" }}
@@ -139,7 +139,7 @@ export default function TrueFalse({
                 </div>
               ) : (
                 <div className="flex" key={key}>
-                  <Tick />
+                  <Tick className="min-w-5" />
 
                   <div className="body_semibold_14 pl-1">{x.label}</div>
                   <div
@@ -149,6 +149,16 @@ export default function TrueFalse({
                 </div>
               ),
             )}
+          </div>
+          <div className="pl-6">
+            <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+              {t("explain_result")}
+            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: question?.content?.explainAnswer ?? "",
+              }}
+            ></div>
           </div>
         </Collapse.Panel>
       </Collapse>

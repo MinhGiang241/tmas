@@ -140,7 +140,7 @@ export default function FillBlank({
         blank: blank?.label,
         true_ans: blank?.anwsers,
         answer: y?.anwsers,
-        result: answers?.anwserScore?.isAnwsered,
+        result: y?.isCorrect,
       };
     }) ?? [];
 
@@ -249,6 +249,16 @@ export default function FillBlank({
                 </div>
               </div>
             </div>
+          </div>
+          <div className="">
+            <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+              {t("explain_result")}
+            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: question?.content?.explainAnswer ?? "",
+              }}
+            ></div>
           </div>
         </Collapse.Panel>
       </Collapse>

@@ -297,7 +297,7 @@ export default function Connect({
                         className="flex font-semibold items-center"
                       >
                         {`${ques?.label} : ${ans?.label}`}
-                        <Tick className="ml-2" />
+                        <Tick className="ml-2 min-w-5" />
                       </div>
                     );
                   })}

@@ -29,7 +29,6 @@ function EditQuestionPage({ params }: any) {
     console.log({ isBank });
 
     var results: APIResults = await getQuestionById(questId!, isBank == "true");
-    console.log("ressss ,sssss,,s", results);
 
     if (results.code != 0) {
       return;

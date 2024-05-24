@@ -226,6 +226,16 @@ export default function Coding({
               onChange={(v) => {}}
             />
           </div>
+          <div className="">
+            <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+              {t("explain_result")}
+            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: question?.content?.codingTemplate?.explainAnswer ?? "",
+              }}
+            ></div>
+          </div>
         </Collapse.Panel>
       </Collapse>
       {/* {data?.examQuestions?.map((x: any, key: any) => (

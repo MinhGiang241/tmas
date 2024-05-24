@@ -439,6 +439,7 @@ export enum Condition {
   lte = "lte",
   inArray = "inArray",
   ninArray = "ninArray",
+  regex = "regex",
 }
 
 export interface PagingAdminExamTestResultParams {
@@ -487,47 +488,17 @@ export interface ExaminationResultParams {
     jobName?: string;
     identifier?: string;
   };
-  candidateAnswers?: [
-    {
-      idExamQuestion?: string;
-      candidateAnswerJson?: string;
-      anwserScore?: {
-        score?: number;
-        totalScore?: number;
-        numberQuestionCorrect?: number;
-        totalQuestion?: number;
-        isAnwsered?: boolean;
-      };
-    },
-    {
-      idExamQuestion?: string;
-      candidateAnswerJson?: string;
-      anwserScore?: {
-        score?: number;
-        totalScore?: number;
-        numberQuestionCorrect?: number;
-        totalQuestion?: number;
-        isAnwsered?: boolean;
-      };
-    },
-  ];
+  candidateAnswers?: CandidateAnswers[];
   timeLine?: {
-    startDoTestAt?: string;
+    commitTestAt?: any;
     mustStopDoTestAt?: string;
-    commitTestAt?: string;
+    startDoTestAt?: string;
+    timeLines?: {
+      createTime?: string;
+      eventType?: string;
+      message?: string;
+    }[];
     totalTimeDoTestSeconds?: number;
-    timeLines?: [
-      {
-        createTime?: string;
-        eventType?: string;
-        message?: string;
-      },
-      {
-        createTime?: string;
-        eventType?: string;
-        message?: string;
-      },
-    ];
   };
 }
 
@@ -581,7 +552,13 @@ export interface ExamTestResulstData {
   ownerId?: string;
   result?: {
     completionState?: ExamCompletionState;
-    couter?: any;
+    couter?: {
+      numberOfQuestionCorrect?: number;
+      numberOfQuestionNotComplete?: number;
+      numberOfQuestionWrong?: number;
+      numberOfQuestions?: number;
+      numberQuestionNeedCheck?: number;
+    };
     numberQuestionNeedCheck?: number;
     passState?: ExamPassState;
     percentComplete?: number;
@@ -620,7 +597,11 @@ export interface StatisticExamTest {
   totalExamTestResult?: number;
   percentPass?: number;
   percentFailed?: number;
-  percentByCompletionStates?: { [key: string]: number };
+  completionByState?: {
+    percentChecking?: number;
+    percentDoing?: number;
+    percentDone?: number;
+  };
   percentAnwserCorrect?: number;
   percentAnwserWrong?: number;
   percentNotAnwser?: number;

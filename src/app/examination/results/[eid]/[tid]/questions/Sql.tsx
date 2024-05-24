@@ -200,41 +200,16 @@ export default function Sql({
             </div>
             <div dangerouslySetInnerHTML={{ __html: "" }} />
           </div>
-          {/* <div className="text-m_primary_500 text-sm font-semibold mb-2">
-            {t("quest_info")}
-          </div> */}
-          {/* <div className="flex">
-            <div className="text-sm pr-2 font-semibold">
-              {t("quest_group")}:
+          <div className="">
+            <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+              {t("explain_result")}
             </div>
-            <span>{questionGroup?.name}</span>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: question?.content?.explainAnswer ?? "",
+              }}
+            ></div>
           </div>
-          <div className="flex">
-            <div className="text-sm pr-2 font-semibold">{t("quest_type")}:</div>
-            <span>{t(question?.questionType)}</span>
-          </div>
-          <div className="flex">
-            <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
-            <span>{question?.numberPoint}</span>
-          </div>
-          <div className="flex">
-            <div className="text-sm pr-2 font-semibold">
-              {t("created_date")}:{" "}
-            </div>
-            <FormattedDate
-              value={question?.createdTime}
-              day="2-digit"
-              month="2-digit"
-              year="numeric"
-            />
-            <div className="w-2" />
-            <FormattedTime
-              value={question?.createdTime}
-              hour="2-digit"
-              minute="2-digit"
-              second="2-digit"
-            />
-          </div> */}
         </Collapse.Panel>
       </Collapse>
     </div>

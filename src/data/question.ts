@@ -130,6 +130,7 @@ export interface FillBlankCandidateAnswer {
   anwserItems?: {
     anwsers?: string[];
     label?: string;
+    isCorrect?: boolean;
   }[];
 }
 
