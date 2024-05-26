@@ -43,6 +43,7 @@ export default function Coding({
   answers?: CandidateAnswers;
 }) {
   const { t } = useTranslation("exam");
+  const common = useTranslation();
 
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -215,16 +216,21 @@ export default function Coding({
                 </div>
               </div>
             </div>
-            <CodeMirror
-              readOnly={true}
-              onBlur={async () => {}}
-              value={candidateAnswer?.code}
-              // lang={lang}
-              theme={dracula}
-              height="300px"
-              extensions={[renderExtension("javascript") as any]}
-              onChange={(v) => {}}
-            />
+            <div className="bg-white rounded-t-lg mt-3">
+              <div className="pt-3 ml-2 mb-2 body_semibold_14">
+                {common.t("language")}: {""}
+              </div>
+              <CodeMirror
+                readOnly={true}
+                onBlur={async () => {}}
+                value={candidateAnswer?.code}
+                // lang={lang}
+                theme={dracula}
+                height="300px"
+                extensions={[renderExtension("javascript") as any]}
+                onChange={(v) => {}}
+              />
+            </div>
           </div>
           <div className="">
             <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">

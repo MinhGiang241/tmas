@@ -384,5 +384,7 @@
   "match_done": "Chấm xong",
   "rematch": "Chấm lại",
   "collapse": "Thu gọn",
-  "read_more": "Xem thêm"
+  "read_more": "Xem thêm",
+  "default_pass": "Chúc mừng bạn đã Đạt!",
+  "default_fail": "Rất tiếc bạn đã không vượt qua. Chúc bạn lần sau đạt kết quả cao hơn!"
 }

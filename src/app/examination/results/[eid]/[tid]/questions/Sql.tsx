@@ -170,7 +170,7 @@ export default function Sql({
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
           <div className="bg-m_neutral_100 p-3 font-semibold text-sm rounded-lg">
-            {"my SQl"}
+            {"My SQl"}
           </div>
           <CodeMirror
             onBlur={async () => {}}

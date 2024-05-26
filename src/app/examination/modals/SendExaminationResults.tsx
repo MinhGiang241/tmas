@@ -112,6 +112,8 @@ function SendExaminationResults(props: Props) {
       status: "New",
       time: e?.timeLine?.timeLines?.find((r) => r.eventType === "Start")
         ?.createTime,
+      //TODO
+      data: e,
     }));
 
     setNewData(news);
@@ -145,6 +147,7 @@ function SendExaminationResults(props: Props) {
     send_time?: string;
     reason_error?: string;
     content_send?: string;
+    data?: ExamTestResulstData;
   }
   const columns: ColumnsType<TableValue> = [
     {
@@ -363,6 +366,13 @@ function SendExaminationResults(props: Props) {
                     props.examination?.accessCodeSettingType == "MultiCode"
                   ? t.passcode
                   : undefined,
+            ended_at:
+              t?.data?.timeLine?.commitTestAt ??
+              t?.data?.timeLine?.mustStopDoTestAt,
+            // numberPoint: ,
+            score: t?.data?.result?.score,
+            result_state: t?.data?.result?.passState,
+            // require_score?: ;
           })),
       ],
       methods: media,

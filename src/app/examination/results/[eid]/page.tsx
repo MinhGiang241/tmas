@@ -46,8 +46,10 @@ import {
 } from "@/redux/exam_group/examGroupSlice";
 import { APIResults } from "@/data/api_results";
 import { getExamGroupTest } from "@/services/api_services/exam_api";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 dayjs.extend(duration);
+dayjs.extend(customParseFormat);
 
 function ResultPage({ params }: any) {
   const { t } = useTranslation("exam");
@@ -469,7 +471,10 @@ function ResultPage({ params }: any) {
                   fieldName: "createdTime",
                   value:
                     values[i] && values[i]!.length >= 1
-                      ? (values[i] as any)[0]
+                      ? `ISODate(${dayjs(
+                          (values[i] as any)[0],
+                          "DD/MM/YYYY",
+                        ).toISOString()})`
                       : undefined,
                   condition: Condition.gte,
                 },
@@ -477,9 +482,11 @@ function ResultPage({ params }: any) {
                   fieldName: "createdTime",
                   value:
                     values[i] && values[i]!.length >= 2
-                      ? (values[i] as any)[2]
+                      ? `ISODate(${dayjs((values[i] as any)[2], "DD/MM/YYYY")
+                          ?.add(1, "day")
+                          ?.toISOString()})`
                       : undefined,
-                  condition: Condition.lte,
+                  condition: Condition.lt,
                 },
               ]);
               break;

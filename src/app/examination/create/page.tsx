@@ -195,9 +195,13 @@ function CreateExaminationPage({ examination }: any) {
       : undefined,
 
     ips: examination?.validAccessSetting?.ipWhiteLists ?? [],
-    pass_point: examination?.passingSetting?.passPointPercent?.toString(),
-    inform_pass: examination?.passingSetting?.passMessage,
-    inform_fail: examination?.passingSetting?.failMessage,
+    pass_point:
+      examination?.passingSetting?.passPointPercent?.toString() ?? "80",
+    inform_pass:
+      examination?.passingSetting?.passMessage ?? "Chúc mừng bạn đã Đạt!", //t("default_pass"),
+    inform_fail:
+      examination?.passingSetting?.failMessage ??
+      "Rất tiếc bạn đã không vượt qua. Chúc bạn lần sau đạt kết quả cao hơn!", //t("default_fail"),
     out_screen: examination?.cheatingSetting?.limitExitScreen?.toString(),
     examination_name: examination?.name,
     avatarId: examination?.idAvatarThumbnail,

@@ -381,7 +381,16 @@ export interface ImportTmasExamParams {
 export interface SendRemindParams {
   methods?: string;
   body?: string;
-  maillist?: { email?: string; passcode?: string; user_name?: string }[];
+  maillist?: {
+    email?: string;
+    passcode?: string;
+    user_name?: string;
+    ended_at?: string;
+    numberPoint?: number;
+    score?: number;
+    result_state?: string;
+    require_score?: number;
+  }[];
   examtestId?: string;
   start_time?: string;
   end_time?: string;

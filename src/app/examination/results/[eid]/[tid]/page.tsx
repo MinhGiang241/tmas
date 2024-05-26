@@ -374,7 +374,11 @@ export default function Result({ params }: any) {
               </div>
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("essay_num")}</div>
-                <div className="text-sm font-semibold">1</div>
+                <div className="text-sm font-semibold">
+                  {questions?.filter(
+                    (quest) => quest?.questionType == QuestionType?.Essay,
+                  )?.length ?? 0}
+                </div>
               </div>
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("test_time_1")}</div>
