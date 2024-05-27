@@ -506,6 +506,9 @@ function SendExaminationResults(props: Props) {
         </div>
         <div className="max-lg:overflow-scroll">
           <Table
+            // locale={{
+            //   emptyText: <div className="bg-m_primary_300">HelloWOrld</div>,
+            // }}
             className="w-full"
             bordered={false}
             columns={columns}

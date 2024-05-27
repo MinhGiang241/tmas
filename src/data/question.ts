@@ -1,3 +1,4 @@
+import { ExamCompletionState } from "./exam";
 import { CodingDataType, ParameterType } from "./form_interface";
 
 export interface MultiAnswer {
@@ -148,4 +149,14 @@ export interface MultiCandidateAnswer {
 export interface EssayCandidateAnswer {
   anwserHtml?: string;
   idFiles?: any[];
+}
+
+export interface ParamsCheckMultiAnswer {
+  idExamTestResult?: string;
+  answerItems?: {
+    evaluatorComment?: string;
+    score?: number;
+    idExamQuestion?: string;
+  }[];
+  completionState?: ExamCompletionState;
 }

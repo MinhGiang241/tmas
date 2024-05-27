@@ -396,3 +396,10 @@ export interface SendRemindParams {
   end_time?: string;
   name?: string;
 }
+
+export interface CheckDiscountParams {
+  discount_code?: string;
+  product_type?: string;
+  packageId?: string;
+  goldId?: string;
+}

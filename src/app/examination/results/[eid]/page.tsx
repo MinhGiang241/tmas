@@ -152,12 +152,6 @@ function ResultPage({ params }: any) {
     [],
   );
 
-  useEffect(() => {
-    getExaminationDetail();
-    if (user?._id) {
-      dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
-    }
-  }, [user, filters, recordNum, indexPage]);
   const loadExamGroupList = async (init?: boolean) => {
     if (init) {
       dispatch(setExamGroupLoading(true));
@@ -411,12 +405,11 @@ function ResultPage({ params }: any) {
       var valuesClone = _.cloneDeep(values);
       setFilterValues(valuesClone);
       for (let i in values) {
-        console.log("i", i);
-        if ((values as any)[i]) {
+        if (!!(values as any)[i]) {
           switch (i) {
             case "email":
               setFilters([
-                ...filters,
+                ...filters?.filter((d) => d.fieldName != "candidate.email"),
                 {
                   fieldName: "candidate.email",
                   value: `/${values[i]?.trim()}/i`,
@@ -426,7 +419,9 @@ function ResultPage({ params }: any) {
               break;
             case "identify_code":
               setFilters([
-                ...filters,
+                ...filters?.filter(
+                  (d) => d.fieldName != "candidate.identifier",
+                ),
                 {
                   fieldName: "candidate.identifier",
                   value: values[i]?.trim(),
@@ -436,7 +431,7 @@ function ResultPage({ params }: any) {
               break;
             case "group":
               setFilters([
-                ...filters,
+                ...filters?.filter((d) => d.fieldName != "candidate.groupTest"),
                 {
                   fieldName: "candidate.groupTest",
                   value: `/${values[i]?.trim()}/i`,
@@ -446,7 +441,7 @@ function ResultPage({ params }: any) {
               break;
             case "full_name":
               setFilters([
-                ...filters,
+                ...filters?.filter((d) => d.fieldName != "candidate.fullName"),
                 {
                   fieldName: "candidate.fullName",
                   value: `/${values[i]?.trim()}/i`,
@@ -456,7 +451,9 @@ function ResultPage({ params }: any) {
               break;
             case "phone_number":
               setFilters([
-                ...filters,
+                ...filters?.filter(
+                  (d) => d.fieldName != "candidate.phoneNumber",
+                ),
                 {
                   fieldName: "phoneNumber",
                   value: values[i]?.trim(),
@@ -465,30 +462,35 @@ function ResultPage({ params }: any) {
               ]);
               break;
             case "test_date":
-              setFilters([
-                ...filters,
-                {
-                  fieldName: "createdTime",
-                  value:
-                    values[i] && values[i]!.length >= 1
-                      ? `ISODate(${dayjs(
-                          (values[i] as any)[0],
-                          "DD/MM/YYYY",
-                        ).toISOString()})`
-                      : undefined,
-                  condition: Condition.gte,
-                },
-                {
-                  fieldName: "createdTime",
-                  value:
-                    values[i] && values[i]!.length >= 2
-                      ? `ISODate(${dayjs((values[i] as any)[2], "DD/MM/YYYY")
-                          ?.add(1, "day")
-                          ?.toISOString()})`
-                      : undefined,
-                  condition: Condition.lt,
-                },
-              ]);
+              var gte = {
+                fieldName: "createdTime",
+                value:
+                  values[i] && values[i]!.length >= 1
+                    ? `${dayjs(
+                        (values[i] as any)[0],
+                        "DD/MM/YYYY",
+                      ).toISOString()}`
+                    : undefined,
+                condition: Condition.gte,
+              };
+              console.log("gte", gte);
+              var lt = {
+                fieldName: "createdTime",
+                value:
+                  values[i] && values[i]!.length >= 2
+                    ? `${dayjs((values[i] as any)[1], "DD/MM/YYYY")
+                        ?.add(1, "day")
+                        ?.toISOString()}`
+                    : undefined,
+                condition: Condition.lt,
+              };
+              console.log("lt", gte, lt);
+              var f = [
+                ...filters.filter((d) => d.fieldName != "createdTime"),
+                gte,
+                lt,
+              ];
+              setFilters(f);
               break;
 
             default:
@@ -498,6 +500,16 @@ function ResultPage({ params }: any) {
       }
     },
   });
+
+  const [testDate, setTestDate] = useState<string | undefined>();
+  useEffect(() => {
+    console.log("filter", filters);
+
+    getExaminationDetail();
+    if (user?._id) {
+      dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
+    }
+  }, [user, filters, testDate, recordNum, indexPage]);
 
   return (
     <HomeLayout>
@@ -683,6 +695,7 @@ function ResultPage({ params }: any) {
                             (d) => d.fieldName != "createdTime",
                           ),
                         ]);
+                        setTestDate(undefined);
                         break;
                     }
                     await setFilterValues(formikValue);

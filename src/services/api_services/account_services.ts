@@ -1,6 +1,6 @@
 import { UserData } from "@/data/user";
 import { callApi } from "./base_api";
-import { StudioFormData } from "@/data/form_interface";
+import { StudioFormData, CheckDiscountParams } from "@/data/form_interface";
 import { APIResults } from "@/data/api_results";
 
 export const changeStudio = async (ownerId?: string) => {
@@ -213,6 +213,15 @@ export const loadResultTransaction = async (vnp_TxnRef?: string) => {
 export const userDeleteAccount = async () => {
   var results: APIResults = await callApi.get(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.delete_self_account`,
+  );
+
+  return results;
+};
+
+export const checkDistcountCode = async (data: CheckDiscountParams) => {
+  var results: APIResults = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/billtransaction.check_discount_code`,
+    data,
   );
 
   return results;

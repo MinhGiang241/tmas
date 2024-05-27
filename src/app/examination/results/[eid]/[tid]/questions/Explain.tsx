@@ -25,7 +25,9 @@ export default function Explain({
   onChangeCheck,
   answers,
   idExamTestResult,
+  isComplete,
 }: {
+  isComplete?: boolean;
   examId?: any;
   question?: EssayQuestionData;
   index?: any;
@@ -136,7 +138,7 @@ export default function Explain({
               __html: candidateAnswer?.anwserHtml ?? "",
             }}
           ></div>
-          {!edit && (
+          {!edit && !isComplete && (
             <div>
               <div className="font-semibold pt-2">{t("comment")}</div>
               <MTextArea
@@ -151,12 +153,14 @@ export default function Explain({
               </div>
               <div className="flex items-end ">
                 <Input
+                  disabled={isComplete}
                   value={point}
                   className="rounded-md h-[50px]"
                   type="number"
                   onChange={(e) => setPoint(e.target.value?.trim())}
                 />
                 <Button
+                  disabled={isComplete}
                   onClick={async () => {
                     setLoading(true);
                     var res = await submitCheckingAnswer({
@@ -179,7 +183,7 @@ export default function Explain({
               </div>
             </div>
           )}
-          {edit && (
+          {(edit || isComplete) && (
             <div className="pt-1">
               <div className="font-semibold py-2">{t("comment")}</div>
               <MTextArea
@@ -194,9 +198,11 @@ export default function Explain({
                   <div>{t("scored_point")}:</div>
                   <div className="font-semibold pl-1">{point}</div>
                 </div>
-                <button onClick={() => setEdit(!edit)}>
-                  <Edit />
-                </button>
+                {!isComplete && (
+                  <button onClick={() => setEdit(!edit)}>
+                    <Edit />
+                  </button>
+                )}
               </div>
             </div>
           )}

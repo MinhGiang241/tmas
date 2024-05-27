@@ -40,6 +40,7 @@ import { PartObject } from "@/data/form_interface";
 import { BaseQuestionData, QuestionType } from "@/data/question";
 import MDropdown from "@/app/components/config/MDropdown";
 import MButton from "@/app/components/config/MButton";
+import { submitCheckMultiAnswer } from "@/services/api_services/question_api";
 
 dayjs.extend(duration);
 
@@ -50,8 +51,25 @@ export default function Result({ params }: any) {
   const [loadingRematch, setLoadingRematch] = useState<boolean>(false);
 
   const reMatchOrDone = async () => {
-    // setLoadingRematch(true);
-    //
+    setLoadingRematch(true);
+    var res = await submitCheckMultiAnswer({
+      answerItems: [],
+      idExamTestResult: params?.tid,
+      completionState:
+        examResult?.result?.completionState == ExamCompletionState.Checking
+          ? ExamCompletionState?.Done
+          : examResult?.result?.completionState == ExamCompletionState.Done
+            ? ExamCompletionState.Checking
+            : examResult?.result?.completionState,
+    });
+    setLoadingRematch(false);
+    getExamResultDetails();
+
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+
     // var res = await editExamTestResult({
     //   candidate: examResult?.candidate,
     //   id: examResult?.id,
@@ -127,6 +145,9 @@ export default function Result({ params }: any) {
       case QuestionType?.Essay:
         return (
           <Explain
+            isComplete={
+              examResult?.result?.completionState == ExamCompletionState.Done
+            }
             question={q}
             index={index}
             answers={answer}
@@ -339,7 +360,7 @@ export default function Result({ params }: any) {
               </div>
               <div className="bg-m_success_50 px-4 py-1 flex items-center">
                 <div className="font-bold text-lg text-m_success_600">
-                  {(examResult?.result?.score ?? 0) / 100}
+                  {examResult?.result?.score ?? 0}
                 </div>
                 <div className="text-m_success_600 text-sm">
                   /

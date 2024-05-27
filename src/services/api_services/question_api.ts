@@ -17,7 +17,11 @@ import axios from "axios";
 import { BaseTmasQuestionData } from "@/data/exam";
 import { APIResults } from "@/data/api_results";
 import { mapTmasQuestionToStudioQuestion } from "../ui/mapTmasToSTudio";
-import { BaseQuestionData, QuestionType } from "@/data/question";
+import {
+  BaseQuestionData,
+  QuestionType,
+  ParamsCheckMultiAnswer,
+} from "@/data/question";
 
 export const createCodingQuestion = async (data: CodingQuestionFormData) => {
   const results = await callStudioAPI.post(
@@ -420,6 +424,15 @@ export const getExamExport = async (data: any) => {
     data,
   );
   // console.log(results, "result");
+
+  return results;
+};
+
+export const submitCheckMultiAnswer = async (data: ParamsCheckMultiAnswer) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/AdminExamTestResult/SubmitCheckingMultiAnswer`,
+    data,
+  );
 
   return results;
 };

@@ -139,8 +139,12 @@ function CreateExaminationPage({ examination }: any) {
   );
   const [startTime, setStartTime] = useState<string | undefined>();
   const [endTime, setEndTime] = useState<string | undefined>();
-  const [resultChecked, setResultChecked] = useState<any[]>([]);
-  const [infoChecked, setInfoChecked] = useState<any[]>([]);
+  const [resultChecked, setResultChecked] = useState<any[]>([
+    "showPoint",
+    "showPercent",
+    "showPassOrFail",
+  ]);
+  const [infoChecked, setInfoChecked] = useState<any[]>(["email", "fullName"]);
   const [preventCheched, setPreventChecked] = useState<any[]>([]);
   const [codeList, setCodeList] = useState<ExaminationCode[]>([]);
   const [exam, setExam] = useState<ExamData | undefined>(undefined);
@@ -331,7 +335,7 @@ function CreateExaminationPage({ examination }: any) {
         passingSetting: {
           passPointPercent: values?.pass_point
             ? parseFloat(values?.pass_point?.trim()!)
-            : undefined,
+            : 0,
           failMessage: values?.inform_fail?.trim(),
           passMessage: values?.inform_pass?.trim(),
         },
