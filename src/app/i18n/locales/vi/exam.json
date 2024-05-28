@@ -386,5 +386,9 @@
   "collapse": "Thu gọn",
   "read_more": "Xem thêm",
   "default_pass": "Chúc mừng bạn đã Đạt!",
-  "default_fail": "Rất tiếc bạn đã không vượt qua. Chúc bạn lần sau đạt kết quả cao hơn!"
+  "default_fail": "Rất tiếc bạn đã không vượt qua. Chúc bạn lần sau đạt kết quả cao hơn!",
+  "question_details": "Chi tiết câu hỏi",
+  "question_list": "Danh sách câu hỏi",
+  "empty_answer": "Bài làm trống",
+  "examination_detail": "Chi tiết đợt thi"
 }

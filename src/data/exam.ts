@@ -558,12 +558,22 @@ export interface ExamTestResulstData {
       numberOfQuestionWrong?: number;
       numberOfQuestions?: number;
       numberQuestionNeedCheck?: number;
+      numberQuestionEssay?: number;
     };
-    numberQuestionNeedCheck?: number;
     passState?: ExamPassState;
     percentComplete?: number;
     percentCorrect?: number;
     score?: number;
+    scoreAsInt?: number;
+    statistic?: {
+      percentAnwserWrong?: number;
+      percentFailed?: number;
+      percentNotAnwser?: number;
+      percentAnwserCorrect?: number;
+      percentNotCheck?: number;
+      percentPass?: number;
+      totalExamTestResult?: number;
+    };
   };
   studioId?: string;
   updateBy?: string;
@@ -594,15 +604,32 @@ export enum ExamCompletionState {
 }
 
 export interface StatisticExamTest {
-  totalExamTestResult?: number;
-  percentPass?: number;
-  percentFailed?: number;
-  completionByState?: {
-    percentChecking?: number;
-    percentDoing?: number;
-    percentDone?: number;
+  statistic?: {
+    completionByState?: {
+      percentChecking?: number;
+      percentDoing?: number;
+      percentDone?: number;
+    };
+    percentAnwserCorrect?: number;
+    percentAnwserWrong?: number;
+    percentPass?: number;
+    percentFailed?: number;
+    percentNotAnwser?: number;
+    totalExamTestResult?: number;
+    percentNotCheck?: number;
   };
-  percentAnwserCorrect?: number;
-  percentAnwserWrong?: number;
-  percentNotAnwser?: number;
+  // new
+  passState?: ExamPassState;
+  percentComplete?: number;
+  percentCorrect?: number;
+  score?: number;
+  scoreAsInt?: number;
+  completionState?: ExamCompletionState;
+  couter?: {
+    numberOfQuestionCorrect?: number;
+    numberOfQuestionNotComplete?: number;
+    numberOfQuestions?: number;
+    numberQuestionEssay?: number;
+    numberQuestionNeedCheck?: number;
+  };
 }

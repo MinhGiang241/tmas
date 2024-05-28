@@ -81,7 +81,7 @@ function Chart({ data, examination }: Props) {
               />
               <span className="body_regular_14">{a?.name}</span>
             </div>
-            <div className="body_semibold_14">{a.value ?? 0}%</div>
+            <div className="body_semibold_14">{a.value ?? 0}</div>
           </div>
         ))}
       </div>

@@ -291,6 +291,7 @@ export default function TrueFalse({
                           className="body_regular_14 pl-2"
                           dangerouslySetInnerHTML={{ __html: x.text }}
                         />
+                        <div className="min-w-5" />
                       </div>
                     ) : (
                       <div className="flex" key={key}>

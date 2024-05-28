@@ -19,10 +19,6 @@ import { auth, facebookProvider, googleProvider } from "@/firebase/config";
 import { useRouter } from "next/navigation";
 import { emailRegex } from "@/services/validation/regex";
 import i18next from "i18next";
-import { Button, Divider } from "antd";
-
-import FacebookIcon from "../components/icons/facebook.svg";
-import GoogleIcon from "../components/icons/google.svg";
 
 function LoginPage() {
   const { t, i18n } = useTranslation();
@@ -37,6 +33,7 @@ function LoginPage() {
     email: undefined,
     password: undefined,
   };
+
   const [capchKey, setCaptchaKey] = useState<any>(Date.now());
   useEffect(() => {
     setCaptchaKey(Date.now());

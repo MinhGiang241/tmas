@@ -243,7 +243,9 @@ function FillBlankQuestion({
             await formik.setFieldTouched(v, true);
           });
           formik.validateForm();
+          //setIsSave(true);
           formik.handleSubmit();
+
           Object.keys(formik.errors).map(async (v) => {
             await formik.setFieldTouched(v, true);
           });

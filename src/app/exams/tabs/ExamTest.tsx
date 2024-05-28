@@ -510,7 +510,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     router.push(
-                                      `/examination/results/${k?.id}`,
+                                      `/exams/examtest_results/${k?.id}?from=ExamList`,
                                     );
                                   }}
                                   className="h-full mx-2"

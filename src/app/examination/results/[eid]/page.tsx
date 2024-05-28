@@ -21,7 +21,7 @@ import duration from "dayjs/plugin/duration";
 import FilterModal from "./components/FilterModal";
 import { FormikErrors, useFormik } from "formik";
 import { CloseOutlined } from "@ant-design/icons";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   exportExelFile,
   getOverViewExamination,
@@ -40,7 +40,7 @@ import axios from "axios";
 import { errorToast } from "@/app/components/toast/customToast";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import {
+import examGroupSlice, {
   fetchDataExamGroup,
   setExamGroupLoading,
 } from "@/redux/exam_group/examGroupSlice";
@@ -86,7 +86,7 @@ function ResultPage({ params }: any) {
   const [examination, setExamination] = useState<ExaminationData | undefined>();
 
   const getExaminationDetail = async () => {
-    var res = await getOverViewExamination(params.eid);
+    var res = await getOverViewExamination(params.eid, false);
     if (res.code != 0) {
       return;
     }
@@ -374,7 +374,13 @@ function ResultPage({ params }: any) {
         <div className="w-full flex justify-start">
           <button
             onClick={() => {
-              router.push(`/examination/results/${params?.eid}/${data?.id}`);
+              from == "ExamList"
+                ? router.push(
+                    `/exams/examtest_results/${params?.eid}/${data?.id}?from=${from}`,
+                  )
+                : router.push(
+                    `/examination/results/${params?.eid}/${data?.id}?from=${from}`,
+                  );
             }}
           >
             <EyeIcon />
@@ -500,11 +506,10 @@ function ResultPage({ params }: any) {
       }
     },
   });
-
+  const search = useSearchParams();
+  var from = search.get("from");
   const [testDate, setTestDate] = useState<string | undefined>();
   useEffect(() => {
-    console.log("filter", filters);
-
     getExaminationDetail();
     if (user?._id) {
       dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
@@ -530,14 +535,26 @@ function ResultPage({ params }: any) {
           setOpenFilter(false);
         }}
       />
-      <div className="h-3" />
+      <div className="h-5" />
       <MBreadcrumb
         items={[
-          { text: t("exam_test"), href: "/examination" },
           {
-            href: `/examination/result/${params?.eid}`,
-            text: t("examination_result"),
+            text: from == "ExamList" ? t("exam_list") : t("exam_test"),
+            href: from == "ExamList" ? "/exams" : "/examination",
+          },
+          {
+            href:
+              from == "EditExam"
+                ? `/examination/${params?.eid}`
+                : `/examination/results/${params?.eid}?from=${from}`,
+            text: from == "EditExam" ? examination?.name : examination?.name,
+            active: from != "EditExam",
+          },
+          {
+            href: `/examination/results/${params?.eid}?from=${from}`,
+            text: t("view_result"),
             active: true,
+            hidden: from != "EditExam",
           },
         ]}
       />
@@ -547,12 +564,21 @@ function ResultPage({ params }: any) {
             {
               label: "pass",
               name: t("pass"),
-              value: examination?.statisticExamTest?.percentPass ?? 0,
+              value:
+                ((examination?.statisticExamTest?.statistic?.percentPass ?? 0) *
+                  (examination?.statisticExamTest?.statistic
+                    ?.totalExamTestResult ?? 0)) /
+                100,
             },
             {
               label: "not_pass",
               name: t("not_pass"),
-              value: examination?.statisticExamTest?.percentFailed ?? 0,
+              value:
+                ((examination?.statisticExamTest?.statistic?.percentFailed ??
+                  0) *
+                  (examination?.statisticExamTest?.statistic
+                    ?.totalExamTestResult ?? 0)) /
+                100,
             },
           ]}
         />
@@ -562,22 +588,31 @@ function ResultPage({ params }: any) {
               label: "doing_exam",
               name: t("doing_exam"),
               value:
-                examination?.statisticExamTest?.completionByState
-                  ?.percentDoing ?? 0,
+                ((examination?.statisticExamTest?.statistic?.completionByState
+                  ?.percentDoing ?? 0) *
+                  (examination?.statisticExamTest?.statistic
+                    ?.totalExamTestResult ?? 0)) /
+                100,
             },
             {
               label: "checking_exam",
               name: t("checking_exam"),
               value:
-                examination?.statisticExamTest?.completionByState
-                  ?.percentChecking ?? 0,
+                ((examination?.statisticExamTest?.statistic?.completionByState
+                  ?.percentChecking ?? 0) *
+                  (examination?.statisticExamTest?.statistic
+                    ?.totalExamTestResult ?? 0)) /
+                100,
             },
             {
               label: "done_exam",
               name: t("done_exam"),
               value:
-                examination?.statisticExamTest?.completionByState
-                  ?.percentDone ?? 0,
+                ((examination?.statisticExamTest?.statistic?.completionByState
+                  ?.percentDone ?? 0) *
+                  (examination?.statisticExamTest?.statistic
+                    ?.totalExamTestResult ?? 0)) /
+                100,
             },
           ]}
         />
@@ -586,17 +621,27 @@ function ResultPage({ params }: any) {
             {
               label: "correct_answer",
               name: t("correct_answer"),
-              value: examination?.statisticExamTest?.percentAnwserCorrect ?? 0,
+              value:
+                examination?.statisticExamTest?.couter
+                  ?.numberOfQuestionCorrect ?? 0,
             },
             {
               label: "incorrect_answer",
               name: t("incorrect_answer"),
-              value: examination?.statisticExamTest?.percentAnwserWrong ?? 0,
+              value:
+                (examination?.statisticExamTest?.couter?.numberOfQuestions ??
+                  0) -
+                (examination?.statisticExamTest?.couter
+                  ?.numberOfQuestionNotComplete ?? 0) -
+                (examination?.statisticExamTest?.couter
+                  ?.numberOfQuestionCorrect ?? 0),
             },
             {
               label: "not_answer",
               name: t("not_answer"),
-              value: examination?.statisticExamTest?.percentNotAnwser ?? 0,
+              value:
+                examination?.statisticExamTest?.couter
+                  ?.numberOfQuestionNotComplete ?? 0,
             },
           ]}
         />

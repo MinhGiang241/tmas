@@ -16,7 +16,7 @@ import Edit from "@/app/components/icons/edit-2.svg";
 import Play from "@/app/components/icons/video-circle.svg";
 import Close from "@/app/components/icons/close-circle2.svg";
 import Sql from "./questions/Sql";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import {
@@ -116,7 +116,7 @@ export default function Result({ params }: any) {
   };
 
   const getExaminationDetail = async () => {
-    var res = await getOverViewExamination(params.eid);
+    var res = await getOverViewExamination(params.eid, false);
     if (res.code != 0) {
       return;
     }
@@ -173,19 +173,38 @@ export default function Result({ params }: any) {
     "all" | "select_question" | "essay_question"
   >("all");
 
+  const search = useSearchParams();
+  const from = search.get("from");
+
   return (
     <HomeLayout>
       <div className="pt-4" />
       <MBreadcrumb
         items={[
-          { text: t("examination_list"), href: "/examination" },
           {
-            href: `/examination`,
-            text: t(`examination_result`),
+            text: from == "ExamList" ? t("exam_list") : t("exam_test"),
+            href: from == "ExamList" ? "/exams" : "/examination",
           },
           {
+            href:
+              from == "EditExam"
+                ? `/examination/${params?.eid}`
+                : `/examination/results/${params?.eid}?from=${from}`,
+            text: from == "EditExam" ? examination?.name : examination?.name,
+            active: from != "EditExam",
+          },
+          {
+            href: `/examination/results/${params?.eid}?from=${from}`,
+            text: t("view_result"),
+            hidden: from != "EditExam",
+          },
+
+          {
             // href: `/`,
-            text: examResult?.examTestDataCreatedWhenTest?.examTestInfo?.name,
+            text:
+              examResult?.candidate?.fullName ??
+              examResult?.candidate?.email ??
+              examResult?.candidate?.phoneNumber,
             active: true,
           },
         ]}
@@ -224,9 +243,7 @@ export default function Result({ params }: any) {
           >
             <div className="px-4 bg-m_warning_50 text-m_warnig_title py-2 font-semibold text-sm">
               {t("has_essay", {
-                num: `${questions?.filter(
-                  (quest) => quest?.questionType == QuestionType?.Essay,
-                )?.length}`,
+                num: `${examResult?.result?.couter?.numberQuestionNeedCheck}`,
               })}
             </div>
             <Collapse.Panel
@@ -236,7 +253,7 @@ export default function Result({ params }: any) {
                   <div className="my-3 flex justify-between items-center">
                     <div className="">
                       <div className="text-base font-semibold">
-                        {t("exam_list")}
+                        {t("question_list")}
                       </div>
                     </div>
 
@@ -396,9 +413,11 @@ export default function Result({ params }: any) {
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("essay_num")}</div>
                 <div className="text-sm font-semibold">
-                  {questions?.filter(
-                    (quest) => quest?.questionType == QuestionType?.Essay,
-                  )?.length ?? 0}
+                  {examResult?.result?.couter?.numberQuestionEssay ??
+                    questions?.filter(
+                      (quest) => quest?.questionType == QuestionType?.Essay,
+                    )?.length ??
+                    0}
                 </div>
               </div>
               <div className="flex justify-between items-center pb-2">

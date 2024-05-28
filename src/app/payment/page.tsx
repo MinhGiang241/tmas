@@ -39,6 +39,7 @@ function Payment() {
   const [discountPrice, setDiscountPrice] = useState<number | undefined>();
   const pay = async () => {
     const res = await makePayment({
+      discount_code: isApply ? discountCode?.trim() : undefined,
       goldId:
         searchGoldId ?? (payment.type == "Gold" ? payment?.goldId : undefined),
       packageId:
@@ -66,21 +67,24 @@ function Payment() {
     setConfig(res.data);
   };
   const [loadingDiscount, setLoadingDiscount] = useState<boolean>(false);
+  const [isApply, setIsApply] = useState<boolean>(false);
   const applyCode = async (e: any) => {
     e.preventDefault();
     setLoadingDiscount(true);
     var res = await checkDistcountCode({
-      discount_code: discountCode?.trim(),
+      discount_code: discountCode,
       goldId: searchType == "Gold" ? searchGoldId ?? undefined : undefined,
       packageId:
-        searchType == "packageId" ? searchPackageId ?? undefined : undefined,
+        searchType == "Package" ? searchPackageId ?? undefined : undefined,
       product_type: searchType ?? undefined,
     });
     setLoadingDiscount(false);
     if (res?.code != 0) {
+      setIsApply(false);
       errorToast(res?.message ?? "");
       return;
     }
+    setIsApply(true);
     setDiscountPrice(res?.data ? parseInt(res?.data ?? "0") : 0);
     console.log("resdataa", res);
   };
@@ -243,6 +247,7 @@ function Payment() {
             </div>
             <form onSubmit={applyCode}>
               <MInput
+                value={discountCode}
                 isTextRequire={false}
                 className="mt-3"
                 placeholder={t("discount_code")}
@@ -250,7 +255,7 @@ function Payment() {
                 id="apply"
                 name="apply"
                 onChange={(e) => {
-                  setDiscountCode(e.target.value);
+                  setDiscountCode(e.target.value?.toUpperCase());
                 }}
                 suffix={
                   <button

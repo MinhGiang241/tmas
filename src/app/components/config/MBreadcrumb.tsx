@@ -10,6 +10,7 @@ interface Item {
   text?: string;
   active?: boolean;
   href?: string;
+  hidden?: boolean;
 }
 
 function MBreadcrumb({ items }: BreadcrumbProps) {
@@ -18,18 +19,20 @@ function MBreadcrumb({ items }: BreadcrumbProps) {
       className="max-lg:ml-5 mb-3"
       separator={<RightOutlined />}
       items={[
-        ...items.map((c) => ({
-          title: (
-            <Link
-              className={`body_regular_14 ${
-                c?.active ? "text-m_neutral_900" : ""
-              }`}
-              href={c?.href ?? "/"}
-            >
-              {c.text}
-            </Link>
-          ),
-        })),
+        ...items
+          ?.filter((d) => !d.hidden)
+          .map((c) => ({
+            title: (
+              <Link
+                className={`body_regular_14 ${
+                  c?.active ? "text-m_neutral_900" : ""
+                }`}
+                href={c?.href ?? "/"}
+              >
+                {c.text}
+              </Link>
+            ),
+          })),
       ]}
     />
   );

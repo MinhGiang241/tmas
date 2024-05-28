@@ -209,6 +209,11 @@ export interface SettingData {
     visa?: boolean;
     vnpay?: boolean;
   };
+  signin?: {
+    enable_form?: boolean;
+    facebook?: boolean;
+    google?: boolean;
+  };
 }
 
 export interface TransactionData {

@@ -83,15 +83,6 @@ export default function Explain({
                     expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
                   }`}
                 >
-                  {canCheck && (
-                    <Checkbox
-                      onChange={onChangeCheck as any}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                      value={question?.id}
-                    />
-                  )}{" "}
                   {`${t("question")} ${index + 1}`}:
                   <div
                     ref={contentRef}
@@ -133,12 +124,18 @@ export default function Explain({
           key={""}
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
+          {!candidateAnswer?.anwserHtml && (
+            <div className="text-m_warning_600 body_semibold_16">
+              {t("empty_answer")}
+            </div>
+          )}
           <div
             dangerouslySetInnerHTML={{
               __html: candidateAnswer?.anwserHtml ?? "",
             }}
           ></div>
-          {!edit && !isComplete && (
+
+          {!edit && !isComplete && candidateAnswer?.anwserHtml && (
             <div>
               <div className="font-semibold pt-2">{t("comment")}</div>
               <MTextArea
@@ -183,7 +180,7 @@ export default function Explain({
               </div>
             </div>
           )}
-          {(edit || isComplete) && (
+          {candidateAnswer?.anwserHtml && (edit || isComplete) && (
             <div className="pt-1">
               <div className="font-semibold py-2">{t("comment")}</div>
               <MTextArea

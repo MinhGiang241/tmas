@@ -162,6 +162,10 @@ function DetailsPage({ params }: any) {
           items={[
             {
               text: t("examTest_question"),
+              href: `/examination`,
+            },
+            {
+              text: data?.name,
               href: `/examination/${examTestId}`,
             },
             // { text: exam?.name, href: `/exams/details/${exam?.id}` },

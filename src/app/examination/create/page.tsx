@@ -37,7 +37,7 @@ import {
 } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import dayjs from "dayjs";
-import { ExamData, ExaminationData } from "@/data/exam";
+import { ExamData } from "@/data/exam";
 import { v4 as uuidv4 } from "uuid";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import GoldPrice from "../components/GoldPrice";
@@ -279,9 +279,22 @@ function CreateExaminationPage({ examination }: any) {
         idAvatarThumbnail = avatarIdData?.data[0];
       }
 
-      var requiredInfoSetting: any = {};
+      var requiredInfoSetting: any = {
+        phoneNumber: false,
+        fullName: false,
+        idGroup: false,
+        birthday: false,
+        email: false,
+        identifier: false,
+        jobPosition: false,
+      };
       var cheatingSetting: any = {};
-      var testResultSetting: any = {};
+      var testResultSetting: any = {
+        showPoint: false,
+        showPercent: false,
+        showPassOrFail: false,
+        showPassOrFailDetail: false,
+      };
       for (let i of infoChecked) {
         requiredInfoSetting[i] = true;
       }
@@ -339,7 +352,18 @@ function CreateExaminationPage({ examination }: any) {
           failMessage: values?.inform_fail?.trim(),
           passMessage: values?.inform_pass?.trim(),
         },
-        requiredInfoSetting,
+        requiredInfoSetting:
+          share == "Public"
+            ? {
+                phoneNumber: false,
+                fullName: false,
+                idGroup: false,
+                birthday: false,
+                email: false,
+                identifier: false,
+                jobPosition: false,
+              }
+            : requiredInfoSetting,
         sharingSetting: share,
         idAvatarThumbnail,
         testResultSetting,
@@ -490,7 +514,9 @@ function CreateExaminationPage({ examination }: any) {
                 <div className="w-4" />
                 <MButton
                   onClick={() => {
-                    router.push(`/examination/results/${examination?.id}`);
+                    router.push(
+                      `/examination/results/${examination?.id}?from=EditExam`,
+                    );
                   }}
                   h="h-11"
                   text={t("view_result")}

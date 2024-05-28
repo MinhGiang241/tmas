@@ -295,14 +295,15 @@ export default function ManyResult({
                           className="body_regular_14 pl-2"
                           dangerouslySetInnerHTML={{ __html: x.text }}
                         />
+                        <div className="min-w-5" />
                       </div>
                     ) : (
                       <div className="flex" key={key}>
-                        <div className="body_semibold_14 text-green-500">
+                        <div className="body_semibold_14 text-green-500 text-justify">
                           {x.label}
                         </div>
                         <div
-                          className="body_regular_14 pl-2 text-green-500 pr-2"
+                          className="body_regular_14 pl-2 text-green-500 pr-2 text-justify"
                           dangerouslySetInnerHTML={{ __html: x.text }}
                         />
                         <Tick className="min-w-5" />

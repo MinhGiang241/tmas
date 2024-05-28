@@ -279,9 +279,12 @@ export const deleteRemindMail = async (maillistId?: string) => {
   return results;
 };
 
-export const getOverViewExamination = async (examinationId?: string) => {
+export const getOverViewExamination = async (
+  examinationId?: string,
+  includeExam?: boolean,
+) => {
   const results = await callStudioAPI.get(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/${examinationId}?IsIncludeExamVersion=false`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/${examinationId}?IsIncludeExamVersion=${includeExam}`,
   );
   return results;
 };

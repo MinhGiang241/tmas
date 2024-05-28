@@ -1,12 +1,38 @@
-import React, { ReactNode, Suspense, useEffect, useState } from "react";
+import React, {
+  ReactNode,
+  Suspense,
+  cloneElement,
+  useEffect,
+  useState,
+} from "react";
 import Image from "next/image";
 import useWindowSize from "@/services/ui/useWindowSize";
 import LoadingPage from "../loading";
 import { redirect } from "next/navigation";
+import { SettingData } from "@/data/user";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import { loadConfig } from "@/services/api_services/account_services";
+import { useAppDispatch } from "@/redux/hooks";
+import { setSettingConfig } from "@/redux/setting/settingSlice";
 
 function AuthLayout({ children }: { children: ReactNode }) {
   const size = useWindowSize();
   const [loading, setLoading] = useState<boolean>(false);
+  const [config, setConfig] = useState<SettingData | undefined>();
+  const dispatch = useAppDispatch();
+
+  const getSetting = async () => {
+    var res = await loadConfig();
+    if (res.code != 0) {
+      return;
+    }
+    setConfig(res.data);
+    dispatch(setSettingConfig(res?.data));
+  };
+
+  useOnMountUnsafe(() => {
+    getSetting();
+  });
 
   return (
     <>

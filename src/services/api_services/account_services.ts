@@ -171,6 +171,7 @@ export const makePayment = async (data: {
   product_type?: "Package" | "Gold";
   goldId?: string;
   packageId?: string;
+  discount_code?: string;
 }) => {
   var results: APIResults = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/billtransaction.create_online_transaction`,

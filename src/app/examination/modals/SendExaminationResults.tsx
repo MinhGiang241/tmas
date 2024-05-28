@@ -30,9 +30,7 @@ import {
   sendResultEmail,
 } from "@/services/api_services/examination_api";
 import MInput from "@/app/components/config/MInput";
-import PushIcon from "@/app/components/icons/push.svg";
 import { Pagination, Select, Tooltip } from "antd";
-import AddCircleIcon from "@/app/components/icons/add-circle.svg";
 import { getPagingAdminExamTestResult } from "@/services/api_services/result_exam_api";
 import { FormattedNumber } from "react-intl";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
