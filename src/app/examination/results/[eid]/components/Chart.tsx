@@ -30,12 +30,12 @@ function Chart({ data, examination }: Props) {
     return (
       <>
         <text
-          x={x}
+          x={x < cx ? x + 10 : x}
           y={y}
           fill="white"
           textAnchor={x > cx ? "start" : "end"}
           dominantBaseline="central"
-          className="text-[13px]"
+          className="body_semibold_14"
         >
           <span className="w-2" />
           {`${(percent * 100).toFixed(2)}%`}

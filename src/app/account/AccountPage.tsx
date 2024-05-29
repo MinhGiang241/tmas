@@ -113,7 +113,11 @@ function AccountPage() {
         onOk={() => {
           setOpenModal(false);
           if (vnp_ResponseCode === "00") {
-            router.push(process.env.NEXT_PUBLIC_MARKET_URL!);
+            if (transaction?.product_type === "Gold") {
+              router.push(process.env.NEXT_PUBLIC_MARKET_URL!);
+            } else {
+              setOpenModal(false);
+            }
           } else {
             if (transaction?.product_type === "Gold") {
               router.push(

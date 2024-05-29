@@ -7,13 +7,20 @@ import {
 import BaseModal, { BaseModalProps } from "@/app/components/config/BaseModal";
 import {
   Condition,
+  ExamCompletionState,
   ExamTestResulstData,
   ExaminationData,
   RemindEmailData,
 } from "@/data/exam";
 import Table, { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import React, { HTMLAttributes, useEffect, useState } from "react";
+import React, {
+  HTMLAttributes,
+  createRef,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import EyeIcon from "@/app/components/icons/eye.svg";
 import TrashIcon from "@/app/components/icons/trash.svg";
@@ -37,6 +44,7 @@ import { errorToast, successToast } from "@/app/components/toast/customToast";
 import _ from "lodash";
 import { useRouter } from "next/navigation";
 import ContentDetailsModal from "./ContentDetailsModal";
+import Link from "next/link";
 
 interface Props extends BaseModalProps {
   examination?: ExaminationData;
@@ -55,6 +63,7 @@ function SendExaminationResults(props: Props) {
   const [template, setTemplate] = useState<string | undefined>();
   const [sendLoading, setSendLoading] = useState<boolean>(false);
   const [openDetail, setOpenDetail] = useState<boolean>(false);
+  var linkRef = useRef(null);
 
   const router = useRouter();
 
@@ -94,6 +103,11 @@ function SendExaminationResults(props: Props) {
           value: props.examination?.id,
           condition: Condition.eq,
         },
+        // {
+        //   fieldName: "result.completionState",
+        //   value: ExamCompletionState.Done,
+        //   condition: Condition.eq,
+        // },
       ],
     });
     if (res.code != 0) {
@@ -322,29 +336,38 @@ function SendExaminationResults(props: Props) {
       ),
       dataIndex: "schema",
       key: "schema",
-      render: (action, data) => (
-        <div className="w-full flex justify-start ">
-          <button
-            className="ml-2"
-            onClick={() => {
-              router.push(
-                `/examination/results/${props.examination?.id}/${data?.id}/`,
-              );
+      render: (action, data) => {
+        var ref = createRef<any>();
+        return (
+          <div className="w-full flex justify-start ">
+            <Link
+              target="_blank"
+              ref={ref}
+              href={`/examination/results/${props.examination?.id}/${data?.id}/`}
+            />
 
-              //setActive(data);
-              //setOpenDetail(true);
-            }}
-          >
-            <EyeIcon />
-          </button>
+            <button
+              className="ml-2"
+              onClick={() => {
+                (ref?.current as any).click();
+                // router.push(
+                //   `/examination/results/${props.examination?.id}/${data?.id}/`,
+                // );
 
-          {/* {data?.status == "New" && ( */}
-          {/*   <button className="ml-2" onClick={async () => {}}> */}
-          {/*     <TrashIcon /> */}
-          {/*   </button> */}
-          {/* )} */}
-        </div>
-      ),
+                //setActive(data);
+                //setOpenDetail(true);
+              }}
+            >
+              <EyeIcon />
+            </button>
+            {/* {data?.status == "New" && ( */}
+            {/*   <button className="ml-2" onClick={async () => {}}> */}
+            {/*     <TrashIcon /> */}
+            {/*   </button> */}
+            {/* )} */}
+          </div>
+        );
+      },
     },
   ];
 

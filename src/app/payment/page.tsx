@@ -70,7 +70,12 @@ function Payment() {
   const [isApply, setIsApply] = useState<boolean>(false);
   const applyCode = async (e: any) => {
     e.preventDefault();
+    if (!discountCode?.trim()) {
+      setDiscountPrice(0);
+      return;
+    }
     setLoadingDiscount(true);
+
     var res = await checkDistcountCode({
       discount_code: discountCode,
       goldId: searchType == "Gold" ? searchGoldId ?? undefined : undefined,
@@ -81,6 +86,7 @@ function Payment() {
     setLoadingDiscount(false);
     if (res?.code != 0) {
       setIsApply(false);
+      setDiscountPrice(0);
       errorToast(res?.message ?? "");
       return;
     }
@@ -259,12 +265,15 @@ function Payment() {
                 }}
                 suffix={
                   <button
-                    disabled={loadingDiscount || !discountCode}
+                    disabled={loadingDiscount}
                     type="submit"
                     className={`${
-                      loadingDiscount || !discountCode
-                        ? "bg-m_neutral_400"
-                        : "bg-m_primary_500"
+                      //loadingDiscount ??
+                      // || !discountCode
+                      //                         ? "bg-m_neutral_400"
+                      //                         :
+
+                      "bg-m_primary_500"
                     } w-20 lg:h-11 h-11 rounded-r-lg text-white`}
                   >
                     {t("apply")}

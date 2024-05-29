@@ -508,8 +508,10 @@ export interface CandidateAnswers {
     isDoneScoring?: boolean;
     numberQuestionCorrect?: number;
     score?: number;
+    scoreAsInt?: number;
     totalQuestion?: number;
     totalScore?: number;
+    totalScoreAsInt?: number;
   };
   idExamQuestion?: string;
   candidateAnswerJson?: string;

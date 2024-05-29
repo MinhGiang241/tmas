@@ -213,7 +213,7 @@ function StudioInfo() {
             className="transition-opacity opacity-0 duration-500 absolute top-0 bottom-0 right-0 left-0 rounded-[50%]"
             objectFit="cover"
             fill
-            src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user.studio?.stu_logo}`}
+            src={`${user.studio?.stu_logo}`}
             alt="Preview"
           />
         ) : (
@@ -269,7 +269,7 @@ function StudioInfo() {
               onLoadingComplete={(image) => image.classList.remove("opacity-0")}
               objectFit="cover"
               fill
-              src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user?.studio?.stu_banner}`}
+              src={`${user?.studio?.stu_banner}`}
               alt="Preview"
             />
           ) : (

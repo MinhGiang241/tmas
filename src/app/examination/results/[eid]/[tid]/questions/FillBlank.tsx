@@ -1,25 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
 import { Checkbox, Collapse, Popover, Table } from "antd";
-import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
-import EditIcon from "@/app/components/icons/edit-black.svg";
-import CopyIcon from "@/app/components/icons/size.svg";
-import BaseModal from "@/app/components/config/BaseModal";
-import MInput from "@/app/components/config/MInput";
-import MTextArea from "@/app/components/config/MTextArea";
-import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import Tick from "@/app/components/icons/tick-circle.svg";
 import { useRouter } from "next/navigation";
-import { FormattedDate, FormattedTime } from "react-intl";
-import { FillBlankQuestionFormData } from "@/data/form_interface";
-import {
-  deleteQuestionById,
-  duplicateQuestion,
-} from "@/services/api_services/question_api";
-import { errorToast, successToast } from "@/app/components/toast/customToast";
-import { APIResults } from "@/data/api_results";
-import AddIcon from "@/app/components/icons/add.svg";
 import Close from "@/app/components/icons/close-circle.svg";
 import { CandidateAnswers } from "@/data/exam";
 import {

@@ -218,17 +218,21 @@ export default function Result({ params }: any) {
             h="h-11"
             onClick={() => router.back()}
           />
-          <div className="w-3" />
-          <MButton
-            loading={loadingRematch}
-            text={
-              examResult?.result?.completionState == ExamCompletionState.Done
-                ? t("rematch")
-                : t("match_done")
-            }
-            h="h-11"
-            onClick={reMatchOrDone}
-          />
+          {examResult?.result?.couter?.numberQuestionNeedCheck != 0 && (
+            <div className="w-3" />
+          )}
+          {examResult?.result?.couter?.numberQuestionNeedCheck != 0 && (
+            <MButton
+              loading={loadingRematch}
+              text={
+                examResult?.result?.completionState == ExamCompletionState.Done
+                  ? t("rematch")
+                  : t("match_done")
+              }
+              h="h-11"
+              onClick={reMatchOrDone}
+            />
+          )}
         </div>
       </div>
       <div className="grid grid-cols-3">
@@ -241,11 +245,13 @@ export default function Result({ params }: any) {
             expandIconPosition="end"
             className="mb-5 rounded-lg bg-white overflow-hidden arrow"
           >
-            <div className="px-4 bg-m_warning_50 text-m_warnig_title py-2 font-semibold text-sm">
-              {t("has_essay", {
-                num: `${examResult?.result?.couter?.numberQuestionNeedCheck}`,
-              })}
-            </div>
+            {examResult?.result?.couter?.numberQuestionNeedCheck != 0 && (
+              <div className="px-4 bg-m_warning_50 text-m_warnig_title py-2 font-semibold text-sm">
+                {t("has_essay", {
+                  num: `${examResult?.result?.couter?.numberQuestionNeedCheck}`,
+                })}
+              </div>
+            )}
             <Collapse.Panel
               key="1"
               header={
