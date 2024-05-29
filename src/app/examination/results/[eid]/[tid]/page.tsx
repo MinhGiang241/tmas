@@ -23,6 +23,7 @@ import {
   CandidateAnswers,
   Condition,
   ExamCompletionState,
+  ExamPassState,
   ExamTestResulstData,
   ExaminationData,
 } from "@/data/exam";
@@ -381,11 +382,35 @@ export default function Result({ params }: any) {
               <div className="font-bold text-base text-m_primary_500">
                 {examResult?.candidate?.fullName}
               </div>
-              <div className="bg-m_success_50 px-4 py-1 flex items-center">
-                <div className="font-bold text-lg text-m_success_600">
+              <div
+                className={`${
+                  examResult?.result?.passState == ExamPassState.Pass
+                    ? `bg-m_success_50`
+                    : examResult?.result?.passState == ExamPassState?.NotPass
+                      ? "bg-m_error_100"
+                      : "bg-m_warning_50"
+                } px-4 py-1 flex items-center`}
+              >
+                <div
+                  className={`font-bold text-lg ${
+                    examResult?.result?.passState == ExamPassState.Pass
+                      ? `text-m_success_600`
+                      : examResult?.result?.passState == ExamPassState?.NotPass
+                        ? "text-m_error_500"
+                        : "text-m_warning_600"
+                  }`}
+                >
                   {examResult?.result?.score ?? 0}
                 </div>
-                <div className="text-m_success_600 text-sm">
+                <div
+                  className={`${
+                    examResult?.result?.passState == ExamPassState.Pass
+                      ? `text-m_success_600`
+                      : examResult?.result?.passState == ExamPassState?.NotPass
+                        ? "text-m_error_500"
+                        : "text-m_warning_600"
+                  } text-sm`}
+                >
                   /
                   {examResult?.examTestDataCreatedWhenTest?.examVersion?.exam
                     ?.totalPoints ?? 0}

@@ -90,20 +90,22 @@ function Header({ path }: { path?: string }) {
     (typeof user?.studios == "string"
       ? JSON.parse(user?.studios)
       : user?.studios
-    )?.map((v: any, i: number) => ({
-      key: i,
-      label: (
-        <button
-          className="body_regular_14"
-          onClick={async () => {
-            setOpenDrawer(false);
-            await onChangeStudio(v.ownerId);
-          }}
-        >
-          {v.ownerId == user._id ? common.t("my_studio") : v.studio_name}
-        </button>
-      ),
-    })) ?? [];
+    )
+      ?.filter((d: any) => d.role != "Member")
+      ?.map((v: any, i: number) => ({
+        key: i,
+        label: (
+          <button
+            className="body_regular_14"
+            onClick={async () => {
+              setOpenDrawer(false);
+              await onChangeStudio(v.ownerId);
+            }}
+          >
+            {v.ownerId == user._id ? common.t("my_studio") : v.studio_name}
+          </button>
+        ),
+      })) ?? [];
 
   const onChangeStudio = async (ownerId?: string) => {
     try {

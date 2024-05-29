@@ -12,6 +12,7 @@ import { EssayCandidateAnswer, EssayQuestionData } from "@/data/question";
 import { CandidateAnswers } from "@/data/exam";
 import { submitCheckingAnswer } from "@/services/api_services/result_exam_api";
 import { parseInt } from "lodash";
+import Link from "next/link";
 
 export default function Explain({
   index,
@@ -124,7 +125,10 @@ export default function Explain({
           key={""}
         >
           <div className="h-[1px] bg-m_primary_200 mb-3" />
-          {!candidateAnswer?.anwserHtml && (
+          {!(
+            candidateAnswer?.anwserHtml ||
+            (candidateAnswer?.idFiles && candidateAnswer?.idFiles?.length != 0)
+          ) && (
             <div className="text-m_warning_600 body_semibold_16">
               {t("empty_answer")}
             </div>
@@ -134,75 +138,88 @@ export default function Explain({
               __html: candidateAnswer?.anwserHtml ?? "",
             }}
           ></div>
-
-          {!edit && !isComplete && candidateAnswer?.anwserHtml && (
-            <div>
-              <div className="font-semibold pt-2">{t("comment")}</div>
-              <MTextArea
-                name="comment"
-                id="comment"
-                onChange={(e) => setComment(e.target.value?.trim())}
-                placeholder={t("enter_comment")}
-              />
-
-              <div className="font-semibold pt-2">
-                {t("match_max", { num: question?.numberPoint })}
-              </div>
-              <div className="flex items-end ">
-                <Input
-                  disabled={isComplete}
-                  value={point}
-                  className="rounded-md h-[50px]"
-                  type="number"
-                  onChange={(e) => setPoint(e.target.value?.trim())}
+          {candidateAnswer?.idFiles?.map((s, i) => (
+            <Link
+              className="text-m_primary_500 underline underline-offset-4"
+              key={s}
+              href={`${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/download/${s}`}
+            >
+              File
+            </Link>
+          ))}
+          {!edit &&
+            !isComplete &&
+            (candidateAnswer?.anwserHtml ||
+              candidateAnswer?.idFiles?.length != 0) && (
+              <div>
+                <div className="font-semibold pt-2">{t("comment")}</div>
+                <MTextArea
+                  name="comment"
+                  id="comment"
+                  onChange={(e) => setComment(e.target.value?.trim())}
+                  placeholder={t("enter_comment")}
                 />
-                <Button
-                  disabled={isComplete}
-                  onClick={async () => {
-                    setLoading(true);
-                    var res = await submitCheckingAnswer({
-                      evaluatorComment: comment,
-                      score: parseInt(point ?? 0),
-                      idExamQuestion: question?.id,
-                      idExamTestResult,
-                    });
-                    setLoading(false);
-                    if (res?.code != 0) {
-                      errorToast(res?.message ?? "");
-                      return;
-                    }
-                    setEdit(!edit);
-                  }}
-                  className="ml-4 w-[114px] h-[36px] rounded-md bg-m_primary_500 text-white font-semibold"
-                >
-                  {t("save_as")}
-                </Button>
-              </div>
-            </div>
-          )}
-          {candidateAnswer?.anwserHtml && (edit || isComplete) && (
-            <div className="pt-1">
-              <div className="font-semibold py-2">{t("comment")}</div>
-              <MTextArea
-                name="comment"
-                id="comment"
-                onChange={(e) => setComment(e.target.value?.trim())}
-                disable
-              />
 
-              <div className="flex justify-between items-center pt-2">
-                <div className="flex">
-                  <div>{t("scored_point")}:</div>
-                  <div className="font-semibold pl-1">{point}</div>
+                <div className="font-semibold pt-2">
+                  {t("match_max", { num: question?.numberPoint })}
                 </div>
-                {!isComplete && (
-                  <button onClick={() => setEdit(!edit)}>
-                    <Edit />
-                  </button>
-                )}
+                <div className="flex items-end ">
+                  <Input
+                    disabled={isComplete}
+                    value={point}
+                    className="rounded-md h-[50px]"
+                    type="number"
+                    onChange={(e) => setPoint(e.target.value?.trim())}
+                  />
+                  <Button
+                    disabled={isComplete}
+                    onClick={async () => {
+                      setLoading(true);
+                      var res = await submitCheckingAnswer({
+                        evaluatorComment: comment,
+                        score: parseInt(point ?? 0),
+                        idExamQuestion: question?.id,
+                        idExamTestResult,
+                      });
+                      setLoading(false);
+                      if (res?.code != 0) {
+                        errorToast(res?.message ?? "");
+                        return;
+                      }
+                      setEdit(!edit);
+                    }}
+                    className="ml-4 w-[114px] h-[36px] rounded-md bg-m_primary_500 text-white font-semibold"
+                  >
+                    {t("save_as")}
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          {(candidateAnswer?.anwserHtml ||
+            candidateAnswer?.idFiles?.length != 0) &&
+            (edit || isComplete) && (
+              <div className="pt-1">
+                <div className="font-semibold py-2">{t("comment")}</div>
+                <MTextArea
+                  name="comment"
+                  id="comment"
+                  onChange={(e) => setComment(e.target.value?.trim())}
+                  disable
+                />
+
+                <div className="flex justify-between items-center pt-2">
+                  <div className="flex">
+                    <div>{t("scored_point")}:</div>
+                    <div className="font-semibold pl-1">{point}</div>
+                  </div>
+                  {!isComplete && (
+                    <button onClick={() => setEdit(!edit)}>
+                      <Edit />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
         </Collapse.Panel>
       </Collapse>
     </div>

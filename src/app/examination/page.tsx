@@ -647,7 +647,7 @@ function ExaminationPage() {
                     <div className="flex max-lg:mt-3">
                       <MButton
                         onClick={() =>
-                          router.push(`/examination/results/${v?.id}`)
+                          router.push(`/examination/results/${v?.id}?from=''`)
                         }
                         type="secondary"
                         text={t("result")}
