@@ -270,8 +270,8 @@ function SendExaminationResults(props: Props) {
         props.examination?.accessCodeSettingType === "MultiCode" &&
         props.examination?.sharingSetting == "Private"
       )
-        ? "10%"
-        : "10%",
+        ? "12%"
+        : "12%",
       title: (
         <div className="w-full flex justify-start">{t("point_status")}</div>
       ),
@@ -280,7 +280,7 @@ function SendExaminationResults(props: Props) {
       render: (text, data) => (
         <p
           key={text}
-          className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
+          className="w-full  flex  min-w-11 justify-start caption_regular_14"
         >
           {text == "Pass" ? t("pass") : t("no_pass")}
         </p>

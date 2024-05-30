@@ -71,6 +71,10 @@ export default function Explain({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  function isFloat(n: any) {
+    return n === +n && n !== (n | 0);
+  }
+
   return (
     !hidden && (
       <div>
@@ -187,11 +191,13 @@ export default function Explain({
                     <Button
                       disabled={isComplete}
                       onClick={async () => {
-                        var val = parseFloat(point.trim()).toFixed(2);
+                        var val = isFloat(point?.trim())
+                          ? parseFloat(point.trim()).toFixed(2)
+                          : undefined;
                         setLoading(true);
                         var res = await submitCheckingAnswer({
                           evaluatorComment: comment,
-                          score: parseFloat(val ?? 0),
+                          score: val ? parseFloat(val ?? 0) : undefined,
                           idExamQuestion: question?.id,
                           idExamTestResult,
                         });
@@ -200,7 +206,7 @@ export default function Explain({
                           errorToast(res?.message ?? "");
                           return;
                         }
-                        setPoint(val?.toString());
+                        setPoint(val ? val?.toString() : "");
                         loadAnswer();
                         setEdit(!edit);
                       }}

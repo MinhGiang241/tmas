@@ -61,6 +61,7 @@ export default function Result({ params }: any) {
 
   const search = useSearchParams();
   const from = search.get("from");
+  const [partKey, setPartKey] = useState(Date.now());
 
   const reMatchOrDone = async () => {
     if (
@@ -75,6 +76,7 @@ export default function Result({ params }: any) {
       );
       return;
     }
+
     setLoadingRematch(true);
     var res = await submitCheckMultiAnswer({
       answerItems: [],
@@ -87,13 +89,14 @@ export default function Result({ params }: any) {
             : examResult?.result?.completionState,
     });
     setLoadingRematch(false);
-    getExamResultDetails();
-    setValueFilter("all");
+    //setValueFilter("all");
 
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
       return;
     }
+    getExamResultDetails();
+    setPartKey(Date.now());
 
     // var res = await editExamTestResult({
     //   candidate: examResult?.candidate,
@@ -426,26 +429,29 @@ export default function Result({ params }: any) {
                 </div>
               }
             >
-              {parts.map((r, i) => {
-                return (
-                  <div key={r?.id}>
-                    <div className="body_semibold_16 my-2">{r?.name}</div>
-                    {r?.questions?.map((q, index) => {
-                      var answerIndex = examResult?.candidateAnswers?.findIndex(
-                        (l) => l.idExamQuestion == q.id,
-                      );
-                      var ans =
-                        answerIndex! < 0
-                          ? undefined
-                          : examResult?.candidateAnswers![
-                              answerIndex as number
-                            ];
+              <div key={partKey}>
+                {parts.map((r, i) => {
+                  return (
+                    <div key={r?.id}>
+                      <div className="body_semibold_16 my-2">{r?.name}</div>
+                      {r?.questions?.map((q, index) => {
+                        var answerIndex =
+                          examResult?.candidateAnswers?.findIndex(
+                            (l) => l.idExamQuestion == q.id,
+                          );
+                        var ans =
+                          answerIndex! < 0
+                            ? undefined
+                            : examResult?.candidateAnswers![
+                                answerIndex as number
+                              ];
 
-                      return genQuestion(q, index, ans);
-                    })}
-                  </div>
-                );
-              })}
+                        return genQuestion(q, index, ans);
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
             </Collapse.Panel>
           </Collapse>
         </div>
