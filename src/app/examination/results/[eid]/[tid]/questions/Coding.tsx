@@ -30,7 +30,9 @@ export default function Coding({
   canCheck,
   onChangeCheck,
   answers,
+  hidden,
 }: {
+  hidden?: boolean;
   getData?: any;
   examId?: any;
   question?: CodingQuestionData;
@@ -116,136 +118,140 @@ export default function Coding({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <div>
-      <Collapse
-        key={question?.id}
-        ghost
-        expandIconPosition="end"
-        className="rounded-lg bg-m_question overflow-hidden mb-3"
-      >
-        <Collapse.Panel
-          header={
-            <div className="my-3 flex justify-between items-center">
-              <div className="flex flex-col">
-                <span
-                  ref={containerRef}
-                  className={`body_semibold_14 ${
-                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                  }`}
-                >
-                  {canCheck && (
-                    <Checkbox
-                      onChange={onChangeCheck as any}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                      value={question?.id}
-                    />
-                  )}{" "}
-                  {`${t("question")} ${index + 1}`}:
-                  {/* <div
+    !hidden && (
+      <div>
+        <Collapse
+          key={question?.id}
+          ghost
+          expandIconPosition="end"
+          className="rounded-lg bg-m_question overflow-hidden mb-3"
+        >
+          <Collapse.Panel
+            header={
+              <div className="my-3 flex justify-between items-center">
+                <div className="flex flex-col">
+                  <span
+                    ref={containerRef}
+                    className={`body_semibold_14 ${
+                      expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                    }`}
+                  >
+                    {canCheck && (
+                      <Checkbox
+                        onChange={onChangeCheck as any}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        value={question?.id}
+                      />
+                    )}{" "}
+                    {`${t("question")} ${index + 1}`}:
+                    {/* <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
                     dangerouslySetInnerHTML={{ __html: question?.question }}
                   /> */}
-                  <div className="text-sm font-normal">
-                    {t("coding_question")}
-                  </div>
-                </span>
-                {isOverflowing ? (
-                  <button
+                    <div className="text-sm font-normal">
+                      {t("coding_question")}
+                    </div>
+                  </span>
+                  {isOverflowing ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExpanded(!expanded);
+                      }}
+                      className="m-auto mt-1 text-blue-500 "
+                    >
+                      {expanded ? t("collapse") : t("read_more")}
+                    </button>
+                  ) : null}
+                </div>
+                {tmasQuest ? (
+                  <MButton
+                    className="flex items-center"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setExpanded(!expanded);
+                      addExamBank!(e, question);
                     }}
-                    className="m-auto mt-1 text-blue-500 "
-                  >
-                    {expanded ? t("collapse") : t("read_more")}
-                  </button>
-                ) : null}
+                    h="h-11"
+                    type="secondary"
+                    icon={<AddIcon />}
+                    text={t("add_bank")}
+                  />
+                ) : (
+                  <div></div>
+                )}
               </div>
-              {tmasQuest ? (
-                <MButton
-                  className="flex items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addExamBank!(e, question);
-                  }}
-                  h="h-11"
-                  type="secondary"
-                  icon={<AddIcon />}
-                  text={t("add_bank")}
+            }
+            key={""}
+          >
+            <div className="h-[1px] bg-m_primary_200 mb-3" />
+            <div>
+              <Table columns={columns} dataSource={data} pagination={false} />
+              <div className="max-lg:flex-col lg:items-center flex justify-between items-center pt-4">
+                <div className="flex">
+                  {t("point")}: <div className="pl-1 font-semibold">1/1</div>
+                </div>
+                <div className="flex">
+                  {t("method_match")}:{" "}
+                  <div className="pl-1 font-semibold">
+                    {" "}
+                    {question?.content?.codingScroringMethod ==
+                    "PassAllTestcase"
+                      ? t("all_match")
+                      : t("part_match")}
+                  </div>
+                </div>
+                <div className="flex">
+                  {t("sum_pair")}: <div className="pl-1 font-semibold">3</div>
+                </div>
+                <div className="flex">
+                  {t("num_true_pair")}:{" "}
+                  <div className="pl-1 font-semibold">
+                    {answers?.anwserScore?.numberQuestionCorrect ?? 0}
+                  </div>
+                </div>
+                <div className="flex">
+                  {t("num_false_pair")}:{" "}
+                  <div className="pl-1 font-semibold">
+                    {(answers?.anwserScore?.totalQuestion ?? 0) -
+                      (answers?.anwserScore?.numberQuestionCorrect ?? 0)}
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-t-lg mt-3">
+                <div className="pt-3 ml-2 mb-2 body_semibold_14">
+                  {common.t("language")}: {""}
+                </div>
+                <CodeMirror
+                  readOnly={true}
+                  onBlur={async () => {}}
+                  value={candidateAnswer?.code}
+                  // lang={lang}
+                  theme={dracula}
+                  height="300px"
+                  extensions={[renderExtension("javascript") as any]}
+                  onChange={(v) => {}}
                 />
-              ) : (
-                <div></div>
-              )}
-            </div>
-          }
-          key={""}
-        >
-          <div className="h-[1px] bg-m_primary_200 mb-3" />
-          <div>
-            <Table columns={columns} dataSource={data} pagination={false} />
-            <div className="max-lg:flex-col lg:items-center flex justify-between items-center pt-4">
-              <div className="flex">
-                {t("point")}: <div className="pl-1 font-semibold">1/1</div>
-              </div>
-              <div className="flex">
-                {t("method_match")}:{" "}
-                <div className="pl-1 font-semibold">
-                  {" "}
-                  {question?.content?.codingScroringMethod == "PassAllTestcase"
-                    ? t("all_match")
-                    : t("part_match")}
-                </div>
-              </div>
-              <div className="flex">
-                {t("sum_pair")}: <div className="pl-1 font-semibold">3</div>
-              </div>
-              <div className="flex">
-                {t("num_true_pair")}:{" "}
-                <div className="pl-1 font-semibold">
-                  {answers?.anwserScore?.numberQuestionCorrect ?? 0}
-                </div>
-              </div>
-              <div className="flex">
-                {t("num_false_pair")}:{" "}
-                <div className="pl-1 font-semibold">
-                  {(answers?.anwserScore?.totalQuestion ?? 0) -
-                    (answers?.anwserScore?.numberQuestionCorrect ?? 0)}
-                </div>
               </div>
             </div>
-            <div className="bg-white rounded-t-lg mt-3">
-              <div className="pt-3 ml-2 mb-2 body_semibold_14">
-                {common.t("language")}: {""}
+            <div className="">
+              <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+                {t("explain_result")}
               </div>
-              <CodeMirror
-                readOnly={true}
-                onBlur={async () => {}}
-                value={candidateAnswer?.code}
-                // lang={lang}
-                theme={dracula}
-                height="300px"
-                extensions={[renderExtension("javascript") as any]}
-                onChange={(v) => {}}
-              />
+              <div
+                dangerouslySetInnerHTML={{
+                  __html:
+                    question?.content?.codingTemplate?.explainAnswer ?? "",
+                }}
+              ></div>
             </div>
-          </div>
-          <div className="">
-            <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
-              {t("explain_result")}
-            </div>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: question?.content?.codingTemplate?.explainAnswer ?? "",
-              }}
-            ></div>
-          </div>
-        </Collapse.Panel>
-      </Collapse>
-      {/* {data?.examQuestions?.map((x: any, key: any) => (
+          </Collapse.Panel>
+        </Collapse>
+        {/* {data?.examQuestions?.map((x: any, key: any) => (
             ))} */}
-    </div>
+      </div>
+    )
   );
 }

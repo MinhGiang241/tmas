@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState } from "react";
 import MBreadcrumb from "@/app/components/config/MBreadcrumb";
@@ -38,7 +39,11 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import _ from "lodash";
 import { PartObject } from "@/data/form_interface";
-import { BaseQuestionData, QuestionType } from "@/data/question";
+import {
+  BaseQuestionData,
+  EssayCandidateAnswer,
+  QuestionType,
+} from "@/data/question";
 import MDropdown from "@/app/components/config/MDropdown";
 import MButton from "@/app/components/config/MButton";
 import { submitCheckMultiAnswer } from "@/services/api_services/question_api";
@@ -50,8 +55,26 @@ export default function Result({ params }: any) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const [loadingRematch, setLoadingRematch] = useState<boolean>(false);
+  const [valueFilter, setValueFilter] = useState<
+    "all" | "select_question" | "essay_question"
+  >("all");
+
+  const search = useSearchParams();
+  const from = search.get("from");
 
   const reMatchOrDone = async () => {
+    if (
+      examResult?.result?.couter?.numberQuestionNeedCheck &&
+      examResult?.result?.couter?.numberQuestionNeedCheck != 0 &&
+      examResult?.result?.completionState == ExamCompletionState.Checking
+    ) {
+      errorToast(
+        t("has_needcheck", {
+          num: examResult?.result?.couter?.numberQuestionNeedCheck,
+        }),
+      );
+      return;
+    }
     setLoadingRematch(true);
     var res = await submitCheckMultiAnswer({
       answerItems: [],
@@ -65,6 +88,7 @@ export default function Result({ params }: any) {
     });
     setLoadingRematch(false);
     getExamResultDetails();
+    setValueFilter("all");
 
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
@@ -104,8 +128,12 @@ export default function Result({ params }: any) {
     setExamResult(res?.data.records[0]);
     var r = res?.data.records[0] as ExamTestResulstData;
     var quests =
-      r?.examTestDataCreatedWhenTest?.examVersion?.jsonExamQuestions?.map((o) =>
-        JSON.parse(o),
+      r?.examTestDataCreatedWhenTest?.examVersion?.jsonExamQuestions?.map(
+        (o) => {
+          var json: BaseQuestionData = JSON.parse(o);
+          json.hidden = false;
+          return json;
+        },
       );
     var p = r?.examTestDataCreatedWhenTest?.examVersion?.parts?.map((e) => {
       var d = _.cloneDeep(e);
@@ -136,16 +164,38 @@ export default function Result({ params }: any) {
   ) => {
     switch (q?.questionType) {
       case QuestionType?.MutilAnswer:
-        return <ManyResult question={q} index={index} answers={answer} />;
+        return (
+          <ManyResult
+            question={q}
+            index={index}
+            answers={answer}
+            hidden={valueFilter == "essay_question"}
+          />
+        );
       case QuestionType?.YesNoQuestion:
-        return <TrueFalse question={q} index={index} answers={answer} />;
+        return (
+          <TrueFalse
+            question={q}
+            index={index}
+            answers={answer}
+            hidden={valueFilter == "essay_question"}
+          />
+        );
 
       case QuestionType?.Pairing:
-        return <Connect question={q} index={index} answers={answer} />;
+        return (
+          <Connect
+            question={q}
+            index={index}
+            answers={answer}
+            hidden={valueFilter == "essay_question"}
+          />
+        );
 
       case QuestionType?.Essay:
         return (
           <Explain
+            loadAnswer={() => getExamResultDetails()}
             isComplete={
               examResult?.result?.completionState == ExamCompletionState.Done
             }
@@ -153,29 +203,66 @@ export default function Result({ params }: any) {
             index={index}
             answers={answer}
             idExamTestResult={examResult?.id}
+            hidden={valueFilter == "select_question"}
           />
         );
 
       case QuestionType?.Coding:
-        return <Coding question={q} index={index} answers={answer} />;
+        return (
+          <Coding
+            question={q}
+            index={index}
+            answers={answer}
+            hidden={valueFilter == "essay_question"}
+          />
+        );
 
       case QuestionType?.Random:
-        return <Random question={q} index={index} />;
+        return (
+          <Random
+            question={q}
+            index={index}
+            hidden={valueFilter == "essay_question"}
+          />
+        );
 
       case QuestionType?.FillBlank:
-        return <FillBlank question={q} index={index} answers={answer} />;
+        return (
+          <FillBlank
+            question={q}
+            index={index}
+            answers={answer}
+            hidden={valueFilter == "essay_question"}
+          />
+        );
 
       case QuestionType?.SQL:
-        return <Sql question={q} index={index} answers={answer} />;
+        return (
+          <Sql
+            question={q}
+            index={index}
+            answers={answer}
+            hidden={valueFilter == "essay_question"}
+          />
+        );
     }
   };
 
-  const [valueFilter, setValueFilter] = useState<
-    "all" | "select_question" | "essay_question"
-  >("all");
+  const questEssayIds =
+    examResult?.examTestDataCreatedWhenTest?.examVersion?.jsonExamQuestions
+      ?.map((e) => JSON.parse(e))
+      ?.filter((r: BaseQuestionData) => r.questionType == QuestionType.Essay)
+      ?.map((t: BaseQuestionData) => t.id);
 
-  const search = useSearchParams();
-  const from = search.get("from");
+  const allEssayListAns = examResult?.candidateAnswers
+    ?.filter((k) => questEssayIds?.includes(k.idExamQuestion))
+    ?.map((o) => JSON.parse(o.candidateAnswerJson ?? ""));
+  const hasAns = allEssayListAns?.every((an: any) => {
+    return (!an?.idFiles || an?.idFiles?.length === 0) && !an.anwserHtml;
+  });
+
+  var isAllEssayEmpty =
+    allEssayListAns?.length === 0 || (allEssayListAns?.length != 0 && hasAns);
 
   return (
     <HomeLayout>
@@ -219,21 +306,24 @@ export default function Result({ params }: any) {
             h="h-11"
             onClick={() => router.back()}
           />
-          {examResult?.result?.couter?.numberQuestionNeedCheck != 0 && (
-            <div className="w-3" />
-          )}
-          {examResult?.result?.couter?.numberQuestionNeedCheck != 0 && (
-            <MButton
-              loading={loadingRematch}
-              text={
-                examResult?.result?.completionState == ExamCompletionState.Done
-                  ? t("rematch")
-                  : t("match_done")
-              }
-              h="h-11"
-              onClick={reMatchOrDone}
-            />
-          )}
+          {!isAllEssayEmpty &&
+            examResult?.result?.completionState !=
+              ExamCompletionState.Doing && <div className="w-3" />}
+          {!isAllEssayEmpty &&
+            examResult?.result?.completionState !=
+              ExamCompletionState.Doing && (
+              <MButton
+                loading={loadingRematch}
+                text={
+                  examResult?.result?.completionState ==
+                  ExamCompletionState.Done
+                    ? t("rematch")
+                    : t("match_done")
+                }
+                h="h-11"
+                onClick={reMatchOrDone}
+              />
+            )}
         </div>
       </div>
       <div className="grid grid-cols-3">
@@ -249,7 +339,9 @@ export default function Result({ params }: any) {
             {examResult?.result?.couter?.numberQuestionNeedCheck != 0 && (
               <div className="px-4 bg-m_warning_50 text-m_warnig_title py-2 font-semibold text-sm">
                 {t("has_essay", {
-                  num: `${examResult?.result?.couter?.numberQuestionNeedCheck}`,
+                  num: `${
+                    examResult?.result?.couter?.numberQuestionNeedCheck ?? 0
+                  }`,
                 })}
               </div>
             )}
@@ -275,40 +367,40 @@ export default function Result({ params }: any) {
                         value={valueFilter}
                         setValue={(name: any, val: any) => {
                           setValueFilter(val);
-                          if (val == "essay_question") {
-                            var partClone = parts?.map((p) => {
-                              var cloneP = _.cloneDeep(p);
-                              cloneP.questions = questions?.filter(
-                                (que) =>
-                                  que?.idExamQuestionPart == p?.id &&
-                                  que?.questionType == QuestionType?.Essay,
-                              );
-                              return cloneP;
-                            });
-
-                            setParts(partClone);
-                          } else if (val == "select_question") {
-                            var partClone = parts?.map((p) => {
-                              var cloneP = _.cloneDeep(p);
-                              cloneP.questions = questions?.filter(
-                                (que) =>
-                                  que?.idExamQuestionPart == p?.id &&
-                                  que?.questionType != QuestionType?.Essay,
-                              );
-                              return cloneP;
-                            });
-
-                            setParts(partClone);
-                          } else {
-                            var partClone = parts?.map((p) => {
-                              var cloneP = _.cloneDeep(p);
-                              cloneP.questions = questions?.filter(
-                                (que) => que?.idExamQuestionPart == p?.id,
-                              );
-                              return cloneP;
-                            });
-                            setParts(partClone);
-                          }
+                          // if (val == "essay_question") {
+                          //   var partClone = parts?.map((p) => {
+                          //     var cloneP = _.cloneDeep(p);
+                          //     cloneP.questions = questions?.filter(
+                          //       (que) =>
+                          //         que?.idExamQuestionPart == p?.id &&
+                          //         que?.questionType == QuestionType?.Essay,
+                          //     );
+                          //     return cloneP;
+                          //   });
+                          //
+                          //   setParts(partClone);
+                          // } else if (val == "select_question") {
+                          //   var partClone = parts?.map((p) => {
+                          //     var cloneP = _.cloneDeep(p);
+                          //     cloneP.questions = questions?.filter(
+                          //       (que) =>
+                          //         que?.idExamQuestionPart == p?.id &&
+                          //         que?.questionType != QuestionType?.Essay,
+                          //     );
+                          //     return cloneP;
+                          //   });
+                          //
+                          //   setParts(partClone);
+                          // } else {
+                          //   var partClone = parts?.map((p) => {
+                          //     var cloneP = _.cloneDeep(p);
+                          //     cloneP.questions = questions?.filter(
+                          //       (que) => que?.idExamQuestionPart == p?.id,
+                          //     );
+                          //     return cloneP;
+                          //   });
+                          //   setParts(partClone);
+                          // }
                         }}
                         isTextRequire={false}
                         className="dropdown-flex"

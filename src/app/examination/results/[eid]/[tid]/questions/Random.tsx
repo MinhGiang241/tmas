@@ -27,7 +27,9 @@ function Random({
   addExamBank,
   canCheck,
   onChangeCheck,
+  hidden,
 }: {
+  hidden?: boolean;
   getData?: any;
   examId?: any;
   question?: RandomQuestionData;
@@ -55,59 +57,61 @@ function Random({
   }, []);
 
   return (
-    <div>
-      <Collapse
-        key={question?.id}
-        ghost
-        expandIconPosition="end"
-        className="mb-3 rounded-lg bg-m_question overflow-hidden"
-      >
-        <Collapse.Panel
-          header={
-            <div className="my-3 flex justify-between items-center">
-              <div className="flex">
-                <span className="body_semibold_14">
-                  {canCheck && (
-                    <Checkbox
-                      onChange={onChangeCheck as any}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                      value={question?.id}
-                    />
-                  )}{" "}
-                  {`${t("question")} 8`}:
-                  <span
-                    className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{
-                      __html: question?.question ?? "",
-                    }}
-                  />
-                </span>
-              </div>
-              {tmasQuest ? (
-                <MButton
-                  className="flex items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addExamBank!(e, question);
-                  }}
-                  h="h-11"
-                  type="secondary"
-                  icon={<AddIcon />}
-                  text={t("add_bank")}
-                />
-              ) : (
-                <div></div>
-              )}
-            </div>
-          }
-          key={""}
+    !hidden && (
+      <div>
+        <Collapse
+          key={question?.id}
+          ghost
+          expandIconPosition="end"
+          className="mb-3 rounded-lg bg-m_question overflow-hidden"
         >
-          <div className="h-[1px] bg-m_primary_200 mb-3" />
-        </Collapse.Panel>
-      </Collapse>
-    </div>
+          <Collapse.Panel
+            header={
+              <div className="my-3 flex justify-between items-center">
+                <div className="flex">
+                  <span className="body_semibold_14">
+                    {canCheck && (
+                      <Checkbox
+                        onChange={onChangeCheck as any}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        value={question?.id}
+                      />
+                    )}{" "}
+                    {`${t("question")} 8`}:
+                    <span
+                      className="body_regular_14 pl-2"
+                      dangerouslySetInnerHTML={{
+                        __html: question?.question ?? "",
+                      }}
+                    />
+                  </span>
+                </div>
+                {tmasQuest ? (
+                  <MButton
+                    className="flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addExamBank!(e, question);
+                    }}
+                    h="h-11"
+                    type="secondary"
+                    icon={<AddIcon />}
+                    text={t("add_bank")}
+                  />
+                ) : (
+                  <div></div>
+                )}
+              </div>
+            }
+            key={""}
+          >
+            <div className="h-[1px] bg-m_primary_200 mb-3" />
+          </Collapse.Panel>
+        </Collapse>
+      </div>
+    )
   );
 }
 

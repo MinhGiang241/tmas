@@ -36,7 +36,9 @@ export default function Sql({
   canCheck,
   onChangeCheck,
   answers,
+  hidden,
 }: {
+  hidden?: boolean;
   examId?: any;
   question?: any;
   index?: any;
@@ -111,107 +113,109 @@ export default function Sql({
   }, []);
 
   return (
-    <div>
-      <Collapse
-        // key={v?.id}
-        ghost
-        expandIconPosition="end"
-        className="rounded-lg bg-m_question overflow-hidden mb-4"
-      >
-        <Collapse.Panel
-          header={
-            <div className="my-3 flex justify-between items-center">
-              <div className="flex flex-col">
-                <span
-                  ref={containerRef}
-                  className={`body_semibold_14 ${
-                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                  }`}
-                >
-                  {`${t("question")} ${index + 1}`}:
-                  <div
-                    ref={contentRef}
-                    className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{
-                      __html: question?.question ?? "",
-                    }}
-                  />
-                </span>
-                {isOverflowing ? (
-                  <button
+    !hidden && (
+      <div>
+        <Collapse
+          // key={v?.id}
+          ghost
+          expandIconPosition="end"
+          className="rounded-lg bg-m_question overflow-hidden mb-4"
+        >
+          <Collapse.Panel
+            header={
+              <div className="my-3 flex justify-between items-center">
+                <div className="flex flex-col">
+                  <span
+                    ref={containerRef}
+                    className={`body_semibold_14 ${
+                      expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                    }`}
+                  >
+                    {`${t("question")} ${index + 1}`}:
+                    <div
+                      ref={contentRef}
+                      className="body_regular_14 pl-2"
+                      dangerouslySetInnerHTML={{
+                        __html: question?.question ?? "",
+                      }}
+                    />
+                  </span>
+                  {isOverflowing ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExpanded(!expanded);
+                      }}
+                      className="m-auto mt-1 text-blue-500 "
+                    >
+                      {expanded ? t("collapse") : t("read_more")}
+                    </button>
+                  ) : null}
+                </div>
+                {tmasQuest ? (
+                  <MButton
+                    className="flex items-center"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setExpanded(!expanded);
+                      addExamBank!(e, question);
                     }}
-                    className="m-auto mt-1 text-blue-500 "
-                  >
-                    {expanded ? t("collapse") : t("read_more")}
-                  </button>
-                ) : null}
+                    h="h-11"
+                    type="secondary"
+                    icon={<AddIcon />}
+                    text={t("add_bank")}
+                  />
+                ) : (
+                  <div></div>
+                )}
               </div>
-              {tmasQuest ? (
-                <MButton
-                  className="flex items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addExamBank!(e, question);
-                  }}
-                  h="h-11"
-                  type="secondary"
-                  icon={<AddIcon />}
-                  text={t("add_bank")}
-                />
-              ) : (
-                <div></div>
-              )}
+            }
+            key={""}
+          >
+            <div className="h-[1px] bg-m_primary_200 mb-3" />
+            <div className="bg-m_neutral_100 p-3 font-semibold text-sm rounded-lg">
+              {"My SQl"}
             </div>
-          }
-          key={""}
-        >
-          <div className="h-[1px] bg-m_primary_200 mb-3" />
-          <div className="bg-m_neutral_100 p-3 font-semibold text-sm rounded-lg">
-            {"My SQl"}
-          </div>
-          <CodeMirror
-            onBlur={async () => {}}
-            // value={code}
-            // lang={lang}
-            theme={dracula}
-            height="300px"
-            extensions={[renderExtension("SQL") as any]}
-            onChange={(v) => {}}
-          />
-          <div className="pt-3">
-            <div className="flex pb-2">
-              <div className="pr-2 font-semibold text-sm">{t("result")}</div>
-              <Tick />
+            <CodeMirror
+              onBlur={async () => {}}
+              // value={code}
+              // lang={lang}
+              theme={dracula}
+              height="300px"
+              extensions={[renderExtension("SQL") as any]}
+              onChange={(v) => {}}
+            />
+            <div className="pt-3">
+              <div className="flex pb-2">
+                <div className="pr-2 font-semibold text-sm">{t("result")}</div>
+                <Tick />
+              </div>
+              <Table columns={columns} dataSource={data} pagination={false} />
             </div>
-            <Table columns={columns} dataSource={data} pagination={false} />
-          </div>
-          <div className="py-3">
-            <div className="pr-2 font-semibold text-sm pb-2">
-              {t("result0")}
+            <div className="py-3">
+              <div className="pr-2 font-semibold text-sm pb-2">
+                {t("result0")}
+              </div>
+              <Table columns={columns} dataSource={data} pagination={false} />
             </div>
-            <Table columns={columns} dataSource={data} pagination={false} />
-          </div>
-          <div>
-            <div className="text-m_primary_500 text-sm font-semibold my-2">
-              {t("explain_result")}
+            <div>
+              <div className="text-m_primary_500 text-sm font-semibold my-2">
+                {t("explain_result")}
+              </div>
+              <div dangerouslySetInnerHTML={{ __html: "" }} />
             </div>
-            <div dangerouslySetInnerHTML={{ __html: "" }} />
-          </div>
-          <div className="">
-            <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
-              {t("explain_result")}
+            <div className="">
+              <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+                {t("explain_result")}
+              </div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: question?.content?.explainAnswer ?? "",
+                }}
+              ></div>
             </div>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: question?.content?.explainAnswer ?? "",
-              }}
-            ></div>
-          </div>
-        </Collapse.Panel>
-      </Collapse>
-    </div>
+          </Collapse.Panel>
+        </Collapse>
+      </div>
+    )
   );
 }

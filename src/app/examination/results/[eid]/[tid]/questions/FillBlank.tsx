@@ -27,7 +27,9 @@ export default function FillBlank({
   canCheck,
   onChangeCheck,
   answers,
+  hidden,
 }: {
+  hidden?: boolean;
   examId?: any;
   question?: FillBlankQuestionData;
   index?: any;
@@ -136,115 +138,117 @@ export default function FillBlank({
   }, []);
 
   return (
-    <div>
-      <Collapse
-        key={question?.id}
-        ghost
-        expandIconPosition="end"
-        className="rounded-lg bg-m_question overflow-hidden mb-4"
-      >
-        <Collapse.Panel
-          header={
-            <div className="my-3 flex justify-between items-center">
-              <div className="flex flex-col">
-                <span
-                  ref={containerRef}
-                  className={`body_semibold_14 ${
-                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                  }`}
-                >
-                  {canCheck && (
-                    <Checkbox
-                      onChange={onChangeCheck as any}
+    !hidden && (
+      <div>
+        <Collapse
+          key={question?.id}
+          ghost
+          expandIconPosition="end"
+          className="rounded-lg bg-m_question overflow-hidden mb-4"
+        >
+          <Collapse.Panel
+            header={
+              <div className="my-3 flex justify-between items-center">
+                <div className="flex flex-col">
+                  <span
+                    ref={containerRef}
+                    className={`body_semibold_14 ${
+                      expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                    }`}
+                  >
+                    {canCheck && (
+                      <Checkbox
+                        onChange={onChangeCheck as any}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        value={question?.id}
+                      />
+                    )}{" "}
+                    {`${t("question")} ${index + 1}`}:
+                    <div
+                      ref={contentRef}
+                      className="body_regular_14 pl-2"
+                      // dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank,}}
+                      dangerouslySetInnerHTML={{
+                        __html: question?.content?.formatBlank ?? "",
+                      }}
+                    />
+                    {/* <div className="text-sm font-normal">{t("fill_blank")}</div> */}
+                  </span>
+                  {isOverflowing ? (
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        setExpanded(!expanded);
                       }}
-                      value={question?.id}
-                    />
-                  )}{" "}
-                  {`${t("question")} ${index + 1}`}:
-                  <div
-                    ref={contentRef}
-                    className="body_regular_14 pl-2"
-                    // dangerouslySetInnerHTML={{ __html: question?.content?.formatBlank,}}
-                    dangerouslySetInnerHTML={{
-                      __html: question?.content?.formatBlank ?? "",
-                    }}
-                  />
-                  {/* <div className="text-sm font-normal">{t("fill_blank")}</div> */}
-                </span>
-                {isOverflowing ? (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setExpanded(!expanded);
-                    }}
-                    className="m-auto mt-1 text-blue-500 "
-                  >
-                    {expanded ? t("collapse") : t("read_more")}
-                  </button>
-                ) : null}
+                      className="m-auto mt-1 text-blue-500 "
+                    >
+                      {expanded ? t("collapse") : t("read_more")}
+                    </button>
+                  ) : null}
+                </div>
               </div>
-            </div>
-          }
-          key={""}
-        >
-          <div className="h-[1px] bg-m_primary_200 mb-3" />
-          <div className="">
-            <div>
-              <Table columns={columns} dataSource={data} pagination={false} />
-              <div className="max-lg:flex-col lg:items-center flex justify-between items-center pt-4">
-                <div className="flex">
-                  {t("point")}:{" "}
-                  <div className="pl-1 font-semibold">
-                    {(answers?.anwserScore?.score ?? 0) / 100}/
-                    {question?.numberPoint ?? 0}
+            }
+            key={""}
+          >
+            <div className="h-[1px] bg-m_primary_200 mb-3" />
+            <div className="">
+              <div>
+                <Table columns={columns} dataSource={data} pagination={false} />
+                <div className="max-lg:flex-col lg:items-center flex justify-between items-center pt-4">
+                  <div className="flex">
+                    {t("point")}:{" "}
+                    <div className="pl-1 font-semibold">
+                      {answers?.anwserScore?.score ?? 0}/
+                      {question?.numberPoint ?? 0}
+                    </div>
                   </div>
-                </div>
-                <div className="flex">
-                  {examTrans.t("method_match")}:{" "}
-                  <div className="pl-1 font-semibold">
-                    {" "}
-                    {question?.content?.fillBlankScoringMethod ==
-                    "CorrectAllBlank"
-                      ? examTrans.t("all_match")
-                      : examTrans.t("part_match")}
+                  <div className="flex">
+                    {examTrans.t("method_match")}:{" "}
+                    <div className="pl-1 font-semibold">
+                      {" "}
+                      {question?.content?.fillBlankScoringMethod ==
+                      "CorrectAllBlank"
+                        ? examTrans.t("all_match")
+                        : examTrans.t("part_match")}
+                    </div>
                   </div>
-                </div>
-                <div className="flex">
-                  {examTrans.t("sum_blank")}:{" "}
-                  <div className="pl-1 font-semibold">
-                    {question?.content?.anwserItems?.length}
+                  <div className="flex">
+                    {examTrans.t("sum_blank")}:{" "}
+                    <div className="pl-1 font-semibold">
+                      {question?.content?.anwserItems?.length}
+                    </div>
                   </div>
-                </div>
-                <div className="flex">
-                  {examTrans.t("true_blank_num")}:{" "}
-                  <div className="pl-1 font-semibold">
-                    {answers?.anwserScore?.numberQuestionCorrect ?? 0}
+                  <div className="flex">
+                    {examTrans.t("true_blank_num")}:{" "}
+                    <div className="pl-1 font-semibold">
+                      {answers?.anwserScore?.numberQuestionCorrect ?? 0}
+                    </div>
                   </div>
-                </div>
-                <div className="flex">
-                  {examTrans.t("false_blank_num")}:{" "}
-                  <div className="pl-1 font-semibold">
-                    {(answers?.anwserScore?.totalQuestion ?? 0) -
-                      (answers?.anwserScore?.numberQuestionCorrect ?? 0)}
+                  <div className="flex">
+                    {examTrans.t("false_blank_num")}:{" "}
+                    <div className="pl-1 font-semibold">
+                      {(answers?.anwserScore?.totalQuestion ?? 0) -
+                        (answers?.anwserScore?.numberQuestionCorrect ?? 0)}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="">
-            <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
-              {t("explain_result")}
+            <div className="">
+              <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+                {t("explain_result")}
+              </div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: question?.content?.explainAnswer ?? "",
+                }}
+              ></div>
             </div>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: question?.content?.explainAnswer ?? "",
-              }}
-            ></div>
-          </div>
-        </Collapse.Panel>
-      </Collapse>
-    </div>
+          </Collapse.Panel>
+        </Collapse>
+      </div>
+    )
   );
 }

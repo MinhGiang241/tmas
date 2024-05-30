@@ -5,10 +5,7 @@ import MInput from "@/app/components/config/MInput";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { UserData } from "@/data/user";
 import { updateRoleMember } from "@/services/api_services/account_services";
-import { baseOnSubmitFormik } from "@/services/ui/form_services";
-import { Modal } from "antd";
 import { Form, FormikErrors, useFormik } from "formik";
-import { stringify } from "querystring";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -106,7 +103,7 @@ function EditAcountInfo({ open, onCancel, onOk, data }: Props) {
         <MDropdown
           className="w-full dropdown-flex"
           allowClear={false}
-          options={["Admin", "Member", "Owner"].map((e: any, i) => ({
+          options={["Admin", "Owner"].map((e: any, i) => ({
             value: e,
             disabled: e == "Owner",
             label: t(e.toLowerCase()),

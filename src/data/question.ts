@@ -45,6 +45,8 @@ export interface BaseQuestionData {
   updateTime?: string;
   createdTime?: string;
   studioId?: string;
+  // find
+  hidden?: boolean;
 }
 
 export interface CodingQuestionData extends BaseQuestionData {

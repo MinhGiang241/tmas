@@ -103,11 +103,11 @@ function SendExaminationResults(props: Props) {
           value: props.examination?.id,
           condition: Condition.eq,
         },
-        // {
-        //   fieldName: "result.completionState",
-        //   value: ExamCompletionState.Done,
-        //   condition: Condition.eq,
-        // },
+        {
+          fieldName: "result.completionState",
+          value: ExamCompletionState.Done,
+          condition: Condition.eq,
+        },
       ],
     });
     if (res.code != 0) {
@@ -282,7 +282,7 @@ function SendExaminationResults(props: Props) {
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {text == "Pass" ? t("pass") : ""}
+          {text == "Pass" ? t("pass") : t("no_pass")}
         </p>
       ),
     },

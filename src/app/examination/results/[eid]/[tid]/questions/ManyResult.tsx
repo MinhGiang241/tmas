@@ -40,7 +40,9 @@ export default function ManyResult({
   canCheck,
   onChangeCheck,
   answers,
+  hidden,
 }: {
+  hidden?: boolean;
   examId?: any;
   question?: MultiAnswerQuestionData;
   index?: any;
@@ -72,126 +74,128 @@ export default function ManyResult({
     );
   }, []);
   return (
-    <div>
-      <Collapse
-        // key={key}
-        ghost
-        expandIconPosition="end"
-        className="mb-3 rounded-lg bg-m_question overflow-hidden"
-      >
-        <Collapse.Panel
-          header={
-            <div className="my-3 flex justify-between items-center">
-              <div className="flex flex-col">
-                <span
-                  ref={containerRef}
-                  className={`body_semibold_14 ${
-                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                  }`}
-                >
-                  {canCheck && (
-                    <Checkbox
-                      onChange={onChangeCheck as any}
+    !hidden && (
+      <div>
+        <Collapse
+          // key={key}
+          ghost
+          expandIconPosition="end"
+          className="mb-3 rounded-lg bg-m_question overflow-hidden"
+        >
+          <Collapse.Panel
+            header={
+              <div className="my-3 flex justify-between items-center">
+                <div className="flex flex-col">
+                  <span
+                    ref={containerRef}
+                    className={`body_semibold_14 ${
+                      expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                    }`}
+                  >
+                    {canCheck && (
+                      <Checkbox
+                        onChange={onChangeCheck as any}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        value={question?.id}
+                      />
+                    )}
+                    {`${t("question")} ${index + 1}`}:
+                    <div
+                      ref={contentRef}
+                      className={`body_regular_14 pl-2 `}
+                      dangerouslySetInnerHTML={{
+                        __html: question?.question ?? "",
+                      }}
+                    />
+                  </span>
+                  {isOverflowing ? (
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        setExpanded(!expanded);
                       }}
-                      value={question?.id}
-                    />
-                  )}
-                  {`${t("question")} ${index + 1}`}:
-                  <div
-                    ref={contentRef}
-                    className={`body_regular_14 pl-2 `}
-                    dangerouslySetInnerHTML={{
-                      __html: question?.question ?? "",
-                    }}
-                  />
-                </span>
-                {isOverflowing ? (
-                  <button
+                      className="m-auto mt-1 text-blue-500 "
+                    >
+                      {expanded ? t("collapse") : t("read_more")}
+                    </button>
+                  ) : null}
+                </div>
+                {tmasQuest ? (
+                  <MButton
+                    className="flex items-center"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setExpanded(!expanded);
+                      addExamBank!(e, question);
                     }}
-                    className="m-auto mt-1 text-blue-500 "
-                  >
-                    {expanded ? t("collapse") : t("read_more")}
-                  </button>
-                ) : null}
+                    h="h-11"
+                    type="secondary"
+                    icon={<AddIcon />}
+                    text={t("add_bank")}
+                  />
+                ) : (
+                  <div></div>
+                )}
               </div>
-              {tmasQuest ? (
-                <MButton
-                  className="flex items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addExamBank!(e, question);
-                  }}
-                  h="h-11"
-                  type="secondary"
-                  icon={<AddIcon />}
-                  text={t("add_bank")}
-                />
-              ) : (
-                <div></div>
-              )}
-            </div>
-          }
-          key={""}
-        >
-          <div className="h-[1px] bg-m_primary_200 mb-3" />
-          <div className="flex">
-            <div className="w-full">
-              <div className="text-m_primary_500 text-sm font-semibold mb-2 pl-6">
-                {t("result")}
-              </div>
-              <div>
+            }
+            key={""}
+          >
+            <div className="h-[1px] bg-m_primary_200 mb-3" />
+            <div className="flex">
+              <div className="w-full">
+                <div className="text-m_primary_500 text-sm font-semibold mb-2 pl-6">
+                  {t("result")}
+                </div>
                 <div>
-                  {question?.content?.answers?.map((x, key: any) =>
-                    !x.isCorrectAnswer ? (
-                      <div className="flex" key={key}>
-                        {candidateAnswer?.answers?.some(
-                          (u) => u.label == x.label,
-                        ) ? (
-                          <Close className="min-w-5" />
-                        ) : (
-                          <div className="min-w-5" />
-                        )}
+                  <div>
+                    {question?.content?.answers?.map((x, key: any) =>
+                      !x.isCorrectAnswer ? (
+                        <div className="flex" key={key}>
+                          {candidateAnswer?.answers?.some(
+                            (u) => u.label == x.label,
+                          ) ? (
+                            <Close className="min-w-5" />
+                          ) : (
+                            <div className="min-w-5" />
+                          )}
 
-                        <div className="body_semibold_14 pl-1">{x.label}</div>
-                        <div
-                          className="body_regular_14 pl-2"
-                          dangerouslySetInnerHTML={{ __html: x.text ?? "" }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex" key={key}>
-                        <Tick className="min-w-5" />
+                          <div className="body_semibold_14 pl-1">{x.label}</div>
+                          <div
+                            className="body_regular_14 pl-2"
+                            dangerouslySetInnerHTML={{ __html: x.text ?? "" }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex" key={key}>
+                          <Tick className="min-w-5" />
 
-                        <div className="body_semibold_14 pl-1">{x.label}</div>
-                        <div
-                          className="body_regular_14 pl-2 pr-2"
-                          dangerouslySetInnerHTML={{ __html: x.text ?? "" }}
-                        />
-                      </div>
-                    ),
-                  )}
+                          <div className="body_semibold_14 pl-1">{x.label}</div>
+                          <div
+                            className="body_regular_14 pl-2 pr-2"
+                            dangerouslySetInnerHTML={{ __html: x.text ?? "" }}
+                          />
+                        </div>
+                      ),
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className="pl-6">
-                <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
-                  {t("explain_result")}
+                <div className="pl-6">
+                  <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+                    {t("explain_result")}
+                  </div>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: question?.content?.explainAnswer ?? "",
+                    }}
+                  ></div>
                 </div>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: question?.content?.explainAnswer ?? "",
-                  }}
-                ></div>
               </div>
             </div>
-          </div>
-        </Collapse.Panel>
-      </Collapse>
-      {/* </Collapse.Panel> */}
-    </div>
+          </Collapse.Panel>
+        </Collapse>
+        {/* </Collapse.Panel> */}
+      </div>
+    )
   );
 }

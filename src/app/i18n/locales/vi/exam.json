@@ -390,5 +390,7 @@
   "question_details": "Chi tiết câu hỏi",
   "question_list": "Danh sách câu hỏi",
   "empty_answer": "Bài làm trống",
-  "examination_detail": "Chi tiết đợt thi"
+  "examination_detail": "Chi tiết đợt thi",
+  "has_needcheck": "Có {{num}} câu tự luận cần chấm điểm",
+  "no_pass": "Không đạt"
 }

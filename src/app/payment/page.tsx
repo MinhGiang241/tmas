@@ -91,7 +91,15 @@ function Payment() {
       return;
     }
     setIsApply(true);
-    setDiscountPrice(res?.data ? parseInt(res?.data ?? "0") : 0);
+    setDiscountPrice(
+      res?.data
+        ? parseInt(res?.data ?? "0") > (searchPrice ? parseInt(searchPrice) : 0)
+          ? searchPrice
+            ? parseInt(searchPrice)
+            : 0
+          : parseInt(res?.data ?? "0")
+        : 0,
+    );
     console.log("resdataa", res);
   };
 

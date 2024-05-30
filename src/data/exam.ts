@@ -504,6 +504,7 @@ export interface ExaminationResultParams {
 
 export interface CandidateAnswers {
   anwserScore?: {
+    evaluatorComment?: string;
     isAnwsered?: boolean;
     isDoneScoring?: boolean;
     numberQuestionCorrect?: number;
