@@ -531,7 +531,16 @@ export default function Result({ params }: any) {
             <hr />
             <div className="p-4">
               {examResult?.timeLine?.timeLines
-                ?.sort((a, b) => dayjs(a?.createTime).diff(b.createTime))
+                ?.sort((a, b) => {
+                  var diff = dayjs(a?.createTime).diff(b.createTime);
+                  if (diff != 0) {
+                    return diff;
+                  } else {
+                    return -(b.eventType?.localeCompare(
+                      a.eventType ?? "",
+                    ) as number);
+                  }
+                })
                 .map((e, k) => (
                   <div key={k} className="flex-row">
                     <div className="flex">
