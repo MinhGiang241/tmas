@@ -407,65 +407,52 @@ function ResultPage({ params }: any) {
     initialValues: {},
     validate,
     onSubmit: (values: FormFilterValue) => {
-      console.log({ values });
+      console.log("values", values);
+
       var valuesClone = _.cloneDeep(values);
       setFilterValues(valuesClone);
+      var newFilters = [];
       for (let i in values) {
         if (!!(values as any)[i]) {
           switch (i) {
             case "email":
-              setFilters([
-                ...filters?.filter((d) => d.fieldName != "candidate.email"),
-                {
-                  fieldName: "candidate.email",
-                  value: `/${values[i]?.trim()}/i`,
-                  condition: Condition.regex,
-                },
-              ]);
+              newFilters.push({
+                fieldName: "candidate.email",
+                value: `/${values[i]?.trim()}/i`,
+                condition: Condition.regex,
+              });
               break;
             case "identify_code":
-              setFilters([
-                ...filters?.filter(
-                  (d) => d.fieldName != "candidate.identifier",
-                ),
-                {
-                  fieldName: "candidate.identifier",
-                  value: values[i]?.trim(),
-                  condition: Condition.eq,
-                },
-              ]);
+              newFilters.push({
+                fieldName: "candidate.identifier",
+                value: `/${values[i]?.trim()}/i`,
+                condition: Condition.regex,
+              });
+
               break;
             case "group":
-              setFilters([
-                ...filters?.filter((d) => d.fieldName != "candidate.groupTest"),
-                {
-                  fieldName: "candidate.groupTest",
-                  value: `/${values[i]?.trim()}/i`,
-                  condition: Condition.regex,
-                },
-              ]);
+              newFilters.push({
+                fieldName: "candidate.groupTest",
+                value: `/${values[i]?.trim()}/i`,
+                condition: Condition.regex,
+              });
+
               break;
             case "full_name":
-              setFilters([
-                ...filters?.filter((d) => d.fieldName != "candidate.fullName"),
-                {
-                  fieldName: "candidate.fullName",
-                  value: `/${values[i]?.trim()}/i`,
-                  condition: Condition.regex,
-                },
-              ]);
+              newFilters.push({
+                fieldName: "candidate.fullName",
+                value: `/${values[i]?.trim()}/i`,
+                condition: Condition.regex,
+              });
+
               break;
             case "phone_number":
-              setFilters([
-                ...filters?.filter(
-                  (d) => d.fieldName != "candidate.phoneNumber",
-                ),
-                {
-                  fieldName: "phoneNumber",
-                  value: values[i]?.trim(),
-                  condition: Condition.eq,
-                },
-              ]);
+              newFilters.push({
+                fieldName: "candidate.phoneNumber",
+                value: `/${values[i]?.trim()}/i`,
+                condition: Condition.regex,
+              });
+
               break;
             case "test_date":
               var gte = {
@@ -491,12 +478,8 @@ function ResultPage({ params }: any) {
                 condition: Condition.lt,
               };
               console.log("lt", gte, lt);
-              var f = [
-                ...filters.filter((d) => d.fieldName != "createdTime"),
-                gte,
-                lt,
-              ];
-              setFilters(f);
+              newFilters.push(gte);
+              newFilters.push(lt);
               break;
 
             default:
@@ -504,6 +487,7 @@ function ResultPage({ params }: any) {
           }
         }
       }
+      setFilters(newFilters);
     },
   });
   const search = useSearchParams();
