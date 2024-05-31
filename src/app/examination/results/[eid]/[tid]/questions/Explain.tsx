@@ -78,7 +78,6 @@ export default function Explain({
   return (
     !hidden && (
       <div>
-        {answers?.anwserScore?.evaluatorComment}
         {/* {data?.examQuestions?.map((x: any, key: any) => ( */}
         <Collapse
           // key={key}
@@ -191,7 +190,11 @@ export default function Explain({
                     <Button
                       disabled={isComplete}
                       onClick={async () => {
-                        var val = isFloat(point?.trim())
+                        if (!point?.trim()) {
+                          errorToast(t("point_not_empty"));
+                          return;
+                        }
+                        var val = point?.trim()
                           ? parseFloat(point.trim()).toFixed(2)
                           : undefined;
                         setLoading(true);

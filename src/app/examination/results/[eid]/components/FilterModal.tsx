@@ -60,21 +60,7 @@ function FilterModal(props: Props) {
         if (!a?.isSelect) {
           return null;
         }
-        // if (a.name == "group") {
-        //   return (
-        //     <MTreeSelect
-        //       h="h-12"
-        //       key={a?.name}
-        //       options={optionSelect}
-        //       required
-        //       id="group"
-        //       name="group"
-        //       title={t("exam_group")}
-        //       placeholder={t("select_exam_group")}
-        //       formik={props.formik}
-        //     />
-        //   );
-        // }
+
         if (a.name == "test_date") {
           return (
             <MRangePicker

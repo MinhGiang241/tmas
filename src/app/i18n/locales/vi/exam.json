@@ -392,5 +392,6 @@
   "empty_answer": "Bài làm trống",
   "examination_detail": "Chi tiết đợt thi",
   "has_needcheck": "Có {{num}} câu tự luận cần chấm điểm",
-  "no_pass": "Không đạt"
+  "no_pass": "Không đạt",
+  "point_not_empty": "Điểm không được để trống"
 }

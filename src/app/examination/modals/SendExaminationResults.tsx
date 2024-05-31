@@ -11,6 +11,7 @@ import {
   ExamTestResulstData,
   ExaminationData,
   RemindEmailData,
+  ResultEmailData,
 } from "@/data/exam";
 import Table, { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
@@ -45,6 +46,7 @@ import _ from "lodash";
 import { useRouter } from "next/navigation";
 import ContentDetailsModal from "./ContentDetailsModal";
 import Link from "next/link";
+import { log } from "util";
 
 interface Props extends BaseModalProps {
   examination?: ExaminationData;
@@ -372,30 +374,36 @@ function SendExaminationResults(props: Props) {
   ];
 
   const handleSendMail = async (e: any) => {
+    var maillist = [
+      ...newData
+        ?.filter((r) => r.status == "New")
+        .map((it) => ({
+          mid: it?.id,
+          email: it.email,
+          passcode:
+            props.examination?.sharingSetting === "Private" &&
+            props.examination?.accessCodeSettingType == "One"
+              ? props.examination?.accessCodeSettings![0].code
+              : props.examination?.sharingSetting === "Private" &&
+                  props.examination?.accessCodeSettingType == "MultiCode"
+                ? it.passcode
+                : undefined,
+          ended_at:
+            it?.data?.timeLine?.commitTestAt ??
+            it?.data?.timeLine?.mustStopDoTestAt,
+          // numberPoint: ,
+          score: it?.data?.result?.score,
+          result_state: it?.data?.result?.passState,
+          // require_score?: ;
+        })),
+    ];
+    // console.log("maillist", maillist);
+    // return;
+
     setSendLoading(true);
+
     const res = await sendResultEmail({
-      maillist: [
-        ...newData
-          ?.filter((r) => r.status == "New")
-          .map((t) => ({
-            email: t.email,
-            passcode:
-              props.examination?.sharingSetting === "Private" &&
-              props.examination?.accessCodeSettingType == "One"
-                ? props.examination?.accessCodeSettings![0].code
-                : props.examination?.sharingSetting === "Private" &&
-                    props.examination?.accessCodeSettingType == "MultiCode"
-                  ? t.passcode
-                  : undefined,
-            ended_at:
-              t?.data?.timeLine?.commitTestAt ??
-              t?.data?.timeLine?.mustStopDoTestAt,
-            // numberPoint: ,
-            score: t?.data?.result?.score,
-            result_state: t?.data?.result?.passState,
-            // require_score?: ;
-          })),
-      ],
+      maillist,
       methods: media,
       examtestId: props.examination?.id,
       body: template,
@@ -420,9 +428,9 @@ function SendExaminationResults(props: Props) {
       return;
     }
     var cloneData = _.cloneDeep(data);
-    var d: RemindEmailData[] = res.data;
+    var d: ResultEmailData[] = res.data;
     var c = cloneData.map((e) => {
-      var i = d?.findIndex((k) => k?.email == e.email);
+      var i = d?.findIndex((k) => k?.mid == e.id);
       if (i < 0) {
         return e;
       }

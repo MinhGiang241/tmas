@@ -415,6 +415,25 @@ export interface TmasStudioExamData {
   Version?: string;
 }
 
+export interface ResultEmailData {
+  _id?: string;
+  body?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  creator?: string;
+  data: { [key: string]: any };
+  email?: string;
+  examtestId?: string;
+  mid?: string;
+  name?: string;
+  retry?: number;
+  schema?: string;
+  sentTime?: string;
+  status?: "Pending" | "Success" | "Failure" | "New";
+  type?: "HasResult" | "Reminder";
+  errorMessage?: string;
+}
+
 export interface RemindEmailData {
   _id?: string;
   createdTime?: string;

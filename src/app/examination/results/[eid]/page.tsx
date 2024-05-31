@@ -524,6 +524,43 @@ function ResultPage({ params }: any) {
           var cloneFilter: FormFilterValue = _.cloneDeep(filterValues);
           (cloneFilter as any)[fields] = undefined;
           setFilterValues(cloneFilter);
+          switch (fields) {
+            case "email":
+              setFilters([
+                ...filters?.filter((d) => d.fieldName != "candidate.email"),
+              ]);
+              break;
+            case "group":
+              setFilters([
+                ...filters?.filter((d) => d.fieldName != "candidate.groupTest"),
+              ]);
+              break;
+            case "phone_number":
+              setFilters([
+                ...filters?.filter(
+                  (d) => d.fieldName != "candidate.phoneNumber",
+                ),
+              ]);
+              break;
+            case "full_name":
+              setFilters([
+                ...filters?.filter((d) => d.fieldName != "candidate.fullName"),
+              ]);
+              break;
+            case "identify_code":
+              setFilters([
+                ...filters?.filter(
+                  (d) => d.fieldName != "candidate.identifier",
+                ),
+              ]);
+              break;
+            case "test_date":
+              setFilters([
+                ...filters?.filter((d) => d.fieldName != "createdTime"),
+              ]);
+              setTestDate(undefined);
+              break;
+          }
         }}
         formik={formik}
         open={openFilter}
