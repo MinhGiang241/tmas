@@ -73,6 +73,7 @@ export default function TrueFalse({
       <div>
         <Collapse
           // key={v?.id}
+          defaultActiveKey={["1"]}
           ghost
           expandIconPosition="end"
           className="rounded-lg bg-m_question overflow-hidden mb-4"
@@ -119,7 +120,7 @@ export default function TrueFalse({
                 </div>
               </div>
             }
-            key={""}
+            key={"1"}
           >
             <div className="h-[1px] bg-m_primary_200 mb-3" />
             <div className="text-m_primary_500 text-sm font-semibold mb-2 pl-6">

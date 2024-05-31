@@ -60,6 +60,7 @@ function Random({
     !hidden && (
       <div>
         <Collapse
+          defaultActiveKey={["1"]}
           key={question?.id}
           ghost
           expandIconPosition="end"
@@ -105,7 +106,7 @@ function Random({
                 )}
               </div>
             }
-            key={""}
+            key={"1"}
           >
             <div className="h-[1px] bg-m_primary_200 mb-3" />
           </Collapse.Panel>

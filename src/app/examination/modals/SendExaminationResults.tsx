@@ -391,10 +391,14 @@ function SendExaminationResults(props: Props) {
           ended_at:
             it?.data?.timeLine?.commitTestAt ??
             it?.data?.timeLine?.mustStopDoTestAt,
-          // numberPoint: ,
+          numberPoint:
+            it?.data?.examTestDataCreatedWhenTest?.examVersion?.exam
+              ?.totalPoints ?? 0,
           score: it?.data?.result?.score,
           result_state: it?.data?.result?.passState,
-          // require_score?: ;
+          require_score:
+            it?.data?.examTestDataCreatedWhenTest?.examTestInfo?.passingSetting
+              ?.passPointPercent,
         })),
     ];
     // console.log("maillist", maillist);

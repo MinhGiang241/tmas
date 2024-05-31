@@ -81,6 +81,7 @@ export default function Explain({
         {/* {data?.examQuestions?.map((x: any, key: any) => ( */}
         <Collapse
           // key={key}
+          defaultActiveKey={["1"]}
           ghost
           expandIconPosition="end"
           className="mb-3 rounded-lg bg-m_question overflow-hidden"
@@ -133,7 +134,7 @@ export default function Explain({
                 )}
               </div>
             }
-            key={""}
+            key={"1"}
           >
             <div className="h-[1px] bg-m_primary_200 mb-3" />
             {!(

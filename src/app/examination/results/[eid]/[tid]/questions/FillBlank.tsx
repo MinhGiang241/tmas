@@ -141,12 +141,14 @@ export default function FillBlank({
     !hidden && (
       <div>
         <Collapse
+          defaultActiveKey={["1"]}
           key={question?.id}
           ghost
           expandIconPosition="end"
           className="rounded-lg bg-m_question overflow-hidden mb-4"
         >
           <Collapse.Panel
+            key="1"
             header={
               <div className="my-3 flex justify-between items-center">
                 <div className="flex flex-col">
@@ -190,7 +192,6 @@ export default function FillBlank({
                 </div>
               </div>
             }
-            key={""}
           >
             <div className="h-[1px] bg-m_primary_200 mb-3" />
             <div className="">

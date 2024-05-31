@@ -117,6 +117,7 @@ export default function Sql({
       <div>
         <Collapse
           // key={v?.id}
+          defaultActiveKey={["1"]}
           ghost
           expandIconPosition="end"
           className="rounded-lg bg-m_question overflow-hidden mb-4"
@@ -169,7 +170,7 @@ export default function Sql({
                 )}
               </div>
             }
-            key={""}
+            key={"1"}
           >
             <div className="h-[1px] bg-m_primary_200 mb-3" />
             <div className="bg-m_neutral_100 p-3 font-semibold text-sm rounded-lg">

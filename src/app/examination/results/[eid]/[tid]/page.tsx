@@ -370,40 +370,6 @@ export default function Result({ params }: any) {
                         value={valueFilter}
                         setValue={(name: any, val: any) => {
                           setValueFilter(val);
-                          // if (val == "essay_question") {
-                          //   var partClone = parts?.map((p) => {
-                          //     var cloneP = _.cloneDeep(p);
-                          //     cloneP.questions = questions?.filter(
-                          //       (que) =>
-                          //         que?.idExamQuestionPart == p?.id &&
-                          //         que?.questionType == QuestionType?.Essay,
-                          //     );
-                          //     return cloneP;
-                          //   });
-                          //
-                          //   setParts(partClone);
-                          // } else if (val == "select_question") {
-                          //   var partClone = parts?.map((p) => {
-                          //     var cloneP = _.cloneDeep(p);
-                          //     cloneP.questions = questions?.filter(
-                          //       (que) =>
-                          //         que?.idExamQuestionPart == p?.id &&
-                          //         que?.questionType != QuestionType?.Essay,
-                          //     );
-                          //     return cloneP;
-                          //   });
-                          //
-                          //   setParts(partClone);
-                          // } else {
-                          //   var partClone = parts?.map((p) => {
-                          //     var cloneP = _.cloneDeep(p);
-                          //     cloneP.questions = questions?.filter(
-                          //       (que) => que?.idExamQuestionPart == p?.id,
-                          //     );
-                          //     return cloneP;
-                          //   });
-                          //   setParts(partClone);
-                          // }
                         }}
                         isTextRequire={false}
                         className="dropdown-flex"
@@ -419,12 +385,6 @@ export default function Result({ params }: any) {
                         }))}
                       />
                     </button>
-                    {/* <Button */}
-                    {/*   onClick={filterEssay} */}
-                    {/*   className="w-[163px] h-[36px] bg-m_primary_500 rounded-lg font-semibold text-sm text-white" */}
-                    {/* > */}
-                    {/*   {t("essay_question")} */}
-                    {/* </Button> */}
                   </div>
                 </div>
               }
@@ -587,11 +547,13 @@ export default function Result({ params }: any) {
                             {e?.eventType == "Start" ? (
                               <Play />
                             ) : e?.eventType == "Rejoin" ||
-                              e?.eventType == "ReJoin" ? (
+                              e?.eventType == "ExitScreen" ? (
                               <Close />
                             ) : e?.eventType == "End" ? (
                               <Pause />
-                            ) : null}
+                            ) : (
+                              <Edit />
+                            )}
                             <div className="font-semibold pl-1 text-sm">
                               {e?.message}
                             </div>
