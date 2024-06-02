@@ -587,15 +587,7 @@ export interface ExamTestResulstData {
     percentCorrect?: number;
     score?: number;
     scoreAsInt?: number;
-    statistic?: {
-      percentAnwserWrong?: number;
-      percentFailed?: number;
-      percentNotAnwser?: number;
-      percentAnwserCorrect?: number;
-      percentNotCheck?: number;
-      percentPass?: number;
-      totalExamTestResult?: number;
-    };
+    statistic?: StatisticExamTestInfo;
   };
   studioId?: string;
   updateBy?: string;
@@ -625,21 +617,23 @@ export enum ExamCompletionState {
   Done = "Done",
 }
 
-export interface StatisticExamTest {
-  statistic?: {
-    completionByState?: {
-      percentChecking?: number;
-      percentDoing?: number;
-      percentDone?: number;
-    };
-    percentAnwserCorrect?: number;
-    percentAnwserWrong?: number;
-    percentPass?: number;
-    percentFailed?: number;
-    percentNotAnwser?: number;
-    totalExamTestResult?: number;
-    percentNotCheck?: number;
+export interface StatisticExamTestInfo {
+  completionByState?: {
+    totalChecking?: number;
+    totalDoing?: number;
+    totalDone?: number;
   };
+  totalAnwserCorrect?: number;
+  totalAnwserWrong?: number;
+  totalPass?: number;
+  totalFailed?: number;
+  totalNotAnwser?: number;
+  totalExamTestResult?: number;
+  totalNotCheck?: number;
+}
+
+export interface StatisticExamTest {
+  statistic?: StatisticExamTestInfo;
   // new
   passState?: ExamPassState;
   percentComplete?: number;

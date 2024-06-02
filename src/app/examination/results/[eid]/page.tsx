@@ -585,23 +585,13 @@ function ResultPage({ params }: any) {
             {
               label: "pass",
               name: t("pass"),
-              value:
-                examination?.statisticExamTest?.statistic?.percentPass ?? 0,
-              // ((examination?.statisticExamTest?.statistic?.percentPass ?? 0) *
-              //   (examination?.statisticExamTest?.statistic
-              //     ?.totalExamTestResult ?? 0)) /
-              // 100,
+              value: examination?.statisticExamTest?.statistic?.totalPass ?? 0,
             },
             {
               label: "not_pass",
               name: t("not_pass"),
               value:
-                examination?.statisticExamTest?.statistic?.percentFailed ?? 0,
-              // ((examination?.statisticExamTest?.statistic?.percentFailed ??
-              //   0) *
-              //   (examination?.statisticExamTest?.statistic
-              //     ?.totalExamTestResult ?? 0)) /
-              // 100,
+                examination?.statisticExamTest?.statistic?.totalFailed ?? 0,
             },
           ]}
         />
@@ -612,36 +602,21 @@ function ResultPage({ params }: any) {
               name: t("doing_exam"),
               value:
                 examination?.statisticExamTest?.statistic?.completionByState
-                  ?.percentDoing,
-              // ((examination?.statisticExamTest?.statistic?.completionByState
-              //   ?.percentDoing ?? 0) *
-              //   (examination?.statisticExamTest?.statistic
-              //     ?.totalExamTestResult ?? 0)) /
-              // 100,
+                  ?.totalDoing,
             },
             {
               label: "checking_exam",
               name: t("checking_exam"),
               value:
                 examination?.statisticExamTest?.statistic?.completionByState
-                  ?.percentChecking,
-              // ((examination?.statisticExamTest?.statistic?.completionByState
-              //   ?.percentChecking ?? 0) *
-              //   (examination?.statisticExamTest?.statistic
-              //     ?.totalExamTestResult ?? 0)) /
-              // 100,
+                  ?.totalChecking,
             },
             {
               label: "done_exam",
               name: t("done_exam"),
               value:
                 examination?.statisticExamTest?.statistic?.completionByState
-                  ?.percentDone,
-              // ((examination?.statisticExamTest?.statistic?.completionByState
-              //   ?.percentDone ?? 0) *
-              //   (examination?.statisticExamTest?.statistic
-              //     ?.totalExamTestResult ?? 0)) /
-              // 100,
+                  ?.totalDone,
             },
           ]}
         />
