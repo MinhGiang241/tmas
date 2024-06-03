@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import AccountPage from "./account/AccountPage";
 import { registerServiceWorker } from "@/utils/serviceWorker";
 //@ts-ignore
 import {
@@ -8,6 +7,7 @@ import {
   registerPushNotifications,
   unregisterPushNotifications,
 } from "@/notifiCations/pushService";
+import OverViewPage from "./overview/OverViewPage";
 
 export default function Home() {
   useEffect(() => {
@@ -26,17 +26,15 @@ export default function Home() {
   return (
     <>
       {/* <PushSubscriptionToggleButton /> */}
-      <AccountPage />
+      <OverViewPage />
     </>
   );
 }
 
 function PushSubscriptionToggleButton() {
-
   const [hasActivePushSubscription, setHasActivePushSubscription] = useState<
     boolean | undefined
   >();
-
 
   useEffect(() => {
     async function getActivePushSubscription() {
@@ -89,4 +87,3 @@ function PushSubscriptionToggleButton() {
     </div>
   );
 }
-

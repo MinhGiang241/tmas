@@ -313,7 +313,7 @@
   "filter_by_criteria": "Lọc theo tiêu chí",
   "filter": "Lọc",
   "test_detail": "Chi tiết bài làm",
-  "percent_complete_true": "Phần trăm hoàn thành đúng",
+  "percent_complete_true": "Phần trăm điểm đạt",
   "true_quest": "Số câu đúng (chưa tính câu tự luận)",
   "essay_num": "Số lượng câu tự luận",
   "detail_timeline": "Timeline chi tiết",
@@ -393,5 +393,7 @@
   "examination_detail": "Chi tiết đợt thi",
   "has_needcheck": "Có {{num}} câu tự luận cần chấm điểm",
   "no_pass": "Không đạt",
-  "point_not_empty": "Điểm không được để trống"
+  "point_not_empty": "Điểm không được để trống",
+  "download_file0": "Tải xuống file",
+  "search_by_name_tag": "Tìm kiếm theo tên/thẻ"
 }

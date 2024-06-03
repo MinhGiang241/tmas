@@ -623,6 +623,7 @@ export interface StatisticExamTestInfo {
     totalDoing?: number;
     totalDone?: number;
   };
+  totalAnwserNotEssayCorrect?: number;
   totalAnwserCorrect?: number;
   totalAnwserWrong?: number;
   totalPass?: number;

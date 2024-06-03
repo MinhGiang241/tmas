@@ -47,6 +47,7 @@ import {
 import MDropdown from "@/app/components/config/MDropdown";
 import MButton from "@/app/components/config/MButton";
 import { submitCheckMultiAnswer } from "@/services/api_services/question_api";
+import { FormattedNumber } from "react-intl";
 
 dayjs.extend(duration);
 
@@ -489,14 +490,25 @@ export default function Result({ params }: any) {
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("percent_complete_true")}</div>
                 <div className="text-sm font-semibold">
-                  {examResult?.result?.percentCorrect ?? 0}%
+                  <FormattedNumber
+                    value={
+                      ((examResult?.result?.score ?? 0) /
+                        (examResult?.examTestDataCreatedWhenTest?.examVersion
+                          ?.exam?.totalPoints ?? 0)) *
+                      100
+                    }
+                    style="decimal"
+                    maximumFractionDigits={2}
+                  />
+                  %
                 </div>
               </div>
               <div className="flex justify-between items-center pb-2">
                 <div className="text-sm">{t("true_answer_num")}</div>
                 <div className="text-sm font-semibold">
-                  {examResult?.result?.couter?.numberOfQuestionCorrect}/
-                  {examResult?.result?.couter?.numberOfQuestions}
+                  {examResult?.result?.statistic?.totalAnwserNotEssayCorrect ??
+                    0}
+                  /{examResult?.result?.couter?.numberOfQuestions}
                 </div>
               </div>
               <div className="flex justify-between items-center pb-2">

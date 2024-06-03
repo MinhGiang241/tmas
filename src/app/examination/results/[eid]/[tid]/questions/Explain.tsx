@@ -171,7 +171,7 @@ export default function Explain({
                     value={comment}
                     name="comment"
                     id="comment"
-                    onChange={(e) => setComment(e.target.value?.trim())}
+                    onChange={(e) => setComment(e.target.value)}
                     placeholder={t("enter_comment")}
                   />
 
@@ -185,7 +185,7 @@ export default function Explain({
                       className="rounded-md h-[50px]"
                       type="number"
                       onChange={(e) => {
-                        setPoint(e?.target?.value?.trim());
+                        setPoint(e?.target?.value);
                       }}
                     />
                     <Button

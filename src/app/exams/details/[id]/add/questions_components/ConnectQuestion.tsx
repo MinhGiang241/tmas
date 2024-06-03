@@ -466,6 +466,7 @@ function ConnectQuestion({
 
         <div className="h-4" />
         <EditorHook
+          formik={formik}
           placeholder={t("enter_content")}
           isCount={false}
           id="explain"

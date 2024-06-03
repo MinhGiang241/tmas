@@ -203,7 +203,7 @@ export const deleteQuestionById = async (questId?: string) => {
   const results = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/${questId}`,
   );
-  // console.log(results);
+
   return results;
 };
 
@@ -221,7 +221,6 @@ export const getExamQuestionPartList = async (data?: PagingGetData) => {
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/GetPagingDetail`,
     data,
   );
-  // console.log("data results", results);
   return results;
 };
 
@@ -245,7 +244,6 @@ export const createManyExamQuestionPart = async (data?: {
 };
 
 export const updateAExamQuestionPart = async (data?: ExamQuestionPart) => {
-  // console.log("dat", data)
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${data?.id}`,
     data,
@@ -282,7 +280,6 @@ export const deleteQuestionPartById = async (id?: string) => {
   const results = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${id}`,
   );
-  // console.log(results)
   return results;
 };
 
@@ -306,7 +303,6 @@ export const deleteQuestionPart = async (id?: string) => {
   const results = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${id}`,
   );
-  // console.log(results)
   return results;
 };
 
@@ -423,7 +419,6 @@ export const getExamExport = async (data: any) => {
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Export`,
     data,
   );
-  // console.log(results, "result");
 
   return results;
 };

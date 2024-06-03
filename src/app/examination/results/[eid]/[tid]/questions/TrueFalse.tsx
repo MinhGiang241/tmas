@@ -1,24 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
 import { Checkbox, Collapse, Popover } from "antd";
-import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
-import EditIcon from "@/app/components/icons/edit-black.svg";
-import CopyIcon from "@/app/components/icons/size.svg";
-import BaseModal from "@/app/components/config/BaseModal";
-import MInput from "@/app/components/config/MInput";
-import MTextArea from "@/app/components/config/MTextArea";
-import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import { useRouter } from "next/navigation";
-import { FormattedDate, FormattedTime } from "react-intl";
 import Tick from "@/app/components/icons/tick-circle.svg";
-import {
-  deleteQuestionById,
-  duplicateQuestion,
-} from "@/services/api_services/question_api";
-import { errorToast, successToast } from "@/app/components/toast/customToast";
-import { APIResults } from "@/data/api_results";
-import AddIcon from "@/app/components/icons/add.svg";
+import OutlineTick from "@/app/components/icons/outline-tick.svg";
 import Close from "@/app/components/icons/close-circle.svg";
 import { MultiCandidateAnswer } from "@/data/question";
 import { CandidateAnswers } from "@/data/exam";
@@ -137,6 +122,7 @@ export default function TrueFalse({
                     ) : (
                       <div className="min-w-5" />
                     )}
+
                     <div className="body_semibold_14 pl-1">{x.label}</div>
                     <div
                       className="body_regular_14 pl-2"
@@ -145,8 +131,14 @@ export default function TrueFalse({
                   </div>
                 ) : (
                   <div className="flex" key={key}>
-                    <Tick className="min-w-5" />
-
+                    {candidateAnswer?.answers?.some(
+                      (u) => u.label == x.label,
+                    ) ? (
+                      <Tick className="min-w-5" />
+                    ) : (
+                      <OutlineTick className="min-w-5" />
+                    )}
+                    {/* <Tick className="min-w-5" /> */}
                     <div className="body_semibold_14 pl-1">{x.label}</div>
                     <div
                       className="body_regular_14 pl-2 pr-2"

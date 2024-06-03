@@ -1,5 +1,5 @@
 import { UserData } from "@/data/user";
-import { callApi } from "./base_api";
+import { callApi, callStudioAPI } from "./base_api";
 import { StudioFormData, CheckDiscountParams } from "@/data/form_interface";
 import { APIResults } from "@/data/api_results";
 
@@ -225,5 +225,13 @@ export const checkDistcountCode = async (data: CheckDiscountParams) => {
     data,
   );
 
+  return results;
+};
+
+export const uploadImageStudio = async (data: any) => {
+  var results: APIResults = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/uploadImage`,
+    data,
+  );
   return results;
 };

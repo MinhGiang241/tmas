@@ -57,7 +57,7 @@ function Header({ path }: { path?: string }) {
     "exams",
     "examination",
     "exam_bank",
-    "statistics",
+    "account",
   ];
 
   const user = useSelector((state: RootState) => state.user.user);
@@ -314,16 +314,7 @@ function Header({ path }: { path?: string }) {
             {links.map((e, i) => (
               <Link
                 key={i}
-                href={
-                  !user?.verified
-                    ? "#"
-                    : e == "exam_group" ||
-                        e == "exams" ||
-                        e == "examination" ||
-                        e == "exam_bank"
-                      ? `/${e}`
-                      : "/"
-                }
+                href={!user?.verified ? "#" : e == "overview" ? "/" : `/${e}`}
                 onClick={() => {
                   if (
                     !user?.verified &&
@@ -333,7 +324,6 @@ function Header({ path }: { path?: string }) {
                       "examination",
                       "overview",
                       "exam_bank",
-                      "statistics",
                     ].some((d) => {
                       return d == e;
                     })
@@ -342,7 +332,7 @@ function Header({ path }: { path?: string }) {
                   }
                 }}
                 className={`flex items-center text-center body_semibold_14 text-white px-5 h-full ${
-                  pathname.includes(e)
+                  pathname.includes(e) || (pathname == "/" && e == "overview")
                     ? "bg-m_primary_400 after:content-[''] border-b-white border-b-4"
                     : ""
                 }`}
@@ -403,7 +393,7 @@ function Header({ path }: { path?: string }) {
                 <button
                   onClick={() => {
                     setOpenPop(false);
-                    router.push("/?tab=0");
+                    router.push("/account?tab=0");
                   }}
                   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >
@@ -412,7 +402,7 @@ function Header({ path }: { path?: string }) {
                 <button
                   onClick={() => {
                     setOpenPop(false);
-                    router.push("/?tab=2");
+                    router.push("/account?tab=2");
                   }}
                   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >
@@ -421,7 +411,7 @@ function Header({ path }: { path?: string }) {
                 <button
                   onClick={() => {
                     setOpenPop(false);
-                    router.push("/?tab=3");
+                    router.push("/account?tab=3");
                   }}
                   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >

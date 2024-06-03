@@ -440,7 +440,7 @@ function ResultPage({ params }: any) {
               break;
             case "full_name":
               newFilters.push({
-                fieldName: "candidate.fullName",
+                fieldName: "candidate.unsignedFullName",
                 value: `/${values[i]?.trim()}/i`,
                 condition: Condition.regex,
               });
@@ -528,7 +528,9 @@ function ResultPage({ params }: any) {
               break;
             case "full_name":
               setFilters([
-                ...filters?.filter((d) => d.fieldName != "candidate.fullName"),
+                ...filters?.filter(
+                  (d) => d.fieldName != "candidate.unsignedFullName",
+                ),
               ]);
               break;
             case "identify_code":
@@ -727,7 +729,7 @@ function ResultPage({ params }: any) {
                       case "full_name":
                         setFilters([
                           ...filters?.filter(
-                            (d) => d.fieldName != "candidate.fullName",
+                            (d) => d.fieldName != "candidate.unsignedFullName",
                           ),
                         ]);
                         break;

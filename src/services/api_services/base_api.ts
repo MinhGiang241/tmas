@@ -134,7 +134,6 @@ export class callStudioAPI {
     };
     try {
       var response = await axios.post(url, data, { headers, ...config });
-      // console.log("resPost", response);
 
       if (response?.data?.isSuccess === false) {
         return {
@@ -299,7 +298,6 @@ export class callStudioAPI {
 
     try {
       var response = await axios.get(url, { headers, ...config });
-      // console.log("dl", response);
 
       if (response.status == 200) {
         return {
