@@ -5,7 +5,9 @@
   "sum_doing_test": "Tổng số bài đang làm",
   "sum_test": "Tổng số bài làm",
   "remain_gold": "Số dư gold",
-  "service_packakge": "Gói dịch vụ",
+  "service_package": "Gói dịch vụ",
   "examination_by_time": "Số đợt thi theo thời gian",
-  "sum_exam_by_group": "Tổng số đề thi theo nhóm"
+  "sum_exam_by_group": "Tổng số đề thi theo nhóm",
+  "sum_candidate": "Tổng số ứng viên",
+  "remain_test": "Số lượt thi còn lại"
 }

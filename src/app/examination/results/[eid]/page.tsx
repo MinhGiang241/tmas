@@ -443,6 +443,7 @@ function ResultPage({ params }: any) {
                 fieldName: "candidate.unsignedFullName",
                 value: `/${values[i]?.trim()}/i`,
                 condition: Condition.regex,
+                ConvertTextToUnsigned: true,
               });
 
               break;

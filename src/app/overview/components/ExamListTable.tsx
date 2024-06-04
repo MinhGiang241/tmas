@@ -5,6 +5,8 @@ import DownloadIcon from "@/app/components/icons/white-import.svg";
 import MInput from "@/app/components/config/MInput";
 import { SearchOutlined } from "@ant-design/icons";
 import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
+import { Table } from "antd";
+import MTable, { TableDataRow } from "@/app/components/config/MTable";
 
 function ExamListTable() {
   const { t } = useTranslation("exam");
@@ -13,6 +15,22 @@ function ExamListTable() {
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(0);
+
+  const dataRows: TableDataRow[] = [
+    { dataIndex: "name", title: t("name") },
+    { dataIndex: "group", title: t("group") },
+    { dataIndex: "tags", title: t("tags") },
+    { dataIndex: "join_num", title: t("join_num") },
+    { dataIndex: "today_join_num", title: t("today_join_num") },
+    { dataIndex: "dtb", title: t("dtb") },
+    { dataIndex: "dtv", title: t("dtv") },
+    { dataIndex: "percent_pass", title: t("percent_pass") },
+    { dataIndex: "avg_test_time", title: t("avg_test_time") },
+    { dataIndex: "min_test_time", title: t("min_test_time") },
+    { dataIndex: "max_test_time", title: t("max_test_time") },
+    { dataIndex: "question_num", title: t("question_num") },
+    { dataIndex: "created_date", title: t("created_date") },
+  ];
 
   return (
     <>
@@ -50,6 +68,7 @@ function ExamListTable() {
           <div className=" mx-2" />
           <div className="max-w-64">
             <MDateTimeSelect
+              formatter={"DD/MM/YYYY"}
               showTime={false}
               isTextRequire={false}
               placeholder={t("start_time")}
@@ -58,9 +77,10 @@ function ExamListTable() {
               name="start_time"
             />
           </div>
-          <div className="mx-2">-</div>
+          <div className="mx-2 w-2 h-[1px] bg-m_neutral_500" />
           <div className="max-w-64">
             <MDateTimeSelect
+              formatter={"DD/MM/YYYY"}
               showTime={false}
               isTextRequire={false}
               placeholder={t("end_time")}
@@ -77,6 +97,15 @@ function ExamListTable() {
           h="h-11"
         />
       </div>
+      <div className="h-3" />
+      <MTable
+        indexPage={indexPage}
+        setIndexPage={setIndexPage}
+        recordNum={recordNum}
+        setRecordNum={setRecordNum}
+        total={total}
+        dataRows={dataRows}
+      />
     </>
   );
 }

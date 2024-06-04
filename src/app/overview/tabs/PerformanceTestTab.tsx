@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ExamListTable from "../components/ExamListTable";
+import ExaminationListTable from "../components/ExaminationListTable";
 
 function PerformanceTestTab() {
   const router = useRouter();
@@ -39,7 +40,7 @@ function PerformanceTestTab() {
       </div>
       <Divider className="my-5" />
       {/* Danh sách đề thi */}
-      {active == "0" ? <ExamListTable /> : null}
+      {active == "0" ? <ExamListTable /> : <ExaminationListTable />}
     </div>
   );
 }

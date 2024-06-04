@@ -508,7 +508,9 @@ export default function Result({ params }: any) {
                 <div className="text-sm font-semibold">
                   {examResult?.result?.statistic?.totalAnwserNotEssayCorrect ??
                     0}
-                  /{examResult?.result?.couter?.numberOfQuestions}
+                  /
+                  {(examResult?.result?.couter?.numberOfQuestions ?? 0) -
+                    (examResult?.result?.couter?.numberQuestionEssay ?? 0)}
                 </div>
               </div>
               <div className="flex justify-between items-center pb-2">
@@ -543,6 +545,7 @@ export default function Result({ params }: any) {
             <hr />
             <div className="p-4">
               {examResult?.timeLine?.timeLines
+                ?.filter((k) => k.eventType != "SubmitPart")
                 ?.sort((a, b) => {
                   var diff = dayjs(a?.createTime).diff(b.createTime);
                   if (diff != 0) {

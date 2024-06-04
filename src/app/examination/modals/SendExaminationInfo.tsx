@@ -402,18 +402,6 @@ function SendExaminationInfo(props: Props) {
           className="min-h-40 mt-2 border rounded-lg bg-m_neutral_100 p-5"
           dangerouslySetInnerHTML={{ __html: template ?? "" }}
         />
-        {/* <EditorHook */}
-        {/*   disabled */}
-        {/*   defaultValue={template} */}
-        {/*   value={sendContent} */}
-        {/*   setValue={(name: any, val: any) => { */}
-        {/*     setSendContent(val); */}
-        {/*   }} */}
-        {/*   isCount={false} */}
-        {/*   id="send_content" */}
-        {/*   name="send_content" */}
-        {/*   title={t("send_content")} */}
-        {/* /> */}
         <div className="mt-2 body_semibold_14 flex items-center justify-between">
           <div>{t("receipt_info_list")}</div>
           <div className="flex items-center w-1/3">

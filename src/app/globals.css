@@ -275,6 +275,30 @@ div.ql-container.ql-snow > .ql-editor {
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */
 /* } */
 
+.heading_bold_32 {
+  @apply font-bold text-4xl;
+}
+
+.heading_semibold_32 {
+  @apply font-semibold text-4xl;
+}
+
+.heading_regular_32 {
+  @apply font-bold text-4xl;
+}
+
+.heading_bold_40 {
+  @apply font-bold text-5xl;
+}
+
+.heading_semibold_40 {
+  @apply font-semibold text-5xl;
+}
+
+.heading_regular_40 {
+  @apply font-bold text-5xl;
+}
+
 .title_bold_40 {
   @apply font-bold text-5xl;
 }

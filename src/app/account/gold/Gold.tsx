@@ -26,6 +26,7 @@ import dayjs from "dayjs";
 import { log } from "console";
 import { errorToast } from "@/app/components/toast/customToast";
 import Image from "next/image";
+import MTable from "@/app/components/config/MTable";
 
 function Gold() {
   const { t } = useTranslation("account");
@@ -307,8 +308,6 @@ function Gold() {
             { label: t("minus_gold"), value: "down" },
           ]}
         />
-        {/* <div className="w-8" /> */}
-        {/* <MButton h="h-9 max-lg:mr-auto" className="mb-1" text={t("search")} /> */}
       </div>
       <div className="body_semibold_16 mb-2">{t("transaction_history")}</div>
       <div className="w-full flex border-b-m_neutral_200 h-11 border-b ">
@@ -353,62 +352,15 @@ function Gold() {
         </button>
       </div>
       <div className="h-3" />
-      <Table
-        loading={goldHisloading}
-        className="w-full"
-        bordered={false}
+      <MTable
+        indexPage={indexPage}
+        setIndexPage={setIndexPage}
+        recordNum={recordNum}
+        setRecordNum={setRecordNum}
         columns={columns}
         dataSource={goldHis}
-        pagination={false}
-        rowKey={"_id"}
-        onRow={(data: any, index: any) =>
-          ({
-            style: {
-              background: "#FFFFFF",
-              borderRadius: "20px",
-            },
-          }) as HTMLAttributes<any>
-        }
+        total={total}
       />
-      <div className="h-4" />
-      <div className="w-full flex items-center justify-center">
-        <span className="body_regular_14 mr-2">{`${total} ${t(
-          "result",
-        )}`}</span>
-
-        <Pagination
-          pageSize={recordNum}
-          onChange={(v) => {
-            setIndexPage(v);
-          }}
-          current={indexPage}
-          total={total}
-          showSizeChanger={false}
-        />
-        <div className="hidden ml-2 lg:flex items-center">
-          <Select
-            optionRender={(oriOption) => (
-              <div className="flex justify-center">{oriOption?.label}</div>
-            )}
-            value={recordNum}
-            onChange={(v) => {
-              setRecordNum(v);
-              setIndexPage(1);
-            }}
-            options={[
-              ...[15, 25, 30, 50, 100].map((i: number) => ({
-                value: i,
-                label: (
-                  <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                    "page",
-                  )}`}</span>
-                ),
-              })),
-            ]}
-            className="select-page min-w-[124px]"
-          />
-        </div>
-      </div>
     </div>
   );
 }

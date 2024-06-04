@@ -395,5 +395,15 @@
   "no_pass": "Không đạt",
   "point_not_empty": "Điểm không được để trống",
   "download_file0": "Tải xuống file",
-  "search_by_name_tag": "Tìm kiếm theo tên/thẻ"
+  "search_by_name_tag": "Tìm kiếm theo tên/thẻ",
+  "tags": "Thẻ",
+  "join_num": "SL tham gia",
+  "today_join_num": "SL tham gia hôm nay",
+  "dtb": "ĐTB",
+  "dtv": "ĐTV",
+  "percent_pass": "% Đạt",
+  "avg_test_time": "Thời gian thi TB",
+  "min_test_time": "Thời gian thi tối thiểu",
+  "max_test_time": "Thời gian thi tối đa",
+  "question_num": "SL câu hỏi"
 }
