@@ -407,9 +407,9 @@
   "max_test_time": "Thời gian thi tối đa",
   "question_num": "SL câu hỏi",
   "notice": "Lưu ý",
-  "gold_tooltip_0": "Định giá mỗi lượt thi. Đây là số gold mà ứng viên phải trả để tham gia thi",
-  "gold_tooltip_1": "Người sáng tạo đề sẽ nhận được {{num1}}% số gold từ mỗi lượt thi mà ứng viên mua. TMAS sẽ giữ lại {{num2}}% để duy trì và phát triển nền tảng",
-  "gold_tooltip_2": "Ví dụ: Nếu bạn định giá 10 gold cho mỗi lượt thi",
+  "gold_tooltip_0": "Định giá mỗi lượt thi. Đây là số gold mà ứng viên phải trả để tham gia thi.",
+  "gold_tooltip_1": "Người sáng tạo đề sẽ nhận được {{num1}}% số gold từ mỗi lượt thi mà ứng viên mua. TMAS sẽ giữ lại {{num2}}% để duy trì và phát triển nền tảng.",
+  "gold_tooltip_2": "Ví dụ: Nếu bạn định giá {{num}} gold cho mỗi lượt thi",
   "gold_tooltip_3": "Người sáng tạo đề sẽ nhận {{num}} gold",
   "gold_tooltip_4": "Công ty chúng tôi sẽ nhận {{num}} gold"
 }

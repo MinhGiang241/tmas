@@ -53,9 +53,9 @@ function GoldPrice({ formik }: { formik: any }) {
                             })}
                           </span>
                         </div>
-                        <div>{t("gold_tooltip_2")}</div>
+                        <div>{t("gold_tooltip_2", { num: 100 })}</div>
                         <div className="ml-2">
-                          .{" "}
+                          •{" "}
                           <span>
                             {t("gold_tooltip_3", {
                               num:
@@ -65,7 +65,7 @@ function GoldPrice({ formik }: { formik: any }) {
                           </span>
                         </div>
                         <div className="ml-2">
-                          .{" "}
+                          •{" "}
                           <span>
                             {t("gold_tooltip_4", {
                               num: setting?.compensate?.exam_purchase_rate ?? 0,
