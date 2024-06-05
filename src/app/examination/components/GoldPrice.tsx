@@ -3,10 +3,13 @@ import { Collapse, Tooltip } from "antd";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import NoticeIcon from "@/app/components/icons/blue-notice.svg";
+import { useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
 
 function GoldPrice({ formik }: { formik: any }) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
+  const setting = useAppSelector((state: RootState) => state.setting);
 
   return (
     <>
@@ -41,15 +44,33 @@ function GoldPrice({ formik }: { formik: any }) {
                             {t("notice")}:
                           </span>
                           <span className="ml-1">
-                            {t("gold_tooltip_1", { num1: 90, num2: 10 })}
+                            {t("gold_tooltip_1", {
+                              num1:
+                                100 -
+                                (setting?.compensate?.exam_purchase_rate ?? 0),
+                              num2:
+                                setting?.compensate?.exam_purchase_rate ?? 0,
+                            })}
                           </span>
                         </div>
                         <div>{t("gold_tooltip_2")}</div>
                         <div className="ml-2">
-                          . <span>{t("gold_tooltip_3", { num: 9 })}</span>
+                          .{" "}
+                          <span>
+                            {t("gold_tooltip_3", {
+                              num:
+                                100 -
+                                (setting?.compensate?.exam_purchase_rate ?? 0),
+                            })}
+                          </span>
                         </div>
                         <div className="ml-2">
-                          . <span>{t("gold_tooltip_4", { num: 1 })}</span>
+                          .{" "}
+                          <span>
+                            {t("gold_tooltip_4", {
+                              num: setting?.compensate?.exam_purchase_rate ?? 0,
+                            })}
+                          </span>
                         </div>
                       </div>
                     }
