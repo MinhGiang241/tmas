@@ -245,11 +245,11 @@ function MyQuestionTab() {
   };
   return (
     <>
-      <div className="w-full flex justify-end max-lg:pr-5">
+      <div className="w-full flex justify-end max-lg:pr-5 mb-3">
         <MButton
           type="secondary"
           onClick={() => {
-            router.push(`/exams/details/u/add`);
+            router.push(`/exam_bank/u/add`);
           }}
           h="h-11"
           text={t("create_question")}

@@ -26,6 +26,8 @@ function AuthLayout({ children }: { children: ReactNode }) {
     if (res.code != 0) {
       return;
     }
+    console.log("config", res);
+
     setConfig(res.data);
     dispatch(setSettingConfig(res?.data));
   };

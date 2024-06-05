@@ -151,7 +151,7 @@ function MDropdown({
 
       <div
         className={`relative w-full flex flex-col ${
-          extend ? "mb-2" : "mb-[22px]"
+          extend ? "mb-0" : "mb-[22px]"
         }`}
       >
         <Select

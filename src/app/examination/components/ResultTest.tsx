@@ -18,8 +18,8 @@ function ResultTest({
   const plainOptions: CheckboxOptionType[] = [
     { value: "showPoint", label: t("point") },
     { value: "showPercent", label: t("percent_complete") },
-    { value: "showPassOrFail", label: t("detail") },
-    { value: "showPassOrFailDetail", label: t("pass_fail") },
+    { value: "showPassOrFailDetail", label: t("detail") },
+    { value: "showPassOrFail", label: t("pass_fail") },
   ];
 
   const onChangeCheck: GetProp<typeof Checkbox.Group, "onChange"> = (

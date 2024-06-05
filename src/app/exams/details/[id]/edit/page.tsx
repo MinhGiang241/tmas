@@ -42,7 +42,7 @@ function EditQuestionPage({ params }: any) {
     );
 
     router.replace(
-      `/exams/details/${params.id ?? "u"}/edit/?partId=${
+      `edit/?partId=${
         results?.data?.records[0]?.idExamQuestionPart ?? partId ?? ""
       }&questId=${results?.data?.records[0]?.id}&question=${type}&isBank=${
         isBank == "true"

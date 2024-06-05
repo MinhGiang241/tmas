@@ -142,7 +142,7 @@ function CreateExaminationPage({ examination }: any) {
   const [resultChecked, setResultChecked] = useState<any[]>([
     "showPoint",
     "showPercent",
-    "showPassOrFail",
+    "showPassOrFailDetail",
   ]);
   const [infoChecked, setInfoChecked] = useState<any[]>(["email", "fullName"]);
   const [preventCheched, setPreventChecked] = useState<any[]>([]);

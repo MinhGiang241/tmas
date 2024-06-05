@@ -175,14 +175,9 @@ function CreateQuestionPage({ params, question }: any) {
               if (a != "connect_quest") {
                 dispatch(resetConnectAnswer(0));
               }
-              router.replace(
-                `/exams/details/${params.id}/add?partId=${
-                  partId ?? ""
-                }&question=${a}`,
-                {
-                  scroll: false,
-                },
-              );
+              router.replace(`?partId=${partId ?? ""}&question=${a}`, {
+                scroll: false,
+              });
             }}
             className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${
               params?.id == "u" && a == "random"

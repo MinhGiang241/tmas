@@ -9,5 +9,20 @@
   "examination_by_time": "Số đợt thi theo thời gian",
   "sum_exam_by_group": "Tổng số đề thi theo nhóm",
   "sum_candidate": "Tổng số ứng viên",
-  "remain_test": "Số lượt thi còn lại"
+  "remain_test": "Số lượt thi còn lại",
+  "income_details": "Chi tiết doanh thu",
+  "income_total": "Tổng doanh thu",
+  "discount_total": "Tổng chiết khấu",
+  "pure_income_total": "Tổng doanh thu thuần",
+  "register_num": "Số người đăng ký",
+  "public_examination": "Đợt thi công khai",
+  "valid_public_examination": "Đợt thi công khai hiệu lực",
+  "valid": "Còn hiệu lực",
+  "in_valid": "Hết hiệu lực",
+  "search_by_name_tag": "Tìm kiếm theo tên/thẻ",
+  "discount": "Chiết khấu",
+  "pure_income": "Doanh thu thuần",
+  "from_date": "Từ ngày",
+  "to_date": "Đến ngày",
+  "status": "Trạng thái"
 }

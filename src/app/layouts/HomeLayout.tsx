@@ -19,6 +19,7 @@ import {
   changeStudio,
   getInvitaionEmailMember,
   getMemberListInStudio,
+  loadConfig,
 } from "@/services/api_services/account_services";
 import { sortedMemList } from "../account/account-info/AccountInfo";
 import {
@@ -33,6 +34,8 @@ import {
 import { APIResults } from "@/data/api_results";
 import { ExamGroupData } from "@/data/exam";
 import { throws } from "assert";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import { setSettingConfig } from "@/redux/setting/settingSlice";
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const [isLogin, setIsLogin] = useState<boolean>(false);
@@ -62,6 +65,19 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       // await loadingQuestionsAndExams(true, userNew.studio?._id);
     } catch (e: any) {}
   };
+
+  const getSetting = async () => {
+    var res = await loadConfig();
+    if (res.code != 0) {
+      return;
+    }
+
+    dispatch(setSettingConfig(res?.data));
+  };
+
+  useOnMountUnsafe(() => {
+    getSetting();
+  });
 
   useEffect(() => {
     if (studioId) {

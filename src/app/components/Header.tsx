@@ -45,7 +45,7 @@ import {
 import { APIResults } from "@/data/api_results";
 import { ExamGroupData } from "@/data/exam";
 import { UserData } from "@/data/user";
-import Router from "next/router";
+import BellIcon from "@/app/components/icons/notification.svg";
 
 function Header({ path }: { path?: string }) {
   const { t, i18n } = useTranslation("account");
@@ -96,7 +96,7 @@ function Header({ path }: { path?: string }) {
         key: i,
         label: (
           <button
-            className="body_regular_14"
+            className="flex w-full mx-0 my-0 body_regular_14 justify-start"
             onClick={async () => {
               setOpenDrawer(false);
               await onChangeStudio(v.ownerId);
@@ -342,10 +342,11 @@ function Header({ path }: { path?: string }) {
             ))}
           </div>
           <div className="flex-1" />
-          <div className="lg:flex hidden h-full items-center mr-9">
+
+          <div className="lg:flex hidden h-full items-center mr-4">
             <HeadPhoneIcon className=" hidden" />
             <Dropdown menu={{ items: itemsStudio }}>
-              <button className="ml-3 lg:flex hidden items-center body_semibold_14 text-white">
+              <button className="ml-3 w-full lg:flex hidden items-center body_semibold_14 text-white">
                 {user?.studio?._id === user?._id
                   ? common.t("my_studio")
                   : user?.studio?.studio_name ?? user?.studio?.full_name}
@@ -355,7 +356,7 @@ function Header({ path }: { path?: string }) {
             </Dropdown>
           </div>
 
-          <div className="h-full lg:flex hidden items-center mr-9">
+          <div className="h-full lg:flex hidden items-center mr-0">
             <button
               className="flex items-center"
               onClick={() => {
@@ -381,6 +382,9 @@ function Header({ path }: { path?: string }) {
               </div>
             </button>
           </div>
+          <button className="mx-4">
+            <BellIcon />
+          </button>
           <Popover
             onOpenChange={(v) => {
               setOpenPop(v);

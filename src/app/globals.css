@@ -30,6 +30,10 @@ body {
   color: #003953;
 }
 
+.white-tooltip > .ant-tooltip-arrow::before {
+  background-color: white !important;
+}
+
 .modalStyle .ant-modal-content .ant-modal-body {
   background-color: #01579b;
   font-family:
