@@ -118,48 +118,6 @@ export default function Result({ params }: any) {
                         </div>
                         <hr />
                         <div className='p-4'>
-                            {/* <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Play />
-                                    <div className='font-semibold pl-1'>Bắt đầu làm bài</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div>
-                            <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Edit />
-                                    <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 1</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div>
-                            <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Edit />
-                                    <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 2</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div>
-                            <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Close />
-                                    <div className='font-semibold pl-1'>Thoát ra ngoài màn hình lần 1</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div>
-                            <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Edit />
-                                    <div className='font-semibold pl-1'>Bắt đầu làm câu hỏi số 4</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div>
-                            <div className='pb-4'>
-                                <div className='flex items-center'>
-                                    <Pause />
-                                    <div className='font-semibold pl-1'>Nộp bài thi</div>
-                                </div>
-                                <div className='text-sm text-m_neutral_500 pl-5'>13/04/2024 11:14:19</div>
-                            </div> */}
                             <div className='flex-row'>
                                 <div className='flex'>
                                     <div className='pt-[6px] mr-5'>

@@ -109,6 +109,7 @@ export const submit = async (data: any) => {
         `${process.env.NEXT_PUBLIC_API_BC}/apimodel/pushdevice.web_subscribe`,
         data,
     );
+    console.log("data noti", results);
     return results;
 };
 
