@@ -92,10 +92,11 @@ export default function FillBlank({
           }
           successToast(t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
+
           router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}?isBank=${
-              isBank ? "true" : "false"
-            }`,
+            `/${isBank ? "exam_bank" : "exams/details"}/${
+              examId ?? "u"
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
           );
           await getData();
         }}
@@ -209,9 +210,11 @@ export default function FillBlank({
                       console.log("isBank", isBank);
 
                       router.push(
-                        `/exams/details/${examId ?? "u"}/edit?questId=${
-                          question.id
-                        }&isBank=${isBank ? "true" : "false"}`,
+                        `/${isBank ? "exam_bank" : "exams/details"}/${
+                          examId ?? "u"
+                        }/edit?questId=${question.id}&isBank=${
+                          isBank ? "true" : "false"
+                        }`,
                       );
                     }}
                   >
@@ -295,7 +298,7 @@ export default function FillBlank({
                             ({x.label})
                           </div>
                           <span className="pr-2">{x?.anwsers?.join("/")}</span>
-                          <Tick />
+                          <Tick className="min-w-5" />
                         </div>
                         {/* <div className="flex items-center">
                                         <div className="body_semibold_14 pr-2">(2)</div><span className="pr-2">Nghĩa mẹ</span>

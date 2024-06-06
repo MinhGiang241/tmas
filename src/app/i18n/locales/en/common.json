@@ -91,5 +91,10 @@
   "action": "Action",
   "success_copy": "Successfully Copy",
   "edit": "Edit",
-  "duplicate": "Duplicate"
+  "duplicate": "Duplicate",
+  "delete_success_examination": "Successfully deleted the exam session",
+  "back": "Back",
+  "start_date": "Start date",
+  "end_date": "End date",
+  "result": "Result"
 }

@@ -92,9 +92,9 @@ export default function TrueFalse({
           successToast(t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}&isBank=${
-              isBank ? "true" : "false"
-            }`,
+            `/${isBank ? "exam_bank" : "exams/details"}/${
+              examId ?? "u"
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
           );
           await getData();
         }}
@@ -205,9 +205,11 @@ export default function TrueFalse({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/exams/details/${examId ?? "u"}/edit?questId=${
-                          question.id
-                        }&isBank=${isBank ? "true" : "false"}`,
+                        `/${isBank ? "exam_bank" : "exams/details"}/${
+                          examId ?? "u"
+                        }/edit?questId=${question.id}&isBank=${
+                          isBank ? "true" : "false"
+                        }`,
                       );
                     }}
                   >
@@ -291,6 +293,7 @@ export default function TrueFalse({
                           className="body_regular_14 pl-2"
                           dangerouslySetInnerHTML={{ __html: x.text }}
                         />
+                        <div className="min-w-5" />
                       </div>
                     ) : (
                       <div className="flex" key={key}>
@@ -301,7 +304,7 @@ export default function TrueFalse({
                           className="body_regular_14 pl-2 text-green-500 pr-2"
                           dangerouslySetInnerHTML={{ __html: x.text }}
                         />
-                        <Tick />
+                        <Tick className="min-w-5" />
                       </div>
                     ),
                   )}

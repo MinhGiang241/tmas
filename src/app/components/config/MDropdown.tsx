@@ -136,18 +136,22 @@ function MDropdown({
 
   return (
     <div className="w-full">
-      <div
-        className={`flex ${action ? "justify-between" : "justify-start"} mb-1 `}
-      >
-        <label className="text-sm font-semibold " htmlFor={id}>
-          {title} {required && <span className="text-m_error_500">*</span>}
-        </label>
-        {action}
-      </div>
+      {(title || action) && (
+        <div
+          className={`flex ${
+            action ? "justify-between" : "justify-start"
+          } mb-1 `}
+        >
+          <label className="text-sm font-semibold " htmlFor={id}>
+            {title} {required && <span className="text-m_error_500">*</span>}
+          </label>
+          {action}
+        </div>
+      )}
 
       <div
         className={`relative w-full flex flex-col ${
-          extend ? "mb-2" : "mb-[22px]"
+          extend ? "mb-0" : "mb-[22px]"
         }`}
       >
         <Select

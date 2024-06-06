@@ -212,9 +212,34 @@ export const getTmasExaminationList = async ({
   return results;
 };
 
-export const getTemplateSendMail = async () => {
-  const results = await callApi.get(
+export const getTemplateSendMail = async ({
+  name,
+  start_time,
+  end_time,
+}: {
+  name?: string;
+  start_time?: string;
+  end_time?: string;
+}) => {
+  const results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/mailtemplate.get_exam_remind_template`,
+    { name, start_time, end_time },
+  );
+  return results;
+};
+
+export const getTemplateSendResultMail = async ({
+  name,
+  start_time,
+  end_time,
+}: {
+  name?: string;
+  start_time?: string;
+  end_time?: string;
+}) => {
+  const results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/mailtemplate.generate_result_exam`,
+    { name, start_time, end_time },
   );
   return results;
 };
@@ -227,10 +252,21 @@ export const sendRemindEmail = async (data: SendRemindParams) => {
   return results;
 };
 
-export const loadRemindMailList = async (examtestId?: string) => {
+export const sendResultEmail = async (data: SendRemindParams) => {
+  const results = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examtestmaillist.send_result`,
+    data,
+  );
+  return results;
+};
+
+export const loadRemindMailList = async (
+  examtestId?: string,
+  type?: "Reminder" | "HasResult",
+) => {
   const results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examtestmaillist.load_by_exam`,
-    { examtestId },
+    { examtestId, type },
   );
   return results;
 };
@@ -239,6 +275,26 @@ export const deleteRemindMail = async (maillistId?: string) => {
   const results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examtestmaillist.delete`,
     { maillistId },
+  );
+  return results;
+};
+
+export const getOverViewExamination = async (
+  examinationId?: string,
+  includeExam?: boolean,
+) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/${examinationId}?IsIncludeExamVersion=${includeExam}`,
+  );
+  return results;
+};
+
+export const exportExelFile = async (examinationId?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/AdminExamTestResult/ExportExcel/${examinationId}`,
+    {
+      responseType: "blob",
+    },
   );
   return results;
 };

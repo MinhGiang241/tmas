@@ -72,19 +72,22 @@ function SendExaminationInfo(props: Props) {
   };
 
   useOnMountUnsafe(() => {
-    getTemplateMail();
     getSetting();
   });
   const getTemplateMail = async () => {
-    var res = await getTemplateSendMail();
+    var res = await getTemplateSendMail({
+      name: props.examination?.name,
+      start_time: props.examination?.validAccessSetting?.validFrom,
+      end_time: props.examination?.validAccessSetting?.validTo,
+    });
 
     console.log("res", res);
 
     if (res?.code != 0) {
       return;
     }
-    setTemplate(res?.data);
-    setSendContent(res?.data);
+    setTemplate(res?.data?.body);
+    setSendContent(res?.data?.body);
   };
 
   const columns: ColumnsType<any> = [
@@ -240,6 +243,7 @@ function SendExaminationInfo(props: Props) {
   useEffect(() => {
     var id: any;
     if (props.open) {
+      getTemplateMail();
       getEmailList();
       id = setInterval(() => {
         getEmailList();
@@ -258,7 +262,7 @@ function SendExaminationInfo(props: Props) {
   const [media, setMedia] = useState("email");
 
   const getEmailList = async () => {
-    const res = await loadRemindMailList(props.examination?.id);
+    const res = await loadRemindMailList(props.examination?.id, "Reminder");
     console.log("res list", res);
     if (res?.code != 0) {
       return;
@@ -350,12 +354,19 @@ function SendExaminationInfo(props: Props) {
         }}
       />
       <ContentDetailsModal
-        data={active}
+        data={{
+          content_send: active?.body,
+          reason_error: active?.errorMessage,
+        }}
         open={openDetal}
         width={564}
         title={t("detail")}
-        onCancel={() => setOpenDetail(false)}
+        onCancel={() => {
+          setActive(undefined);
+          setOpenDetail(false);
+        }}
         onOk={() => {
+          setActive(undefined);
           setOpenDetail(false);
         }}
       />
@@ -391,18 +402,6 @@ function SendExaminationInfo(props: Props) {
           className="min-h-40 mt-2 border rounded-lg bg-m_neutral_100 p-5"
           dangerouslySetInnerHTML={{ __html: template ?? "" }}
         />
-        {/* <EditorHook */}
-        {/*   disabled */}
-        {/*   defaultValue={template} */}
-        {/*   value={sendContent} */}
-        {/*   setValue={(name: any, val: any) => { */}
-        {/*     setSendContent(val); */}
-        {/*   }} */}
-        {/*   isCount={false} */}
-        {/*   id="send_content" */}
-        {/*   name="send_content" */}
-        {/*   title={t("send_content")} */}
-        {/* /> */}
         <div className="mt-2 body_semibold_14 flex items-center justify-between">
           <div>{t("receipt_info_list")}</div>
           <div className="flex items-center w-1/3">

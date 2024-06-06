@@ -2,8 +2,10 @@ import { ExaminationVersionState } from "@/services/api_services/examination_bc_
 import {
   AccessCodeExaminantionSetting,
   CodingDataType,
+  PartObject,
 } from "./form_interface";
 import { BaseQuestionData, QuestionType } from "./question";
+import { TagData } from "./tag";
 
 export interface ExamGroupData {
   name?: string;
@@ -50,6 +52,10 @@ export interface ExamListDataResult {
 
 export interface ExamData {
   examinations?: ExaminationData[];
+  approvedState?: {
+    approvedState?: "Approved" | "Pending" | "Rejected";
+    rejectedMessage?: string;
+  };
   changePositionQuestion?: boolean;
   name?: string;
   numberOfTests?: number;
@@ -72,6 +78,7 @@ export interface ExamData {
   createdBy?: string;
   updateTime?: string;
   updateBy?: string;
+  unsignedName?: string;
   studioId?: string;
   idSession?: string;
 }
@@ -184,6 +191,7 @@ export interface ExaminationData {
     isEnable?: boolean;
     goldPrice?: number;
   };
+  statisticExamTest?: StatisticExamTest;
 }
 
 export interface TmasExamVersion {
@@ -407,6 +415,25 @@ export interface TmasStudioExamData {
   Version?: string;
 }
 
+export interface ResultEmailData {
+  _id?: string;
+  body?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  creator?: string;
+  data: { [key: string]: any };
+  email?: string;
+  examtestId?: string;
+  mid?: string;
+  name?: string;
+  retry?: number;
+  schema?: string;
+  sentTime?: string;
+  status?: "Pending" | "Success" | "Failure" | "New";
+  type?: "HasResult" | "Reminder";
+  errorMessage?: string;
+}
+
 export interface RemindEmailData {
   _id?: string;
   createdTime?: string;
@@ -421,4 +448,205 @@ export interface RemindEmailData {
   status?: "Pending" | "Success" | "Failure" | "New";
   passcode?: string;
   errorMessage?: string;
+}
+export enum Condition {
+  eq = "eq",
+  ne = "ne",
+  gt = "gt",
+  gte = "gte",
+  lt = "lt",
+  lte = "lte",
+  inArray = "inArray",
+  ninArray = "ninArray",
+  regex = "regex",
+}
+
+export interface PagingAdminExamTestResultParams {
+  paging?: {
+    startIndex?: number;
+    recordPerPage?: number;
+  };
+  ids?: string[];
+  studioSorters?: [
+    {
+      name?: string;
+      isAsc?: boolean;
+    },
+  ];
+  filters?: {
+    fieldName?: string;
+    condition?: Condition;
+    value?: string;
+  }[];
+}
+
+export interface CheckingAnswerParams {
+  idExamTestResult?: string;
+  evaluatorComment?: string;
+  score?: number;
+  idExamQuestion?: string;
+}
+
+export interface ExaminationResultParams {
+  id?: string;
+  idExamTest?: string;
+  joinTest?: {
+    codeJoin?: string;
+    joinCouter?: number;
+    canContinueDoTest?: boolean;
+  };
+  candidate?: {
+    ip4?: string;
+    idUser?: string;
+    fullName?: string;
+    accessCode?: string;
+    phoneNumber?: string;
+    email?: string;
+    birthDay?: string;
+    groupTest?: string;
+    jobName?: string;
+    identifier?: string;
+  };
+  candidateAnswers?: CandidateAnswers[];
+  timeLine?: {
+    commitTestAt?: any;
+    mustStopDoTestAt?: string;
+    startDoTestAt?: string;
+    timeLines?: {
+      createTime?: string;
+      eventType?: string;
+      message?: string;
+    }[];
+    totalTimeDoTestSeconds?: number;
+  };
+}
+
+export interface CandidateAnswers {
+  anwserScore?: {
+    evaluatorComment?: string;
+    isAnwsered?: boolean;
+    isDoneScoring?: boolean;
+    numberQuestionCorrect?: number;
+    score?: number;
+    scoreAsInt?: number;
+    totalQuestion?: number;
+    totalScore?: number;
+    totalScoreAsInt?: number;
+  };
+  idExamQuestion?: string;
+  candidateAnswerJson?: string;
+}
+
+export interface ExamTestResulstData {
+  candidate?: {
+    accessCode?: string;
+    birthDay?: string;
+    email?: string;
+    fullName?: string;
+    groupTest?: string;
+    idUser?: string;
+    identifier?: string;
+    ip4?: string;
+    jobName?: string;
+    phoneNumber?: string;
+  };
+  candidateAnswers?: CandidateAnswers[];
+  createdBy?: string;
+  createdTime?: string;
+  examTestDataCreatedWhenTest?: {
+    examTestInfo?: ExaminationData;
+    examVersion?: {
+      documents?: any[];
+      exam?: ExamData;
+      groupExams?: ExamGroupData[];
+      jsonExamQuestions?: string[];
+      parts?: PartObject[];
+      tags?: TagData[];
+    };
+  };
+  id?: string;
+  idExamTest?: string;
+  joinTest?: {
+    canContinueDoTest?: boolean;
+    codeJoin?: string;
+    joinCouter?: number;
+  };
+  ownerId?: string;
+  result?: {
+    completionState?: ExamCompletionState;
+    couter?: {
+      numberOfQuestionCorrect?: number;
+      numberOfQuestionNotComplete?: number;
+      numberOfQuestionWrong?: number;
+      numberOfQuestions?: number;
+      numberQuestionNeedCheck?: number;
+      numberQuestionEssay?: number;
+    };
+    passState?: ExamPassState;
+    percentComplete?: number;
+    percentCorrect?: number;
+    score?: number;
+    scoreAsInt?: number;
+    statistic?: StatisticExamTestInfo;
+  };
+  studioId?: string;
+  updateBy?: string;
+  updateTime?: string;
+  timeLine?: {
+    commitTestAt?: any;
+    mustStopDoTestAt?: string;
+    startDoTestAt?: string;
+    timeLines?: {
+      createTime?: string;
+      eventType?: string;
+      message?: string;
+    }[];
+    totalTimeDoTestSeconds?: number;
+  };
+}
+
+export enum ExamPassState {
+  Pass = "Pass",
+  NotCheck = "NotCheck",
+  NotPass = "NotPass",
+}
+
+export enum ExamCompletionState {
+  Doing = "Doing",
+  Checking = "Checking",
+  Done = "Done",
+}
+
+export interface StatisticExamTestInfo {
+  completionByState?: {
+    totalChecking?: number;
+    totalDoing?: number;
+    totalDone?: number;
+  };
+  totalAnwserNotEssayCorrect?: number;
+  totalAnwserCorrect?: number;
+  totalAnwserWrong?: number;
+  totalPass?: number;
+  totalFailed?: number;
+  totalNotAnwser?: number;
+  totalExamTestResult?: number;
+  totalNotCheck?: number;
+}
+
+export interface StatisticExamTest {
+  statistic?: StatisticExamTestInfo;
+  // new
+  passState?: ExamPassState;
+  percentComplete?: number;
+  percentCorrect?: number;
+  score?: number;
+  scoreAsInt?: number;
+  completionState?: ExamCompletionState;
+  couter?: {
+    numberOfQuestionCorrect?: number;
+    numberOfQuestionNotComplete?: number;
+    numberOfQuestions?: number;
+    numberQuestionEssay?: number;
+    numberQuestionNeedCheck?: number;
+  };
 }

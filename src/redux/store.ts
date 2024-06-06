@@ -5,6 +5,7 @@ import homeReducer from "./home/homeSlice";
 import examGroupReducer from "./exam_group/examGroupSlice";
 import questionReducer from "./questions/questionSlice";
 import paymentReducer from "./payment/paymentSlice";
+import settingReducer from "./setting/settingSlice";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     examGroup: examGroupReducer,
     question: questionReducer,
     payment: paymentReducer,
+    setting: settingReducer,
   },
 });
 

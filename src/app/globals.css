@@ -30,6 +30,10 @@ body {
   color: #003953;
 }
 
+.white-tooltip > .ant-tooltip-arrow::before {
+  background-color: white !important;
+}
+
 .modalStyle .ant-modal-content .ant-modal-body {
   background-color: #01579b;
   font-family:
@@ -178,6 +182,23 @@ body {
   color: #003953 !important;
 }
 
+.ql-toolbar.ql-snow {
+  border-top-right-radius: 6px 6px !important;
+  border-top-left-radius: 6px 6px !important;
+}
+.ql-container.ql-snow {
+  border-bottom-right-radius: 6px 6px;
+  border-bottom-left-radius: 6px 6px;
+}
+
+.ql-error > .ql-toolbar.ql-snow {
+  border-color: #ea3434 !important;
+}
+
+.ql-error > .ql-container.ql-snow {
+  border-color: #ea3434 !important;
+}
+
 .custom-ql-snow .ql-toolbar {
   border-top-right-radius: 6px 6px;
   border-top-left-radius: 6px 6px;
@@ -249,11 +270,38 @@ body {
 .tag-big .ant-select-selector {
   min-height: 44px !important ;
 }
+div.ql-container.ql-snow > .ql-editor {
+  min-height: 200px !important;
+}
 
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */
 /* } */
+
+.heading_bold_32 {
+  @apply font-bold text-4xl;
+}
+
+.heading_semibold_32 {
+  @apply font-semibold text-4xl;
+}
+
+.heading_regular_32 {
+  @apply font-bold text-4xl;
+}
+
+.heading_bold_40 {
+  @apply font-bold text-5xl;
+}
+
+.heading_semibold_40 {
+  @apply font-semibold text-5xl;
+}
+
+.heading_regular_40 {
+  @apply font-bold text-5xl;
+}
 
 .title_bold_40 {
   @apply font-bold text-5xl;

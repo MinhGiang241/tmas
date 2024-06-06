@@ -6,6 +6,10 @@ import _ from "lodash";
 import MInput from "@/app/components/config/MInput";
 import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 import MRangePicker from "@/app/components/config/MRangePicker";
+import MTreeSelect from "@/app/components/config/MTreeSelect";
+import { useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import { ExamGroupData } from "@/data/exam";
 
 interface Props extends BaseModalProps {
   loading?: boolean;
@@ -56,6 +60,7 @@ function FilterModal(props: Props) {
         if (!a?.isSelect) {
           return null;
         }
+
         if (a.name == "test_date") {
           return (
             <MRangePicker

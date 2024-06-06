@@ -45,7 +45,7 @@ import {
 import { APIResults } from "@/data/api_results";
 import { ExamGroupData } from "@/data/exam";
 import { UserData } from "@/data/user";
-import Router from "next/router";
+import BellIcon from "@/app/components/icons/notification.svg";
 
 function Header({ path }: { path?: string }) {
   const { t, i18n } = useTranslation("account");
@@ -57,7 +57,7 @@ function Header({ path }: { path?: string }) {
     "exams",
     "examination",
     "exam_bank",
-    "statistics",
+    "account",
   ];
 
   const user = useSelector((state: RootState) => state.user.user);
@@ -90,20 +90,22 @@ function Header({ path }: { path?: string }) {
     (typeof user?.studios == "string"
       ? JSON.parse(user?.studios)
       : user?.studios
-    )?.map((v: any, i: number) => ({
-      key: i,
-      label: (
-        <button
-          className="body_regular_14"
-          onClick={async () => {
-            setOpenDrawer(false);
-            await onChangeStudio(v.ownerId);
-          }}
-        >
-          {v.ownerId == user._id ? common.t("my_studio") : v.studio_name}
-        </button>
-      ),
-    })) ?? [];
+    )
+      ?.filter((d: any) => d.role != "Member")
+      ?.map((v: any, i: number) => ({
+        key: i,
+        label: (
+          <button
+            className="flex w-full mx-0 my-0 body_regular_14 justify-start"
+            onClick={async () => {
+              setOpenDrawer(false);
+              await onChangeStudio(v.ownerId);
+            }}
+          >
+            {v.ownerId == user._id ? common.t("my_studio") : v.studio_name}
+          </button>
+        ),
+      })) ?? [];
 
   const onChangeStudio = async (ownerId?: string) => {
     try {
@@ -312,16 +314,7 @@ function Header({ path }: { path?: string }) {
             {links.map((e, i) => (
               <Link
                 key={i}
-                href={
-                  !user?.verified
-                    ? "#"
-                    : e == "exam_group" ||
-                        e == "exams" ||
-                        e == "examination" ||
-                        e == "exam_bank"
-                      ? `/${e}`
-                      : "/"
-                }
+                href={!user?.verified ? "#" : e == "overview" ? "/" : `/${e}`}
                 onClick={() => {
                   if (
                     !user?.verified &&
@@ -331,7 +324,6 @@ function Header({ path }: { path?: string }) {
                       "examination",
                       "overview",
                       "exam_bank",
-                      "statistics",
                     ].some((d) => {
                       return d == e;
                     })
@@ -340,7 +332,7 @@ function Header({ path }: { path?: string }) {
                   }
                 }}
                 className={`flex items-center text-center body_semibold_14 text-white px-5 h-full ${
-                  pathname.includes(e)
+                  pathname.includes(e) || (pathname == "/" && e == "overview")
                     ? "bg-m_primary_400 after:content-[''] border-b-white border-b-4"
                     : ""
                 }`}
@@ -350,10 +342,11 @@ function Header({ path }: { path?: string }) {
             ))}
           </div>
           <div className="flex-1" />
-          <div className="lg:flex hidden h-full items-center mr-9">
+
+          <div className="lg:flex hidden h-full items-center mr-4">
             <HeadPhoneIcon className=" hidden" />
             <Dropdown menu={{ items: itemsStudio }}>
-              <button className="ml-3 lg:flex hidden items-center body_semibold_14 text-white">
+              <button className="ml-3 w-full lg:flex hidden items-center body_semibold_14 text-white">
                 {user?.studio?._id === user?._id
                   ? common.t("my_studio")
                   : user?.studio?.studio_name ?? user?.studio?.full_name}
@@ -363,7 +356,7 @@ function Header({ path }: { path?: string }) {
             </Dropdown>
           </div>
 
-          <div className="h-full lg:flex hidden items-center mr-9">
+          <div className="h-full lg:flex hidden items-center mr-0">
             <button
               className="flex items-center"
               onClick={() => {
@@ -389,6 +382,9 @@ function Header({ path }: { path?: string }) {
               </div>
             </button>
           </div>
+          <button className="mx-4">
+            <BellIcon />
+          </button>
           <Popover
             onOpenChange={(v) => {
               setOpenPop(v);
@@ -401,7 +397,7 @@ function Header({ path }: { path?: string }) {
                 <button
                   onClick={() => {
                     setOpenPop(false);
-                    router.push("/?tab=0");
+                    router.push("/account?tab=0");
                   }}
                   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >
@@ -410,7 +406,7 @@ function Header({ path }: { path?: string }) {
                 <button
                   onClick={() => {
                     setOpenPop(false);
-                    router.push("/?tab=2");
+                    router.push("/account?tab=2");
                   }}
                   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >
@@ -419,7 +415,7 @@ function Header({ path }: { path?: string }) {
                 <button
                   onClick={() => {
                     setOpenPop(false);
-                    router.push("/?tab=3");
+                    router.push("/account?tab=3");
                   }}
                   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
                 >

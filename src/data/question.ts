@@ -1,3 +1,4 @@
+import { ExamCompletionState } from "./exam";
 import { CodingDataType, ParameterType } from "./form_interface";
 
 export interface MultiAnswer {
@@ -44,6 +45,8 @@ export interface BaseQuestionData {
   updateTime?: string;
   createdTime?: string;
   studioId?: string;
+  // find
+  hidden?: boolean;
 }
 
 export interface CodingQuestionData extends BaseQuestionData {
@@ -119,4 +122,43 @@ export interface SqlQuestionData extends BaseQuestionData {
     schemaSql?: string;
     expectedOutput?: string;
   };
+}
+
+export interface CodingCandidateAnswer {
+  code?: string;
+  languageSelected?: string;
+}
+
+export interface FillBlankCandidateAnswer {
+  anwserItems?: {
+    anwsers?: string[];
+    label?: string;
+    isCorrect?: boolean;
+  }[];
+}
+
+export interface ConnectCandidateAnswer {
+  anwserPairings: { idAnswer?: string; idQuestion?: string }[];
+}
+
+export interface MultiCandidateAnswer {
+  answers?: {
+    label?: string;
+    isCorrect?: boolean;
+  }[];
+}
+
+export interface EssayCandidateAnswer {
+  anwserHtml?: string;
+  idFiles?: any[];
+}
+
+export interface ParamsCheckMultiAnswer {
+  idExamTestResult?: string;
+  answerItems?: {
+    evaluatorComment?: string;
+    score?: number;
+    idExamQuestion?: string;
+  }[];
+  completionState?: ExamCompletionState;
 }

@@ -152,6 +152,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
       var dataResults = await getExaminationTestList({
         "FilterByExamId.Name": "Name",
         "FilterByExamId.InValues": c[0],
+        isIncludeExamVersion: false,
       });
       console.log("dataResults", dataResults);
       if (dataResults?.code != 0) {
@@ -393,7 +394,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                           >
                             <Tooltip
                               placement="top"
-                              title={t("push_to_market")}
+                              title={t("push_exam_bank")}
                             >
                               <UploadOutlined className="text-2xl" />
                             </Tooltip>
@@ -508,6 +509,9 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    router.push(
+                                      `/exams/examtest_results/${k?.id}?from=ExamList`,
+                                    );
                                   }}
                                   className="h-full mx-2"
                                 >

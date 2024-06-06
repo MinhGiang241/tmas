@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { Suspense, useEffect, useState } from "react";
 import Header from "../components/Header";
 import {
@@ -17,22 +18,11 @@ import { setLoadingMember, setMemberData } from "@/redux/members/MemberSlice";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import {
   changeStudio,
-  getInvitaionEmailMember,
-  getMemberListInStudio,
+  loadConfig,
 } from "@/services/api_services/account_services";
-import { sortedMemList } from "../account/account-info/AccountInfo";
-import {
-  setExamAndQuestionLoading,
-  setExamGroupList,
-  setquestionGroupList,
-} from "@/redux/exam_group/examGroupSlice";
-import {
-  getExamGroupTest,
-  getQuestionGroups,
-} from "@/services/api_services/exam_api";
-import { APIResults } from "@/data/api_results";
-import { ExamGroupData } from "@/data/exam";
-import { throws } from "assert";
+
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import { setSettingConfig } from "@/redux/setting/settingSlice";
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const [isLogin, setIsLogin] = useState<boolean>(false);
@@ -62,6 +52,19 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       // await loadingQuestionsAndExams(true, userNew.studio?._id);
     } catch (e: any) {}
   };
+
+  const getSetting = async () => {
+    var res = await loadConfig();
+    if (res.code != 0) {
+      return;
+    }
+
+    dispatch(setSettingConfig(res?.data));
+  };
+
+  useEffect(() => {
+    getSetting();
+  }, [user]);
 
   useEffect(() => {
     if (studioId) {
@@ -139,6 +142,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       ) : (
         <main className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900">
           <Header />
+          {user?._id && !user?.verified && <div className="h-[44px]" />}
           <div className="lg:h-[68px] h-14 " />
           <div className="max-w-[1140px] mx-auto">
             <div className=" w-full text-m_neutral_900">{children}</div>

@@ -1,19 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import MBreadcrumb from "@/app/components/config/MBreadcrumb";
 import HomeLayout from "@/app/layouts/HomeLayout";
 import { Divider, Pagination, Select, Table } from "antd";
-import React, { HTMLAttributes, useState } from "react";
+import React, { HTMLAttributes, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _, { keys } from "lodash";
-import {
-  PieChart,
-  Pie,
-  Sector,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from "recharts";
 import MButton from "@/app/components/config/MButton";
 import DownloadIcon from "@/app/components/icons/download.svg";
 import FilterIcon from "@/app/components/icons/filter.svg";
@@ -25,10 +17,39 @@ import {
 } from "@/app/account/account-info/AccountInfo";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
 import FilterModal from "./components/FilterModal";
 import { FormikErrors, useFormik } from "formik";
 import { CloseOutlined } from "@ant-design/icons";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  exportExelFile,
+  getOverViewExamination,
+} from "@/services/api_services/examination_api";
+import {
+  Condition,
+  ExamCompletionState,
+  ExamGroupData,
+  ExamTestResulstData,
+  ExaminationData,
+} from "@/data/exam";
+import Chart from "./components/Chart";
+import { getPagingAdminExamTestResult } from "@/services/api_services/result_exam_api";
+import { saveAs } from "file-saver";
+import axios from "axios";
+import { errorToast } from "@/app/components/toast/customToast";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import examGroupSlice, {
+  fetchDataExamGroup,
+  setExamGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
+import { APIResults } from "@/data/api_results";
+import { getExamGroupTest } from "@/services/api_services/exam_api";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(duration);
+dayjs.extend(customParseFormat);
 
 function ResultPage({ params }: any) {
   const { t } = useTranslation("exam");
@@ -39,53 +60,124 @@ function ResultPage({ params }: any) {
   const [total, setTotal] = useState<number>(1);
   const router = useRouter();
 
-  const data = [
-    { label: "pass", name: t("pass"), value: 100 },
-    { label: "not_pass", name: t("not_pass"), value: 300 },
-  ];
+  interface TableValue {
+    id?: string;
+    full_name?: string;
+    percent_complete?: string;
+    point?: number;
+    complete_time?: string;
+    test_date?: string;
+    status?: string;
+    email?: string;
+    phone?: string;
+    group?: string;
+    identify_code?: string;
+    seconds?: number;
+  }
+  interface FilterObject {
+    fieldName?: string;
+    value?: any;
+    condition?: Condition;
+  }
 
-  const COLORS = ["#FC8800", "#6DB3C2", "#775DA6"];
-  const RADIAN = Math.PI / 180;
+  const [infos, setInfos] = useState<TableValue[]>([]);
+  const [filters, setFilters] = useState<FilterObject[]>([]);
 
-  const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-    index,
-  }: any) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  const [examination, setExamination] = useState<ExaminationData | undefined>();
 
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
+  const getExaminationDetail = async () => {
+    var res = await getOverViewExamination(params.eid, false);
+    if (res.code != 0) {
+      return;
+    }
+    setExamination(res?.data?.records[0]);
+    getListResults(res?.data?.records[0]);
   };
-  const infos = [
-    {
-      full_name: "Trương Minh Giang",
-      percent_complete: "10%",
-      point: 100,
-      complete_time: "30 phút",
-      test_date: "2024-04-19T02:11:24.096+0000",
-      status: "Chưa hoàn thành",
-      email: "minhgiang241@gmail.com",
-      phone: "0367333592",
-      group: "Chim",
-      identify_code: "5045",
-    },
-  ];
+  const examGroups = useAppSelector(
+    (state: RootState) => state?.examGroup?.list,
+  );
+  const getListResults = async (examTest?: ExaminationData) => {
+    var res = await getPagingAdminExamTestResult({
+      paging: {
+        recordPerPage: recordNum,
+        startIndex: indexPage,
+      },
+      filters: [
+        {
+          fieldName: "idExamTest",
+          value: examTest?.id,
+          condition: Condition.eq,
+        },
+        ...filters,
+      ],
+    });
+    if (res.code != 0) {
+      return;
+    }
+    var data: ExamTestResulstData[] = res.data?.records;
+    var s = data?.map<TableValue>((e) => ({
+      id: e.id,
+      email: e?.candidate?.email,
+      full_name: e?.candidate?.fullName,
+      identify_code: e?.candidate?.identifier,
+      point: e?.result?.score,
+      complete_time: e?.timeLine?.mustStopDoTestAt ?? e?.timeLine?.commitTestAt,
+      test_date: e?.timeLine?.startDoTestAt,
+      percent_complete: `${e?.result?.percentComplete} %`,
+      phone: e?.candidate?.phoneNumber,
+      status: e?.result?.completionState,
+      seconds: e?.timeLine?.totalTimeDoTestSeconds,
+      group: e?.candidate?.groupTest,
+    }));
+
+    setTotal(res?.data?.totalOfRecords);
+    setInfos(s);
+    console.log("esss", res);
+  };
+
+  const [filterValues, setFilterValues] = useState<FormFilterValue>({});
+  const downloadExcell = async () => {
+    var res = await exportExelFile(params.eid);
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    saveAs(res?.data, "data.xlsx");
+  };
+
+  const user = useAppSelector((state: RootState) => state.user.user);
+  const dispatch = useAppDispatch();
+  const chilGroups = examGroups?.reduce(
+    (a: any, b: any) => [...a, ...(b.childs ?? [])],
+    [],
+  );
+
+  const loadExamGroupList = async (init?: boolean) => {
+    if (init) {
+      dispatch(setExamGroupLoading(true));
+    }
+
+    var dataResults: APIResults = await getExamGroupTest({
+      text: "",
+      studioId: user?.studio?._id,
+    });
+
+    if (dataResults.code != 0) {
+      return [];
+    } else {
+      var data = dataResults?.data as ExamGroupData[];
+      var levelOne = data?.filter((v: ExamGroupData) => v.level === 0);
+      var levelTwo = data?.filter((v: ExamGroupData) => v.level === 1);
+
+      var list = levelOne.map((e: ExamGroupData) => {
+        var childs = levelTwo.filter(
+          (ch: ExamGroupData) => ch.idParent === e.id,
+        );
+        return { ...e, childs };
+      });
+      return list;
+    }
+  };
 
   const columns: ColumnsType<any> = [
     {
@@ -102,9 +194,8 @@ function ResultPage({ params }: any) {
     },
     {
       onHeaderCell: (_) => rowStyle,
-
       title: (
-        <div className="w-full break-all  flex justify-start">
+        <div className="min-w-36 w-full break-all  flex justify-start">
           {t("full_name")}
         </div>
       ),
@@ -122,9 +213,10 @@ function ResultPage({ params }: any) {
 
     {
       onHeaderCell: (_) => rowStyle,
-
       title: (
-        <div className="w-full flex justify-start">{t("percent_complete")}</div>
+        <div className="min-w-32 w-full flex justify-start">
+          {t("percent_complete")}
+        </div>
       ),
       dataIndex: "percent_complete",
       key: "complete_percent",
@@ -155,36 +247,42 @@ function ResultPage({ params }: any) {
       onHeaderCell: (_) => rowStyle,
 
       title: (
-        <div className="w-full flex justify-start">{t("complete_time")}</div>
+        <div className="min-w-32 flex justify-start">{t("complete_time")}</div>
       ),
       dataIndex: "complete_time",
       key: "complete_time",
-      render: (text) => (
+      render: (text, data) => (
         <p
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {text}
+          {`${dayjs.duration((data?.seconds ?? 0) * 1000).format("HH:mm:ss")}`}
         </p>
       ),
     },
     {
       onHeaderCell: (_) => rowStyle,
-      title: <div className="w-full flex justify-start">{t("test_date")}</div>,
+      title: (
+        <div className="min-w-32 w-full flex justify-start">
+          {t("test_date")}
+        </div>
+      ),
       dataIndex: "test_date",
       key: "test_date",
       render: (text) => (
         <p
           key={text}
-          className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
+          className="w-full flex  min-w-32 justify-start caption_regular_14"
         >
-          {`${dayjs(text).format(dateFormat)}`}
+          {`${dayjs(text).format("HH:mm:ss DD/MM/YYYY")}`}
         </p>
       ),
     },
     {
       onHeaderCell: (_) => rowStyle,
-      title: <div className="w-full flex justify-start">{t("status")}</div>,
+      title: (
+        <div className="min-w-32 w-full flex justify-start">{t("status")}</div>
+      ),
       dataIndex: "status",
       key: "status",
       render: (text) => (
@@ -192,14 +290,16 @@ function ResultPage({ params }: any) {
           key={text}
           className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
         >
-          {text}
+          {t(text)}
         </p>
       ),
     },
 
     {
       onHeaderCell: (_) => rowStyle,
-      title: <div className="w-full flex justify-start">{t("email")}</div>,
+      title: (
+        <div className="min-w-36 w-full flex justify-start">{t("email")}</div>
+      ),
       dataIndex: "email",
       key: "email",
       render: (text) => (
@@ -213,7 +313,9 @@ function ResultPage({ params }: any) {
     },
     {
       onHeaderCell: (_) => rowEndStyle,
-      title: <div className="w-full flex justify-start">{t("phone")}</div>,
+      title: (
+        <div className="min-w-32 w-full flex justify-start">{t("phone")}</div>
+      ),
       dataIndex: "phone",
       key: "phone",
       render: (text) => (
@@ -227,22 +329,28 @@ function ResultPage({ params }: any) {
     },
     {
       onHeaderCell: (_) => rowEndStyle,
-      title: <div className="w-full flex justify-start">{t("group")}</div>,
+      title: (
+        <div className="min-w-24 w-full flex justify-start">{t("group")}</div>
+      ),
       dataIndex: "group",
       key: "group",
-      render: (text) => (
-        <p
-          key={text}
-          className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
-        >
-          {text}
-        </p>
-      ),
+      render: (text) => {
+        return (
+          <p
+            key={text}
+            className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
+          >
+            {text}
+          </p>
+        );
+      },
     },
     {
       onHeaderCell: (_) => rowEndStyle,
       title: (
-        <div className="w-full flex justify-start">{t("identify_code")}</div>
+        <div className="min-w-24 w-full flex justify-start">
+          {t("identify_code")}
+        </div>
       ),
       dataIndex: "identify_code",
       key: "identify-code",
@@ -257,14 +365,22 @@ function ResultPage({ params }: any) {
     },
     {
       onHeaderCell: (_) => rowEndStyle,
-      title: <div className="w-full flex justify-start">{t("detail")}</div>,
+      title: (
+        <div className="min-w-24 w-full flex justify-start">{t("detail")}</div>
+      ),
       dataIndex: "detail",
       key: "detail",
-      render: (text) => (
-        <div className="w-full flex justify-center">
+      render: (text, data) => (
+        <div className="w-full flex justify-start">
           <button
             onClick={() => {
-              router.push(`/examination/results/${params?.eid}/details`);
+              from == "ExamList"
+                ? router.push(
+                    `/exams/examtest_results/${params?.eid}/${data?.id}?from=${from}`,
+                  )
+                : router.push(
+                    `/examination/results/${params?.eid}/${data?.id}?from=${from}`,
+                  );
             }}
           >
             <EyeIcon />
@@ -281,7 +397,7 @@ function ResultPage({ params }: any) {
     full_name?: string;
     group?: string;
     phone_number?: string;
-    test_date?: string;
+    test_date?: string[];
   }
   const validate = (values: FormFilterValue) => {
     const errors: FormikErrors<FormFilterValue> = {};
@@ -291,13 +407,99 @@ function ResultPage({ params }: any) {
     initialValues: {},
     validate,
     onSubmit: (values: FormFilterValue) => {
-      console.log({ values });
+      console.log("values", values);
 
-      setFilterValues(values);
+      var valuesClone = _.cloneDeep(values);
+      setFilterValues(valuesClone);
+      var newFilters = [];
+      for (let i in values) {
+        if (!!(values as any)[i]) {
+          switch (i) {
+            case "email":
+              newFilters.push({
+                fieldName: "candidate.email",
+                value: `/${values[i]?.trim()}/i`,
+                condition: Condition.regex,
+              });
+              break;
+            case "identify_code":
+              newFilters.push({
+                fieldName: "candidate.identifier",
+                value: `/${values[i]?.trim()}/i`,
+                condition: Condition.regex,
+              });
+
+              break;
+            case "group":
+              newFilters.push({
+                fieldName: "candidate.groupTest",
+                value: `/${values[i]?.trim()}/i`,
+                condition: Condition.regex,
+              });
+
+              break;
+            case "full_name":
+              newFilters.push({
+                fieldName: "candidate.unsignedFullName",
+                value: `/${values[i]?.trim()}/i`,
+                condition: Condition.regex,
+                ConvertTextToUnsigned: true,
+              });
+
+              break;
+            case "phone_number":
+              newFilters.push({
+                fieldName: "candidate.phoneNumber",
+                value: `/${values[i]?.trim()}/i`,
+                condition: Condition.regex,
+              });
+
+              break;
+            case "test_date":
+              var gte = {
+                fieldName: "createdTime",
+                value:
+                  values[i] && values[i]!.length >= 1
+                    ? `${dayjs(
+                        (values[i] as any)[0],
+                        "DD/MM/YYYY",
+                      ).toISOString()}`
+                    : undefined,
+                condition: Condition.gte,
+              };
+              console.log("gte", gte);
+              var lt = {
+                fieldName: "createdTime",
+                value:
+                  values[i] && values[i]!.length >= 2
+                    ? `${dayjs((values[i] as any)[1], "DD/MM/YYYY")
+                        ?.add(1, "day")
+                        ?.toISOString()}`
+                    : undefined,
+                condition: Condition.lt,
+              };
+              console.log("lt", gte, lt);
+              newFilters.push(gte);
+              newFilters.push(lt);
+              break;
+
+            default:
+              break;
+          }
+        }
+      }
+      setFilters(newFilters);
     },
   });
-
-  const [filterValues, setFilterValues] = useState<FormFilterValue>({});
+  const search = useSearchParams();
+  var from = search.get("from");
+  const [testDate, setTestDate] = useState<string | undefined>();
+  useEffect(() => {
+    getExaminationDetail();
+    if (user?._id) {
+      dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
+    }
+  }, [user, filters, testDate, recordNum, indexPage]);
 
   return (
     <HomeLayout>
@@ -307,6 +509,45 @@ function ResultPage({ params }: any) {
           var cloneFilter: FormFilterValue = _.cloneDeep(filterValues);
           (cloneFilter as any)[fields] = undefined;
           setFilterValues(cloneFilter);
+          switch (fields) {
+            case "email":
+              setFilters([
+                ...filters?.filter((d) => d.fieldName != "candidate.email"),
+              ]);
+              break;
+            case "group":
+              setFilters([
+                ...filters?.filter((d) => d.fieldName != "candidate.groupTest"),
+              ]);
+              break;
+            case "phone_number":
+              setFilters([
+                ...filters?.filter(
+                  (d) => d.fieldName != "candidate.phoneNumber",
+                ),
+              ]);
+              break;
+            case "full_name":
+              setFilters([
+                ...filters?.filter(
+                  (d) => d.fieldName != "candidate.unsignedFullName",
+                ),
+              ]);
+              break;
+            case "identify_code":
+              setFilters([
+                ...filters?.filter(
+                  (d) => d.fieldName != "candidate.identifier",
+                ),
+              ]);
+              break;
+            case "test_date":
+              setFilters([
+                ...filters?.filter((d) => d.fieldName != "createdTime"),
+              ]);
+              setTestDate(undefined);
+              break;
+          }
         }}
         formik={formik}
         open={openFilter}
@@ -318,83 +559,99 @@ function ResultPage({ params }: any) {
           setOpenFilter(false);
         }}
       />
-      <div className="h-3" />
+      <div className="h-5" />
       <MBreadcrumb
         items={[
-          { text: t("exam_test"), href: "/examination" },
           {
-            href: `/examination/result/${params?.eid}`,
-            text: t("examination_result"),
+            text: from == "ExamList" ? t("exam_list") : t("exam_test"),
+            href: from == "ExamList" ? "/exams" : "/examination",
+          },
+          {
+            href:
+              from == "EditExam"
+                ? `/examination/${params?.eid}`
+                : `/examination/results/${params?.eid}?from=${from}`,
+            text: from == "EditExam" ? examination?.name : examination?.name,
+            active: from != "EditExam",
+          },
+          {
+            href: `/examination/results/${params?.eid}?from=${from}`,
+            text: t("view_result"),
             active: true,
+            hidden: from != "EditExam",
           },
         ]}
       />
-      <div className="flex justify-between">
-        {[1, 2, 3].map((e) => {
-          var cloneData = _.cloneDeep(data);
-          if (e === 3) {
-            cloneData.push({
+      <div className="flex justify-between  max-lg:flex-col max-lg:gap-3 max-lg:items-center max-lg:mx-5">
+        <Chart
+          data={[
+            {
               label: "pass",
-              name: t("not_answer_quest"),
-              value: 100,
-            });
-          }
-          return (
-            <div key={e} className="w-[calc(33%-1rem)] bg-white rounded-lg">
-              <div className="h-[220px] pt-4 ">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart className="flex" width={200} height={200}>
-                    <Pie
-                      data={cloneData}
-                      dataKey="value"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={95}
-                      labelLine={false}
-                      label={renderCustomizedLabel}
-                      fill="#8884d8"
-                      isAnimationActive={false}
-                    >
-                      {data.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="w-full mb-3 px-4">
-                <div className="flex justify-between mx-2 border-b border-b-m_neutral_100">
-                  <div className="flex items-center">
-                    <div className={`rounded w-3 h-2 bg-[#6DB3C2] mr-2`} />
-                    <span className="body_regular_14">{t("pass")}</span>
-                  </div>
-                  <div className="body_semibold_14">75%</div>
-                </div>
-
-                <div className="flex mt-2 justify-between mx-2 border-b border-b-m_neutral_100">
-                  <div className="flex items-center">
-                    <div className={`rounded w-3 h-2 bg-[#FC8800] mr-2`} />
-                    <span className="body_regular_14">{t("not_pass")}</span>
-                  </div>
-                  <div className="body_semibold_14">25%</div>
-                </div>
-
-                {e === 3 && (
-                  <div className="flex mt-2 justify-between mx-2 border-b border-b-m_neutral_100">
-                    <div className="flex items-center">
-                      <div className={`rounded w-3 h-2 bg-[#775DA6] mr-2`} />
-                      <span className="body_regular_14">
-                        {t("not_answer_quest")}
-                      </span>
-                    </div>
-                    <div className="body_semibold_14">20%</div>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+              name: t("pass"),
+              value: examination?.statisticExamTest?.statistic?.totalPass ?? 0,
+            },
+            {
+              label: "not_pass",
+              name: t("not_pass"),
+              value:
+                examination?.statisticExamTest?.statistic?.totalFailed ?? 0,
+            },
+          ]}
+        />
+        <Chart
+          data={[
+            {
+              label: "doing_exam",
+              name: t("doing_exam"),
+              value:
+                examination?.statisticExamTest?.statistic?.completionByState
+                  ?.totalDoing,
+            },
+            {
+              label: "checking_exam",
+              name: t("checking_exam"),
+              value:
+                examination?.statisticExamTest?.statistic?.completionByState
+                  ?.totalChecking,
+            },
+            {
+              label: "done_exam",
+              name: t("done_exam"),
+              value:
+                examination?.statisticExamTest?.statistic?.completionByState
+                  ?.totalDone,
+            },
+          ]}
+        />
+        <Chart
+          data={[
+            {
+              label: "correct_answer",
+              name: t("correct_answer"),
+              value:
+                examination?.statisticExamTest?.couter
+                  ?.numberOfQuestionCorrect ?? 0,
+            },
+            {
+              label: "incorrect_answer",
+              name: t("incorrect_answer"),
+              value:
+                (examination?.statisticExamTest?.couter?.numberOfQuestions ??
+                  0) -
+                (examination?.statisticExamTest?.couter
+                  ?.numberOfQuestionNotComplete ?? 0) -
+                (examination?.statisticExamTest?.couter
+                  ?.numberOfQuestionCorrect ?? 0),
+            },
+            {
+              label: "not_answer",
+              name: t("not_answer"),
+              value:
+                examination?.statisticExamTest?.couter
+                  ?.numberOfQuestionNotComplete ?? 0,
+            },
+          ]}
+        />
       </div>
       <div className="w-full p-3 bg-white rounded-lg mt-5">
         <div className="flex items-center w-full justify-between">
@@ -412,6 +669,7 @@ function ResultPage({ params }: any) {
             />
             <div className="w-3" />
             <MButton
+              onClick={downloadExcell}
               className="flex items-center"
               icon={<DownloadIcon />}
               h="h-11"
@@ -420,17 +678,17 @@ function ResultPage({ params }: any) {
             />
           </div>
         </div>
-        {/* <div className="h-5" /> */}
+        <div className="h-2" />
         <div className="flex flex-wrap">
-          <Divider className="my-4" />
           {Object.keys(filterValues).map((e) => {
             if (!(filterValues as any)[e]) {
               return null;
             }
+
             return (
               <div
                 key={e}
-                className="flex py-2 px-3 border border-m_neutral_200 ml-2 mb-2 rounded-lg items-center bg-m_primary_100"
+                className="flex mb-1 py-2 px-3 border border-m_neutral_200 ml-2 rounded-lg items-center bg-m_primary_100"
               >
                 <span className="body_semibold_14 mr-1">{`${t(e)}: `}</span>
                 <span className="body_regular_14">
@@ -447,6 +705,51 @@ function ResultPage({ params }: any) {
                     const formikValue = _.cloneDeep(formik.values);
                     await formik.setFieldValue(e, undefined);
                     (formikValue as any)[e] = undefined;
+                    switch (e) {
+                      case "email":
+                        setFilters([
+                          ...filters?.filter(
+                            (d) => d.fieldName != "candidate.email",
+                          ),
+                        ]);
+                        break;
+                      case "group":
+                        setFilters([
+                          ...filters?.filter(
+                            (d) => d.fieldName != "candidate.groupTest",
+                          ),
+                        ]);
+                        break;
+                      case "phone_number":
+                        setFilters([
+                          ...filters?.filter(
+                            (d) => d.fieldName != "candidate.phoneNumber",
+                          ),
+                        ]);
+                        break;
+                      case "full_name":
+                        setFilters([
+                          ...filters?.filter(
+                            (d) => d.fieldName != "candidate.unsignedFullName",
+                          ),
+                        ]);
+                        break;
+                      case "identify_code":
+                        setFilters([
+                          ...filters?.filter(
+                            (d) => d.fieldName != "candidate.identifier",
+                          ),
+                        ]);
+                        break;
+                      case "test_date":
+                        setFilters([
+                          ...filters?.filter(
+                            (d) => d.fieldName != "createdTime",
+                          ),
+                        ]);
+                        setTestDate(undefined);
+                        break;
+                    }
                     await setFilterValues(formikValue);
                   }}
                 >
@@ -456,23 +759,25 @@ function ResultPage({ params }: any) {
             );
           })}
         </div>
-        <div className="h-5" />
-        <Table
-          className="w-full max-lg:overflow-scroll"
-          bordered={false}
-          columns={columns}
-          dataSource={infos}
-          pagination={false}
-          rowKey={"id"}
-          onRow={(data: any, index: any) =>
-            ({
-              style: {
-                background: "#FFFFFF",
-                borderRadius: "20px",
-              },
-            }) as HTMLAttributes<any>
-          }
-        />
+        <Divider className="mb-7" />
+        <div className="overflow-scroll ">
+          <Table
+            className="w-full max-lg:overflow-scroll"
+            bordered={false}
+            columns={columns}
+            dataSource={infos}
+            pagination={false}
+            rowKey={"id"}
+            onRow={(data: any, index: any) =>
+              ({
+                style: {
+                  background: "#FFFFFF",
+                  borderRadius: "20px",
+                },
+              }) as HTMLAttributes<any>
+            }
+          />
+        </div>
         <div className="w-full flex items-center justify-center mt-5">
           <span className="body_regular_14 mr-2">{`${total} ${t(
             "result",
@@ -495,6 +800,7 @@ function ResultPage({ params }: any) {
               value={recordNum}
               onChange={(v) => {
                 setRecordNum(v);
+                setIndexPage(1);
               }}
               options={[
                 ...[15, 25, 30, 50, 100].map((i: number) => ({

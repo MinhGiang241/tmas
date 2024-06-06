@@ -1,6 +1,6 @@
 import { UserData } from "@/data/user";
-import { callApi } from "./base_api";
-import { StudioFormData } from "@/data/form_interface";
+import { callApi, callStudioAPI } from "./base_api";
+import { StudioFormData, CheckDiscountParams } from "@/data/form_interface";
 import { APIResults } from "@/data/api_results";
 
 export const changeStudio = async (ownerId?: string) => {
@@ -171,6 +171,7 @@ export const makePayment = async (data: {
   product_type?: "Package" | "Gold";
   goldId?: string;
   packageId?: string;
+  discount_code?: string;
 }) => {
   var results: APIResults = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/billtransaction.create_online_transaction`,
@@ -207,5 +208,30 @@ export const loadResultTransaction = async (vnp_TxnRef?: string) => {
     },
   );
 
+  return results;
+};
+
+export const userDeleteAccount = async () => {
+  var results: APIResults = await callApi.get(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.delete_self_account`,
+  );
+
+  return results;
+};
+
+export const checkDistcountCode = async (data: CheckDiscountParams) => {
+  var results: APIResults = await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/billtransaction.check_discount_code`,
+    data,
+  );
+
+  return results;
+};
+
+export const uploadImageStudio = async (data: any) => {
+  var results: APIResults = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/uploadImage`,
+    data,
+  );
   return results;
 };

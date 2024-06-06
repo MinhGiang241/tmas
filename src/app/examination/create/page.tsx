@@ -37,7 +37,7 @@ import {
 } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import dayjs from "dayjs";
-import { ExamData, ExaminationData } from "@/data/exam";
+import { ExamData } from "@/data/exam";
 import { v4 as uuidv4 } from "uuid";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import GoldPrice from "../components/GoldPrice";
@@ -139,8 +139,12 @@ function CreateExaminationPage({ examination }: any) {
   );
   const [startTime, setStartTime] = useState<string | undefined>();
   const [endTime, setEndTime] = useState<string | undefined>();
-  const [resultChecked, setResultChecked] = useState<any[]>([]);
-  const [infoChecked, setInfoChecked] = useState<any[]>([]);
+  const [resultChecked, setResultChecked] = useState<any[]>([
+    "showPoint",
+    "showPercent",
+    "showPassOrFailDetail",
+  ]);
+  const [infoChecked, setInfoChecked] = useState<any[]>(["email", "fullName"]);
   const [preventCheched, setPreventChecked] = useState<any[]>([]);
   const [codeList, setCodeList] = useState<ExaminationCode[]>([]);
   const [exam, setExam] = useState<ExamData | undefined>(undefined);
@@ -195,16 +199,20 @@ function CreateExaminationPage({ examination }: any) {
       : undefined,
 
     ips: examination?.validAccessSetting?.ipWhiteLists ?? [],
-    pass_point: examination?.passingSetting?.passPointPercent?.toString(),
-    inform_pass: examination?.passingSetting?.passMessage,
-    inform_fail: examination?.passingSetting?.failMessage,
+    pass_point:
+      examination?.passingSetting?.passPointPercent?.toString() ?? "80",
+    inform_pass:
+      examination?.passingSetting?.passMessage ?? "Chúc mừng bạn đã Đạt!", //t("default_pass"),
+    inform_fail:
+      examination?.passingSetting?.failMessage ??
+      "Rất tiếc bạn đã không vượt qua. Chúc bạn lần sau đạt kết quả cao hơn!", //t("default_fail"),
     out_screen: examination?.cheatingSetting?.limitExitScreen?.toString(),
     examination_name: examination?.name,
     avatarId: examination?.idAvatarThumbnail,
     description: examination?.description,
     turn_per_code:
       examination?.accessCodeSettings &&
-        examination?.accessCodeSettingType == "MultiCode"
+      examination?.accessCodeSettingType == "MultiCode"
         ? examination?.accessCodeSettings[0]?.limitOfAccess?.toString()
         : undefined,
   };
@@ -271,9 +279,22 @@ function CreateExaminationPage({ examination }: any) {
         idAvatarThumbnail = avatarIdData?.data[0];
       }
 
-      var requiredInfoSetting: any = {};
+      var requiredInfoSetting: any = {
+        phoneNumber: false,
+        fullName: false,
+        idGroup: false,
+        birthday: false,
+        email: false,
+        identifier: false,
+        jobPosition: false,
+      };
       var cheatingSetting: any = {};
-      var testResultSetting: any = {};
+      var testResultSetting: any = {
+        showPoint: false,
+        showPercent: false,
+        showPassOrFail: false,
+        showPassOrFailDetail: false,
+      };
       for (let i of infoChecked) {
         requiredInfoSetting[i] = true;
       }
@@ -300,26 +321,26 @@ function CreateExaminationPage({ examination }: any) {
             ? []
             : code == "One"
               ? [
-                {
-                  //TODO: sửa sau cái này để vì _id trong studio là ownerId
-                  studioId: studio?._id,
-                  ownerId: user?._id,
-                  code: formik.values["one_code"],
-                  numberOfAccess: 0,
-                },
-              ]
+                  {
+                    //TODO: sửa sau cái này để vì _id trong studio là ownerId
+                    studioId: studio?._id,
+                    ownerId: user?._id,
+                    code: formik.values["one_code"],
+                    numberOfAccess: 0,
+                  },
+                ]
               : [
-                ...codeList.map((e: any) => ({
-                  //TODO: sửa sau cái này để vì _id trong studio là ownerId
-                  studioId: studio?._id,
-                  ownerId: user?._id,
-                  code: e.code,
-                  limitOfAccess: formik.values["turn_per_code"]
-                    ? parseInt(formik.values["turn_per_code"])
-                    : undefined,
-                  numberOfAccess: 0,
-                })),
-              ],
+                  ...codeList.map((e: any) => ({
+                    //TODO: sửa sau cái này để vì _id trong studio là ownerId
+                    studioId: studio?._id,
+                    ownerId: user?._id,
+                    code: e.code,
+                    limitOfAccess: formik.values["turn_per_code"]
+                      ? parseInt(formik.values["turn_per_code"])
+                      : undefined,
+                    numberOfAccess: 0,
+                  })),
+                ],
         cheatingSetting,
         description: values?.description?.trim(),
         name: values?.examination_name?.trim(),
@@ -327,11 +348,22 @@ function CreateExaminationPage({ examination }: any) {
         passingSetting: {
           passPointPercent: values?.pass_point
             ? parseFloat(values?.pass_point?.trim()!)
-            : undefined,
+            : 0,
           failMessage: values?.inform_fail?.trim(),
           passMessage: values?.inform_pass?.trim(),
         },
-        requiredInfoSetting,
+        requiredInfoSetting:
+          share == "Public"
+            ? {
+                phoneNumber: false,
+                fullName: false,
+                idGroup: false,
+                birthday: false,
+                email: false,
+                identifier: false,
+                jobPosition: false,
+              }
+            : requiredInfoSetting,
         sharingSetting: share,
         idAvatarThumbnail,
         testResultSetting,
@@ -339,14 +371,14 @@ function CreateExaminationPage({ examination }: any) {
           share === "Public"
             ? {}
             : {
-              ipWhiteLists: formik.values["ips"],
-              validFrom: values.start_time
-                ? dayjs(values?.start_time, dateFormat).toISOString()
-                : undefined,
-              validTo: values?.end_time
-                ? dayjs(values?.end_time, dateFormat).toISOString()
-                : undefined,
-            },
+                ipWhiteLists: formik.values["ips"],
+                validFrom: values.start_time
+                  ? dayjs(values?.start_time, dateFormat).toISOString()
+                  : undefined,
+                validTo: values?.end_time
+                  ? dayjs(values?.end_time, dateFormat).toISOString()
+                  : undefined,
+              },
         idExam:
           exam?.id ?? examination?.id ?? search.get("examId") ?? undefined,
         idSession: sessionId,
@@ -355,11 +387,11 @@ function CreateExaminationPage({ examination }: any) {
           share === "Private"
             ? {}
             : {
-              goldPrice: values?.gold_price
-                ? parseInt(values?.gold_price)
-                : undefined,
-              isEnable: true,
-            },
+                goldPrice: values?.gold_price
+                  ? parseInt(values?.gold_price)
+                  : undefined,
+                isEnable: true,
+              },
       };
 
       console.log("submitData", submitData);
@@ -443,10 +475,11 @@ function CreateExaminationPage({ examination }: any) {
                 </button>
               ) : (
                 <Link
-                  className={`${pathname.includes("/examination/create")
-                    ? "text-m_neutral_900"
-                    : ""
-                    } body_regular_14`}
+                  className={`${
+                    pathname.includes("/examination/create")
+                      ? "text-m_neutral_900"
+                      : ""
+                  } body_regular_14`}
                   href={"/examination/create"}
                 >
                   {t("create_examination")}
@@ -479,7 +512,15 @@ function CreateExaminationPage({ examination }: any) {
             {examination ? (
               <>
                 <div className="w-4" />
-                <MButton h="h-11" text={t("view_result")} />
+                <MButton
+                  onClick={() => {
+                    router.push(
+                      `/examination/results/${examination?.id}?from=EditExam`,
+                    );
+                  }}
+                  h="h-11"
+                  text={t("view_result")}
+                />
               </>
             ) : null}
             <div className="w-4" />
@@ -642,8 +683,9 @@ function CreateExaminationPage({ examination }: any) {
             <div className="body_semibold_14">{t("selected_exam")}</div>
             <Link
               // Link ở đây
-              href={`/examination/details?examId=${exam?.id}&examTestId=${examination?.id ?? ""
-                }`}
+              href={`/examination/details?examId=${exam?.id}&examTestId=${
+                examination?.id ?? ""
+              }`}
               // href={`/exams/details/${exam?.id}`}
               className="text-[#4D7EFF] body_regular_14 underline underline-offset-4"
               target="_blank"

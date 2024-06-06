@@ -48,7 +48,7 @@ function PreviewModal(props: Props) {
               className="rounded-l-lg"
               objectFit="cover"
               layout="fill"
-              src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user?.studio?.stu_banner}`}
+              src={`${user?.studio?.stu_banner}`}
               alt="banner"
             />
           ) : (
@@ -79,7 +79,7 @@ function PreviewModal(props: Props) {
                 className="rounded-[50%]"
                 objectFit="cover"
                 layout="fill"
-                src={`${process.env.NEXT_PUBLIC_API_BC}/headless/stream/upload?load=${user?.studio?.stu_logo}`}
+                src={`${user?.studio?.stu_logo}`}
                 alt="logo"
               />
             ) : (

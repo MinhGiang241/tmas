@@ -46,6 +46,12 @@ const EditorHook = dynamic(
     ssr: false,
   },
 );
+const Editor = dynamic(
+  () => import("@/app/exams/components/react_quill/Editor"),
+  {
+    ssr: false,
+  },
+);
 
 interface Props {
   questionGroups?: QuestionGroupData[];
@@ -460,6 +466,7 @@ function ConnectQuestion({
 
         <div className="h-4" />
         <EditorHook
+          formik={formik}
           placeholder={t("enter_content")}
           isCount={false}
           id="explain"

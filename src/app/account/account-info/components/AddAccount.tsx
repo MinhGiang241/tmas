@@ -27,7 +27,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
   const common = useTranslation();
   const [danger, setDanger] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
-  const [role, setRole] = useState<string>("Member");
+  const [role, setRole] = useState<string>("Admin");
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingValidateMail, setLoadingValidateMail] =
     useState<boolean>(false);
@@ -111,7 +111,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
           title={t("email")}
           formik={formik}
         />
-
+        {/*
         <p className="caption_semibold_14 mt-[35px] mb-2">{t("role")}</p>
         <Radio.Group
           className="flex flex-col justify-start"
@@ -128,7 +128,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
             </Radio>
           </Space>
         </Radio.Group>
-
+        */}
         <div className="w-full flex justify-center mt-7">
           <MButton
             onClick={onCancel}

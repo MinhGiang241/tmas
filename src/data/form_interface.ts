@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import { ConnectQuestAns } from "./question";
+import { BaseQuestionData, ConnectQuestAns } from "./question";
 import { AppovedState, ExamData } from "./exam";
 import { TagParams } from "./tag";
 
@@ -364,6 +364,7 @@ export interface PartObject {
   description?: string;
   idExam?: string;
   jsonExamQuestions?: string[];
+  questions?: BaseQuestionData[];
 }
 
 export interface ImportTmasExamParams {
@@ -380,9 +381,25 @@ export interface ImportTmasExamParams {
 export interface SendRemindParams {
   methods?: string;
   body?: string;
-  maillist?: { email?: string; passcode?: string; user_name?: string }[];
+  maillist?: {
+    email?: string;
+    passcode?: string;
+    user_name?: string;
+    ended_at?: string;
+    numberPoint?: number;
+    score?: number;
+    result_state?: string;
+    require_score?: number;
+  }[];
   examtestId?: string;
   start_time?: string;
   end_time?: string;
   name?: string;
+}
+
+export interface CheckDiscountParams {
+  discount_code?: string;
+  product_type?: string;
+  packageId?: string;
+  goldId?: string;
 }

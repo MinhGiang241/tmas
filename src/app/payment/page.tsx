@@ -10,11 +10,12 @@ import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import { FormattedNumber } from "react-intl";
 import {
+  checkDistcountCode,
   loadConfig,
   makePayment,
 } from "@/services/api_services/account_services";
 import { error } from "console";
-import { errorToast } from "../components/toast/customToast";
+import { errorToast, successToast } from "../components/toast/customToast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { parseInt } from "lodash";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
@@ -34,8 +35,11 @@ function Payment() {
   var searchName = search.get("name");
   const [config, setConfig] = useState<SettingData | undefined>();
 
+  const [discountCode, setDiscountCode] = useState<string | undefined>();
+  const [discountPrice, setDiscountPrice] = useState<number | undefined>();
   const pay = async () => {
     const res = await makePayment({
+      discount_code: isApply ? discountCode?.trim() : undefined,
       goldId:
         searchGoldId ?? (payment.type == "Gold" ? payment?.goldId : undefined),
       packageId:
@@ -61,6 +65,42 @@ function Payment() {
       return;
     }
     setConfig(res.data);
+  };
+  const [loadingDiscount, setLoadingDiscount] = useState<boolean>(false);
+  const [isApply, setIsApply] = useState<boolean>(false);
+  const applyCode = async (e: any) => {
+    e.preventDefault();
+    if (!discountCode?.trim()) {
+      setDiscountPrice(0);
+      return;
+    }
+    setLoadingDiscount(true);
+
+    var res = await checkDistcountCode({
+      discount_code: discountCode,
+      goldId: searchType == "Gold" ? searchGoldId ?? undefined : undefined,
+      packageId:
+        searchType == "Package" ? searchPackageId ?? undefined : undefined,
+      product_type: searchType ?? undefined,
+    });
+    setLoadingDiscount(false);
+    if (res?.code != 0) {
+      setIsApply(false);
+      setDiscountPrice(0);
+      errorToast(res?.message ?? "");
+      return;
+    }
+    setIsApply(true);
+    setDiscountPrice(
+      res?.data
+        ? parseInt(res?.data ?? "0") > (searchPrice ? parseInt(searchPrice) : 0)
+          ? searchPrice
+            ? parseInt(searchPrice)
+            : 0
+          : parseInt(res?.data ?? "0")
+        : 0,
+    );
+    console.log("resdataa", res);
   };
 
   return (
@@ -210,24 +250,45 @@ function Payment() {
               <div className="body_regular_16 text-m_neutral_500 ">{`${t(
                 "discount_price",
               )}:`}</div>
-              <div className="body_semibold_16">0 VNĐ</div>
+              <div className="body_semibold_16">
+                <FormattedNumber
+                  value={discountPrice ?? 0}
+                  style="decimal"
+                  maximumFractionDigits={2}
+                />{" "}
+                VNĐ
+              </div>
             </div>
-            <MInput
-              isTextRequire={false}
-              className="mt-3"
-              placeholder={t("discount_code")}
-              h="h-11"
-              id="apply"
-              name="apply"
-              suffix={
-                <button
-                  type="submit"
-                  className="bg-m_primary_500 w-20 lg:h-11 h-11 rounded-r-lg text-white"
-                >
-                  {t("apply")}
-                </button>
-              }
-            />
+            <form onSubmit={applyCode}>
+              <MInput
+                value={discountCode}
+                isTextRequire={false}
+                className="mt-3"
+                placeholder={t("discount_code")}
+                h="h-11"
+                id="apply"
+                name="apply"
+                onChange={(e) => {
+                  setDiscountCode(e.target.value?.toUpperCase());
+                }}
+                suffix={
+                  <button
+                    disabled={loadingDiscount}
+                    type="submit"
+                    className={`${
+                      //loadingDiscount ??
+                      // || !discountCode
+                      //                         ? "bg-m_neutral_400"
+                      //                         :
+
+                      "bg-m_primary_500"
+                    } w-20 lg:h-11 h-11 rounded-r-lg text-white`}
+                  >
+                    {t("apply")}
+                  </button>
+                }
+              />
+            </form>
           </div>
           <Divider className="my-5" />
           <div className="flex justify-between items-center mx-5 mb-5">
@@ -238,7 +299,9 @@ function Payment() {
               <div className="title_bold_24 text-m_primary_500">
                 <FormattedNumber
                   value={
-                    searchPrice ? parseInt(searchPrice) : payment?.price ?? 0
+                    (searchPrice
+                      ? parseInt(searchPrice)
+                      : payment?.price ?? 0) - (discountPrice ?? 0)
                   }
                   style="decimal"
                   maximumFractionDigits={2}

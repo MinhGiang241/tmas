@@ -37,6 +37,12 @@ const EditorHook = dynamic(
     ssr: false,
   },
 );
+const Editor = dynamic(
+  () => import("@/app/exams/components/react_quill/Editor"),
+  {
+    ssr: false,
+  },
+);
 
 interface Props {
   questionGroups?: ExamGroupData[];
@@ -237,7 +243,9 @@ function FillBlankQuestion({
             await formik.setFieldTouched(v, true);
           });
           formik.validateForm();
+          //setIsSave(true);
           formik.handleSubmit();
+
           Object.keys(formik.errors).map(async (v) => {
             await formik.setFieldTouched(v, true);
           });

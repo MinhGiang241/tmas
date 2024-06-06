@@ -176,6 +176,10 @@ export interface SettingData {
   _id?: string;
   createdTime?: string;
   updatedTime?: string;
+  compensate?: {
+    enable_exam_purchase?: boolean;
+    exam_purchase_rate?: number;
+  };
   fraud?: {
     anti_copy?: boolean;
     anti_paste?: boolean;
@@ -208,6 +212,11 @@ export interface SettingData {
     momo?: boolean;
     visa?: boolean;
     vnpay?: boolean;
+  };
+  signin?: {
+    enable_form?: boolean;
+    facebook?: boolean;
+    google?: boolean;
   };
 }
 

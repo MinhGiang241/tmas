@@ -55,11 +55,10 @@ export default function TrueFalse({
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
-
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -78,8 +77,9 @@ export default function TrueFalse({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -94,7 +94,9 @@ export default function TrueFalse({
                   <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
+                    dangerouslySetInnerHTML={{
+                      __html: question?.Base?.Question,
+                    }}
                   />
                 </span>
                 {isOverflowing ? (
@@ -193,7 +195,7 @@ export default function TrueFalse({
                           className="body_regular_14 pl-2 text-green-500 pr-2"
                           dangerouslySetInnerHTML={{ __html: x.Text }}
                         />
-                        <Tick />
+                        <Tick className="min-w-5" />
                       </div>
                     ),
                   )}

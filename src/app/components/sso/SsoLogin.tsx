@@ -2,6 +2,8 @@ import { Button, Divider } from "antd";
 import { useTranslation } from "react-i18next";
 import FacebookIcon from "../icons/facebook.svg";
 import GoogleIcon from "../icons/google.svg";
+import { useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
 
 function SsoLogin({
   signInFacebook,
@@ -17,6 +19,7 @@ function SsoLogin({
   fLoading?: boolean;
 }) {
   const { t } = useTranslation();
+  const config = useAppSelector((state: RootState) => state?.setting);
 
   return (
     <div>
@@ -29,35 +32,39 @@ function SsoLogin({
         </div>
       </div>
       {/* {value && <div>{value}</div>} */}
-      <div className="w-full relative">
-        {!gLoading && (
-          <div className="h-full absolute px-4 top-[11px] z-10">
-            <GoogleIcon />
-          </div>
-        )}
-        <Button
-          loading={gLoading}
-          className="w-full mb-4 h-12 "
-          onClick={() => signInGoogle()}
-        >
-          {isLogin ? t("signin_google") : t("register_with_google")}
-        </Button>
-      </div>
-      <div className="w-full relative">
-        {!fLoading && (
-          <div className="h-full absolute px-4 top-[11px] z-10">
-            <FacebookIcon />
-          </div>
-        )}
+      {config?.signin?.google && (
+        <div className="w-full relative">
+          {!gLoading && (
+            <div className="h-full absolute px-4 top-[11px] z-10">
+              <GoogleIcon />
+            </div>
+          )}
+          <Button
+            loading={gLoading}
+            className="w-full mb-4 h-12 "
+            onClick={() => signInGoogle()}
+          >
+            {isLogin ? t("signin_google") : t("register_with_google")}
+          </Button>
+        </div>
+      )}
+      {config?.signin?.facebook && (
+        <div className="w-full relative">
+          {!fLoading && (
+            <div className="h-full absolute px-4 top-[11px] z-10">
+              <FacebookIcon />
+            </div>
+          )}
 
-        <Button
-          loading={fLoading}
-          className="w-full mb-4 h-12 "
-          onClick={() => signInFacebook()}
-        >
-          {isLogin ? t("signin_facebook") : t("register_with_facebook")}
-        </Button>
-      </div>
+          <Button
+            loading={fLoading}
+            className="w-full mb-4 h-12 "
+            onClick={() => signInFacebook()}
+          >
+            {isLogin ? t("signin_facebook") : t("register_with_facebook")}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

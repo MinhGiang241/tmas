@@ -60,6 +60,7 @@ function MyBankAddTab({
   const [questionType, setQuestionType] = useState<string | undefined>("");
   const [search, setSearch] = useState<string | undefined>();
   const [sort, setSort] = useState<string>("recently_create");
+  const [valueSearch, setValueSearch] = useState<string | undefined>();
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
     (state: RootState) => state?.examGroup?.questions,
   );
@@ -434,11 +435,17 @@ function MyBankAddTab({
   return (
     <>
       <div className="w-full flex">
-        <form className="flex w-full max-lg:flex-col max-lg:mx-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setSearch(valueSearch);
+          }}
+          className="flex w-full max-lg:flex-col max-lg:mx-5"
+        >
           <MInput
             onChange={(e: React.ChangeEvent<any>) => {
               setIndexPage(1);
-              setSearch(e.target.value);
+              setValueSearch(e.target.value);
             }}
             className="max-lg:mt-3"
             placeholder={t("enter_key_search")}

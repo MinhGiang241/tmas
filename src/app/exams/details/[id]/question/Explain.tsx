@@ -91,9 +91,9 @@ export default function Explain({
           successToast(t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}&isBank=${
-              isBank ? "true" : "false"
-            }`,
+            `/${isBank ? "exam_bank" : "exams/details"}/${
+              examId ?? "u"
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
           );
           await getData();
         }}
@@ -205,9 +205,11 @@ export default function Explain({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/exams/details/${examId ?? "u"}/edit?questId=${
-                          question.id
-                        }&isBank=${isBank ? "true" : "false"}`,
+                        `/${isBank ? "exam_bank" : "exams/details"}/${
+                          examId ?? "u"
+                        }/edit?questId=${question.id}&isBank=${
+                          isBank ? "true" : "false"
+                        }`,
                       );
                     }}
                   >

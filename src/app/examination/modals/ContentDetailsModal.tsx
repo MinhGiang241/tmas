@@ -7,12 +7,17 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 interface Props extends BaseModalProps {
-  data?: RemindEmailData;
+  data?: {
+    content_send?: string;
+    reason_error?: string;
+  };
 }
 
 function ContentDetailsModal(props: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
+  console.log("data", props.data);
+
   return (
     <BaseModal {...props}>
       <label className="text-sm font-semibold mr-auto mb-1">
@@ -22,14 +27,14 @@ function ContentDetailsModal(props: Props) {
       <div
         className="h-36 w-full border rounded-lg bg-m_neutral_100 p-2 overflow-scroll break-all mb-5"
         dangerouslySetInnerHTML={{
-          __html: props.data?.body ?? "",
+          __html: props.data?.content_send ?? "",
         }}
       ></div>
 
       <MTextArea
         disable
-        defaultValue={props.data?.errorMessage}
-        id="reason_eror"
+        defaultValue={props.data?.reason_error}
+        id="reason_error"
         name="reason_error"
         title={t("reason_error")}
       />

@@ -85,9 +85,9 @@ function Random({
           successToast(t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}&isBank=${
-              isBank ? "true" : "false"
-            }`,
+            `/${isBank ? "exam_bank" : "exams/details"}/${
+              examId ?? "u"
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
           );
           await getData();
         }}
@@ -182,7 +182,7 @@ function Random({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/exams/details/${
+                        `/${isBank ? "exam_bank" : "exams/details"}/${
                           examId ?? "u"
                         }/edit?questId=${question?.id}&isBank=${
                           isBank ? "true" : "false"

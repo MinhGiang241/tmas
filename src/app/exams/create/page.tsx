@@ -132,7 +132,6 @@ function CreatePage({ exam, isEdit }: any) {
     if (values?.tag && values?.tag?.length > 10) {
       errors.tag = "tag_limit";
     }
-
     return errors;
   };
 

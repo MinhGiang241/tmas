@@ -2,29 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
 import { Checkbox, Collapse, Popover } from "antd";
-import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
-import EditIcon from "@/app/components/icons/edit-black.svg";
-import CopyIcon from "@/app/components/icons/size.svg";
-import BaseModal from "@/app/components/config/BaseModal";
-import MInput from "@/app/components/config/MInput";
-import MTextArea from "@/app/components/config/MTextArea";
-import ConfirmModal from "@/app/components/modals/ConfirmModal";
-import { useRouter } from "next/navigation";
-import {
-  createAExamQuestionPart,
-  getExamQuestionPartList,
-  deleteQuestionPartById,
-  deleteQuestionById,
-  CopyQuestion,
-  updateAExamQuestionPart,
-  deleteQuestionPart,
-  duplicateQuestion,
-} from "@/services/api_services/question_api";
 import { FormattedDate, FormattedTime } from "react-intl";
-import { errorToast, successToast } from "@/app/components/toast/customToast";
-import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
-import dayjs from "dayjs";
 
 export default function Coding({
   getData,
@@ -59,7 +38,7 @@ export default function Coding({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -77,8 +56,9 @@ export default function Coding({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -147,6 +127,7 @@ export default function Coding({
             <div className="text-sm pr-2 font-semibold">
               {t("created_date")}:
             </div>
+
             <FormattedDate
               value={question?.createdTime}
               day="2-digit"

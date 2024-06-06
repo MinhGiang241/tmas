@@ -26,7 +26,7 @@ function HistoryUpgrade() {
 
   useEffect(() => {
     loadHistoryBill();
-  }, []);
+  }, [user]);
   const loadHistoryBill = async () => {
     setLoading(true);
     var res = await loadHistoryUpgrade({ skip: 0, limit: 100 });

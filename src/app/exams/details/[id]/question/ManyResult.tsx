@@ -91,9 +91,9 @@ export default function ManyResult({
           successToast(t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
-            `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}&isBank=${
-              isBank ? "true" : "false"
-            }`,
+            `/${isBank ? "exam_bank" : "exams/details"}/${
+              examId ?? "u"
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
           );
           await getData();
         }}
@@ -207,7 +207,7 @@ export default function ManyResult({
                       e.stopPropagation();
 
                       router.push(
-                        `/exams/details/${
+                        `/${isBank ? "exam_bank" : "exams/details"}/${
                           examId ?? question?.examId ?? "u"
                         }/edit?questId=${question?.id}&isBank=${
                           isBank ? "true" : "false"
@@ -295,17 +295,18 @@ export default function ManyResult({
                           className="body_regular_14 pl-2"
                           dangerouslySetInnerHTML={{ __html: x.text }}
                         />
+                        <div className="min-w-5" />
                       </div>
                     ) : (
                       <div className="flex" key={key}>
-                        <div className="body_semibold_14 text-green-500">
+                        <div className="body_semibold_14 text-green-500 text-justify">
                           {x.label}
                         </div>
                         <div
-                          className="body_regular_14 pl-2 text-green-500 pr-2"
+                          className="body_regular_14 pl-2 text-green-500 pr-2 text-justify"
                           dangerouslySetInnerHTML={{ __html: x.text }}
                         />
-                        <Tick />
+                        <Tick className="min-w-5" />
                       </div>
                     ),
                   )}

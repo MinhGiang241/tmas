@@ -17,7 +17,11 @@ import axios from "axios";
 import { BaseTmasQuestionData } from "@/data/exam";
 import { APIResults } from "@/data/api_results";
 import { mapTmasQuestionToStudioQuestion } from "../ui/mapTmasToSTudio";
-import { BaseQuestionData, QuestionType } from "@/data/question";
+import {
+  BaseQuestionData,
+  QuestionType,
+  ParamsCheckMultiAnswer,
+} from "@/data/question";
 
 export const createCodingQuestion = async (data: CodingQuestionFormData) => {
   const results = await callStudioAPI.post(
@@ -199,7 +203,7 @@ export const deleteQuestionById = async (questId?: string) => {
   const results = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/${questId}`,
   );
-  // console.log(results);
+
   return results;
 };
 
@@ -217,7 +221,6 @@ export const getExamQuestionPartList = async (data?: PagingGetData) => {
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/GetPagingDetail`,
     data,
   );
-  // console.log("data results", results);
   return results;
 };
 
@@ -241,7 +244,6 @@ export const createManyExamQuestionPart = async (data?: {
 };
 
 export const updateAExamQuestionPart = async (data?: ExamQuestionPart) => {
-  // console.log("dat", data)
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${data?.id}`,
     data,
@@ -278,7 +280,6 @@ export const deleteQuestionPartById = async (id?: string) => {
   const results = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${id}`,
   );
-  // console.log(results)
   return results;
 };
 
@@ -302,7 +303,6 @@ export const deleteQuestionPart = async (id?: string) => {
   const results = await callStudioAPI.delete(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${id}`,
   );
-  // console.log(results)
   return results;
 };
 
@@ -407,7 +407,8 @@ export const importTmasExamData = async (data: ImportTmasExamParams) => {
 export const getExamTestId = async (params: any) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/GetExamVersion`,
-    { ...params }, { params }
+    { ...params },
+    { params },
   );
 
   return results;
@@ -416,9 +417,17 @@ export const getExamTestId = async (params: any) => {
 export const getExamExport = async (data: any) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Export`,
-    data
+    data,
   );
-  // console.log(results, "result");
+
+  return results;
+};
+
+export const submitCheckMultiAnswer = async (data: ParamsCheckMultiAnswer) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/AdminExamTestResult/SubmitCheckingMultiAnswer`,
+    data,
+  );
 
   return results;
 };

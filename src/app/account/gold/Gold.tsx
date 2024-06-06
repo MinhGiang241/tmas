@@ -26,6 +26,7 @@ import dayjs from "dayjs";
 import { log } from "console";
 import { errorToast } from "@/app/components/toast/customToast";
 import Image from "next/image";
+import MTable from "@/app/components/config/MTable";
 
 function Gold() {
   const { t } = useTranslation("account");
@@ -48,10 +49,10 @@ function Gold() {
 
   useEffect(() => {
     loadGolds();
-  }, []);
+  }, [user]);
   useEffect(() => {
     loadHistoryGoldList();
-  }, [indexPage, change, status, recordNum, fromDate, toDate]);
+  }, [indexPage, change, status, recordNum, fromDate, toDate, user]);
   const [goldList, setGoldList] = useState<GoldData[]>([]);
   const loadGolds = async () => {
     var res = await loadGoldList({ skip: 0, limit: 100 });
@@ -78,6 +79,7 @@ function Gold() {
       setGoldHis([]);
       return;
     }
+
     setGoldHis(res.data ?? []);
     setTotal(res.records ?? 0);
   };
@@ -353,7 +355,16 @@ function Gold() {
         </button>
       </div>
       <div className="h-3" />
-      <Table
+      <MTable
+        indexPage={indexPage}
+        setIndexPage={setIndexPage}
+        recordNum={recordNum}
+        setRecordNum={setRecordNum}
+        columns={columns}
+        dataSource={goldHis}
+        total={total}
+      />
+      {/*     <Table
         loading={goldHisloading}
         className="w-full"
         bordered={false}
@@ -408,7 +419,7 @@ function Gold() {
             className="select-page min-w-[124px]"
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

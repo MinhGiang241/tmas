@@ -57,6 +57,7 @@ import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import SendExaminationInfo from "./modals/SendExaminationInfo";
 import SendExaminationResults from "./modals/SendExaminationResults";
+import SelectExamModal from "./modals/SelectExamModal";
 
 function ExaminationPage() {
   const router = useRouter();
@@ -99,7 +100,7 @@ function ExaminationPage() {
               status === "Rejected"
                 ? status
                 : undefined,
-            isIncludeExamVersion: true,
+            isIncludeExamVersion: false,
             "FilterByName.Name": "Name",
             "FilterByName.InValues": search ?? undefined,
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
@@ -119,8 +120,7 @@ function ExaminationPage() {
               status === "Rejected"
                 ? status
                 : undefined,
-
-            isIncludeExamVersion: true,
+            isIncludeExamVersion: false,
             "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
             "FilterByExamGroupId.Name": "Name",
             "Paging.RecordPerPage": recordNum,
@@ -270,8 +270,21 @@ function ExaminationPage() {
   const [openExaminationResults, setOpenExaminationResults] =
     useState<boolean>(false);
 
+  const [openSelectExam, setOpenSelectExam] = useState<boolean>(false);
+
   return (
     <HomeLayout>
+      <SelectExamModal
+        width={1024}
+        title={t("select_an_exam")}
+        open={openSelectExam}
+        onCancel={() => {
+          setOpenSelectExam(false);
+        }}
+        onOk={(id: string) => {
+          router.push(`/examination/create?examId=${id}`);
+        }}
+      />
       <SendExaminationResults
         examination={active}
         open={openExaminationResults}
@@ -325,7 +338,8 @@ function ExaminationPage() {
           <MButton
             h="h-11"
             onClick={() => {
-              router.push("/exams");
+              //router.push("/exams");
+              setOpenSelectExam(true);
             }}
             className="flex items-center"
             icon={<AddIcon />}
@@ -633,7 +647,7 @@ function ExaminationPage() {
                     <div className="flex max-lg:mt-3">
                       <MButton
                         onClick={() =>
-                          router.push(`/examination/results/${v?.id}`)
+                          router.push(`/examination/results/${v?.id}?from=''`)
                         }
                         type="secondary"
                         text={t("result")}
