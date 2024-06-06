@@ -2,28 +2,16 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
 import { Checkbox, Collapse, Popover, Table } from "antd";
-import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
-import EditIcon from "@/app/components/icons/edit-black.svg";
-import CopyIcon from "@/app/components/icons/size.svg";
-import BaseModal from "@/app/components/config/BaseModal";
-import MInput from "@/app/components/config/MInput";
-import MTextArea from "@/app/components/config/MTextArea";
-import ConfirmModal from "@/app/components/modals/ConfirmModal";
 import Tick from "@/app/components/icons/tick-circle.svg";
+import Close from "@/app/components/icons/close-circle.svg";
 import { useRouter } from "next/navigation";
-import { FormattedDate, FormattedTime } from "react-intl";
-import {
-  deleteQuestionById,
-  duplicateQuestion,
-} from "@/services/api_services/question_api";
-import { errorToast, successToast } from "@/app/components/toast/customToast";
-import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
 import CodeMirror from "@uiw/react-codemirror";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 import { renderExtension } from "@/services/ui/coding_services";
-import { Label } from "recharts";
 import { CandidateAnswers } from "@/data/exam";
+import { SqlAnswerMetadata, SqlCandidateAnswer } from "@/data/question";
+import MTable, { TableDataRow } from "@/app/components/config/MTable";
 
 export default function Sql({
   examId,
@@ -50,59 +38,16 @@ export default function Sql({
   onChangeCheck?: Function;
   answers?: CandidateAnswers;
 }) {
-  const [openEditQuestion, setOpenEditQuestion] = useState(false);
-  const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
-  const [openDeleteQuestion, setOpenDeleteQuestion] = useState<boolean>(false);
-
-  const router = useRouter();
   const { t } = useTranslation("exam");
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [dupLoading, setDupLoading] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
-  var candidateAnswer: any | undefined = !answers?.candidateAnswerJson
-    ? undefined
-    : JSON.parse(answers?.candidateAnswerJson ?? "");
-
-  console.log("candidateAnswer sql", candidateAnswer);
-  console.log("sql ans", answers);
-  console.log("que sql", question);
-
-  const columns = [
-    {
-      title: "Cột 1",
-      dataIndex: "Testcase1",
-      key: "Testcase1",
-    },
-    {
-      title: "Cột 2",
-      dataIndex: "Testcase2",
-      key: "Testcase2",
-    },
-    {
-      title: "Cột 3",
-      dataIndex: "Testcase3",
-      key: "Testcase3",
-    },
-    {
-      title: "Cột 4",
-      dataIndex: "Testcase4",
-      key: "Testcase4",
-    },
-  ];
-
-  const data = [
-    {
-      key: "1",
-      Testcase1: "abc",
-      Testcase2: "abc",
-      Testcase3: <div>2024-05-12 18:05:30</div>,
-      Testcase4: "10",
-    },
-  ];
+  var candidateAnswer: SqlCandidateAnswer | undefined =
+    !answers?.candidateAnswerJson
+      ? undefined
+      : JSON.parse(answers?.candidateAnswerJson ?? "");
 
   useEffect(() => {
     setIsOverflowing(
@@ -111,6 +56,56 @@ export default function Sql({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Extract the header
+  const header =
+    candidateAnswer?.stdOutRaw && candidateAnswer?.stdOutRaw?.length != 0
+      ? (candidateAnswer?.stdOutRaw as any)[0]
+      : [0];
+  // Convert to list of objects
+  const dataSource = (candidateAnswer?.stdOutRaw ?? []).slice(1).map((row) => {
+    let entry: any = {};
+    header.forEach((key: string, index: number) => {
+      entry[key] = row[index];
+    });
+    return entry;
+  });
+
+  var tableDataRow: TableDataRow[] = (header as any[])?.map<TableDataRow>(
+    (e) => ({
+      title: e,
+      dataIndex: e,
+    }),
+  );
+
+  // Correct Ansewr
+
+  var metadata: SqlAnswerMetadata = candidateAnswer?.metadata
+    ? JSON.parse(candidateAnswer?.metadata ?? "")
+    : undefined;
+
+  const expectedData = metadata?.data?.expectedOutput
+    ?.split("\n")
+    ?.map((r) => r?.split("  "));
+
+  const headerAns =
+    expectedData && expectedData?.length != 0 ? (expectedData as any)[0] : [0];
+  const dataSourceAns = (expectedData ?? []).slice(1).map((row) => {
+    let entry: any = {};
+    headerAns.forEach((key: string, index: number) => {
+      entry[key] = row[index];
+    });
+    return entry;
+  });
+
+  var tableDataRowAns: TableDataRow[] = (headerAns as any[])?.map<TableDataRow>(
+    (e) => ({
+      title: e,
+      dataIndex: e,
+    }),
+  );
+
+  console.log("metadata", metadata);
 
   return (
     !hidden && (
@@ -174,36 +169,40 @@ export default function Sql({
           >
             <div className="h-[1px] bg-m_primary_200 mb-3" />
             <div className="bg-m_neutral_100 p-3 font-semibold text-sm rounded-lg">
-              {"My SQl"}
+              {"My SQL"}
             </div>
             <CodeMirror
-              onBlur={async () => {}}
-              // value={code}
-              // lang={lang}
+              readOnly
+              value={candidateAnswer?.querySql}
+              lang={"sql"}
               theme={dracula}
               height="300px"
-              extensions={[renderExtension("SQL") as any]}
+              extensions={[renderExtension("sql") as any]}
               onChange={(v) => {}}
             />
             <div className="pt-3">
               <div className="flex pb-2">
                 <div className="pr-2 font-semibold text-sm">{t("result")}</div>
-                <Tick />
+                {metadata?.data?.matched ? <Tick /> : <Close />}
               </div>
-              <Table columns={columns} dataSource={data} pagination={false} />
+              {/* <Table columns={columns} dataSource={data} pagination={false} /> */}
+              <MTable
+                isHidePagination
+                dataRows={tableDataRow}
+                dataSource={dataSource}
+              />
             </div>
             <div className="py-3">
               <div className="pr-2 font-semibold text-sm pb-2">
                 {t("result0")}
               </div>
-              <Table columns={columns} dataSource={data} pagination={false} />
+              <MTable
+                isHidePagination
+                dataRows={tableDataRowAns}
+                dataSource={dataSourceAns}
+              />
             </div>
-            <div>
-              <div className="text-m_primary_500 text-sm font-semibold my-2">
-                {t("explain_result")}
-              </div>
-              <div dangerouslySetInnerHTML={{ __html: "" }} />
-            </div>
+
             <div className="">
               <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
                 {t("explain_result")}

@@ -162,3 +162,35 @@ export interface ParamsCheckMultiAnswer {
   }[];
   completionState?: ExamCompletionState;
 }
+
+export interface SqlCandidateAnswer {
+  querySql?: string;
+  stdOut?: string;
+  metadata?: string;
+  stdOutRaw?: any[];
+}
+
+export interface SqlAnswerMetadata {
+  code?: number;
+  message?: string;
+  data?: {
+    buildErrMsg?: string;
+    complete?: boolean;
+    correct?: number;
+    createdTime?: string;
+    duration?: number;
+    expectedOutput?: string;
+    matched?: boolean;
+    querySql?: string;
+    schema?: string;
+    schemaSql?: string;
+    startAt?: string;
+    state?: string;
+    stdErr?: string;
+    stdOut?: string;
+    stdOutRaw?: any[];
+    testDir?: any;
+    updatedTime?: string;
+    wrong?: number;
+  };
+}

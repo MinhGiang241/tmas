@@ -29,6 +29,8 @@ export const renderExtension: (
       return langs.ruby();
     case "rust":
       return langs.rust();
+    case "sql":
+      return langs.sql();
     default:
       return langs.javascript();
   }

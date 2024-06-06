@@ -1,6 +1,6 @@
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import UpIcon from "@/app/components/icons/up.svg";
 import DownIcon from "@/app/components/icons/down.svg";
@@ -21,6 +21,8 @@ import {
 } from "recharts";
 import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 import UpDownTrend from "../components/UpDownTrend";
+import { overviewGetNum } from "@/services/api_services/overview_api";
+import { errorToast } from "@/app/components/toast/customToast";
 
 function OverviewTab() {
   const { t } = useTranslation("overview");
@@ -28,64 +30,77 @@ function OverviewTab() {
 
   const user = useAppSelector((state: RootState) => state.user.user);
 
+  const getNum = async () => {
+    const res = await overviewGetNum();
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    console.log("res", res);
+  };
+
+  // useEffect(() => {
+  //   getNum();
+  // }, [user]);
+
   const data = [
     {
-      name: "Tháng 1",
+      name: "Jan",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 2",
+      name: "Feb",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 3",
+      name: "Mar",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 4",
+      name: "Apr",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 5",
+      name: "May",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 6",
+      name: "Jun",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 7",
+      name: "Jul",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 8",
+      name: "Aug",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 9",
+      name: "Sep",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 10",
+      name: "Oct",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 11",
+      name: "Nov",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
     {
-      name: "Tháng 12",
+      name: "Dec",
       num: Math.floor(Math.random() * 1000),
       px: Math.floor(Math.random() * 1000),
     },
@@ -140,7 +155,7 @@ function OverviewTab() {
           <div className="h-2" />
           <div className="heading_semibold_32">
             <FormattedNumber
-              value={30}
+              value={user?.gold ?? 0}
               style="decimal"
               maximumFractionDigits={2}
             />
@@ -296,10 +311,10 @@ function OverviewTab() {
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              {/* <XAxis dataKey="name" /> */}
               <YAxis />
               <Tooltip />
-              <Legend />
+              {/* <Legend /> */}
 
               <Bar
                 dataKey="num"

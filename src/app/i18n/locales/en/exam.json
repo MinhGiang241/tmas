@@ -411,5 +411,8 @@
   "gold_tooltip_1": "The creator will receive {{num1}}% of the gold from each test that the candidate purchases. TMAS will retain {{num2}}% to maintain and develop the platform",
   "gold_tooltip_2": "For example: If you set a price of {{num}} gold per test",
   "gold_tooltip_3": "The topic creator will receive {{num}} gold",
-  "gold_tooltip_4": "Our company will receive {{num}} gold"
+  "gold_tooltip_4": "Our company will receive {{num}} gold",
+  "pure_income": "Pure income",
+  "from_date": "From date",
+  "to_date": "To date"
 }

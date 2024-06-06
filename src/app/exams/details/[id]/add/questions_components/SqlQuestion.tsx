@@ -136,8 +136,8 @@ function SqlQuestion({
           (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
           undefined,
         content: {
-          schemaSql,
-          expectedOutput,
+          schemaSql: schemaSql?.replace(/  +/g, " "),
+          expectedOutput: expectedOutput?.replace(/  +/g, " "),
           explainAnswer: values.explain,
         },
       };

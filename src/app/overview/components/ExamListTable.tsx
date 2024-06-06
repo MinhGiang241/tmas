@@ -17,19 +17,47 @@ function ExamListTable() {
   const [total, setTotal] = useState<number>(0);
 
   const dataRows: TableDataRow[] = [
-    { dataIndex: "name", title: t("name") },
-    { dataIndex: "group", title: t("group") },
-    { dataIndex: "tags", title: t("tags") },
-    { dataIndex: "join_num", title: t("join_num") },
-    { dataIndex: "today_join_num", title: t("today_join_num") },
-    { dataIndex: "dtb", title: t("dtb") },
-    { dataIndex: "dtv", title: t("dtv") },
-    { dataIndex: "percent_pass", title: t("percent_pass") },
-    { dataIndex: "avg_test_time", title: t("avg_test_time") },
-    { dataIndex: "min_test_time", title: t("min_test_time") },
-    { dataIndex: "max_test_time", title: t("max_test_time") },
-    { dataIndex: "question_num", title: t("question_num") },
-    { dataIndex: "created_date", title: t("created_date") },
+    { dataIndex: "name", title: t("name"), classNameTitle: "min-w-20" },
+    { dataIndex: "group", title: t("group"), classNameTitle: "min-w-20" },
+    { dataIndex: "tags", title: t("tags"), classNameTitle: "min-w-20" },
+    { dataIndex: "join_num", title: t("join_num"), classNameTitle: "min-w-20" },
+    {
+      dataIndex: "today_join_num",
+      title: t("today_join_num"),
+      classNameTitle: "min-w-20",
+    },
+    { dataIndex: "dtb", title: t("dtb"), classNameTitle: "min-w-20" },
+    { dataIndex: "dtv", title: t("dtv"), classNameTitle: "min-w-20" },
+    {
+      dataIndex: "percent_pass",
+      title: t("percent_pass"),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "avg_test_time",
+      title: t("avg_test_time"),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "min_test_time",
+      title: t("min_test_time"),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "max_test_time",
+      title: t("max_test_time"),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "question_num",
+      title: t("question_num"),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "created_date",
+      title: t("created_date"),
+      classNameTitle: "min-w-20",
+    },
   ];
 
   return (
@@ -97,7 +125,7 @@ function ExamListTable() {
           h="h-11"
         />
       </div>
-      <div className="h-3" />
+      <div className="h-5" />
       <MTable
         indexPage={indexPage}
         setIndexPage={setIndexPage}
@@ -105,6 +133,7 @@ function ExamListTable() {
         setRecordNum={setRecordNum}
         total={total}
         dataRows={dataRows}
+        sumData={{ name: `${t("sum")}:` }}
       />
     </>
   );
