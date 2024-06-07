@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
-import { Checkbox, Collapse, Popover } from "antd";
+import { Checkbox, Collapse, Popover, Tooltip } from "antd";
 import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
 import EditIcon from "@/app/components/icons/edit-black.svg";
 import CopyIcon from "@/app/components/icons/size.svg";
@@ -57,6 +57,7 @@ export default function Sql({
 
   const router = useRouter();
   const { t } = useTranslation("question");
+  const examTrans = useTranslation("exam");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [dupLoading, setDupLoading] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -212,7 +213,12 @@ export default function Sql({
                       );
                     }}
                   >
-                    <EditIcon />
+                    <Tooltip
+                      placement="bottom"
+                      title={examTrans.t("edit_question")}
+                    >
+                      <EditIcon />
+                    </Tooltip>
                   </button>
                   <button
                     className="px-2"
@@ -221,7 +227,12 @@ export default function Sql({
                       setOpenCopyQuestion(true);
                     }}
                   >
-                    <CopyIcon />
+                    <Tooltip
+                      placement="bottom"
+                      title={examTrans.t("clone_question")}
+                    >
+                      <CopyIcon />
+                    </Tooltip>
                   </button>
                   <button
                     onClick={(e) => {
@@ -229,7 +240,12 @@ export default function Sql({
                       setOpenDeleteQuestion(true);
                     }}
                   >
-                    <DeleteRedIcon />
+                    <Tooltip
+                      placement="bottom"
+                      title={examTrans.t("delete_question")}
+                    >
+                      <DeleteRedIcon />
+                    </Tooltip>
                   </button>
                 </div>
               )}

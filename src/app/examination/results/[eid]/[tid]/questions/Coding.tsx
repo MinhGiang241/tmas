@@ -10,7 +10,11 @@ import Tick from "@/app/components/icons/tick-circle.svg";
 import CodeMirror from "@uiw/react-codemirror";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 import { renderExtension } from "@/services/ui/coding_services";
-import { CodingCandidateAnswer, CodingQuestionData } from "@/data/question";
+import {
+  CodingAnswerMetadata,
+  CodingCandidateAnswer,
+  CodingQuestionData,
+} from "@/data/question";
 import { CandidateAnswers } from "@/data/exam";
 import { ColumnsType } from "antd/es/table";
 import {
@@ -55,6 +59,14 @@ export default function Coding({
     !answers?.candidateAnswerJson
       ? undefined
       : JSON.parse(answers?.candidateAnswerJson ?? "");
+
+  const codingMetadata: CodingAnswerMetadata = candidateAnswer?.metadata
+    ? JSON.parse(candidateAnswer?.metadata ?? "")
+    : undefined;
+
+  console.log("coding metadata", codingMetadata);
+  console.log("coding ans", answers);
+
   interface TableValue {
     testcase?: string;
     input?: string;
@@ -77,9 +89,7 @@ export default function Coding({
       dataIndex: "input",
       key: "input",
       render: (text, data) => (
-        <div className=" flex justify-start mr-1 px-1 cursor-pointer text-m_primary_500 underline underline-offset-4">
-          LinkTest
-        </div>
+        <div className=" flex justify-start mr-1 px-1  ">{text}</div>
       ),
     },
     {
@@ -88,9 +98,7 @@ export default function Coding({
       dataIndex: "output",
       key: "output",
       render: (text, data) => (
-        <div className="flex justify-start mr-1 px-1 cursor-pointer text-m_primary_500 underline underline-offset-4">
-          LinkTest
-        </div>
+        <div className="flex justify-start mr-1 px-1 ">{text}</div>
       ),
     },
     {
@@ -103,11 +111,11 @@ export default function Coding({
   ];
 
   const data: TableValue[] =
-    question?.content?.testcases?.map<TableValue>((k) => ({
+    candidateAnswer?.testCaseScoreds?.map<TableValue>((k) => ({
       testcase: k.name,
       input: k.inputData,
       output: k.outputData,
-      result: true,
+      result: k.matched,
     })) ?? [];
 
   useEffect(() => {
@@ -192,7 +200,11 @@ export default function Coding({
               <Table columns={columns} dataSource={data} pagination={false} />
               <div className="max-lg:flex-col lg:items-center flex justify-between items-center pt-4">
                 <div className="flex">
-                  {t("point")}: <div className="pl-1 font-semibold">1/1</div>
+                  {t("point")}:{" "}
+                  <div className="pl-1 font-semibold">
+                    {answers?.anwserScore?.score ?? 0} /
+                    {answers?.anwserScore?.totalScore ?? 0}
+                  </div>
                 </div>
                 <div className="flex">
                   {t("method_match")}:{" "}
@@ -205,25 +217,30 @@ export default function Coding({
                   </div>
                 </div>
                 <div className="flex">
-                  {t("sum_pair")}: <div className="pl-1 font-semibold">3</div>
-                </div>
-                <div className="flex">
-                  {t("num_true_pair")}:{" "}
+                  {t("sum_testcases")}:{" "}
                   <div className="pl-1 font-semibold">
-                    {answers?.anwserScore?.numberQuestionCorrect ?? 0}
+                    {codingMetadata?.data?.testcases?.length ?? 0}
                   </div>
                 </div>
                 <div className="flex">
-                  {t("num_false_pair")}:{" "}
+                  {t("correct_testcase_num")}:{" "}
                   <div className="pl-1 font-semibold">
-                    {(answers?.anwserScore?.totalQuestion ?? 0) -
-                      (answers?.anwserScore?.numberQuestionCorrect ?? 0)}
+                    {codingMetadata?.data?.testcases?.filter((e) => e.matched)
+                      ?.length ?? 0}
+                  </div>
+                </div>
+                <div className="flex">
+                  {t("incorrect_testcase_num")}:{" "}
+                  <div className="pl-1 font-semibold">
+                    {codingMetadata?.data?.testcases?.filter((e) => !e.matched)
+                      ?.length ?? 0}
                   </div>
                 </div>
               </div>
               <div className="bg-white rounded-t-lg mt-3">
                 <div className="pt-3 ml-2 mb-2 body_semibold_14">
-                  {common.t("language")}: {""}
+                  {common.t("language")}:{" "}
+                  {candidateAnswer?.languageSelected ?? ""}
                 </div>
                 <CodeMirror
                   readOnly={true}
@@ -232,7 +249,11 @@ export default function Coding({
                   // lang={lang}
                   theme={dracula}
                   height="300px"
-                  extensions={[renderExtension("javascript") as any]}
+                  extensions={[
+                    renderExtension(
+                      candidateAnswer?.languageSelected?.toLowerCase() ?? "",
+                    ) as any,
+                  ]}
                   onChange={(v) => {}}
                 />
               </div>

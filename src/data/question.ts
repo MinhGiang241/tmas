@@ -124,11 +124,6 @@ export interface SqlQuestionData extends BaseQuestionData {
   };
 }
 
-export interface CodingCandidateAnswer {
-  code?: string;
-  languageSelected?: string;
-}
-
 export interface FillBlankCandidateAnswer {
   anwserItems?: {
     anwsers?: string[];
@@ -190,6 +185,58 @@ export interface SqlAnswerMetadata {
     stdOut?: string;
     stdOutRaw?: any[];
     testDir?: any;
+    updatedTime?: string;
+    wrong?: number;
+  };
+}
+
+export interface CodingCandidateAnswer {
+  testCaseScoreds?: {
+    matched?: boolean;
+    id?: string;
+    name?: string;
+    inputData?: string;
+    outputData?: string;
+  }[];
+  buildErrMsg?: string;
+  metadata?: string;
+  languageSelected?: string;
+  code?: string;
+}
+
+export interface CodingAnswerMetadata {
+  code?: number;
+  message?: string;
+  data?: {
+    buildErrMsg?: string;
+    codingTemplate?: {
+      nameFunction?: string;
+      parameterInputs?: any;
+      returnType?: string;
+    };
+    completed?: boolean;
+    content?: string;
+    contentMode?: string;
+    correct?: number;
+    createdTime?: string;
+    duration?: number;
+    endAt?: string;
+    fullContent?: string;
+    language?: string;
+    projectId?: string;
+    schema?: string;
+    startAt?: string;
+    state?: string;
+    testDir?: string;
+    testcases?: {
+      actualResult?: any;
+      createdTime?: string;
+      inputData?: string;
+      matched?: boolean;
+      name?: string;
+      outputData?: string;
+      updatedTime?: string;
+    }[];
     updatedTime?: string;
     wrong?: number;
   };

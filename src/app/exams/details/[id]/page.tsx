@@ -446,12 +446,15 @@ function ExamDetails({ params }: any) {
               // text={common.t("create_new")}
               text={question.t("Lựa chọn khác")}
             /> */}
+
             <button
               onClick={() => {
                 router.push(`/exams/${params.id}`);
               }}
             >
-              <EditIcon />
+              <Tooltip placement="bottom" title={examTrans.t("edit_exam")}>
+                <EditIcon />
+              </Tooltip>
             </button>
             {/* <button className="pl-3">
               <MoreIcon />
@@ -691,25 +694,35 @@ function ExamDetails({ params }: any) {
                             e.stopPropagation();
                           }}
                         >
-                          <EditIcon
-                            onClick={() => {
-                              // setOpenEdit(true);
-                              setActiveDelete(x);
-                              openEditModal(x.id);
-                            }}
-                          />
+                          <Tooltip
+                            placement="bottom"
+                            title={examTrans.t("edit_part")}
+                          >
+                            <EditIcon
+                              onClick={() => {
+                                // setOpenEdit(true);
+                                setActiveDelete(x);
+                                openEditModal(x.id);
+                              }}
+                            />
+                          </Tooltip>
                         </button>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                           }}
                         >
-                          <DeleteRedIcon
-                            onClick={() => {
-                              setOpenDelete(true);
-                              setIdDelete(x.id);
-                            }}
-                          />
+                          <Tooltip
+                            placement="bottom"
+                            title={examTrans.t("delete_part")}
+                          >
+                            <DeleteRedIcon
+                              onClick={() => {
+                                setOpenDelete(true);
+                                setIdDelete(x.id);
+                              }}
+                            />
+                          </Tooltip>
                         </button>
                       </div>
                     </div>

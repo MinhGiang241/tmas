@@ -414,5 +414,14 @@
   "gold_tooltip_4": "Our company will receive {{num}} gold",
   "pure_income": "Pure income",
   "from_date": "From date",
-  "to_date": "To date"
+  "to_date": "To date",
+  "sum_testcases": "Total testcase",
+  "correct_testcase_num": "Correct testcase ammount",
+  "incorrect_testcase_num": "Incorrect testcase ammount",
+  "edit_exam": "Edit exam",
+  "edit_part": "Edit part",
+  "delete_part": "Delete part",
+  "edit_question": "Edit question",
+  "clone_question": "Clone question",
+  "delete_question": "Delete question"
 }

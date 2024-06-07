@@ -415,5 +415,14 @@
   "sum": "Tổng",
   "pure_income": "Doanh thu thuần",
   "from_date": "Từ ngày",
-  "to_date": "Đến ngày"
+  "to_date": "Đến ngày",
+  "sum_testcases": "Tổng số testcase",
+  "correct_testcase_num": "Số testcase đúng",
+  "incorrect_testcase_num": "Số testcase sai",
+  "edit_exam": "Sửa đề thi",
+  "edit_part": "Sửa phần",
+  "delete_part": "Xóa phần",
+  "edit_question": "Sửa câu hỏi",
+  "clone_question": "Clone câu hỏi",
+  "delete_question": "Xóa câu hỏi"
 }
