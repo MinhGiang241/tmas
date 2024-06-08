@@ -411,5 +411,18 @@
   "gold_tooltip_1": "Người sáng tạo đề sẽ nhận được {{num1}}% số gold từ mỗi lượt thi mà ứng viên mua. TMAS sẽ giữ lại {{num2}}% để duy trì và phát triển nền tảng.",
   "gold_tooltip_2": "Ví dụ: Nếu bạn định giá {{num}} gold cho mỗi lượt thi",
   "gold_tooltip_3": "Người sáng tạo đề sẽ nhận {{num}} gold",
-  "gold_tooltip_4": "Công ty chúng tôi sẽ nhận {{num}} gold"
+  "gold_tooltip_4": "Công ty chúng tôi sẽ nhận {{num}} gold",
+  "sum": "Tổng",
+  "pure_income": "Doanh thu thuần",
+  "from_date": "Từ ngày",
+  "to_date": "Đến ngày",
+  "sum_testcases": "Tổng số testcase",
+  "correct_testcase_num": "Số testcase đúng",
+  "incorrect_testcase_num": "Số testcase sai",
+  "edit_exam": "Sửa đề thi",
+  "edit_part": "Sửa phần",
+  "delete_part": "Xóa phần",
+  "edit_question": "Sửa câu hỏi",
+  "clone_question": "Clone câu hỏi",
+  "delete_question": "Xóa câu hỏi"
 }

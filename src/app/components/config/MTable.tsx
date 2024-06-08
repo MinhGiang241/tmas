@@ -24,6 +24,8 @@ interface Props {
   rowStartStyle?: { [key: string]: any };
   rowStyle?: { [key: string]: any };
   rowEndStyle?: { [key: string]: any };
+  totalComponent?: ReactNode;
+  sumData?: { [key: string]: any };
 }
 
 function MTable(props: Props) {
@@ -84,13 +86,13 @@ function MTable(props: Props) {
   ];
 
   return (
-    <div className="w-full overflow-scroll">
+    <div className="w-full ">
       <Table
         // locale={{
         //   emptyText: <div className="bg-m_primary_300">HelloWOrld</div>,
         // }}
         loading={props.loading}
-        className="w-full"
+        className="w-full overflow-scroll"
         bordered={false}
         columns={columns}
         dataSource={props.dataSource}
@@ -103,6 +105,23 @@ function MTable(props: Props) {
               borderRadius: "20px",
             },
           }) as HTMLAttributes<any>
+        }
+        summary={
+          props.sumData
+            ? (data) => {
+                var d = props.dataRows?.map((y) => y?.dataIndex);
+
+                return (
+                  <Table.Summary.Row className="w-full bg-m_primary_100 h-12 rounded-b-lg body_semibold_14">
+                    {d?.map((k, i) => (
+                      <Table.Summary.Cell key={k} index={i}>
+                        {(props.sumData as any)[k as string]}
+                      </Table.Summary.Cell>
+                    ))}
+                  </Table.Summary.Row>
+                );
+              }
+            : undefined
         }
       />
       <div className="h-4" />

@@ -1,4 +1,4 @@
-import { Checkbox, Collapse } from "antd";
+import { Checkbox, Collapse, Tooltip } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
 import EditIcon from "@/app/components/icons/edit-black.svg";
@@ -49,6 +49,7 @@ function Random({
 }) {
   const router = useRouter();
   const { t } = useTranslation("question");
+  const examTrans = useTranslation("exam");
   const [expanded, setExpanded] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [dupLoading, setDupLoading] = useState(false);
@@ -190,7 +191,12 @@ function Random({
                       );
                     }}
                   >
-                    <EditIcon />
+                    <Tooltip
+                      placement="bottom"
+                      title={examTrans.t("edit_question")}
+                    >
+                      <EditIcon />
+                    </Tooltip>
                   </button>
                   <button
                     className="px-2"
@@ -199,7 +205,12 @@ function Random({
                       setOpenCopyQuestion(true);
                     }}
                   >
-                    <CopyIcon />
+                    <Tooltip
+                      placement="bottom"
+                      title={examTrans.t("clone_question")}
+                    >
+                      <CopyIcon />
+                    </Tooltip>
                   </button>
                   <button
                     onClick={(e) => {
@@ -207,7 +218,12 @@ function Random({
                       setOpenDeleteQuestion(true);
                     }}
                   >
-                    <DeleteRedIcon />
+                    <Tooltip
+                      placement="bottom"
+                      title={examTrans.t("delete_question")}
+                    >
+                      <DeleteRedIcon />
+                    </Tooltip>
                   </button>
                 </div>
               )}
