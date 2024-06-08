@@ -46,6 +46,8 @@ import { APIResults } from "@/data/api_results";
 import { ExamGroupData } from "@/data/exam";
 import { UserData } from "@/data/user";
 import BellIcon from "@/app/components/icons/notification.svg";
+import Notification from "../notifications/page";
+// import * as Popover from '@radix-ui/react-popover';
 
 function Header({ path }: { path?: string }) {
   const { t, i18n } = useTranslation("account");
@@ -141,7 +143,7 @@ function Header({ path }: { path?: string }) {
       }));
 
       dispatch(
-        setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)]),
+        setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)])
       );
     } catch (e: any) {
       dispatch(setLoadingMember(false));
@@ -178,7 +180,7 @@ function Header({ path }: { path?: string }) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id,
+          (ch: ExamGroupData) => ch.idParent === e.id
         );
         return { ...e, childs };
       });
@@ -236,11 +238,11 @@ function Header({ path }: { path?: string }) {
                   !user?.verified
                     ? "#"
                     : v == "exam_group" ||
-                        v == "exams" ||
-                        v == "examination" ||
-                        v == "exam_bank"
-                      ? `/${v}`
-                      : "/"
+                      v == "exams" ||
+                      v == "examination" ||
+                      v == "exam_bank"
+                    ? `/${v}`
+                    : "/"
                 }
                 onClick={() => {
                   if (
@@ -382,9 +384,8 @@ function Header({ path }: { path?: string }) {
               </div>
             </button>
           </div>
-          <button className="mx-4">
-            <BellIcon />
-          </button>
+          {/* TODO */}
+          <Notification />
           <Popover
             onOpenChange={(v) => {
               setOpenPop(v);
