@@ -49,6 +49,8 @@ export default function Sql({
       ? undefined
       : JSON.parse(answers?.candidateAnswerJson ?? "");
 
+  console.log("candidateAnswer SQL", candidateAnswer);
+
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
@@ -83,6 +85,8 @@ export default function Sql({
   var metadata: SqlAnswerMetadata = candidateAnswer?.metadata
     ? JSON.parse(candidateAnswer?.metadata ?? "")
     : undefined;
+
+  console.log("metedata sql", metadata);
 
   const expectedData = metadata?.data?.expectedOutput
     ?.split("\n")

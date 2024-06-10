@@ -23,11 +23,14 @@ import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 import UpDownTrend from "../components/UpDownTrend";
 import { overviewGetNum } from "@/services/api_services/overview_api";
 import { errorToast } from "@/app/components/toast/customToast";
+import { OverviewNumberData } from "@/data/overview";
 
 function OverviewTab() {
   const { t } = useTranslation("overview");
   const examTrans = useTranslation("exam");
-
+  const [overviewData, setOverviewData] = useState<
+    OverviewNumberData | undefined
+  >();
   const user = useAppSelector((state: RootState) => state.user.user);
 
   const getNum = async () => {
@@ -36,12 +39,12 @@ function OverviewTab() {
       errorToast(res?.message ?? "");
       return;
     }
-    console.log("res", res);
+    setOverviewData(res?.data);
   };
 
-  // useEffect(() => {
-  //   getNum();
-  // }, [user]);
+  useEffect(() => {
+    getNum();
+  }, [user]);
 
   const data = [
     {
@@ -116,7 +119,7 @@ function OverviewTab() {
           <div className="h-2" />
           <div className="heading_semibold_32">
             <FormattedNumber
-              value={30}
+              value={overviewData?.totalDoingTest ?? 0}
               style="decimal"
               maximumFractionDigits={2}
             />
@@ -128,12 +131,24 @@ function OverviewTab() {
           <div className="flex items-center">
             <div className="heading_semibold_32">
               <FormattedNumber
-                value={30}
+                value={overviewData?.totalTest ?? 0}
                 style="decimal"
                 maximumFractionDigits={2}
               />
             </div>
-            <UpDownTrend up num={30} />
+            {overviewData?.totalTestToday !=
+              overviewData?.totalTestTomorrow && (
+              <UpDownTrend
+                up={
+                  (overviewData?.totalTestTomorrow ?? 0) >
+                  (overviewData?.totalTestToday ?? 0)
+                }
+                num={
+                  (overviewData?.totalTestTomorrow ?? 0) -
+                  (overviewData?.totalTestToday ?? 0)
+                }
+              />
+            )}
           </div>
         </div>
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
@@ -142,12 +157,24 @@ function OverviewTab() {
           <div className="flex items-center">
             <div className="heading_semibold_32">
               <FormattedNumber
-                value={30}
+                value={overviewData?.totalUserTest ?? 0}
                 style="decimal"
                 maximumFractionDigits={2}
               />
             </div>
-            <UpDownTrend num={30} />
+            {overviewData?.totalUserTestToday !=
+              overviewData?.totalUserTestTomorrow && (
+              <UpDownTrend
+                up={
+                  (overviewData?.totalUserTestTomorrow ?? 0) >
+                  (overviewData?.totalUserTestToday ?? 0)
+                }
+                num={
+                  (overviewData?.totalUserTestTomorrow ?? 0) -
+                  (overviewData?.totalUserTestToday ?? 0)
+                }
+              />
+            )}
           </div>
         </div>
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
@@ -276,7 +303,7 @@ function OverviewTab() {
               <Tooltip />
               {/* <Legend /> */}
               <Line
-                type="bump"
+                type="natural"
                 strokeWidth={2}
                 dataKey="px"
                 stroke="#FC8800"
@@ -284,7 +311,7 @@ function OverviewTab() {
               />
               <Line
                 strokeWidth={2}
-                type="monotone"
+                type="natural"
                 dataKey="num"
                 stroke="#0B8199"
                 dot={false}

@@ -117,7 +117,7 @@ function CreateExaminationPage({ examination }: any) {
       )?.filter((s: any) => (examination?.requiredInfoSetting as any)[s]);
       setInfoChecked(required);
 
-      var tricks = Object.keys(examination?.cheatingSetting as any)?.filter(
+      var tricks = Object.keys(examination?.cheatingSetting ?? {})?.filter(
         (s: any) => (examination?.cheatingSetting as any)[s],
       );
       setPreventChecked(tricks);
