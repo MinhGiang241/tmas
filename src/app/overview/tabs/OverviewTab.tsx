@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import React, { useEffect, useState } from "react";
@@ -21,9 +22,14 @@ import {
 } from "recharts";
 import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 import UpDownTrend from "../components/UpDownTrend";
-import { overviewGetNum } from "@/services/api_services/overview_api";
+import {
+  overviewActivitiesReport,
+  overviewGetNum,
+  overviewGetTotalExamByExamGroup,
+} from "@/services/api_services/overview_api";
 import { errorToast } from "@/app/components/toast/customToast";
-import { OverviewNumberData } from "@/data/overview";
+import { OverviewNumberData, TimeChart } from "@/data/overview";
+import dayjs from "dayjs";
 
 function OverviewTab() {
   const { t } = useTranslation("overview");
@@ -32,6 +38,54 @@ function OverviewTab() {
     OverviewNumberData | undefined
   >();
   const user = useAppSelector((state: RootState) => state.user.user);
+  const [lineField, setLineField] = useState<TimeChart | undefined>(
+    TimeChart.Day,
+  );
+
+  interface LineTableValue {
+    name?: string;
+    value?: number;
+  }
+  interface BarTableValue {
+    name?: string;
+    [key: string]: any;
+  }
+  var now = dayjs();
+  var year = now.year();
+  const [lineData, setLineData] = useState<LineTableValue[]>([]);
+  const [barData, setBarData] = useState<BarTableValue[]>([]);
+  const [startTime, setStartTime] = useState<string>(
+    dayjs(`1/1/${year}`).toISOString(),
+  );
+  const [endTime, setEndTime] = useState<string>(dayjs()?.toISOString());
+
+  const getActivitiestOverTime = async () => {
+    const res = await overviewActivitiesReport({
+      startTime: startTime,
+      endTime: endTime,
+      typeTime: lineField,
+    });
+
+    console.log("ress overtime", res);
+
+    if (res?.code != 0) {
+      errorToast(res?.message);
+      return;
+    }
+
+    var dataLine = res?.data?.map((e: any) => ({
+      name:
+        lineField == TimeChart.Year
+          ? `${e?.year}`
+          : lineField == TimeChart.Month
+            ? `${e.month}/${e.year}`
+            : lineField == TimeChart.Week
+              ? `${e.week}/${e.year}`
+              : `${e.day}/${e?.month}/${e?.year}`,
+      value: e.total,
+    }));
+    setLineData(dataLine);
+  };
 
   const getNum = async () => {
     const res = await overviewGetNum();
@@ -42,9 +96,23 @@ function OverviewTab() {
     setOverviewData(res?.data);
   };
 
+  const getTotalExamByExamGroup = async () => {
+    var res = await overviewGetTotalExamByExamGroup();
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    console.log("bar data", res);
+    setBarData(res.data);
+  };
+
   useEffect(() => {
     getNum();
   }, [user]);
+  useEffect(() => {
+    getActivitiestOverTime();
+    getTotalExamByExamGroup();
+  }, [user, lineField]);
 
   const data = [
     {
@@ -108,8 +176,7 @@ function OverviewTab() {
       px: Math.floor(Math.random() * 1000),
     },
   ];
-
-  const [lineField, setLineField] = useState<string | undefined>("0");
+  console.log("on bardata", Object.keys(barData));
 
   return (
     <>
@@ -210,10 +277,10 @@ function OverviewTab() {
           <div className="flex ">
             <button
               onClick={() => {
-                setLineField("0");
+                setLineField(TimeChart.Day);
               }}
               className={`flex justify-center items-center px-4 ml-3 rounded-lg h-9 ${
-                lineField == "0"
+                lineField == TimeChart.Day
                   ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
                   : "border border-m_neutral_200 body_regular_14"
               }`}
@@ -222,10 +289,10 @@ function OverviewTab() {
             </button>
             <button
               onClick={() => {
-                setLineField("1");
+                setLineField(TimeChart.Week);
               }}
               className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${
-                lineField == "1"
+                lineField == TimeChart.Week
                   ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
                   : "border border-m_neutral_200 body_regular_14"
               }`}
@@ -234,10 +301,10 @@ function OverviewTab() {
             </button>
             <button
               onClick={() => {
-                setLineField("2");
+                setLineField(TimeChart.Month);
               }}
               className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${
-                lineField == "2"
+                lineField == TimeChart.Month
                   ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
                   : "border border-m_neutral_200 body_regular_14"
               }`}
@@ -246,10 +313,10 @@ function OverviewTab() {
             </button>
             <button
               onClick={() => {
-                setLineField("3");
+                setLineField(TimeChart.Year);
               }}
               className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${
-                lineField == "3"
+                lineField == TimeChart.Year
                   ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
                   : "border border-m_neutral_200 body_regular_14"
               }`}
@@ -260,6 +327,11 @@ function OverviewTab() {
           <div className="flex items-center">
             <div className="max-w-36">
               <MDateTimeSelect
+                setValue={(name: string, val: any) => {
+                  setStartTime(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                }}
+                allowClear={false}
+                isoValue={startTime}
                 formatter={"DD/MM/YYYY"}
                 showTime={false}
                 isTextRequire={false}
@@ -272,6 +344,11 @@ function OverviewTab() {
             <div className="mx-2 w-2 h-[1px] bg-m_neutral_500" />
             <div className="max-w-36">
               <MDateTimeSelect
+                setValue={(name: string, val: any) => {
+                  setEndTime(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                }}
+                allowClear={false}
+                isoValue={endTime}
                 formatter={"DD/MM/YYYY"}
                 showTime={false}
                 isTextRequire={false}
@@ -289,7 +366,7 @@ function OverviewTab() {
             <LineChart
               width={500}
               height={300}
-              data={data}
+              data={lineData}
               margin={{
                 top: 5,
                 right: 30,
@@ -302,17 +379,17 @@ function OverviewTab() {
               <YAxis />
               <Tooltip />
               {/* <Legend /> */}
+              {/* <Line */}
+              {/*   type="natural" */}
+              {/*   strokeWidth={2} */}
+              {/*   dataKey="px" */}
+              {/*   stroke="#FC8800" */}
+              {/*   dot={false} */}
+              {/* /> */}
               <Line
-                type="natural"
                 strokeWidth={2}
-                dataKey="px"
-                stroke="#FC8800"
-                dot={false}
-              />
-              <Line
-                strokeWidth={2}
-                type="natural"
-                dataKey="num"
+                type="monotone"
+                dataKey="value"
                 stroke="#0B8199"
                 dot={false}
               />
@@ -329,7 +406,7 @@ function OverviewTab() {
             <BarChart
               width={500}
               height={300}
-              data={data}
+              data={barData}
               margin={{
                 top: 5,
                 right: 30,
@@ -338,16 +415,27 @@ function OverviewTab() {
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              {/* <XAxis dataKey="name" /> */}
+              <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
               {/* <Legend /> */}
-
-              <Bar
-                dataKey="num"
-                fill="#6FADE0"
-                activeBar={<Rectangle fill="gold" stroke="purple" />}
-              />
+              {barData?.length != 0 &&
+                Object.keys(barData?.reduce((a, b) => ({ ...a, ...b }), {}))
+                  .filter((l) => l != "name")
+                  //barData
+                  .map((e, i) => (
+                    <Bar
+                      key={e}
+                      dataKey={e}
+                      stackId={"a"}
+                      fill={
+                        "#" +
+                        (((1 << 24) * Math.random()) | 0)
+                          .toString(16)
+                          .padStart(6, "0")
+                      }
+                    />
+                  ))}
             </BarChart>
           </ResponsiveContainer>
         </div>
