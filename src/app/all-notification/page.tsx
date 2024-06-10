@@ -81,7 +81,9 @@ export default function AllNotification() {
               }
               trigger={["click"]}
             >
-              ...
+              <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300">
+                <div className="pb-2">...</div>
+              </div>
             </Popover>
           </div>
           <div className="mb-2 text-lg">Mới</div>
@@ -164,16 +166,38 @@ export default function AllNotification() {
                       </div>
                     </div>
                     <div>
-                      {!x?.imageLink ? (
+                      {x?.type === "PublicExam" ? (
                         <img
                           src="/images/logo.png"
-                          className="h-[66.65px] w-[200px]"
+                          className="h-[50px] w-[129px]"
+                        />
+                      ) : x?.type === "TestResults" ? (
+                        <img
+                          src="/images/logo.png"
+                          className="h-[50px] w-[129px]"
+                        />
+                      ) : x?.type === "ExamApproved" ? (
+                        <img
+                          src="/images/logo.png"
+                          className="h-[50px] w-[129px]"
+                        />
+                      ) : x?.type === "ExamNotApproved" ? (
+                        <img
+                          src="/images/logo.png"
+                          className="h-[50px] w-[129px]"
+                        />
+                      ) : x?.type === "GoldEarned" ? (
+                        <img
+                          src="/images/logo.png"
+                          className="h-[50px] w-[129px]"
+                        />
+                      ) : x?.type === "PurchaseExam" ? (
+                        <img
+                          src="/images/logo.png"
+                          className="h-[50px] w-[129px]"
                         />
                       ) : (
-                        <img
-                          className="h-[66.65px] w-[200px]"
-                          src={x?.imageLink}
-                        />
+                        ""
                       )}
                     </div>
                   </a>
@@ -214,7 +238,9 @@ export default function AllNotification() {
                         }
                         trigger={["click"]}
                       >
-                        <img src="/notify/more.png" />
+                        <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300">
+                          <div className="pb-2">...</div>
+                        </div>
                       </Popover>
                     </div>
                     {!x?.read ? (
@@ -313,16 +339,38 @@ export default function AllNotification() {
                           </div>
                         </div>
                         <div>
-                          {!e?.imageLink ? (
+                          {e?.type === "PublicExam" ? (
                             <img
                               src="/images/logo.png"
-                              className="h-[66.65px] w-[200px]"
+                              className="h-[50px] w-[129px]"
+                            />
+                          ) : e?.type === "TestResults" ? (
+                            <img
+                              src="/images/logo.png"
+                              className="h-[50px] w-[129px]"
+                            />
+                          ) : e?.type === "ExamApproved" ? (
+                            <img
+                              src="/images/logo.png"
+                              className="h-[50px] w-[129px]"
+                            />
+                          ) : e?.type === "ExamNotApproved" ? (
+                            <img
+                              src="/images/logo.png"
+                              className="h-[50px] w-[129px]"
+                            />
+                          ) : e?.type === "GoldEarned" ? (
+                            <img
+                              src="/images/logo.png"
+                              className="h-[50px] w-[129px]"
+                            />
+                          ) : e?.type === "PurchaseExam" ? (
+                            <img
+                              src="/images/logo.png"
+                              className="h-[50px] w-[129px]"
                             />
                           ) : (
-                            <img
-                              className="h-[66.65px] w-[200px]"
-                              src={e?.imageLink}
-                            />
+                            ""
                           )}
                         </div>
                       </a>
@@ -362,7 +410,9 @@ export default function AllNotification() {
                           }
                           trigger={["click"]}
                         >
-                          <img src="/notify/more.png" />
+                          <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300">
+                            <div className="pb-2">...</div>
+                          </div>
                         </Popover>
                       </div>
                       {!e?.read ? (

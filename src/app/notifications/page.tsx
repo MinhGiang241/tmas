@@ -17,13 +17,13 @@ export default function Notification() {
   const [getNoti, setGetNoti] = useState<ListNotification>();
   const [totalNum, setTotalNum] = useState<number>();
   const [, setShow] = useState<string | undefined>();
+  const router = useRouter();
 
   const dataNotify = async () => {
     const res = await myListNotify(0, 15);
     // await getNotiAwait(0, 1000);
     if (res) {
       setGetNoti(res?.data);
-      console.log(res?.data);
     }
   };
 
@@ -31,25 +31,17 @@ export default function Notification() {
     const res = await totalUnreadNoti();
     if (res) {
       setTotalNum(res?.data);
-      console.log(res?.data);
-
-      void dataNotify();
     }
   };
 
-  const router = useRouter();
-
   useEffect(() => {
-    void dataNotify();
-    void totalUnread();
-    // const intervalId = setInterval(() => {
-    //   void dataNotify();
-    //   void totalUnread();
-    //   // console.log(1);
-    // }, 5000);
+    const intervalId = setInterval(() => {
+      void totalUnread();
+    }, 5000);
 
-    // return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId);
   }, []);
+
   return (
     <Popover
       className="mx-4"
@@ -91,12 +83,14 @@ export default function Notification() {
             }
             trigger={["click"]}
           >
-            ...
+            <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300">
+              <div className="pb-2">...</div>
+            </div>
           </Popover>
         </div>
       }
       content={
-        <div className="max-h-[750px] overflow-y-scroll">
+        <div className="max-h-[750px] max-w-[600px] overflow-y-scroll">
           <div className="mb-2 mt-4 text-sm font-semibold">Mới</div>
           {(getNoti?.unAwared?.length || 0) > 0
             ? getNoti?.unAwared?.map((key: any, index) => (
@@ -161,10 +155,10 @@ export default function Notification() {
                           />
                         )}
                       </div>
-                      <div className="flex w-[280px] flex-1 flex-col">
-                        <div className="w-[280px]">
+                      <div className="flex flex-1 flex-col">
+                        <div className="break-all">
                           <b className="pr-1">{key?.subject}</b>
-                          <span className="">{key?.body}</span>
+                          <span className="break-all">{key?.body}</span>
                         </div>
                         <div className="text-sm text-gray-500">
                           {key?.timeJoined}
@@ -181,17 +175,41 @@ export default function Notification() {
                           &nbsp; trước
                         </div>
                       </div>
-                      {!key?.imageLink ? (
-                        <img
-                          src="/images/logo.png"
-                          className="h-[66.65px] w-[129px]"
-                        />
-                      ) : (
-                        <img
-                          className="h-[66.65px] w-[129px]"
-                          src={key?.imageLink}
-                        />
-                      )}
+                      <div>
+                        {key?.type === "PublicExam" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : key?.type === "TestResults" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : key?.type === "ExamApproved" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : key?.type === "ExamNotApproved" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : key?.type === "GoldEarned" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : key?.type === "PurchaseExam" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : (
+                          ""
+                        )}
+                      </div>
                     </a>
                     <div className="flex items-center justify-center">
                       <Popover
@@ -229,7 +247,9 @@ export default function Notification() {
                         }
                         trigger={["click"]}
                       >
-                        <img src="/notify/more.png" />
+                        <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300">
+                          <div className="pb-2">...</div>
+                        </div>
                       </Popover>
                     </div>
                     {!key?.read ? (
@@ -308,10 +328,10 @@ export default function Notification() {
                           />
                         )}
                       </div>
-                      <div className="flex w-[280px] flex-1 flex-col">
-                        <div className="w-[280px]">
-                          <b className="break-words pr-1">{key?.subject}</b>
-                          <span className="break-words">{key?.body}</span>
+                      <div className="flex flex-1 flex-col">
+                        <div className="break-all">
+                          <b className="pr-1">{key?.subject}</b>
+                          <span className="break-all">{key?.body}</span>
                         </div>
                         <div className="text-sm text-gray-500">
                           {key?.timeJoined}
@@ -328,17 +348,39 @@ export default function Notification() {
                           &nbsp; trước
                         </div>
                       </div>
-                      <div className="w-[129px]">
-                        {!key?.imageLink ? (
+                      <div>
+                        {key?.type === "PublicExam" ? (
                           <img
                             src="/images/logo.png"
-                            className="h-[40px] w-[129px]"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : key?.type === "TestResults" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : key?.type === "ExamApproved" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : key?.type === "ExamNotApproved" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : key?.type === "GoldEarned" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
+                          />
+                        ) : key?.type === "PurchaseExam" ? (
+                          <img
+                            src="/images/logo.png"
+                            className="h-[50px] w-[129px]"
                           />
                         ) : (
-                          <img
-                            className="h-[65px] w-[129px]"
-                            src={key?.imageLink}
-                          />
+                          ""
                         )}
                       </div>
                     </a>
@@ -378,7 +420,9 @@ export default function Notification() {
                         }
                         trigger={["click"]}
                       >
-                        <img src="/notify/more.png" />
+                        <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300">
+                          <div className="pb-2">...</div>
+                        </div>
                       </Popover>
                     </div>
                     {!key?.read ? (
@@ -398,9 +442,9 @@ export default function Notification() {
     >
       <div
         onClick={async () => {
-          // await totalUnread();
+          await totalUnread();
+          await dataNotify();
           await getNotiAwait(0, 1000);
-          // await dataNotify();
         }}
         className="cursor-pointer"
       >
