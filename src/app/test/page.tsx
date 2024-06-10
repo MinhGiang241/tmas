@@ -1,6 +1,6 @@
 "use client";
 import HomeLayout from "@/app/layouts/HomeLayout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "@uiw/codemirror-theme-dracula";
@@ -36,7 +36,15 @@ function DetailsPage() {
     console.log("val:", val);
     setValue(val);
   }, []);
+  useEffect(() => {
+    window.addEventListener("message", (event: MessageEvent<any>) => {
+      console.log('addEvent Noti', event);
+    });
 
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      console.log('addEvent Noti 2', event);
+    });
+  }, [])
   return (
     <HomeLayout>
       <Select
@@ -69,7 +77,7 @@ function DetailsPage() {
       <div className="border rounded-lg p-4 min-h-40">
         {results?.map((d: any, i: number) => <div key={i}>{d}</div>)}
       </div>
-      {}
+      { }
     </HomeLayout>
   );
 }
