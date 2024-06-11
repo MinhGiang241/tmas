@@ -189,6 +189,7 @@ export default function Explain({
                       }}
                     />
                     <Button
+                      loading={loading}
                       disabled={isComplete}
                       onClick={async () => {
                         if (!point?.trim()) {

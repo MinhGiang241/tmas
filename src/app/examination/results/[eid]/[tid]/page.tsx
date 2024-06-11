@@ -243,10 +243,15 @@ export default function Result({ params }: any) {
       case QuestionType?.SQL:
         return (
           <Sql
+            loadAnswer={() => getExamResultDetails()}
+            isComplete={
+              examResult?.result?.completionState == ExamCompletionState.Done
+            }
+            idExamTestResult={examResult?.id}
             question={q}
             index={index}
             answers={answer}
-            hidden={valueFilter == "essay_question"}
+            hidden={valueFilter == "select_question"}
           />
         );
     }

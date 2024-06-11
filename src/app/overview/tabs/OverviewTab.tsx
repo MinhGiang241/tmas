@@ -30,6 +30,7 @@ import {
 import { errorToast } from "@/app/components/toast/customToast";
 import { OverviewNumberData, TimeChart } from "@/data/overview";
 import dayjs from "dayjs";
+import LineChartOverTime from "../components/LineChartOverTime";
 
 function OverviewTab() {
   const { t } = useTranslation("overview");
@@ -108,75 +109,8 @@ function OverviewTab() {
 
   useEffect(() => {
     getNum();
-  }, [user]);
-  useEffect(() => {
-    getActivitiestOverTime();
     getTotalExamByExamGroup();
-  }, [user, lineField]);
-
-  const data = [
-    {
-      name: "Jan",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "Feb",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "Mar",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "Apr",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "May",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "Jun",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "Jul",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "Aug",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "Sep",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "Oct",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "Nov",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-    {
-      name: "Dec",
-      num: Math.floor(Math.random() * 1000),
-      px: Math.floor(Math.random() * 1000),
-    },
-  ];
-  console.log("on bardata", Object.keys(barData));
+  }, [user]);
 
   return (
     <>
@@ -273,129 +207,7 @@ function OverviewTab() {
       <div className="rounded-lg bg-white p-4 mt-4">
         <div className="body_semibold_20">{t("examination_by_time")}</div>
         <Divider className="my-4" />
-        <div className="flex my-2 justify-between items-center">
-          <div className="flex ">
-            <button
-              onClick={() => {
-                setLineField(TimeChart.Day);
-              }}
-              className={`flex justify-center items-center px-4 ml-3 rounded-lg h-9 ${
-                lineField == TimeChart.Day
-                  ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
-                  : "border border-m_neutral_200 body_regular_14"
-              }`}
-            >
-              Day
-            </button>
-            <button
-              onClick={() => {
-                setLineField(TimeChart.Week);
-              }}
-              className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${
-                lineField == TimeChart.Week
-                  ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
-                  : "border border-m_neutral_200 body_regular_14"
-              }`}
-            >
-              Week
-            </button>
-            <button
-              onClick={() => {
-                setLineField(TimeChart.Month);
-              }}
-              className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${
-                lineField == TimeChart.Month
-                  ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
-                  : "border border-m_neutral_200 body_regular_14"
-              }`}
-            >
-              Month
-            </button>
-            <button
-              onClick={() => {
-                setLineField(TimeChart.Year);
-              }}
-              className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${
-                lineField == TimeChart.Year
-                  ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
-                  : "border border-m_neutral_200 body_regular_14"
-              }`}
-            >
-              Year
-            </button>
-          </div>
-          <div className="flex items-center">
-            <div className="max-w-36">
-              <MDateTimeSelect
-                setValue={(name: string, val: any) => {
-                  setStartTime(dayjs(val, "DD/MM/YYYY")?.toISOString());
-                }}
-                allowClear={false}
-                isoValue={startTime}
-                formatter={"DD/MM/YYYY"}
-                showTime={false}
-                isTextRequire={false}
-                placeholder={examTrans.t("start_time")}
-                h="h-9"
-                id="start_time"
-                name="start_time"
-              />
-            </div>
-            <div className="mx-2 w-2 h-[1px] bg-m_neutral_500" />
-            <div className="max-w-36">
-              <MDateTimeSelect
-                setValue={(name: string, val: any) => {
-                  setEndTime(dayjs(val, "DD/MM/YYYY")?.toISOString());
-                }}
-                allowClear={false}
-                isoValue={endTime}
-                formatter={"DD/MM/YYYY"}
-                showTime={false}
-                isTextRequire={false}
-                placeholder={examTrans.t("end_time")}
-                h="h-9"
-                id="end_time"
-                name="end_time"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="h-3" />
-        <div className="w-full h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              width={500}
-              height={300}
-              data={lineData}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              {/* <Legend /> */}
-              {/* <Line */}
-              {/*   type="natural" */}
-              {/*   strokeWidth={2} */}
-              {/*   dataKey="px" */}
-              {/*   stroke="#FC8800" */}
-              {/*   dot={false} */}
-              {/* /> */}
-              <Line
-                strokeWidth={2}
-                type="monotone"
-                dataKey="value"
-                stroke="#0B8199"
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <LineChartOverTime />
       </div>
 
       <div className="rounded-lg bg-white p-4 mt-4">
