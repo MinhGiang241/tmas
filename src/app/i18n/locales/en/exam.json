@@ -423,5 +423,7 @@
   "delete_part": "Delete part",
   "edit_question": "Edit question",
   "clone_question": "Clone question",
-  "delete_question": "Delete question"
+  "delete_question": "Delete question",
+  "not_approve_send_info": "The test has not been approved yet. Notifications cannot be sent to candidates",
+  "reject_send_info": "The exam was refused approval. Notifications cannot be sent to candidates"
 }
