@@ -82,7 +82,7 @@ export const revertLanguage = (lang?: string) => {
   switch (lang) {
     case "PHP":
       return "php";
-    case "Javascrip":
+    case "Javascript":
       return "javascript";
     case "Java":
       return "java";

@@ -143,7 +143,7 @@ function Header({ path }: { path?: string }) {
       }));
 
       dispatch(
-        setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)])
+        setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)]),
       );
     } catch (e: any) {
       dispatch(setLoadingMember(false));
@@ -180,7 +180,7 @@ function Header({ path }: { path?: string }) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id
+          (ch: ExamGroupData) => ch.idParent === e.id,
         );
         return { ...e, childs };
       });
@@ -238,11 +238,11 @@ function Header({ path }: { path?: string }) {
                   !user?.verified
                     ? "#"
                     : v == "exam_group" ||
-                      v == "exams" ||
-                      v == "examination" ||
-                      v == "exam_bank"
-                    ? `/${v}`
-                    : "/"
+                        v == "exams" ||
+                        v == "examination" ||
+                        v == "exam_bank"
+                      ? `/${v}`
+                      : "/"
                 }
                 onClick={() => {
                   if (
@@ -449,15 +449,16 @@ function Header({ path }: { path?: string }) {
               onClick={() => setOpenPop(true)}
               className="absolute max-lg:pr-5 right-0 lg:ml-6  cursor-pointer"
             >
-              {user?.avatar ? (
-                <Image
-                  className="rounded-full "
-                  loading="lazy"
-                  src={user.avatar}
-                  alt="avatar"
-                  width={34}
-                  height={34}
-                />
+              {user?.stu_logo ? (
+                <div className="w-[34px] h-[34px] relative">
+                  <Image
+                    className="rounded-full "
+                    loading="lazy"
+                    src={user?.stu_logo ?? ""}
+                    alt="avatar"
+                    fill
+                  />
+                </div>
               ) : (
                 <Image
                   className="rounded-full "

@@ -162,7 +162,7 @@ function MDropdown({
           notFoundContent={fetching ? <Spin size="small" /> : null}
           popupClassName={popupClassName}
           dropdownRender={dropdownRender}
-          showSearch={true}
+          showSearch={false}
           tagRender={tagRender}
           mode={mode}
           value={value}

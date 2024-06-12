@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
-import { Checkbox, Collapse, Popover, Table } from "antd";
+import { Button, Checkbox, Collapse, Input, Popover, Table } from "antd";
 import Tick from "@/app/components/icons/tick-circle.svg";
 import Close from "@/app/components/icons/close-circle.svg";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,10 @@ import { renderExtension } from "@/services/ui/coding_services";
 import { CandidateAnswers } from "@/data/exam";
 import { SqlAnswerMetadata, SqlCandidateAnswer } from "@/data/question";
 import MTable, { TableDataRow } from "@/app/components/config/MTable";
+import MTextArea from "@/app/components/config/MTextArea";
+import { errorToast } from "@/app/components/toast/customToast";
+import { submitCheckingAnswer } from "@/services/api_services/result_exam_api";
+import Edit from "@/app/components/icons/edit-black.svg";
 
 export default function Sql({
   examId,
@@ -25,8 +29,12 @@ export default function Sql({
   onChangeCheck,
   answers,
   hidden,
+  isComplete,
+  idExamTestResult,
+  loadAnswer,
 }: {
   hidden?: boolean;
+  isComplete?: boolean;
   examId?: any;
   question?: any;
   index?: any;
@@ -37,17 +45,28 @@ export default function Sql({
   canCheck?: boolean;
   onChangeCheck?: Function;
   answers?: CandidateAnswers;
+  idExamTestResult?: string;
+  loadAnswer: Function;
 }) {
   const { t } = useTranslation("exam");
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [comment, setComment] = useState<string | undefined>(
+    answers?.anwserScore?.evaluatorComment,
+  );
+  const [point, setPoint] = useState(
+    (answers?.anwserScore?.score ?? 0)?.toString(),
+  );
 
   var candidateAnswer: SqlCandidateAnswer | undefined =
     !answers?.candidateAnswerJson
       ? undefined
       : JSON.parse(answers?.candidateAnswerJson ?? "");
+
+  console.log("candidateAnswer SQL", candidateAnswer);
 
   useEffect(() => {
     setIsOverflowing(
@@ -84,6 +103,8 @@ export default function Sql({
     ? JSON.parse(candidateAnswer?.metadata ?? "")
     : undefined;
 
+  console.log("metedata sql", metadata);
+
   const expectedData = metadata?.data?.expectedOutput
     ?.split("\n")
     ?.map((r) => r?.split("  "));
@@ -107,6 +128,7 @@ export default function Sql({
 
   console.log("metadata", metadata);
 
+  const [edit, setEdit] = useState<boolean>(false);
   return (
     !hidden && (
       <div>
@@ -168,51 +190,148 @@ export default function Sql({
             key={"1"}
           >
             <div className="h-[1px] bg-m_primary_200 mb-3" />
-            <div className="bg-m_neutral_100 p-3 font-semibold text-sm rounded-lg">
-              {"My SQL"}
-            </div>
-            <CodeMirror
-              readOnly
-              value={candidateAnswer?.querySql}
-              lang={"sql"}
-              theme={dracula}
-              height="300px"
-              extensions={[renderExtension("sql") as any]}
-              onChange={(v) => {}}
-            />
-            <div className="pt-3">
-              <div className="flex pb-2">
-                <div className="pr-2 font-semibold text-sm">{t("result")}</div>
-                {metadata?.data?.matched ? <Tick /> : <Close />}
+            {!candidateAnswer?.metadata || !candidateAnswer?.stdOut ? (
+              <div className="text-m_warning_600 body_semibold_16">
+                {t("empty_answer")}
               </div>
-              {/* <Table columns={columns} dataSource={data} pagination={false} /> */}
-              <MTable
-                isHidePagination
-                dataRows={tableDataRow}
-                dataSource={dataSource}
-              />
-            </div>
-            <div className="py-3">
-              <div className="pr-2 font-semibold text-sm pb-2">
-                {t("result0")}
-              </div>
-              <MTable
-                isHidePagination
-                dataRows={tableDataRowAns}
-                dataSource={dataSourceAns}
-              />
-            </div>
+            ) : (
+              <>
+                <div className="bg-m_neutral_100 p-3 font-semibold text-sm rounded-lg">
+                  {"My SQL"}
+                </div>
+                <CodeMirror
+                  readOnly
+                  value={candidateAnswer?.querySql}
+                  lang={"sql"}
+                  theme={dracula}
+                  height="300px"
+                  extensions={[renderExtension("sql") as any]}
+                  onChange={(v) => {}}
+                />
+                <div className="pt-3">
+                  <div className="flex pb-2">
+                    <div className="pr-2 font-semibold text-sm">
+                      {t("result")}
+                    </div>
+                    {metadata?.data?.matched ? <Tick /> : <Close />}
+                  </div>
+                  {/* <Table columns={columns} dataSource={data} pagination={false} /> */}
+                  <MTable
+                    isHidePagination
+                    dataRows={tableDataRow}
+                    dataSource={dataSource}
+                  />
+                </div>
+                <div className="py-3">
+                  <div className="pr-2 font-semibold text-sm pb-2">
+                    {t("result0")}
+                  </div>
+                  <MTable
+                    isHidePagination
+                    dataRows={tableDataRowAns}
+                    dataSource={dataSourceAns}
+                  />
+                </div>
 
-            <div className="">
-              <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
-                {t("explain_result")}
-              </div>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: question?.content?.explainAnswer ?? "",
-                }}
-              ></div>
-            </div>
+                <div className="">
+                  <div className="text-m_primary_500 text-sm font-semibold mb-2 mt-2">
+                    {t("explain_result")}
+                  </div>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: question?.content?.explainAnswer ?? "",
+                    }}
+                  ></div>
+                </div>
+
+                {!edit &&
+                  !isComplete &&
+                  candidateAnswer?.querySql &&
+                  candidateAnswer?.stdOut && (
+                    <div>
+                      <div className="font-semibold pt-2">{t("comment")}</div>
+                      <MTextArea
+                        value={comment}
+                        name="comment"
+                        id="comment"
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder={t("enter_comment")}
+                      />
+
+                      <div className="font-semibold pt-2">
+                        {t("match_max", { num: question?.numberPoint })}
+                      </div>
+                      <div className="flex items-end ">
+                        <Input
+                          disabled={isComplete}
+                          value={point}
+                          className="rounded-md h-[50px]"
+                          type="number"
+                          onChange={(e) => {
+                            setPoint(e?.target?.value);
+                          }}
+                        />
+                        <Button
+                          disabled={isComplete}
+                          onClick={async () => {
+                            if (!point?.trim()) {
+                              errorToast(t("point_not_empty"));
+                              return;
+                            }
+                            var val = point?.trim()
+                              ? parseFloat(point.trim()).toFixed(2)
+                              : undefined;
+                            setLoading(true);
+                            var res = await submitCheckingAnswer({
+                              evaluatorComment: comment,
+                              score: val ? parseFloat(val ?? 0) : undefined,
+                              idExamQuestion: question?.id,
+                              idExamTestResult,
+                            });
+                            setLoading(false);
+                            if (res?.code != 0) {
+                              errorToast(res?.message ?? "");
+                              return;
+                            }
+                            setPoint(val ? val?.toString() : "");
+                            loadAnswer();
+                            setEdit(!edit);
+                          }}
+                          className="ml-4 w-[114px] h-[36px] rounded-md bg-m_primary_500 text-white font-semibold"
+                        >
+                          {t("save_as")}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                {candidateAnswer?.querySql &&
+                  candidateAnswer?.stdOut &&
+                  (edit || isComplete) && (
+                    <div className="pt-1">
+                      <div className="font-semibold py-2">{t("comment")}</div>
+                      <MTextArea
+                        value={comment}
+                        name="comment"
+                        id="comment"
+                        onChange={(e) => setComment(e.target.value?.trim())}
+                        disable
+                      />
+
+                      <div className="flex justify-between items-center pt-2">
+                        <div className="flex">
+                          <div>{t("scored_point")}:</div>
+                          <div className="font-semibold pl-1">{point}</div>
+                        </div>
+                        {!isComplete && (
+                          <button onClick={() => setEdit(!edit)}>
+                            <Edit />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+              </>
+            )}
           </Collapse.Panel>
         </Collapse>
       </div>

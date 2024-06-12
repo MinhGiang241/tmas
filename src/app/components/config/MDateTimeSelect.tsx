@@ -38,6 +38,7 @@ interface Props {
   formatter?: string;
   isTextRequire?: boolean;
   showTime?: boolean;
+  isoValue?: string;
 }
 
 function MDateTimeSelect({
@@ -69,6 +70,7 @@ function MDateTimeSelect({
   isTextRequire = true,
   showTime = true,
   onOk,
+  isoValue,
 }: Props) {
   var np;
   var er;
@@ -119,7 +121,13 @@ function MDateTimeSelect({
           allowClear={allowClear ?? true}
           defaultValue={defaultValue ?? formik?.initialValues[name]}
           suffixIcon={<CalendarIcon />}
-          value={value ? dayjs(formik.values[name], formatter) : undefined}
+          value={
+            isoValue
+              ? dayjs(isoValue)
+              : value
+                ? dayjs(formik?.values[name], formatter)
+                : undefined
+          }
           placeholder={placeholder}
           format={[formatter]}
           showSecond={false}
