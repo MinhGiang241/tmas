@@ -43,7 +43,7 @@ export default function SettingNotify() {
     void getDataSettings();
   }, []);
   return (
-    <HomeLayout>
+    <>
       <div className="w-full pt-10">
         <div className="mx-auto max-w-[934px] rounded-md bg-white p-6 shadow-md">
           <h1 className="mb-4 text-xl font-semibold">Cài đặt thông báo</h1>
@@ -179,6 +179,6 @@ export default function SettingNotify() {
           </div>
         </div>
       </div>
-    </HomeLayout>
+    </>
   );
 }

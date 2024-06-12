@@ -25,6 +25,7 @@ export default function Notification() {
     // await getNotiAwait(0, 1000);
     if (res) {
       setGetNoti(res?.data);
+      console.log(res?.data);
     }
   };
 
@@ -74,7 +75,7 @@ export default function Notification() {
                 </div>
                 <div
                   onClick={() => {
-                    router.push("/settings-notify");
+                    router.push("/account?tab=5");
                   }}
                   className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
                 >
@@ -84,7 +85,7 @@ export default function Notification() {
             }
             trigger={["click"]}
           >
-            <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300">
+            <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300 ml-1">
               <div className="pb-2">...</div>
             </div>
           </Popover>
@@ -167,12 +168,12 @@ export default function Notification() {
                           {key?.timeJoinedUnit === "minute"
                             ? "phút"
                             : key?.timeJoinedUnit === "month"
-                              ? "Tháng"
-                              : key?.timeJoinedUnit === "hour"
-                                ? "Giờ"
-                                : key?.timeJoinedUnit === "second"
-                                  ? "Giây"
-                                  : ""}
+                            ? "Tháng"
+                            : key?.timeJoinedUnit === "hour"
+                            ? "Giờ"
+                            : key?.timeJoinedUnit === "second"
+                            ? "Giây"
+                            : ""}
                           &nbsp; trước
                         </div>
                       </div>
@@ -223,7 +224,7 @@ export default function Notification() {
                         }
                         trigger={["click"]}
                       >
-                        <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300">
+                        <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300 ml-1">
                           <div className="pb-2">...</div>
                         </div>
                       </Popover>
@@ -315,12 +316,12 @@ export default function Notification() {
                           {key?.timeJoinedUnit === "minute"
                             ? "phút"
                             : key?.timeJoinedUnit === "month"
-                              ? "Tháng"
-                              : key?.timeJoinedUnit === "hour"
-                                ? "Giờ"
-                                : key?.timeJoinedUnit === "second"
-                                  ? "Giây"
-                                  : ""}
+                            ? "Tháng"
+                            : key?.timeJoinedUnit === "hour"
+                            ? "Giờ"
+                            : key?.timeJoinedUnit === "second"
+                            ? "Giây"
+                            : ""}
                           &nbsp; trước
                         </div>
                       </div>
@@ -340,24 +341,27 @@ export default function Notification() {
                         placement="bottom"
                         content={
                           <div>
-                            <div
-                              onClick={async () => {
-                                await readNoti(key?._id);
-                                await dataNotify();
-                              }}
-                              className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
-                            >
-                              Đánh dấu đã đọc
-                            </div>
-                            <div
-                              onClick={async () => {
-                                await unReadNoti(key?._id);
-                                await dataNotify();
-                              }}
-                              className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
-                            >
-                              Đánh dấu chưa đọc
-                            </div>
+                            {key?.read ? (
+                              <div
+                                onClick={async () => {
+                                  await unReadNoti(key?._id);
+                                  await dataNotify();
+                                }}
+                                className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
+                              >
+                                Đánh dấu chưa đọc
+                              </div>
+                            ) : (
+                              <div
+                                onClick={async () => {
+                                  await readNoti(key?._id);
+                                  await dataNotify();
+                                }}
+                                className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
+                              >
+                                Đánh dấu đã đọc
+                              </div>
+                            )}
                             <div
                               onClick={async () => {
                                 await deleteNoti(key?._id);
@@ -371,7 +375,7 @@ export default function Notification() {
                         }
                         trigger={["click"]}
                       >
-                        <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300">
+                        <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300 ml-1">
                           <div className="pb-2">...</div>
                         </div>
                       </Popover>
