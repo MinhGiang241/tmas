@@ -52,14 +52,14 @@ export default function SettingNotify() {
 
           <div className="flex items-center py-4">
             <Switch
-              checked={notiSetting?.examtest_approved}
+              checked={notiSetting?.examtest_public}
               defaultChecked={
-                userSettingNotify?.notify_setting?.examtest_approved
+                userSettingNotify?.notify_setting?.examtest_public
               }
               onChange={async (e: any) => {
                 const submitNoti = {
                   ...notiSetting,
-                  examtest_approved: e,
+                  examtest_public: e,
                 };
                 try {
                   await settingsConfig({ notify_setting: submitNoti });
@@ -79,14 +79,12 @@ export default function SettingNotify() {
           </div>
           <div className="flex items-center py-4">
             <Switch
-              checked={notiSetting?.examtest_not_approved}
-              defaultChecked={
-                userSettingNotify?.notify_setting?.examtest_not_approved
-              }
+              checked={notiSetting?.result_test}
+              defaultChecked={userSettingNotify?.notify_setting?.result_test}
               onChange={async (e: any) => {
                 const submitNoti = {
                   ...notiSetting,
-                  examtest_not_approved: e,
+                  result_test: e,
                 };
                 try {
                   await settingsConfig({ notify_setting: submitNoti });
@@ -106,13 +104,13 @@ export default function SettingNotify() {
           <div className="flex items-center py-4">
             <Switch
               defaultChecked={
-                userSettingNotify?.notify_setting?.examtest_public
+                userSettingNotify?.notify_setting?.examtest_approved
               }
-              checked={notiSetting?.examtest_public}
+              checked={notiSetting?.examtest_approved}
               onChange={async (e: any) => {
                 const submitNoti = {
                   ...notiSetting,
-                  examtest_public: e,
+                  examtest_approved: e,
                 };
                 try {
                   await settingsConfig({ notify_setting: submitNoti });
@@ -131,12 +129,14 @@ export default function SettingNotify() {
           </div>
           <div className="flex items-center py-4">
             <Switch
-              defaultChecked={userSettingNotify?.notify_setting?.receive_gold}
-              checked={notiSetting?.receive_gold}
+              defaultChecked={
+                userSettingNotify?.notify_setting?.examtest_not_approved
+              }
+              checked={notiSetting?.examtest_not_approved}
               onChange={async (e: any) => {
                 const submitNoti = {
                   ...notiSetting,
-                  receive_gold: e,
+                  examtest_not_approved: e,
                 };
                 try {
                   await settingsConfig({ notify_setting: submitNoti });
@@ -155,12 +155,12 @@ export default function SettingNotify() {
           </div>
           <div className="flex items-center py-4">
             <Switch
-              defaultChecked={userSettingNotify?.notify_setting?.result_test}
-              checked={notiSetting?.result_test}
+              defaultChecked={userSettingNotify?.notify_setting?.receive_gold}
+              checked={notiSetting?.receive_gold}
               onChange={async (e: any) => {
                 const submitNoti = {
                   ...notiSetting,
-                  result_test: e,
+                  receive_gold: e,
                 };
                 try {
                   await settingsConfig({ notify_setting: submitNoti });

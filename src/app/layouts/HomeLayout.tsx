@@ -23,12 +23,34 @@ import {
 
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import { setSettingConfig } from "@/redux/setting/settingSlice";
+import { Button, Modal, Tabs, Tooltip } from "antd";
+import Image from "next/image";
+import BaseModal from "../components/config/BaseModal";
+import MButton from "../components/config/MButton";
+import Introduce from "../introduce/page";
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const user = useSelector((state: RootState) => state.user?.user);
+  const [visible, setVisible] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [currentTab, setCurrentTab] = useState("1");
+
+  useEffect(() => {
+    setVisible(true);
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const nextTab = () => {
+    const nextTabIndex = (parseInt(currentTab) % 3) + 1;
+    setCurrentTab(nextTabIndex.toString());
+  };
+
   const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
   const pathname = usePathname();
@@ -140,13 +162,14 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
           <LoadingPage />
         </main>
       ) : (
-        <main className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900">
+        <main className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900 relative">
           <Header />
           {user?._id && !user?.verified && <div className="h-[44px]" />}
           <div className="lg:h-[68px] h-14 " />
           <div className="max-w-[1140px] mx-auto">
             <div className=" w-full text-m_neutral_900">{children}</div>
           </div>
+          <Introduce />
         </main>
       )}
     </>
