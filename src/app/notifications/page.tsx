@@ -116,7 +116,7 @@ export default function Notification() {
                       href={key?.url}
                       target="_blank"
                       key={key?._id}
-                      className="flex w-full items-center justify-between"
+                      className="flex w-full items-center justify-between text-[#0D1939]"
                       rel="noreferrer"
                     >
                       <div className="relative mr-2 w-[40px]">
@@ -156,9 +156,9 @@ export default function Notification() {
                         )}
                       </div>
                       <div className="flex flex-1 flex-col">
-                        <div className="break-all">
+                        <div className="">
                           <b className="pr-1">{key?.subject}</b>
-                          <span className="break-all">{key?.body}</span>
+                          <span className="">{key?.body}</span>
                         </div>
                         <div className="text-sm text-gray-500">
                           {key?.timeJoined}
@@ -176,34 +176,9 @@ export default function Notification() {
                         </div>
                       </div>
                       <div>
-                        {key?.type === "PublicExam" ? (
+                        {key?.imageLink ? (
                           <img
-                            src="/images/logo.png"
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : key?.type === "TestResults" ? (
-                          <img
-                            src="/images/logo.png"
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : key?.type === "ExamApproved" ? (
-                          <img
-                            src="/images/logo.png"
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : key?.type === "ExamNotApproved" ? (
-                          <img
-                            src="/images/logo.png"
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : key?.type === "GoldEarned" ? (
-                          <img
-                            src="/images/logo.png"
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : key?.type === "PurchaseExam" ? (
-                          <img
-                            src="/images/logo.png"
+                            src={key?.imageLink}
                             className="h-[50px] w-[129px]"
                           />
                         ) : (
@@ -329,9 +304,9 @@ export default function Notification() {
                         )}
                       </div>
                       <div className="flex flex-1 flex-col">
-                        <div className="break-all">
+                        <div>
                           <b className="pr-1">{key?.subject}</b>
-                          <span className="break-all">{key?.body}</span>
+                          <span>{key?.body}</span>
                         </div>
                         <div className="text-sm text-gray-500">
                           {key?.timeJoined}
@@ -349,34 +324,9 @@ export default function Notification() {
                         </div>
                       </div>
                       <div>
-                        {key?.type === "PublicExam" ? (
+                        {key?.imageLink ? (
                           <img
-                            src="/images/logo.png"
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : key?.type === "TestResults" ? (
-                          <img
-                            src="/images/logo.png"
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : key?.type === "ExamApproved" ? (
-                          <img
-                            src="/images/logo.png"
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : key?.type === "ExamNotApproved" ? (
-                          <img
-                            src="/images/logo.png"
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : key?.type === "GoldEarned" ? (
-                          <img
-                            src="/images/logo.png"
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : key?.type === "PurchaseExam" ? (
-                          <img
-                            src="/images/logo.png"
+                            src={key?.imageLink}
                             className="h-[50px] w-[129px]"
                           />
                         ) : (
@@ -454,7 +404,7 @@ export default function Notification() {
           <div className="relative">
             <BellIcon />
             {totalNum && (
-              <div className="absolute right-[-5px] top-[-3px] h-[15px] w-[15px] rounded-full bg-[#EA3434] text-xs text-white">
+              <div className="absolute right-[-5px] top-[-3px] h-[15px] w-[15px] rounded-full bg-[#EA3434] text-xs text-white flex justify-center items-center">
                 {totalNum as any}
               </div>
             )}

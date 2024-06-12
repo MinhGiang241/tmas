@@ -166,34 +166,9 @@ export default function AllNotification() {
                       </div>
                     </div>
                     <div>
-                      {x?.type === "PublicExam" ? (
+                      {x?.imageLink ? (
                         <img
-                          src="/images/logo.png"
-                          className="h-[50px] w-[129px]"
-                        />
-                      ) : x?.type === "TestResults" ? (
-                        <img
-                          src="/images/logo.png"
-                          className="h-[50px] w-[129px]"
-                        />
-                      ) : x?.type === "ExamApproved" ? (
-                        <img
-                          src="/images/logo.png"
-                          className="h-[50px] w-[129px]"
-                        />
-                      ) : x?.type === "ExamNotApproved" ? (
-                        <img
-                          src="/images/logo.png"
-                          className="h-[50px] w-[129px]"
-                        />
-                      ) : x?.type === "GoldEarned" ? (
-                        <img
-                          src="/images/logo.png"
-                          className="h-[50px] w-[129px]"
-                        />
-                      ) : x?.type === "PurchaseExam" ? (
-                        <img
-                          src="/images/logo.png"
+                          src={x?.imageLink}
                           className="h-[50px] w-[129px]"
                         />
                       ) : (
@@ -339,34 +314,9 @@ export default function AllNotification() {
                           </div>
                         </div>
                         <div>
-                          {e?.type === "PublicExam" ? (
+                          {e?.imageLink ? (
                             <img
-                              src="/images/logo.png"
-                              className="h-[50px] w-[129px]"
-                            />
-                          ) : e?.type === "TestResults" ? (
-                            <img
-                              src="/images/logo.png"
-                              className="h-[50px] w-[129px]"
-                            />
-                          ) : e?.type === "ExamApproved" ? (
-                            <img
-                              src="/images/logo.png"
-                              className="h-[50px] w-[129px]"
-                            />
-                          ) : e?.type === "ExamNotApproved" ? (
-                            <img
-                              src="/images/logo.png"
-                              className="h-[50px] w-[129px]"
-                            />
-                          ) : e?.type === "GoldEarned" ? (
-                            <img
-                              src="/images/logo.png"
-                              className="h-[50px] w-[129px]"
-                            />
-                          ) : e?.type === "PurchaseExam" ? (
-                            <img
-                              src="/images/logo.png"
+                              src={e?.imageLink}
                               className="h-[50px] w-[129px]"
                             />
                           ) : (
