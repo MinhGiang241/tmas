@@ -424,5 +424,7 @@
   "delete_part": "Xóa phần",
   "edit_question": "Sửa câu hỏi",
   "clone_question": "Clone câu hỏi",
-  "delete_question": "Xóa câu hỏi"
+  "delete_question": "Xóa câu hỏi",
+  "not_approve_send_info": "Đợt thi chưa được phê duyêt. Không thể gửi thông báo đến thí sinh",
+  "reject_send_info": "Đợt thi bị từ chối phê duyệt. Không thể gửi thông báo đến thí sinh"
 }

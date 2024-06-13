@@ -29,7 +29,7 @@ import {
   sendRemindEmail,
 } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
-import { ExaminationData, RemindEmailData } from "@/data/exam";
+import { AppovedState, ExaminationData, RemindEmailData } from "@/data/exam";
 import { functions, method } from "lodash";
 import _ from "lodash";
 import { SettingData } from "@/data/user";
@@ -282,6 +282,20 @@ function SendExaminationInfo(props: Props) {
   };
 
   const sendEmail = async () => {
+    if (
+      props.examination?.sharingSetting == "Public" &&
+      props.examination?.stateInfo?.approvedState == AppovedState.Pending
+    ) {
+      errorToast(t("not_approve_send_info"));
+      return;
+    }
+    if (
+      props.examination?.sharingSetting == "Public" &&
+      props.examination?.stateInfo?.approvedState == AppovedState.Rejected
+    ) {
+      errorToast(t("reject_send_info"));
+      return;
+    }
     setSendEmailLoading(true);
     const res = await sendRemindEmail({
       maillist: [
