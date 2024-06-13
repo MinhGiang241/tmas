@@ -45,8 +45,6 @@ function LineChartOverTime(props: Props) {
       typeTime: lineField,
     });
 
-    console.log("ress overtime", res);
-
     if (res?.code != 0) {
       errorToast(res?.message);
       return;

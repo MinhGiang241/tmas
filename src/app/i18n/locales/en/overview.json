@@ -18,7 +18,7 @@
   "public_examination": "Public exam",
   "valid_public_examination": "Public examination takes effect",
   "valid": "Still validated",
-  "in_valid": "Expire",
+  "invalid": "Expire",
   "search_by_name_tag": "Search by name/tag",
   "discount": "Discount",
   "pure_income": "Net revenue",

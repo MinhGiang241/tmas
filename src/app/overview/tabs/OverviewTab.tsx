@@ -144,10 +144,10 @@ function OverviewTab() {
                   (overviewData?.totalTestTomorrow ?? 0) >
                   (overviewData?.totalTestToday ?? 0)
                 }
-                num={
+                num={Math.abs(
                   (overviewData?.totalTestTomorrow ?? 0) -
-                  (overviewData?.totalTestToday ?? 0)
-                }
+                    (overviewData?.totalTestToday ?? 0),
+                )}
               />
             )}
           </div>
@@ -170,10 +170,10 @@ function OverviewTab() {
                   (overviewData?.totalUserTestTomorrow ?? 0) >
                   (overviewData?.totalUserTestToday ?? 0)
                 }
-                num={
+                num={Math.abs(
                   (overviewData?.totalUserTestTomorrow ?? 0) -
-                  (overviewData?.totalUserTestToday ?? 0)
-                }
+                    (overviewData?.totalUserTestToday ?? 0),
+                )}
               />
             )}
           </div>
@@ -183,7 +183,7 @@ function OverviewTab() {
           <div className="h-2" />
           <div className="heading_semibold_32">
             <FormattedNumber
-              value={user?.gold ?? 0}
+              value={user?.studio?.gold ?? 0}
               style="decimal"
               maximumFractionDigits={2}
             />

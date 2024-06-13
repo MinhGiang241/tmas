@@ -1,6 +1,7 @@
-import { useAppSelector } from "@/redux/hooks";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormattedNumber } from "react-intl";
 import UpIcon from "@/app/components/icons/up.svg";
@@ -14,29 +15,222 @@ import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 import MDropdown from "@/app/components/config/MDropdown";
 import MTable, { TableDataRow } from "@/app/components/config/MTable";
 import UpDownTrend from "../components/UpDownTrend";
+import {
+  overviewListRevenue,
+  overviewListRevenueExell,
+  overviewRevenue,
+} from "@/services/api_services/overview_api";
+import {
+  OverviewListRevenueData,
+  RevenueData,
+  RevenueDataTotal,
+} from "@/data/overview";
+import { errorToast } from "@/app/components/toast/customToast";
+import dayjs from "dayjs";
+import { APIResults } from "@/data/api_results";
+import {
+  fetchDataExamGroup,
+  setExamGroupLoading,
+} from "@/redux/exam_group/examGroupSlice";
+import { getExamGroupTest } from "@/services/api_services/exam_api";
+import { ExamGroupData } from "@/data/exam";
+import MTreeSelect from "@/app/components/config/MTreeSelect";
+import { saveAs } from "file-saver";
 
 function IncomeTab() {
   const { t } = useTranslation("overview");
+  const dispatch = useAppDispatch();
   const examTrans = useTranslation("exam");
   const user = useAppSelector((state: RootState) => state.user.user);
   const [search, setSearch] = useState<string | undefined>();
+  const [searchValue, setSearchValue] = useState<string | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(0);
+  const [status, setStatus] = useState<string | undefined>();
+  const [startDate, setStartDate] = useState<string | undefined>();
+  const [endDate, setEndDate] = useState<string | undefined>();
+  const [revenueData, setRevenueData] = useState<RevenueData | undefined>();
+  const [revenueListData, setRevenueListData] = useState<TableValue[]>([]);
+  const [revenueTotal, setRevenueTotal] = useState<
+    RevenueDataTotal | undefined
+  >();
+  const [groupId, setGroupId] = useState<string | undefined>();
+  const examGroupList = useAppSelector(
+    (state: RootState) => state.examGroup?.list,
+  );
+
+  const loadExamGroupList = async (init?: boolean) => {
+    if (init) {
+      dispatch(setExamGroupLoading(true));
+    }
+
+    var dataResults: APIResults = await getExamGroupTest({
+      text: "",
+      studioId: user?.studio?._id,
+    });
+
+    if (dataResults.code != 0) {
+      return [];
+    } else {
+      var data = dataResults?.data as ExamGroupData[];
+      var levelOne = data?.filter((v: ExamGroupData) => v.level === 0);
+      var levelTwo = data?.filter((v: ExamGroupData) => v.level === 1);
+
+      var list = levelOne.map((e: ExamGroupData) => {
+        var childs = levelTwo.filter(
+          (ch: ExamGroupData) => ch.idParent === e.id,
+        );
+        return { ...e, childs };
+      });
+      return list;
+    }
+  };
+
+  interface TableValue {
+    name?: string;
+    group?: string[];
+    tags?: string[];
+    gold_price?: number;
+    income?: number;
+    discount?: number;
+    pure_income?: number;
+    from_date?: string;
+    to_date?: string;
+    status?: string;
+  }
 
   const dataRows: TableDataRow[] = [
-    { dataIndex: "name", title: examTrans.t("name") },
-    { dataIndex: "group", title: examTrans.t("group") },
-    { dataIndex: "tags", title: examTrans.t("tags") },
+    {
+      dataIndex: "name",
+      title: examTrans.t("name"),
+      classNameTitle: "min-w-24",
+    },
+    {
+      dataIndex: "group",
+      title: examTrans.t("group"),
+      render: (text: any, data: any) => (
+        <p key={text} className={"w-full  min-w-11  caption_regular_14"}>
+          {text?.join(", ")}
+        </p>
+      ),
+    },
+    {
+      dataIndex: "tags",
+      title: examTrans.t("tags"),
+      render: (text: any, data: any) => (
+        <p key={text} className={"w-full  min-w-11  caption_regular_14"}>
+          {text?.join(", ")}
+        </p>
+      ),
+    },
     { dataIndex: "gold_price", title: examTrans.t("gold_price") },
     { dataIndex: "income", title: t("income") },
     { dataIndex: "discount", title: t("discount") },
     { dataIndex: "pure_income", title: t("pure_income") },
-    { dataIndex: "from_date", title: t("from_date") },
+    {
+      dataIndex: "from_date",
+      title: t("from_date"),
+      classNameTitle: "min-w-20",
+    },
     { dataIndex: "to_date", title: t("to_date") },
     { dataIndex: "status", title: t("status") },
   ];
+
+  const getRevenue = async () => {
+    const res = await overviewRevenue(user?.studio?._id);
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    setRevenueData(res?.data);
+  };
+
+  const getRevenueList = async () => {
+    setLoading(true);
+    const res = await overviewListRevenue({
+      skip: recordNum * (indexPage - 1),
+      limit: recordNum,
+      studioId: user?.studio?._id,
+      endDate,
+      startDate,
+      status,
+      search,
+      groupId,
+    });
+    setLoading(false);
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+
+    var revenueData = res?.data as OverviewListRevenueData[];
+    var list = revenueData?.map<TableValue>((e) => ({
+      discount: e.discountRevenue,
+      group: e.groupName,
+      gold_price: e.goldExamTest,
+      income: e.revenue,
+      name: e.examTestName,
+      pure_income: e.netRevenue,
+      status: e.status,
+      tags: e?.tagsName,
+      from_date: dayjs(e?.createdTime)?.format("DD/MM/YYYY"),
+    }));
+    setRevenueListData(list);
+    setTotal(res?.records ?? 0);
+    setRevenueTotal(res?.dataTotal);
+  };
+
+  useEffect(() => {
+    getRevenueList();
+  }, [user, indexPage, recordNum, search, groupId, status, startDate, endDate]);
+  useEffect(() => {
+    if (user?.studio?._id) {
+      dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
+    }
+
+    getRevenue();
+  }, [user]);
+
+  const examGroup = useAppSelector((state: RootState) => state.examGroup?.list);
+  const optionSelect = (examGroup ?? []).map<any>(
+    (v: ExamGroupData, i: number) => ({
+      title: v?.name,
+      value: v?.id,
+      disabled: true,
+      isLeaf: false,
+      children: [
+        ...(v?.childs ?? []).map((e: ExamGroupData, i: number) => ({
+          title: e?.name,
+          value: e?.id,
+        })),
+      ],
+    }),
+  );
+  optionSelect.push({
+    title: examTrans.t("all_category"),
+    value: "",
+  });
+  const statusOption = [
+    {
+      label: t("valid"),
+      value: "valid",
+    },
+    {
+      label: t("invalid"),
+      value: "invalid",
+    },
+  ];
+
+  const downloadExell = async () => {
+    var res = await overviewListRevenueExell(user?.studio?._id);
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+    saveAs(res?.data, "data.xlsx");
+  };
 
   return (
     <>
@@ -47,12 +241,24 @@ function IncomeTab() {
           <div className="flex items-center">
             <div className="heading_semibold_32">
               <FormattedNumber
-                value={30000}
+                value={revenueData?.revenueData?.revenue ?? 0}
                 style="decimal"
                 maximumFractionDigits={2}
               />
             </div>
-            <UpDownTrend up num={50} />
+            {revenueData?.revenueData?.revenueTomorrow !=
+              revenueData?.revenueData?.revenueToday && (
+              <UpDownTrend
+                up={
+                  (revenueData?.revenueData?.revenueTomorrow ?? 0) >
+                  (revenueData?.revenueData?.revenueToday ?? 0)
+                }
+                num={Math.abs(
+                  (revenueData?.revenueData?.revenueTomorrow ?? 0) -
+                    (revenueData?.revenueData?.revenueToday ?? 0),
+                )}
+              />
+            )}
           </div>
         </div>
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
@@ -61,12 +267,24 @@ function IncomeTab() {
           <div className="flex items-center">
             <div className="heading_semibold_32">
               <FormattedNumber
-                value={4234}
+                value={revenueData?.discountData?.revenue ?? 0}
                 style="decimal"
                 maximumFractionDigits={2}
               />
             </div>
-            <UpDownTrend up num={5} />
+            {revenueData?.discountData?.revenueTomorrow !=
+              revenueData?.discountData?.revenueToday && (
+              <UpDownTrend
+                up={
+                  (revenueData?.discountData?.revenueTomorrow ?? 0) >
+                  (revenueData?.discountData?.revenueToday ?? 0)
+                }
+                num={Math.abs(
+                  (revenueData?.discountData?.revenueTomorrow ?? 0) -
+                    (revenueData?.discountData?.revenueToday ?? 0),
+                )}
+              />
+            )}
           </div>
         </div>
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
@@ -75,12 +293,24 @@ function IncomeTab() {
           <div className="flex items-center">
             <div className="heading_semibold_32">
               <FormattedNumber
-                value={2434}
+                value={revenueData?.netData?.revenue ?? 0}
                 style="decimal"
                 maximumFractionDigits={2}
               />
             </div>
-            <UpDownTrend up num={45} />
+            {revenueData?.netData?.revenueTomorrow !=
+              revenueData?.netData?.revenueToday && (
+              <UpDownTrend
+                up={
+                  (revenueData?.netData?.revenueTomorrow ?? 0) >
+                  (revenueData?.netData?.revenueToday ?? 0)
+                }
+                num={
+                  (revenueData?.netData?.revenueTomorrow ?? 0) -
+                  (revenueData?.netData?.revenueToday ?? 0)
+                }
+              />
+            )}
           </div>
         </div>
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
@@ -112,6 +342,7 @@ function IncomeTab() {
         <div className="w-full flex justify-between items-center">
           <div className="body_semibold_20">{t("income_details")}</div>
           <MButton
+            onClick={downloadExell}
             text={examTrans.t("download_file0")}
             className="flex items-center"
             icon={<DownloadIcon />}
@@ -121,14 +352,27 @@ function IncomeTab() {
         <Divider className="my-4" />
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <MDropdown
+            <MTreeSelect
+              value={groupId}
+              setValue={(name: any, e: any) => {
+                setGroupId(e);
+              }}
+              allowClear={false}
+              defaultValue=""
               id="question_group"
               name="question_group"
               className="w-52"
               isTextRequire={false}
+              h="h-11"
+              options={optionSelect}
             />
             <div className="w-3" />
             <MDropdown
+              value={status}
+              options={statusOption}
+              setValue={(name: string, val: string) => {
+                setStatus(val);
+              }}
               id="valid"
               name="valid"
               className="w-52"
@@ -138,6 +382,10 @@ function IncomeTab() {
           <div className="flex items-center">
             <div className="max-w-36">
               <MDateTimeSelect
+                setValue={(name: string, val: any) => {
+                  setStartDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                }}
+                isoValue={startDate}
                 formatter={"DD/MM/YYYY"}
                 showTime={false}
                 isTextRequire={false}
@@ -150,6 +398,10 @@ function IncomeTab() {
             <div className="mx-2 w-2 h-[1px] bg-m_neutral_500" />
             <div className="max-w-36">
               <MDateTimeSelect
+                setValue={(name: string, val: any) => {
+                  setEndDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                }}
+                isoValue={endDate}
                 formatter={"DD/MM/YYYY"}
                 showTime={false}
                 isTextRequire={false}
@@ -166,13 +418,14 @@ function IncomeTab() {
             onSubmit={(e) => {
               e.preventDefault();
               setIndexPage(1);
+              setSearch(searchValue);
             }}
           >
             <MInput
               isTextRequire={false}
-              value={search}
+              value={searchValue}
               onChange={(e: React.ChangeEvent<any>) => {
-                setSearch(e.target.value);
+                setSearchValue(e.target.value);
               }}
               className=""
               placeholder={t("search_by_name_tag")}
@@ -192,12 +445,20 @@ function IncomeTab() {
         </div>
         <div className="h-3" />
         <MTable
+          loading={loading}
+          dataSource={revenueListData}
           indexPage={indexPage}
           setIndexPage={setIndexPage}
           recordNum={recordNum}
           setRecordNum={setRecordNum}
           total={total}
           dataRows={dataRows}
+          sumData={{
+            name: `${examTrans.t("sum")} :`,
+            income: revenueTotal?.revenue ?? 0,
+            pure_income: revenueTotal?.netRevenue ?? 0,
+            discount: revenueTotal?.discountRevenue ?? 0,
+          }}
         />
       </div>
     </>

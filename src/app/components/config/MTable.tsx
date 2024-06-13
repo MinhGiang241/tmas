@@ -8,6 +8,7 @@ export interface TableDataRow {
   dataIndex?: string;
   classNameTitle?: string;
   classNameRow?: string;
+  render?: any;
 }
 
 interface Props {
@@ -72,16 +73,19 @@ function MTable(props: Props) {
       ),
       dataIndex: e?.dataIndex,
       key: e?.dataIndex,
-      render: (text: any, data: any) => (
-        <p
-          key={text}
-          className={
-            e.classNameRow ?? "w-full  min-w-11 break-all caption_regular_14"
-          }
-        >
-          {text}
-        </p>
-      ),
+      render: e?.render
+        ? e?.render
+        : (text: any, data: any) => (
+            <p
+              key={text}
+              className={
+                e.classNameRow ??
+                "w-full  min-w-11 break-all caption_regular_14"
+              }
+            >
+              {text}
+            </p>
+          ),
     })),
   ];
 
@@ -91,6 +95,7 @@ function MTable(props: Props) {
         // locale={{
         //   emptyText: <div className="bg-m_primary_300">HelloWOrld</div>,
         // }}
+
         loading={props.loading}
         className="w-full overflow-scroll"
         bordered={false}

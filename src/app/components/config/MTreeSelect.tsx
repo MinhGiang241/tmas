@@ -44,9 +44,11 @@ interface Props {
   mode?: "multiple" | "tags";
   h?: string;
   defaultValue?: any;
+  isTextRequire?: boolean;
 }
 
 function MTreeSelect({
+  isTextRequire = true,
   disable,
   onChange,
   required = false,
@@ -134,7 +136,7 @@ function MTreeSelect({
 
       <div
         className={`relative w-full flex flex-col ${
-          extend ? "mb-2" : "mb-[22px]"
+          extend ? "mb-0" : "mb-[22px]"
         }`}
       >
         <TreeSelect
@@ -200,7 +202,9 @@ function MTreeSelect({
             <div className={`text-m_error_500 body_regular_14`}>{t(er)}</div>
           </div>
         ) : null}
-        {extend && !(er && touch) && <div className="h-[20px]" />}
+        {extend && isTextRequire && !(er && touch) && (
+          <div className="h-[20px]" />
+        )}
       </div>
     </div>
   );

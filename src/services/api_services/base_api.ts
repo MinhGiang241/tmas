@@ -31,6 +31,7 @@ export class callApi {
           data: response.data?.data ?? response.data,
           message: response.data?.message,
           records: response?.data?.records,
+          dataTotal: response?.data?.dataTotal,
         };
       }
 
@@ -39,6 +40,7 @@ export class callApi {
         data: response?.data?.data ?? response.data,
         message: response?.data?.message,
         records: response?.data?.records,
+        dataTotal: response?.data?.dataTotal,
       };
     } catch (error: any) {
       return {
