@@ -86,7 +86,11 @@ export default function AllNotification() {
               </div>
             </Popover>
           </div>
-          <div className="mb-2 text-lg">Mới</div>
+          {(getNoti?.unAwared?.length || 0) > 0 ? (
+            <div className="mb-2 mt-4 text-sm font-semibold">Mới</div>
+          ) : (
+            ""
+          )}
           {(getNoti?.unAwared?.length || 0) > 0
             ? getNoti?.unAwared?.map((x, key) => (
                 <div
@@ -230,7 +234,11 @@ export default function AllNotification() {
               ))
             : ""}
           <div className="my-5 h-[1px] w-full bg-[#DFDFE2]" />
-          <div className="mb-2 text-lg">Trước đó</div>
+          {(getNoti?.awared?.length || 0) > 0 ? (
+            <div className="mb-2 mt-4 text-sm font-semibold">Trước</div>
+          ) : (
+            ""
+          )}
           {(getNoti?.awared?.length || 0) > 0
             ? getNoti?.awared?.map((e: any, key: any) => {
                 return (
