@@ -72,7 +72,7 @@ export interface Package {
 
 export interface Studio {
   _id?: string;
-
+  gold?: number;
   accountType?: string;
   avatar?: string;
   createdTime?: string;

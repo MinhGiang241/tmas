@@ -18,7 +18,7 @@
   "public_examination": "Đợt thi công khai",
   "valid_public_examination": "Đợt thi công khai hiệu lực",
   "valid": "Còn hiệu lực",
-  "in_valid": "Hết hiệu lực",
+  "invalid": "Hết hiệu lực",
   "search_by_name_tag": "Tìm kiếm theo tên/thẻ",
   "discount": "Chiết khấu",
   "pure_income": "Doanh thu thuần",

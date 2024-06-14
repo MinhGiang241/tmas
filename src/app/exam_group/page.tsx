@@ -7,14 +7,6 @@ import TabPane from "antd/es/tabs/TabPane";
 import ExamGroupTab from "./tabs/ExamGroup";
 import QuestionGroup from "./tabs/QuestionGroup";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  setExamGroupList,
-  setExamGroupLoading,
-} from "@/redux/exam_group/examGroupSlice";
-import { useDispatch } from "react-redux";
-import { APIResults } from "@/data/api_results";
-import { getExamGroupTest } from "@/services/api_services/exam_api";
-import { ExamGroupData } from "@/data/exam";
 
 function ExamGroup() {
   const { t } = useTranslation("exam");
@@ -28,41 +20,6 @@ function ExamGroup() {
   const onChangeTab = (i: any) => {
     router.push(`/exam_group?tab=${i}`);
   };
-
-  // const [index, setIndex] = useState<number>(0);
-  // const dispatch = useDispatch();
-  //
-  // useEffect(() => {
-  //   loadExamTestList(true);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-  // const loadExamTestList = async (init?: boolean) => {
-  //   if (init) {
-  //     dispatch(setExamGroupLoading(true));
-  //   }
-  //   var dataResults: APIResults = await getExamGroupTest({
-  //     text: "",
-  //   });
-  //   if (dataResults.code != 0) {
-  //     dispatch(setExamGroupList([]));
-  //   } else {
-  //     var data = dataResults?.data as ExamGroupData[];
-  //     var levelOne = data?.filter((v: ExamGroupData) => v.level === 0);
-  //     var levelTwo = data?.filter((v: ExamGroupData) => v.level === 1);
-  //
-  //     var list = levelOne.map((e: ExamGroupData) => {
-  //       var childs = levelTwo.filter(
-  //         (ch: ExamGroupData) => ch.idParent === e.id,
-  //       );
-  //       return { ...e, childs };
-  //     });
-  //
-  //     dispatch(setExamGroupList(list));
-  //
-  //     console.log("levelOne", list);
-  //     console.log("data", dataResults);
-  //   }
-  // };
 
   return (
     <HomeLayout>
@@ -100,16 +57,6 @@ function ExamGroup() {
 
       <QuestionGroup hidden={index != "1"} />
       <div className="h-3" />
-
-      {/*``
-        <Tabs
-        destroyInactiveTabPane
-        size="large"
-        defaultActiveKey={index ?? "1"}
-        items={items}
-        onChange={onChangeTab}
-      />
-*/}
     </HomeLayout>
   );
 }
