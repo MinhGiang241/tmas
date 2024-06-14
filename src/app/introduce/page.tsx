@@ -1,20 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Radio, Space, Tooltip } from "antd";
+import { Button, Modal, Tooltip } from "antd";
 import Image from "next/image";
 import MButton from "../components/config/MButton";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import CreateExaminationIntroduce from "./createExamination/page";
-
-const ITEMS = [
-  "IT (Công nghệ thông tin)",
-  "Marketing",
-  "Thiết kế",
-  "Giáo dục",
-  "Y tế",
-  "Tài chính - Ngân hàng",
-];
+import {
+  getTopic,
+  getTopicChild,
+  onBoardingTopic,
+  onBoardingTopicChild,
+} from "@/services/api_services/onboarding";
+import { createChildsGroup } from "@/services/api_services/exam_api";
 
 export default function Introduce() {
   const user = useSelector((state: RootState) => state.user?.user);
@@ -23,6 +21,34 @@ export default function Introduce() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [value, setValue] = useState<number | undefined>();
+  const [dataTopic, setDataTopic] = useState<onBoardingTopic[]>([]);
+  const [dataTopicChild, setDataTopicChild] = useState<onBoardingTopicChild[]>(
+    []
+  );
+  const [groupName, setGroupName] = useState<string[]>([]);
+
+  const getDataTopicChild = async () => {
+    const res = await getTopicChild();
+    console.log("getTopicChild", res);
+
+    if (res) {
+      setDataTopicChild(res?.data);
+    }
+  };
+
+  const getDataTopic = async () => {
+    const res = await getTopic();
+    // console.log("getDataTopic", res);
+
+    if (res) {
+      setDataTopic(res?.data);
+    }
+  };
+
+  useEffect(() => {
+    getDataTopic();
+    getDataTopicChild();
+  }, []);
 
   useEffect(() => {
     setVisible(true);
@@ -32,12 +58,13 @@ export default function Introduce() {
     return () => clearTimeout(timer);
   }, []);
 
-  const toggleSelection = (item: string) => {
+  const toggleSelection = (item: onBoardingTopic) => {
     setSelectedItems((prevSelectedItems) => {
-      if (prevSelectedItems.includes(item)) {
-        return prevSelectedItems.filter((i) => i !== item);
+      if (prevSelectedItems.includes(item._id!)) {
+        return prevSelectedItems.filter((i) => i !== item._id);
       } else if (prevSelectedItems.length < 3) {
-        return [...prevSelectedItems, item];
+        setGroupName((name) => [...name, item.name!]);
+        return [...prevSelectedItems, item._id!];
       }
       return prevSelectedItems;
     });
@@ -45,6 +72,20 @@ export default function Introduce() {
 
   const handleContinue = () => {
     if (selectedItems.length === 3) {
+      setCurrentStep(currentStep + 1);
+      var submitData = {
+        items: groupName,
+        action: "Add",
+        level: 0,
+        idParent: "",
+        studioId: user?.studio?._id,
+      };
+      createChildsGroup(submitData);
+    }
+  };
+
+  const handleContinueStep2 = () => {
+    if (value) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -110,9 +151,6 @@ export default function Introduce() {
                 }`}
               />
             </div>
-            {/* <div className="cursor-pointer" onClick={() => setOpen(false)}>
-              Bỏ qua
-            </div> */}
             <div />
           </div>
           {currentStep === 1 && (
@@ -121,17 +159,17 @@ export default function Introduce() {
                 Cấu hình đề thi
               </div>
               <div className="flex flex-wrap mb-3">
-                {ITEMS.map((item) => (
+                {dataTopic.map((x, key) => (
                   <div
-                    key={item}
-                    onClick={() => toggleSelection(item)}
+                    key={key}
+                    onClick={() => toggleSelection(x)}
                     className={`cursor-pointer rounded-md border w-auto mr-2 p-1 px-5 mb-2 ${
-                      selectedItems.includes(item)
+                      selectedItems.includes(x._id!)
                         ? "bg-[#E2F0F3] text-[#0B8199] border-[#0B8199]"
                         : ""
                     }`}
                   >
-                    {item}
+                    {x?.name}
                   </div>
                 ))}
               </div>
@@ -144,23 +182,25 @@ export default function Introduce() {
                 <div className="font-normal text-base">
                   (Bạn hãy chọn tối thiểu 1 đề thi)
                 </div>
-                <div className="pt-3">
-                  <button
-                    onClick={() => {
-                      setValue(1);
-                    }}
-                    className="md:w-[653px] md:h-[64px] w-[300px] h-[50px] flex items-center justify-between bg-[#F4F5F5] px-3 rounded-md cursor-pointer mb-2"
-                  >
-                    <div>Đề thi tuyển dụng fresher Kế toán</div>
-                    <div className="w-[24px] h-[24px] border-[1px] border-[#9EA3B0] p-2 rounded-full flex justify-center items-center">
-                      <div
-                        className={`w-[15px] h-[15px] rounded-full ${
-                          value === 1 ? "bg-[#0B8199] p-2" : ""
-                        }`}
-                      />
-                    </div>
-                  </button>
-                </div>
+                {dataTopicChild?.map((x: any, key: any) => (
+                  <div className="pt-3" key={key}>
+                    <button
+                      onClick={() => {
+                        setValue(1);
+                      }}
+                      className="md:w-[653px] md:h-[64px] w-[300px] h-[50px] flex items-center justify-between bg-[#F4F5F5] px-3 rounded-md cursor-pointer mb-2"
+                    >
+                      <div>{x?.name}</div>
+                      <div className="w-[24px] h-[24px] border-[1px] border-[#9EA3B0] p-2 rounded-full flex justify-center items-center">
+                        <div
+                          className={`w-[15px] h-[15px] rounded-full ${
+                            value === 1 ? "bg-[#0B8199] p-2" : ""
+                          }`}
+                        />
+                      </div>
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -194,7 +234,7 @@ export default function Introduce() {
                 htmlType="submit"
                 text={"Tiếp tục"}
                 disabled={value == null}
-                onClick={handleContinue}
+                onClick={handleContinueStep2}
               />
             )}
             {currentStep === 3 && (
