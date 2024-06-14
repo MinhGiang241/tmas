@@ -29,6 +29,9 @@ import {
 import { FormattedNumber } from "react-intl";
 import dayjs from "dayjs";
 import { sendNotification } from "@/notifiCations/pushService";
+import BellIcon from "@/app/components/icons/blue-noti.svg";
+import SettingNotify from "../settings-notify/settings-notification";
+
 function AccountPage() {
   const index = useSelector((state: RootState) => state.home.index);
   const dispatch = useDispatch();
@@ -69,8 +72,8 @@ function AccountPage() {
     }
     dispatch(
       setHomeIndex(
-        ["0", "1", "2", "3", "4"].includes(indexTab ?? "") ? indexTab : "0",
-      ),
+        ["0", "1", "2", "3", "4", "5"].includes(indexTab ?? "") ? indexTab : "0"
+      )
     );
     sendNotification();
     console.log("Sendtest noti");
@@ -125,7 +128,7 @@ function AccountPage() {
               router.push(
                 `/payment?type=Gold&goldId=${transaction?.goldId ?? ""}&price=${
                   goldSetting?.cost ?? 0
-                }&name=${goldSetting?.name}`,
+                }&name=${goldSetting?.name}`
               );
             } else {
               router.push(
@@ -133,7 +136,7 @@ function AccountPage() {
                   transaction?.packageId ?? ""
                 }&price=${packageData?.price ?? 0}&name=${
                   packageData?.name ?? ""
-                }`,
+                }`
               );
             }
           }
@@ -274,6 +277,20 @@ function AccountPage() {
             <ClockIcon className="min-w-5" />
             <p className="mx-2">{t("history_upgrade")}</p>
           </button>
+
+          <button
+            onClick={() => {
+              router.push("/account?tab=5");
+            }}
+            className={`h-[52px] ${
+              index === "5"
+                ? "bg-m_primary_100 body_semibold_14"
+                : "body_regular_14"
+            } flex items-center justify-start rounded-lg w-full pl-1`}
+          >
+            <BellIcon className="min-w-5" />
+            <p className="mx-2">{"Quản lý thông báo"}</p>
+          </button>
         </div>
         <div className="hidden lg:block w-6" />
         <div className="h-screen lg:h-fit bg-white lg:w-4/5 w-full lg:mt-10 rounded-lg">
@@ -282,6 +299,7 @@ function AccountPage() {
           {index === "2" && <UserProfile />}
           {index === "3" && <StudioInfo />}
           {index === "4" && <HistoryUpgrade />}
+          {index === "5" && <SettingNotify />}
         </div>
       </div>
     </HomeLayout>
