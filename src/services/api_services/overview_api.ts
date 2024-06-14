@@ -77,10 +77,19 @@ export const overviewListRevenue = async (data?: OverviewListRevenueParams) => {
   return results;
 };
 
-export const overviewListRevenueExell = async (studioId?: string) => {
+export const overviewListRevenueExel = async (studioId?: string) => {
   const results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/goldtransaction.excelDowloadOverviewListRevenue`,
     { studioId },
+    { responseType: "blob" },
+  );
+  return results;
+};
+
+export const overviewRevenueStu = async (studioId?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/getOverViewRevenue`,
+    { params: { studioId } },
   );
   return results;
 };

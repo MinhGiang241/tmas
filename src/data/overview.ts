@@ -95,3 +95,15 @@ export interface RevenueDataTotal {
   netRevenue?: number;
   revenue?: number;
 }
+
+export interface StuRevenueData {
+  examTest?: {
+    examTestPublic?: number;
+    examTestPublicActive?: number;
+  };
+  subStudio?: {
+    total?: number;
+    totalToday?: number;
+    totalYesterDay?: number;
+  };
+}

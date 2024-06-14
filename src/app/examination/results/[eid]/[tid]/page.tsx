@@ -280,7 +280,7 @@ export default function Result({ params }: any) {
     ?.filter((k) => questSqlIds?.includes(k.idExamQuestion))
     ?.map((o) => JSON.parse(o.candidateAnswerJson ?? ""));
   const sqlHasNotAns = allSqlListAns?.every((an: SqlCandidateAnswer) => {
-    return !an?.metadata || !an?.stdOut;
+    return !an?.querySql;
   });
 
   var isAllEssayEmpty =
