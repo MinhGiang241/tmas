@@ -4,10 +4,10 @@ export interface OverviewNumberData {
   totalDoingTest?: number;
   totalTest?: number;
   totalTestToday?: number;
-  totalTestTomorrow?: number;
+  totalTestYesterday?: number;
   totalUserTest?: number;
   totalUserTestToday?: number;
-  totalUserTestTomorrow?: number;
+  totalUserTestYesterday?: number;
 }
 
 export enum TimeChart {
@@ -53,17 +53,17 @@ export interface RevenueData {
   discountData?: {
     revenue?: number;
     revenueToday?: number;
-    revenueTomorrow?: number;
+    revenueYesterday?: number;
   };
   netData?: {
     revenue?: number;
     revenueToday?: number;
-    revenueTomorrow?: number;
+    revenueYesterday?: number;
   };
   revenueData?: {
     revenue?: number;
     revenueToday?: number;
-    revenueTomorrow?: number;
+    revenueYesterday?: number;
   };
 }
 

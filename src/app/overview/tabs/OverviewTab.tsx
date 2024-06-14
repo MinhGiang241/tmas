@@ -138,15 +138,15 @@ function OverviewTab() {
               />
             </div>
             {overviewData?.totalTestToday !=
-              overviewData?.totalTestTomorrow && (
+              overviewData?.totalTestYesterday && (
               <UpDownTrend
                 up={
-                  (overviewData?.totalTestTomorrow ?? 0) >
+                  (overviewData?.totalTestYesterday ?? 0) <
                   (overviewData?.totalTestToday ?? 0)
                 }
                 num={Math.abs(
-                  (overviewData?.totalTestTomorrow ?? 0) -
-                    (overviewData?.totalTestToday ?? 0),
+                  (overviewData?.totalTestToday ?? 0) -
+                    (overviewData?.totalTestYesterday ?? 0),
                 )}
               />
             )}
@@ -164,15 +164,15 @@ function OverviewTab() {
               />
             </div>
             {overviewData?.totalUserTestToday !=
-              overviewData?.totalUserTestTomorrow && (
+              overviewData?.totalUserTestYesterday && (
               <UpDownTrend
                 up={
-                  (overviewData?.totalUserTestTomorrow ?? 0) >
+                  (overviewData?.totalUserTestYesterday ?? 0) <
                   (overviewData?.totalUserTestToday ?? 0)
                 }
                 num={Math.abs(
-                  (overviewData?.totalUserTestTomorrow ?? 0) -
-                    (overviewData?.totalUserTestToday ?? 0),
+                  (overviewData?.totalUserTestToday ?? 0) -
+                    (overviewData?.totalUserTestYesterday ?? 0),
                 )}
               />
             )}

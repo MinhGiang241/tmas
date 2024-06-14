@@ -246,16 +246,16 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.revenueData?.revenueTomorrow !=
+            {revenueData?.revenueData?.revenueYesterday !=
               revenueData?.revenueData?.revenueToday && (
               <UpDownTrend
                 up={
-                  (revenueData?.revenueData?.revenueTomorrow ?? 0) >
+                  (revenueData?.revenueData?.revenueYesterday ?? 0) <
                   (revenueData?.revenueData?.revenueToday ?? 0)
                 }
                 num={Math.abs(
-                  (revenueData?.revenueData?.revenueTomorrow ?? 0) -
-                    (revenueData?.revenueData?.revenueToday ?? 0),
+                  (revenueData?.revenueData?.revenueToday ?? 0) -
+                    (revenueData?.revenueData?.revenueYesterday ?? 0),
                 )}
               />
             )}
@@ -272,16 +272,16 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.discountData?.revenueTomorrow !=
+            {revenueData?.discountData?.revenueYesterday !=
               revenueData?.discountData?.revenueToday && (
               <UpDownTrend
                 up={
-                  (revenueData?.discountData?.revenueTomorrow ?? 0) >
+                  (revenueData?.discountData?.revenueYesterday ?? 0) <
                   (revenueData?.discountData?.revenueToday ?? 0)
                 }
                 num={Math.abs(
-                  (revenueData?.discountData?.revenueTomorrow ?? 0) -
-                    (revenueData?.discountData?.revenueToday ?? 0),
+                  (revenueData?.discountData?.revenueToday ?? 0) -
+                    (revenueData?.discountData?.revenueYesterday ?? 0),
                 )}
               />
             )}
@@ -298,17 +298,17 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.netData?.revenueTomorrow !=
+            {revenueData?.netData?.revenueYesterday !=
               revenueData?.netData?.revenueToday && (
               <UpDownTrend
                 up={
-                  (revenueData?.netData?.revenueTomorrow ?? 0) >
+                  (revenueData?.netData?.revenueYesterday ?? 0) <
                   (revenueData?.netData?.revenueToday ?? 0)
                 }
-                num={
-                  (revenueData?.netData?.revenueTomorrow ?? 0) -
-                  (revenueData?.netData?.revenueToday ?? 0)
-                }
+                num={Math.abs(
+                  (revenueData?.netData?.revenueToday ?? 0) -
+                    (revenueData?.netData?.revenueYesterday ?? 0),
+                )}
               />
             )}
           </div>

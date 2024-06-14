@@ -213,7 +213,7 @@ export default function Sql({
                     <div className="pr-2 font-semibold text-sm">
                       {t("result")}
                     </div>
-                    {metadata?.data?.matched ? <Tick /> : <Close />}
+                    {/* {metadata?.data?.matched ? <Tick /> : <Close />} */}
                   </div>
                   {/* <Table columns={columns} dataSource={data} pagination={false} /> */}
                   <MTable

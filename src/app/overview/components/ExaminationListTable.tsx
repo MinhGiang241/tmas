@@ -1,11 +1,20 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import MTable, { TableDataRow } from "@/app/components/config/MTable";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DownloadIcon from "@/app/components/icons/white-import.svg";
 import MButton from "@/app/components/config/MButton";
 import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
 import { SearchOutlined } from "@ant-design/icons";
 import MInput from "@/app/components/config/MInput";
+import { useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import {
+  overviewExamTestCounter,
+  overviewExamTestCounterExcel,
+} from "@/services/api_services/overview_api";
+import { errorToast } from "@/app/components/toast/customToast";
+import saveAs from "file-saver";
 
 function ExaminationListTable() {
   const { t } = useTranslation("exam");
@@ -14,6 +23,7 @@ function ExaminationListTable() {
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(0);
+  const user = useAppSelector((state: RootState) => state.user.user);
 
   const dataRows: TableDataRow[] = [
     {
@@ -74,6 +84,36 @@ function ExaminationListTable() {
     { dataIndex: "to_date", title: t("to_date"), classNameTitle: "min-w-20" },
     { dataIndex: "status", title: t("status"), classNameTitle: "min-w-20" },
   ];
+
+  const getListData = async () => {
+    var res = await overviewExamTestCounter({
+      paging: { startIndex: indexPage, recordPerPage: recordNum },
+    });
+    if (res?.code != 0) {
+      return;
+    }
+    setTotal(res?.data?.totalOfRecords ?? 0);
+  };
+
+  const downloadExell = async () => {
+    var res = await overviewExamTestCounterExcel({
+      paging: {
+        startIndex: indexPage,
+        recordPerPage: recordNum,
+      },
+    });
+
+    if (res?.code != 0) {
+      errorToast(res?.message ?? "");
+      return;
+    }
+
+    saveAs(res?.data);
+  };
+
+  useEffect(() => {
+    getListData();
+  }, [user]);
 
   return (
     <>
@@ -136,6 +176,7 @@ function ExaminationListTable() {
           </div>
         </div>
         <MButton
+          onClick={downloadExell}
           text={t("download_file0")}
           className="flex items-center"
           icon={<DownloadIcon />}
