@@ -1,6 +1,6 @@
 import {
   ActivitiesParams,
-  ExamCounterData,
+  ExamCounterParams,
   OverviewListRevenueParams,
 } from "@/data/overview";
 import { callApi, callStudioAPI } from "./base_api";
@@ -20,6 +20,13 @@ export const overviewActivitiesReport = async (params: ActivitiesParams) => {
   return results;
 };
 
+export const overviewGetRemaining = async () => {
+  const results = await callApi.get(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.number_of_tests_remaining`,
+  );
+  return results;
+};
+
 export const overviewGetTotalExamByExamGroup = async () => {
   const results = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/getTotalExamByExamGroup`,
@@ -27,7 +34,7 @@ export const overviewGetTotalExamByExamGroup = async () => {
   return results;
 };
 
-export const overviewExamCounter = async (data: ExamCounterData) => {
+export const overviewExamCounter = async (data: ExamCounterParams) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamCounter/GetPaging`,
     data,
@@ -35,7 +42,7 @@ export const overviewExamCounter = async (data: ExamCounterData) => {
   return results;
 };
 
-export const overviewExamCounterExcel = async (data: ExamCounterData) => {
+export const overviewExamCounterExcel = async (data: ExamCounterParams) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamCounter/ExportExcel`,
     data,
@@ -44,7 +51,7 @@ export const overviewExamCounterExcel = async (data: ExamCounterData) => {
   return results;
 };
 
-export const overviewExamTestCounter = async (data: ExamCounterData) => {
+export const overviewExamTestCounter = async (data: ExamCounterParams) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTestCounter/GetPaging`,
     data,
@@ -52,7 +59,7 @@ export const overviewExamTestCounter = async (data: ExamCounterData) => {
   return results;
 };
 
-export const overviewExamTestCounterExcel = async (data: ExamCounterData) => {
+export const overviewExamTestCounterExcel = async (data: ExamCounterParams) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTestCounter/ExportExcel`,
     data,
@@ -77,10 +84,19 @@ export const overviewListRevenue = async (data?: OverviewListRevenueParams) => {
   return results;
 };
 
-export const overviewListRevenueExell = async (studioId?: string) => {
+export const overviewListRevenueExel = async (studioId?: string) => {
   const results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/goldtransaction.excelDowloadOverviewListRevenue`,
     { studioId },
+    { responseType: "blob" },
+  );
+  return results;
+};
+
+export const overviewRevenueStu = async (studioId?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/getOverViewRevenue`,
+    { params: { studioId } },
   );
   return results;
 };

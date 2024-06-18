@@ -17,13 +17,15 @@ import MTable, { TableDataRow } from "@/app/components/config/MTable";
 import UpDownTrend from "../components/UpDownTrend";
 import {
   overviewListRevenue,
-  overviewListRevenueExell,
+  overviewListRevenueExel,
   overviewRevenue,
+  overviewRevenueStu,
 } from "@/services/api_services/overview_api";
 import {
   OverviewListRevenueData,
   RevenueData,
   RevenueDataTotal,
+  StuRevenueData,
 } from "@/data/overview";
 import { errorToast } from "@/app/components/toast/customToast";
 import dayjs from "dayjs";
@@ -36,6 +38,7 @@ import { getExamGroupTest } from "@/services/api_services/exam_api";
 import { ExamGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { saveAs } from "file-saver";
+import { useRouter } from "next/navigation";
 
 function IncomeTab() {
   const { t } = useTranslation("overview");
@@ -53,6 +56,9 @@ function IncomeTab() {
   const [endDate, setEndDate] = useState<string | undefined>();
   const [revenueData, setRevenueData] = useState<RevenueData | undefined>();
   const [revenueListData, setRevenueListData] = useState<TableValue[]>([]);
+  const [studioRevenueData, setStudioRevenueData] = useState<
+    StuRevenueData | undefined
+  >();
   const [revenueTotal, setRevenueTotal] = useState<
     RevenueDataTotal | undefined
   >();
@@ -182,6 +188,14 @@ function IncomeTab() {
     setRevenueTotal(res?.dataTotal);
   };
 
+  const getRrevenueStudio = async () => {
+    const res = await overviewRevenueStu(user?.studio?._id);
+    if (res?.code != 0) {
+      return;
+    }
+    setStudioRevenueData(res?.data);
+  };
+
   useEffect(() => {
     getRevenueList();
   }, [user, indexPage, recordNum, search, groupId, status, startDate, endDate]);
@@ -189,7 +203,7 @@ function IncomeTab() {
     if (user?.studio?._id) {
       dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
     }
-
+    getRrevenueStudio();
     getRevenue();
   }, [user]);
 
@@ -223,13 +237,15 @@ function IncomeTab() {
     },
   ];
 
+  const router = useRouter();
   const downloadExell = async () => {
-    var res = await overviewListRevenueExell(user?.studio?._id);
+    var res = await overviewListRevenueExel(user?.studio?._id);
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
       return;
     }
-    saveAs(res?.data, "data.xlsx");
+    router.push(res.data ?? "");
+    //saveAs(res?.data, "data.xlsx");
   };
 
   return (
@@ -246,16 +262,16 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.revenueData?.revenueTomorrow !=
+            {revenueData?.revenueData?.revenueYesterday !=
               revenueData?.revenueData?.revenueToday && (
               <UpDownTrend
                 up={
-                  (revenueData?.revenueData?.revenueTomorrow ?? 0) >
+                  (revenueData?.revenueData?.revenueYesterday ?? 0) <
                   (revenueData?.revenueData?.revenueToday ?? 0)
                 }
                 num={Math.abs(
-                  (revenueData?.revenueData?.revenueTomorrow ?? 0) -
-                    (revenueData?.revenueData?.revenueToday ?? 0),
+                  (revenueData?.revenueData?.revenueToday ?? 0) -
+                    (revenueData?.revenueData?.revenueYesterday ?? 0),
                 )}
               />
             )}
@@ -272,16 +288,16 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.discountData?.revenueTomorrow !=
+            {revenueData?.discountData?.revenueYesterday !=
               revenueData?.discountData?.revenueToday && (
               <UpDownTrend
                 up={
-                  (revenueData?.discountData?.revenueTomorrow ?? 0) >
+                  (revenueData?.discountData?.revenueYesterday ?? 0) <
                   (revenueData?.discountData?.revenueToday ?? 0)
                 }
                 num={Math.abs(
-                  (revenueData?.discountData?.revenueTomorrow ?? 0) -
-                    (revenueData?.discountData?.revenueToday ?? 0),
+                  (revenueData?.discountData?.revenueToday ?? 0) -
+                    (revenueData?.discountData?.revenueYesterday ?? 0),
                 )}
               />
             )}
@@ -298,17 +314,17 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.netData?.revenueTomorrow !=
+            {revenueData?.netData?.revenueYesterday !=
               revenueData?.netData?.revenueToday && (
               <UpDownTrend
                 up={
-                  (revenueData?.netData?.revenueTomorrow ?? 0) >
+                  (revenueData?.netData?.revenueYesterday ?? 0) <
                   (revenueData?.netData?.revenueToday ?? 0)
                 }
-                num={
-                  (revenueData?.netData?.revenueTomorrow ?? 0) -
-                  (revenueData?.netData?.revenueToday ?? 0)
-                }
+                num={Math.abs(
+                  (revenueData?.netData?.revenueToday ?? 0) -
+                    (revenueData?.netData?.revenueYesterday ?? 0),
+                )}
               />
             )}
           </div>
@@ -319,23 +335,39 @@ function IncomeTab() {
           <div className="flex items-center">
             <div className="heading_semibold_32">
               <FormattedNumber
-                value={30}
+                value={studioRevenueData?.subStudio?.total ?? 0}
                 style="decimal"
                 maximumFractionDigits={2}
               />
             </div>
-            <UpDownTrend num={2} />
+            {studioRevenueData?.subStudio?.totalToday !=
+              studioRevenueData?.subStudio?.totalYesterDay && (
+              <UpDownTrend
+                up={
+                  (studioRevenueData?.subStudio?.totalToday ?? 0) >
+                  (studioRevenueData?.subStudio?.totalYesterDay ?? 0)
+                }
+                num={Math.abs(
+                  (studioRevenueData?.subStudio?.totalToday ?? 0) -
+                    (studioRevenueData?.subStudio?.totalYesterDay ?? 0),
+                )}
+              />
+            )}
           </div>
         </div>
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
           <div className="body_regular_14">{t("public_examination")}</div>
           <div className="h-2" />
-          <div className="heading_semibold_32">10</div>
+          <div className="heading_semibold_32">
+            {studioRevenueData?.examTest?.examTestPublic ?? 0}
+          </div>
         </div>
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
           <div className="body_regular_14">{t("valid_public_examination")}</div>
           <div className="h-2" />
-          <div className="heading_semibold_32">10</div>
+          <div className="heading_semibold_32">
+            {studioRevenueData?.examTest?.examTestPublicActive ?? 0}
+          </div>
         </div>
       </div>
       <div className="w-full mt-4 p-4 bg-white rounded-lg">
@@ -383,7 +415,11 @@ function IncomeTab() {
             <div className="max-w-36">
               <MDateTimeSelect
                 setValue={(name: string, val: any) => {
-                  setStartDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                  if (val) {
+                    setStartDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                  } else {
+                    setStartDate(undefined);
+                  }
                 }}
                 isoValue={startDate}
                 formatter={"DD/MM/YYYY"}
@@ -399,7 +435,11 @@ function IncomeTab() {
             <div className="max-w-36">
               <MDateTimeSelect
                 setValue={(name: string, val: any) => {
-                  setEndDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                  if (val) {
+                    setEndDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                  } else {
+                    setEndDate(undefined);
+                  }
                 }}
                 isoValue={endDate}
                 formatter={"DD/MM/YYYY"}

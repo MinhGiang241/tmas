@@ -43,6 +43,7 @@ import {
   BaseQuestionData,
   EssayCandidateAnswer,
   QuestionType,
+  SqlCandidateAnswer,
 } from "@/data/question";
 import MDropdown from "@/app/components/config/MDropdown";
 import MButton from "@/app/components/config/MButton";
@@ -266,12 +267,26 @@ export default function Result({ params }: any) {
   const allEssayListAns = examResult?.candidateAnswers
     ?.filter((k) => questEssayIds?.includes(k.idExamQuestion))
     ?.map((o) => JSON.parse(o.candidateAnswerJson ?? ""));
-  const hasAns = allEssayListAns?.every((an: any) => {
+  const hasNotAns = allEssayListAns?.every((an: any) => {
     return (!an?.idFiles || an?.idFiles?.length === 0) && !an.anwserHtml;
   });
 
+  const questSqlIds =
+    examResult?.examTestDataCreatedWhenTest?.examVersion?.jsonExamQuestions
+      ?.map((e) => JSON.parse(e))
+      ?.filter((r: BaseQuestionData) => r.questionType == QuestionType.SQL)
+      ?.map((t: BaseQuestionData) => t.id);
+  const allSqlListAns = examResult?.candidateAnswers
+    ?.filter((k) => questSqlIds?.includes(k.idExamQuestion))
+    ?.map((o) => JSON.parse(o.candidateAnswerJson ?? ""));
+  const sqlHasNotAns = allSqlListAns?.every((an: SqlCandidateAnswer) => {
+    return !an?.querySql;
+  });
+
   var isAllEssayEmpty =
-    allEssayListAns?.length === 0 || (allEssayListAns?.length != 0 && hasAns);
+    (allEssayListAns?.length === 0 ||
+      (allEssayListAns?.length != 0 && hasNotAns)) &&
+    (allSqlListAns?.length === 0 || sqlHasNotAns);
 
   return (
     <HomeLayout>
