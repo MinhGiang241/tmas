@@ -25,6 +25,7 @@ import UpDownTrend from "../components/UpDownTrend";
 import {
   overviewActivitiesReport,
   overviewGetNum,
+  overviewGetRemaining,
   overviewGetTotalExamByExamGroup,
 } from "@/services/api_services/overview_api";
 import { errorToast } from "@/app/components/toast/customToast";
@@ -54,6 +55,7 @@ function OverviewTab() {
   var now = dayjs();
   var year = now.year();
   const [lineData, setLineData] = useState<LineTableValue[]>([]);
+  const [remain, setRemain] = useState<number | undefined>(0);
   const [barData, setBarData] = useState<BarTableValue[]>([]);
   const [startTime, setStartTime] = useState<string>(
     dayjs(`1/1/${year}`).toISOString(),
@@ -107,8 +109,17 @@ function OverviewTab() {
     setBarData(res.data);
   };
 
+  const getRemaining = async () => {
+    var res = await overviewGetRemaining();
+    if (res?.code != 0) {
+      return;
+    }
+    setRemain(res?.data);
+  };
+
   useEffect(() => {
     getNum();
+    getRemaining();
     getTotalExamByExamGroup();
   }, [user]);
 
@@ -200,7 +211,7 @@ function OverviewTab() {
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
           <div className="body_regular_14">{t("remain_test")}</div>
           <div className="h-2" />
-          <div className="heading_semibold_32">10/tháng</div>
+          <div className="heading_semibold_32">{remain}/tháng</div>
         </div>
       </div>
 

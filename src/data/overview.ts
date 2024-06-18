@@ -1,4 +1,4 @@
-import { Condition } from "./exam";
+import { Condition, ExamData } from "./exam";
 
 export interface OverviewNumberData {
   totalDoingTest?: number;
@@ -31,7 +31,7 @@ export interface TimeOnChartData {
   total?: number;
 }
 
-export interface ExamCounterData {
+export interface ExamCounterParams {
   paging?: {
     startIndex?: number;
     recordPerPage?: number;
@@ -106,4 +106,51 @@ export interface StuRevenueData {
     totalToday?: number;
     totalYesterDay?: number;
   };
+}
+
+export interface ExamCounterData {
+  id?: string;
+  createdBy?: string;
+  createdTime?: string;
+  couter?: {
+    goldCouter?: {
+      discount?: number;
+      netRevenue?: number;
+      revenue?: number;
+    };
+    maximumTimeSeconds?: number;
+    medianScoreAsInt?: number;
+    minimumTimeSeconds?: number;
+    numberOfQuestions?: number;
+    numberOfTest?: number;
+    totalPass?: number;
+    totalScoreAsInt?: number;
+    totalTimeSeconds?: number;
+  };
+  info?: {
+    exam?: ExamData;
+    groupExam?: {
+      id?: string;
+      createdBy?: string;
+      createdTime?: string;
+      idParent?: string;
+      level?: number;
+      name?: string;
+      ownerId?: string;
+      studioId?: string;
+      unsignedName?: string;
+      updateBy?: string;
+      updateTime?: string;
+    };
+  };
+  key?: {
+    couterByDate?: string;
+    idExam?: string;
+    idStudio?: string;
+  };
+  keyCouter?: string;
+  ownerId?: string;
+  studioId?: string;
+  updateBy?: string;
+  updateTime?: string;
 }

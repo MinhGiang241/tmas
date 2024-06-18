@@ -16,6 +16,29 @@ import {
 } from "@/services/api_services/overview_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import { saveAs } from "file-saver";
+import { ExamCounterData } from "@/data/overview";
+import dayjs from "dayjs";
+
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import duration from "dayjs/plugin/duration";
+dayjs.extend(duration);
+dayjs.extend(customParseFormat);
+
+interface TableValue {
+  name?: string;
+  group?: string;
+  tags?: string[];
+  join_num?: number;
+  today_join_num?: string;
+  dtb?: number;
+  dtv?: number;
+  percent_pass?: number;
+  avg_test_time?: string;
+  min_test_time?: string;
+  max_test_time?: string;
+  question_num?: number;
+  created_date?: string;
+}
 
 function ExamListTable() {
   const { t } = useTranslation("exam");
@@ -25,6 +48,7 @@ function ExamListTable() {
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(0);
   const user = useAppSelector((state: RootState) => state.user.user);
+  const [dataTable, setDataTable] = useState<TableValue[]>([]);
 
   const dataRows: TableDataRow[] = [
     { dataIndex: "name", title: t("name"), classNameTitle: "min-w-20" },
@@ -78,6 +102,37 @@ function ExamListTable() {
       return;
     }
     setTotal(res?.data?.totalOfRecords ?? 0);
+    var examData: ExamCounterData[] = res?.data?.records ?? [];
+    var examTableData = examData?.map<TableValue>((t) => ({
+      created_date: dayjs(t?.info?.exam?.createdTime).format(
+        "DD:MM:YYYY HH:mm:ss",
+      ),
+      question_num: t?.couter?.numberOfQuestions ?? 0,
+      group: t?.info?.groupExam?.name,
+      name: t?.info?.exam?.name,
+      tags: t?.info?.exam?.tags,
+      dtv: t?.couter?.medianScoreAsInt,
+      dtb: (t?.couter?.totalScoreAsInt ?? 0) / (t?.couter?.numberOfTest ?? 0),
+      join_num: t?.couter?.numberOfTest,
+      percent_pass:
+        ((t?.couter?.totalScoreAsInt ?? 0) / (t?.couter?.numberOfTest ?? 0)) *
+        100,
+      avg_test_time: dayjs
+        .duration(
+          (t?.couter?.totalTimeSeconds ?? 0) / (t?.couter?.numberOfTest ?? 0),
+        )
+        .format("HH:mm:ss"),
+      max_test_time: dayjs
+        .duration(t?.couter?.maximumTimeSeconds ?? 0)
+        .format("HH:mm:ss"),
+      min_test_time: dayjs
+        .duration(t?.couter?.minimumTimeSeconds ?? 0)
+        .format("HH:mm:ss"),
+      today_join_num: `${t?.key?.couterByDate}`,
+
+      // avg_test_time: t?.couter?.
+    }));
+    setDataTable(examTableData);
   };
 
   useEffect(() => {
@@ -168,6 +223,7 @@ function ExamListTable() {
       </div>
       <div className="h-5" />
       <MTable
+        dataSource={dataTable}
         indexPage={indexPage}
         setIndexPage={setIndexPage}
         recordNum={recordNum}

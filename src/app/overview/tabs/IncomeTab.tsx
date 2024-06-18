@@ -38,6 +38,7 @@ import { getExamGroupTest } from "@/services/api_services/exam_api";
 import { ExamGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { saveAs } from "file-saver";
+import { useRouter } from "next/navigation";
 
 function IncomeTab() {
   const { t } = useTranslation("overview");
@@ -236,13 +237,15 @@ function IncomeTab() {
     },
   ];
 
+  const router = useRouter();
   const downloadExell = async () => {
     var res = await overviewListRevenueExel(user?.studio?._id);
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
       return;
     }
-    saveAs(res?.data, "data.xlsx");
+    router.push(res.data ?? "");
+    //saveAs(res?.data, "data.xlsx");
   };
 
   return (
@@ -412,7 +415,11 @@ function IncomeTab() {
             <div className="max-w-36">
               <MDateTimeSelect
                 setValue={(name: string, val: any) => {
-                  setStartDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                  if (val) {
+                    setStartDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                  } else {
+                    setStartDate(undefined);
+                  }
                 }}
                 isoValue={startDate}
                 formatter={"DD/MM/YYYY"}
@@ -428,7 +435,11 @@ function IncomeTab() {
             <div className="max-w-36">
               <MDateTimeSelect
                 setValue={(name: string, val: any) => {
-                  setEndDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                  if (val) {
+                    setEndDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                  } else {
+                    setEndDate(undefined);
+                  }
                 }}
                 isoValue={endDate}
                 formatter={"DD/MM/YYYY"}
