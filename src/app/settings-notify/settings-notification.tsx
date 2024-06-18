@@ -37,8 +37,6 @@ export default function SettingNotify() {
     result_test: !!userSettingNotify?.notify_setting?.result_test,
   });
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     void getDataSettings();
   }, []);

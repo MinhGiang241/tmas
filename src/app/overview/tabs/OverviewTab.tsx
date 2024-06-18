@@ -40,7 +40,7 @@ function OverviewTab() {
   >();
   const user = useAppSelector((state: RootState) => state.user.user);
   const [lineField, setLineField] = useState<TimeChart | undefined>(
-    TimeChart.Day,
+    TimeChart.Day
   );
 
   interface LineTableValue {
@@ -56,7 +56,7 @@ function OverviewTab() {
   const [lineData, setLineData] = useState<LineTableValue[]>([]);
   const [barData, setBarData] = useState<BarTableValue[]>([]);
   const [startTime, setStartTime] = useState<string>(
-    dayjs(`1/1/${year}`).toISOString(),
+    dayjs(`1/1/${year}`).toISOString()
   );
   const [endTime, setEndTime] = useState<string>(dayjs()?.toISOString());
 
@@ -79,10 +79,10 @@ function OverviewTab() {
         lineField == TimeChart.Year
           ? `${e?.year}`
           : lineField == TimeChart.Month
-            ? `${e.month}/${e.year}`
-            : lineField == TimeChart.Week
-              ? `${e.week}/${e.year}`
-              : `${e.day}/${e?.month}/${e?.year}`,
+          ? `${e.month}/${e.year}`
+          : lineField == TimeChart.Week
+          ? `${e.week}/${e.year}`
+          : `${e.day}/${e?.month}/${e?.year}`,
       value: e.total,
     }));
     setLineData(dataLine);
@@ -103,7 +103,7 @@ function OverviewTab() {
       errorToast(res?.message ?? "");
       return;
     }
-    console.log("bar data", res);
+    // console.log("bar data", res);
     setBarData(res.data);
   };
 
@@ -146,7 +146,7 @@ function OverviewTab() {
                 }
                 num={Math.abs(
                   (overviewData?.totalTestTomorrow ?? 0) -
-                    (overviewData?.totalTestToday ?? 0),
+                    (overviewData?.totalTestToday ?? 0)
                 )}
               />
             )}
@@ -172,7 +172,7 @@ function OverviewTab() {
                 }
                 num={Math.abs(
                   (overviewData?.totalUserTestTomorrow ?? 0) -
-                    (overviewData?.totalUserTestToday ?? 0),
+                    (overviewData?.totalUserTestToday ?? 0)
                 )}
               />
             )}

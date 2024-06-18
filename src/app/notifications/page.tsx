@@ -18,6 +18,7 @@ export default function Notification() {
   const [getNoti, setGetNoti] = useState<ListNotification>();
   const [totalNum, setTotalNum] = useState<number>();
   const [, setShow] = useState<string | undefined>();
+  const [popupVisible, setPopupVisible] = useState<string | undefined>();
   const router = useRouter();
 
   const dataNotify = async () => {
@@ -25,7 +26,7 @@ export default function Notification() {
     // await getNotiAwait(0, 1000);
     if (res) {
       setGetNoti(res?.data);
-      console.log(res?.data);
+      // console.log(res?.data);
     }
   };
 
@@ -93,12 +94,11 @@ export default function Notification() {
       }
       content={
         <div className="h-[700px] w-[600px] overflow-y-scroll">
-          {(getNoti?.unAwared?.length || 0) > 0 ? (
+          {getNoti?.unAwared?.length! > 0 ? (
             <div className="mb-2 mt-4 text-sm font-semibold">Mới</div>
           ) : (
             ""
           )}
-
           {(getNoti?.unAwared?.length || 0) > 0
             ? getNoti?.unAwared?.map((key: any, index) => (
                 <>
@@ -248,12 +248,11 @@ export default function Notification() {
               ))
             : ""}
           <div className="my-5 h-[1px] w-full bg-[#DFDFE2]" />
-          {(getNoti?.awared?.length || 0) > 0 ? (
+          {getNoti?.awared?.length! > 0 ? (
             <div className="mb-2 mt-4 text-sm font-semibold">Trước</div>
           ) : (
             ""
           )}
-
           {(getNoti?.awared?.length || 0) > 0
             ? getNoti?.awared?.map((key: any, index) => (
                 <div
@@ -378,6 +377,7 @@ export default function Notification() {
                               onClick={async () => {
                                 await deleteNoti(key?._id);
                                 await dataNotify();
+                                setPopupVisible(undefined);
                               }}
                               className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
                             >
@@ -386,8 +386,15 @@ export default function Notification() {
                           </div>
                         }
                         trigger={["click"]}
+                        visible={popupVisible === key?._id}
+                        onVisibleChange={(visible) =>
+                          setPopupVisible(visible ? key?._id : undefined)
+                        }
                       >
-                        <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300 ml-1">
+                        <div
+                          // onClick={() => setPopup(true)}
+                          className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300 ml-1"
+                        >
                           <div className="pb-2">...</div>
                         </div>
                       </Popover>

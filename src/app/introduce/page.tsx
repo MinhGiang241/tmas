@@ -10,11 +10,14 @@ import {
   getTopic,
   getTopicChild,
   onBoardingTopic,
-  onBoardingTopicChild,
 } from "@/services/api_services/onboarding";
 import { createChildsGroup } from "@/services/api_services/exam_api";
+import { successToast } from "../components/toast/customToast";
+import { useRouter } from "next/navigation";
+import { CopyQuestion } from "@/services/api_services/question_api";
 
 export default function Introduce() {
+  const router = useRouter();
   const user = useSelector((state: RootState) => state.user?.user);
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
@@ -22,24 +25,11 @@ export default function Introduce() {
   const [currentStep, setCurrentStep] = useState(1);
   const [value, setValue] = useState<number | undefined>();
   const [dataTopic, setDataTopic] = useState<onBoardingTopic[]>([]);
-  const [dataTopicChild, setDataTopicChild] = useState<onBoardingTopicChild[]>(
-    []
-  );
-  const [groupName, setGroupName] = useState<string[]>([]);
-
-  const getDataTopicChild = async () => {
-    const res = await getTopicChild();
-    console.log("getTopicChild", res);
-
-    if (res) {
-      setDataTopicChild(res?.data);
-    }
-  };
+  const [dataTopicChild, setDataTopicChild] = useState<onBoardingTopic[]>([]);
 
   const getDataTopic = async () => {
     const res = await getTopic();
     // console.log("getDataTopic", res);
-
     if (res) {
       setDataTopic(res?.data);
     }
@@ -47,8 +37,19 @@ export default function Introduce() {
 
   useEffect(() => {
     getDataTopic();
-    getDataTopicChild();
   }, []);
+
+  const getDataTopicChild = async () => {
+    const res = await getTopicChild(selectedItems.map((x: any) => x?._id));
+    console.log("getTopicChild", res);
+    if (res) {
+      setDataTopicChild(res.data);
+    }
+  };
+
+  useEffect(() => {
+    getDataTopicChild();
+  }, [selectedItems]);
 
   useEffect(() => {
     setVisible(true);
@@ -58,35 +59,60 @@ export default function Introduce() {
     return () => clearTimeout(timer);
   }, []);
 
+  function selected(item: onBoardingTopic, arr: any) {
+    if (arr.find((i: any) => i._id == item._id)) {
+      return [...arr.filter((i: any) => i._id != item._id)];
+    } else {
+      return [...arr, item];
+    }
+  }
+
   const toggleSelection = (item: onBoardingTopic) => {
     setSelectedItems((prevSelectedItems) => {
-      if (prevSelectedItems.includes(item._id!)) {
-        return prevSelectedItems.filter((i) => i !== item._id);
-      } else if (prevSelectedItems.length < 3) {
-        setGroupName((name) => [...name, item.name!]);
-        return [...prevSelectedItems, item._id!];
-      }
+      prevSelectedItems = selected(item, prevSelectedItems);
+      // console.log(selectedItems);
       return prevSelectedItems;
     });
   };
 
   const handleContinue = () => {
-    if (selectedItems.length === 3) {
+    if (selectedItems.length >= 3) {
       setCurrentStep(currentStep + 1);
       var submitData = {
-        items: groupName,
+        items: selectedItems?.map((x: any) => {
+          return { name: x?.name };
+        }),
         action: "Add",
         level: 0,
-        idParent: "",
+        idParent: null,
         studioId: user?.studio?._id,
       };
+      // console.log(submitData);
+      // console.log(selectedItems, "selectedItems");
       createChildsGroup(submitData);
     }
   };
 
-  const handleContinueStep2 = () => {
+  const handleContinueStep2 = async () => {
+    console.log(dataTopicChild[value as number]?._id);
+
     if (value) {
       setCurrentStep(currentStep + 1);
+      const res = await CopyQuestion(dataTopicChild[value as number]?._id);
+      console.log("data res", res);
+
+      var submitDataChild = {
+        items: selectedItems?.map((x: any) => {
+          return { name: x?.name };
+        }),
+        action: "Add",
+        level: 1,
+        idParent: res.data,
+        studioId: user?.studio?._id,
+      };
+      console.log(submitDataChild);
+
+      createChildsGroup(submitDataChild);
     }
   };
 
@@ -127,8 +153,8 @@ export default function Introduce() {
         <div className="p-4">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
-              <span>Xin chào</span>
-              <span className="font-medium text-sm ml-2">
+              <span>Xin chào,</span>
+              <span className="font-semibold text-sm ml-2">
                 {user?.full_name}
               </span>
             </div>
@@ -155,18 +181,21 @@ export default function Introduce() {
           </div>
           {currentStep === 1 && (
             <div>
-              <div className="font-bold text-2xl flex justify-center pb-3">
+              <div className="font-bold text-2xl flex justify-center">
                 Cấu hình đề thi
               </div>
+              <div className="font-normal text-base flex justify-center pb-3">
+                (Bạn hãy chọn tối thiểu 3 lĩnh vực quan tâm)
+              </div>
               <div className="flex flex-wrap mb-3">
-                {dataTopic.map((x, key) => (
+                {dataTopic?.map((x: any, key: any) => (
                   <div
                     key={key}
                     onClick={() => toggleSelection(x)}
                     className={`cursor-pointer rounded-md border w-auto mr-2 p-1 px-5 mb-2 ${
-                      selectedItems.includes(x._id!)
-                        ? "bg-[#E2F0F3] text-[#0B8199] border-[#0B8199]"
-                        : ""
+                      selectedItems.some((a: any) => x._id! == a._id)
+                        ? "bg-[#E2F0F3] text-[#0B8199] border-[#0B8199] font-semibold text-base"
+                        : "font-semibold text-base bg-[#F4F5F5] text-[#B6BAC4]"
                     }`}
                   >
                     {x?.name}
@@ -183,18 +212,22 @@ export default function Introduce() {
                   (Bạn hãy chọn tối thiểu 1 đề thi)
                 </div>
                 {dataTopicChild?.map((x: any, key: any) => (
-                  <div className="pt-3" key={key}>
+                  <div className={`pt-3`} key={key}>
                     <button
                       onClick={() => {
-                        setValue(1);
+                        setValue(key);
                       }}
-                      className="md:w-[653px] md:h-[64px] w-[300px] h-[50px] flex items-center justify-between bg-[#F4F5F5] px-3 rounded-md cursor-pointer mb-2"
+                      className={`md:w-[653px] md:h-[64px] w-[300px] h-[50px] flex items-center justify-between bg-[#E2F0F3] px-3 rounded-md cursor-pointer mb-2 ${
+                        value === key
+                          ? "border-[#0B8199] border bg-[#0B8199]"
+                          : "bg-[#F4F5F5]"
+                      }`}
                     >
-                      <div>{x?.name}</div>
+                      <div className="font-semibold text-base">{x?.name}</div>
                       <div className="w-[24px] h-[24px] border-[1px] border-[#9EA3B0] p-2 rounded-full flex justify-center items-center">
                         <div
                           className={`w-[15px] h-[15px] rounded-full ${
-                            value === 1 ? "bg-[#0B8199] p-2" : ""
+                            value === key ? "bg-[#0B8199] p-2" : ""
                           }`}
                         />
                       </div>
@@ -211,21 +244,21 @@ export default function Introduce() {
                   Cấu hình đợt thi với đề thi
                 </div>
                 <div className="font-bold text-2xl">
-                  “Tuyển dụng Fresher Kế toán”
+                  “{dataTopicChild[value as number]?.name}”
                 </div>
               </div>
               <CreateExaminationIntroduce />
             </div>
           )}
-          {currentStep === 4 && (
+          {/* {currentStep === 4 && (
             <div className="flex flex-wrap mb-3">step 4 success</div>
-          )}
+          )} */}
           <div className="flex justify-center items-center">
             {currentStep === 1 && (
               <MButton
                 htmlType="submit"
                 text={"Tiếp tục"}
-                disabled={selectedItems.length !== 3}
+                disabled={selectedItems.length < 3}
                 onClick={handleContinue}
               />
             )}
@@ -238,7 +271,18 @@ export default function Introduce() {
               />
             )}
             {currentStep === 3 && (
-              <MButton htmlType="submit" text={"Tiếp tục"} />
+              <MButton
+                htmlType="submit"
+                text={"Tiếp tục"}
+                onClick={() => {
+                  successToast(
+                    "Chúc mừng bạn đã tạo thành công đợt thi đầu tiên trên Tmas"
+                  );
+                  setOpen(false);
+                  router.push(`/examination/${""}`);
+                  // createExamination(submitData);
+                }}
+              />
             )}
           </div>
         </div>
