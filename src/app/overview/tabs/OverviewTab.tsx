@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,6 +32,11 @@ import { errorToast } from "@/app/components/toast/customToast";
 import { OverviewNumberData, TimeChart } from "@/data/overview";
 import dayjs from "dayjs";
 import LineChartOverTime from "../components/LineChartOverTime";
+import { getExamGroupTest } from "@/services/api_services/exam_api";
+import { APIResults } from "@/data/api_results";
+import { ExamGroupData } from "@/data/exam";
+import { useDispatch } from "react-redux";
+import { fetchDataExamGroup } from "@/redux/exam_group/examGroupSlice";
 
 function OverviewTab() {
   const { t } = useTranslation("overview");
@@ -41,9 +46,9 @@ function OverviewTab() {
   >();
   const user = useAppSelector((state: RootState) => state.user.user);
   const [lineField, setLineField] = useState<TimeChart | undefined>(
-    TimeChart.Day
+    TimeChart.Day,
   );
-
+  const dispatch = useAppDispatch();
   interface LineTableValue {
     name?: string;
     value?: number;
@@ -58,40 +63,12 @@ function OverviewTab() {
   const [remain, setRemain] = useState<number | undefined>(0);
   const [barData, setBarData] = useState<BarTableValue[]>([]);
   const [startTime, setStartTime] = useState<string>(
-    dayjs(`1/1/${year}`).toISOString()
+    dayjs(`1/1/${year}`).toISOString(),
   );
   const [endTime, setEndTime] = useState<string>(dayjs()?.toISOString());
 
-  const getActivitiestOverTime = async () => {
-    const res = await overviewActivitiesReport({
-      startTime: startTime,
-      endTime: endTime,
-      typeTime: lineField,
-    });
-
-    console.log("ress overtime", res);
-
-    if (res?.code != 0) {
-      errorToast(res?.message);
-      return;
-    }
-
-    var dataLine = res?.data?.map((e: any) => ({
-      name:
-        lineField == TimeChart.Year
-          ? `${e?.year}`
-          : lineField == TimeChart.Month
-          ? `${e.month}/${e.year}`
-          : lineField == TimeChart.Week
-          ? `${e.week}/${e.year}`
-          : `${e.day}/${e?.month}/${e?.year}`,
-      value: e.total,
-    }));
-    setLineData(dataLine);
-  };
-
   const getNum = async () => {
-    const res = await overviewGetNum();
+    const res = await overviewGetNum(user?.studio?._id);
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
       return;
@@ -100,7 +77,7 @@ function OverviewTab() {
   };
 
   const getTotalExamByExamGroup = async () => {
-    var res = await overviewGetTotalExamByExamGroup();
+    var res = await overviewGetTotalExamByExamGroup(user?.studio?._id);
     if (res?.code != 0) {
       errorToast(res?.message ?? "");
       return;
@@ -122,7 +99,6 @@ function OverviewTab() {
     getRemaining();
     getTotalExamByExamGroup();
   }, [user]);
-
   return (
     <>
       <div className="grid grid-cols-3 gap-x-5 gap-y-4">
@@ -156,13 +132,8 @@ function OverviewTab() {
                   (overviewData?.totalTestToday ?? 0)
                 }
                 num={Math.abs(
-<<<<<<< HEAD
-                  (overviewData?.totalTestTomorrow ?? 0) -
-                    (overviewData?.totalTestToday ?? 0)
-=======
                   (overviewData?.totalTestToday ?? 0) -
                     (overviewData?.totalTestYesterday ?? 0),
->>>>>>> 494fd7d5fc9c986abc53d4559a759526da1ad678
                 )}
               />
             )}
@@ -187,13 +158,8 @@ function OverviewTab() {
                   (overviewData?.totalUserTestToday ?? 0)
                 }
                 num={Math.abs(
-<<<<<<< HEAD
-                  (overviewData?.totalUserTestTomorrow ?? 0) -
-                    (overviewData?.totalUserTestToday ?? 0)
-=======
                   (overviewData?.totalUserTestToday ?? 0) -
                     (overviewData?.totalUserTestYesterday ?? 0),
->>>>>>> 494fd7d5fc9c986abc53d4559a759526da1ad678
                 )}
               />
             )}
@@ -250,7 +216,7 @@ function OverviewTab() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
-              <Tooltip />
+              <Tooltip cursor={{ fill: "transparent" }} />
               {/* <Legend /> */}
               {barData?.length != 0 &&
                 Object.keys(barData?.reduce((a, b) => ({ ...a, ...b }), {}))
@@ -258,6 +224,7 @@ function OverviewTab() {
                   //barData
                   .map((e, i) => (
                     <Bar
+                      barSize={100}
                       key={e}
                       dataKey={e}
                       stackId={"a"}

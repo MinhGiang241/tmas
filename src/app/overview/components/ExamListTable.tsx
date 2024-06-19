@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import MButton from "@/app/components/config/MButton";
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DownloadIcon from "@/app/components/icons/white-import.svg";
 import MInput from "@/app/components/config/MInput";
@@ -16,15 +16,18 @@ import {
 } from "@/services/api_services/overview_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import { saveAs } from "file-saver";
-import { ExamCounterData } from "@/data/overview";
+import { ExamCounterData, FilterData } from "@/data/overview";
 import dayjs from "dayjs";
-
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import duration from "dayjs/plugin/duration";
+import { Condition } from "@/data/exam";
+import MTreeSelect from "@/app/components/config/MTreeSelect";
+import Link from "next/link";
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
 
 interface TableValue {
+  id?: string;
   name?: string;
   group?: string;
   tags?: string[];
@@ -40,18 +43,47 @@ interface TableValue {
   created_date?: string;
 }
 
-function ExamListTable() {
+function ExamListTable({ optionSelect }: { optionSelect: any }) {
   const { t } = useTranslation("exam");
   const [search, setSearch] = useState<string | undefined>();
+  const [searchValue, setSearchValue] = useState<string | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(0);
   const user = useAppSelector((state: RootState) => state.user.user);
   const [dataTable, setDataTable] = useState<TableValue[]>([]);
+  const [startDate, setStartDate] = useState<string | undefined>();
+  const [endDate, setEndDate] = useState<string | undefined>();
+  const [groupId, setGroupId] = useState<string | undefined>();
 
   const dataRows: TableDataRow[] = [
-    { dataIndex: "name", title: t("name"), classNameTitle: "min-w-20" },
+    {
+      dataIndex: "name",
+      title: t("name"),
+      classNameTitle: "min-w-20",
+      render: (text: any, data: any) => {
+        var ref = createRef<any>();
+        return (
+          <div className="w-full flex justify-start ">
+            <Link
+              target="_blank"
+              ref={ref}
+              href={`/exams/details/${data.id}`}
+            />
+
+            <button
+              className="ml-2 text-m_primary_500 underline underline-offset-4"
+              onClick={() => {
+                (ref?.current as any).click();
+              }}
+            >
+              {text}
+            </button>
+          </div>
+        );
+      },
+    },
     { dataIndex: "group", title: t("group"), classNameTitle: "min-w-20" },
     { dataIndex: "tags", title: t("tags"), classNameTitle: "min-w-20" },
     { dataIndex: "join_num", title: t("join_num"), classNameTitle: "min-w-20" },
@@ -95,8 +127,46 @@ function ExamListTable() {
   ];
 
   const getListData = async () => {
+    var filters: FilterData[] = [];
+    if (search) {
+      filters.push({
+        fieldName: "info.exam.unsignedName",
+        value: `/${search?.trim()}/i`,
+        condition: Condition.regex,
+        convertTextToUnsigned: true,
+      });
+    }
+    if (startDate) {
+      filters.push({
+        fieldName: "info.exam.createdTime",
+        value: `${startDate}`,
+        condition: Condition.gte,
+      });
+    }
+    if (endDate) {
+      filters.push({
+        fieldName: "info.exam.createdTime",
+        value: `${endDate}`,
+        condition: Condition.lte,
+      });
+    }
+    if (groupId) {
+      filters.push({
+        fieldName: "info.groupExam.id",
+        value: groupId,
+        condition: Condition.eq,
+      });
+    }
+
     var res = await overviewExamCounter({
       paging: { startIndex: indexPage, recordPerPage: recordNum },
+      filters,
+      studioSorters: [
+        {
+          name: "createdTime",
+          isAsc: false,
+        },
+      ],
     });
     if (res?.code != 0) {
       return;
@@ -104,6 +174,7 @@ function ExamListTable() {
     setTotal(res?.data?.totalOfRecords ?? 0);
     var examData: ExamCounterData[] = res?.data?.records ?? [];
     var examTableData = examData?.map<TableValue>((t) => ({
+      id: t?.info?.exam?.id,
       created_date: dayjs(t?.info?.exam?.createdTime).format(
         "DD:MM:YYYY HH:mm:ss",
       ),
@@ -137,14 +208,51 @@ function ExamListTable() {
 
   useEffect(() => {
     getListData();
-  }, [user]);
+  }, [user, startDate, endDate, search, groupId]);
 
   const downloadExell = async () => {
+    var filters: FilterData[] = [];
+    if (search) {
+      filters.push({
+        fieldName: "info.exam.unsignedName",
+        value: `/${search?.trim()}/i`,
+        condition: Condition.regex,
+        convertTextToUnsigned: true,
+      });
+    }
+    if (startDate) {
+      filters.push({
+        fieldName: "info.exam.createdTime",
+        value: `${startDate}`,
+        condition: Condition.gte,
+      });
+    }
+    if (endDate) {
+      filters.push({
+        fieldName: "info.exam.createdTime",
+        value: `${endDate}`,
+        condition: Condition.lte,
+      });
+    }
+    if (groupId) {
+      filters.push({
+        fieldName: "info.groupExam.id",
+        value: groupId,
+        condition: Condition.eq,
+      });
+    }
     var res = await overviewExamCounterExcel({
+      filters,
       paging: {
         startIndex: indexPage,
         recordPerPage: recordNum,
       },
+      studioSorters: [
+        {
+          name: "createdTime",
+          isAsc: false,
+        },
+      ],
     });
 
     if (res?.code != 0) {
@@ -160,18 +268,36 @@ function ExamListTable() {
       <div className="w-full body_semibold_20 mb-4">{t("exam_list")}</div>
       <div className="flex justify-between w-full items-center">
         <div className="flex  items-center">
+          <div className="w-52 mr-4">
+            <MTreeSelect
+              value={groupId}
+              setValue={(name: any, e: any) => {
+                setGroupId(e);
+              }}
+              allowClear={false}
+              defaultValue=""
+              id="question_group"
+              name="question_group"
+              className="w-52"
+              isTextRequire={false}
+              h="h-11"
+              options={optionSelect}
+            />
+          </div>
+
           <form
             className="w-full max-w-[309px]"
             onSubmit={(e) => {
               e.preventDefault();
+              setSearch(searchValue);
               setIndexPage(1);
             }}
           >
             <MInput
               isTextRequire={false}
-              value={search}
+              value={searchValue}
               onChange={(e: React.ChangeEvent<any>) => {
-                setSearch(e.target.value);
+                setSearchValue(e.target.value);
               }}
               className=""
               placeholder={t("search_by_name_tag")}
@@ -191,6 +317,14 @@ function ExamListTable() {
           <div className=" mx-2" />
           <div className="max-w-64">
             <MDateTimeSelect
+              setValue={(name: string, val: any) => {
+                if (val) {
+                  setStartDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                } else {
+                  setStartDate(undefined);
+                }
+              }}
+              isoValue={startDate}
               formatter={"DD/MM/YYYY"}
               showTime={false}
               isTextRequire={false}
@@ -203,6 +337,14 @@ function ExamListTable() {
           <div className="mx-2 w-2 h-[1px] bg-m_neutral_500" />
           <div className="max-w-64">
             <MDateTimeSelect
+              setValue={(name: string, val: any) => {
+                if (val) {
+                  setEndDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                } else {
+                  setEndDate(undefined);
+                }
+              }}
+              isoValue={endDate}
               formatter={"DD/MM/YYYY"}
               showTime={false}
               isTextRequire={false}

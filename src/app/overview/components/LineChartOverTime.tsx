@@ -43,6 +43,7 @@ function LineChartOverTime(props: Props) {
       startTime: startTime,
       endTime: endTime,
       typeTime: lineField,
+      studioId: user?.studio?._id,
     });
 
     if (res?.code != 0) {

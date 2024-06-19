@@ -174,12 +174,12 @@ export default function Notification() {
                             {key?.timeJoinedUnit === "minute"
                               ? "phút"
                               : key?.timeJoinedUnit === "month"
-                              ? "Tháng"
-                              : key?.timeJoinedUnit === "hour"
-                              ? "Giờ"
-                              : key?.timeJoinedUnit === "second"
-                              ? "Giây"
-                              : ""}
+                                ? "Tháng"
+                                : key?.timeJoinedUnit === "hour"
+                                  ? "Giờ"
+                                  : key?.timeJoinedUnit === "second"
+                                    ? "Giây"
+                                    : ""}
                             &nbsp; trước
                           </div>
                         </div>
@@ -327,12 +327,12 @@ export default function Notification() {
                           {key?.timeJoinedUnit === "minute"
                             ? "phút"
                             : key?.timeJoinedUnit === "month"
-                            ? "Tháng"
-                            : key?.timeJoinedUnit === "hour"
-                            ? "Giờ"
-                            : key?.timeJoinedUnit === "second"
-                            ? "Giây"
-                            : ""}
+                              ? "Tháng"
+                              : key?.timeJoinedUnit === "hour"
+                                ? "Giờ"
+                                : key?.timeJoinedUnit === "second"
+                                  ? "Giây"
+                                  : ""}
                           &nbsp; trước
                         </div>
                       </div>
