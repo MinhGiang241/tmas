@@ -7,25 +7,35 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import CreateExaminationIntroduce from "./createExamination/page";
 import {
+  getExamTopic,
+  getListExam,
   getTopic,
   getTopicChild,
   onBoardingTopic,
 } from "@/services/api_services/onboarding";
-import { createChildsGroup } from "@/services/api_services/exam_api";
-import { successToast } from "../components/toast/customToast";
+import { createExamGroupTest } from "@/services/api_services/exam_api";
+import { errorToast, successToast } from "../components/toast/customToast";
 import { useRouter } from "next/navigation";
-import { CopyQuestion } from "@/services/api_services/question_api";
+import { BaseTmasQuestionExamData, ExamData, TmasData } from "@/data/exam";
+import { DocumentObject, PartObject } from "@/data/form_interface";
+import { mapTmasQuestionToStudioQuestion } from "@/services/ui/mapTmasToSTudio";
+import _ from "lodash";
+import { importTmasExamData } from "@/services/api_services/question_api";
+import { countExamQuestion } from "@/services/api_services/count_exam_api";
 
+let mapping: { [key: string]: string } = {};
+var childrenIds: string[] = [];
 export default function Introduce() {
   const router = useRouter();
   const user = useSelector((state: RootState) => state.user?.user);
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedItems, setSelectedItems] = useState<onBoardingTopic[]>([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [value, setValue] = useState<number | undefined>();
   const [dataTopic, setDataTopic] = useState<onBoardingTopic[]>([]);
   const [dataTopicChild, setDataTopicChild] = useState<onBoardingTopic[]>([]);
+  const [dataExamTopicVersion, setDataExamTopicVersion] = useState([]);
 
   const getDataTopic = async () => {
     const res = await getTopic();
@@ -41,7 +51,7 @@ export default function Introduce() {
 
   const getDataTopicChild = async () => {
     const res = await getTopicChild(selectedItems.map((x: any) => x?._id));
-    console.log("getTopicChild", res);
+    // console.log("getTopicChild", res);
     if (res) {
       setDataTopicChild(res.data);
     }
@@ -50,6 +60,18 @@ export default function Introduce() {
   useEffect(() => {
     getDataTopicChild();
   }, [selectedItems]);
+
+  const dataExamByTopic = async () => {
+    const res = await getListExam(childrenIds);
+    console.log("getListExam", res?.data);
+    if (res) {
+      setDataExamTopicVersion(res?.data);
+    }
+  };
+
+  // useEffect(() => {
+  //   dataExamByTopic();
+  // }, []);
 
   useEffect(() => {
     setVisible(true);
@@ -70,50 +92,124 @@ export default function Introduce() {
   const toggleSelection = (item: onBoardingTopic) => {
     setSelectedItems((prevSelectedItems) => {
       prevSelectedItems = selected(item, prevSelectedItems);
-      // console.log(selectedItems);
+      // console.log("selectedItems", selectedItems);
       return prevSelectedItems;
     });
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (selectedItems.length >= 3) {
       setCurrentStep(currentStep + 1);
-      var submitData = {
-        items: selectedItems?.map((x: any) => {
-          return { name: x?.name };
-        }),
-        action: "Add",
-        level: 0,
-        idParent: null,
-        studioId: user?.studio?._id,
-      };
-      // console.log(submitData);
-      // console.log(selectedItems, "selectedItems");
-      createChildsGroup(submitData);
+      for (let i of selectedItems) {
+        let submitData = {
+          name: i?.name,
+          level: 0,
+          studioId: user?.studio?._id,
+        };
+        var res = await createExamGroupTest(submitData);
+        if (res?.code != 0) {
+          continue;
+        }
+
+        var newChildren = dataTopicChild.filter((d) => d.parentId == i?._id);
+        for (let j of newChildren) {
+          let submitDataChild = {
+            name: j.name,
+            level: 1,
+            idParent: res.data,
+            studioId: user?.studio?._id,
+          };
+          var res = await createExamGroupTest(submitDataChild);
+          if (res?.code != 0) {
+            continue;
+          }
+          childrenIds.push(j._id!);
+          mapping[j._id!] = res.data;
+        }
+      }
+      dataExamByTopic();
     }
   };
 
-  const handleContinueStep2 = async () => {
-    console.log(dataTopicChild[value as number]?._id);
+  const [active, setActive] = useState<TmasData | undefined>();
 
-    if (value) {
-      setCurrentStep(currentStep + 1);
-      const res = await CopyQuestion(dataTopicChild[value as number]?._id);
-      console.log("data res", res);
+  const handleContinueStep2 = async (idGroup?: string) => {
+    var documentObj: DocumentObject[] = (
+      active?.version?.examData?.Documents ?? []
+    ).map((e) => ({
+      contentType: e?.ContentType,
+      createdBy: e?.CreatedBy,
+      createdTime: e?.CreatedTime,
+      fileName: e?.FileName,
+      fileSize: e?.FileSize,
+      fileType: e?.FileType,
+      id: e?.Id,
+      idSession: e?.IdSession,
+      link: e?.Link,
+      ownerId: e?.OwnerId,
+      studioId: e?.StudioId,
+      updateBy: e?.UpdatedBy,
+      updateTime: e?.UpdateTime,
+    }));
 
-      var submitDataChild = {
-        items: selectedItems?.map((x: any) => {
-          return { name: x?.name };
+    var partObj: PartObject[] = (active?.version?.examData?.Parts ?? []).map(
+      (e) => ({
+        id: e?._id,
+        description: e?.Description,
+        name: e?.Name,
+        jsonExamQuestions: e?.Questions?.map((e) => {
+          var q = _.cloneDeep(e?.Base) as BaseTmasQuestionExamData;
+          e.IsQuestionBank = false;
+          return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
-        action: "Add",
-        level: 1,
-        idParent: res.data,
-        studioId: user?.studio?._id,
-      };
-      console.log(submitDataChild);
+      })
+    );
 
-      createChildsGroup(submitDataChild);
+    var examObj: ExamData = {
+      timeLimitMinutes: active?.version?.examData?.TimeLimitMinutes,
+      changePositionQuestion: active?.version?.examData?.ChangePositionQuestion,
+      description: active?.version?.examData?.Description,
+      examNextQuestion: active?.version?.examData?.ExamNextQuestion,
+      examViewQuestionType: active?.version?.examData?.ExamViewQuestionType,
+      externalLinks: active?.version?.examData?.ExternalLinks,
+      idDocuments: active?.version?.examData?.IdDocuments,
+      idExamGroup: idGroup,
+      idSession: active?.version?.examData?.IdSession,
+      studioId: active?.version?.examData?.StudioId,
+      name: active?.version?.name,
+      numberOfQuestions: active?.version?.examData?.NumberOfQuestions,
+      numberOfTests: active?.version?.examData?.NumberOfTests,
+      totalPoints: (active?.version?.examData?.TotalPointsAsInt ?? 0) / 100,
+      tags: active?.version?.examData?.Tags,
+      playAudio: active?.version?.examData?.PlayAudio,
+      version: active?.version?.examData?.Version,
+    };
+
+    var res = await importTmasExamData({
+      examFulls: [
+        {
+          documents: documentObj,
+          exam: examObj,
+          jsonExamQuestions: (partObj ?? []).reduce(
+            (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
+            []
+          ),
+          parts: partObj,
+        },
+      ],
+    });
+
+    console.log(res, "examDataa123");
+
+    if (res.code != 0) {
+      errorToast(res.message ?? "");
+      return;
     }
+    if (value != undefined) {
+    }
+    await countExamQuestion(active?.version?._id);
+
+    setCurrentStep(currentStep + 1);
   };
 
   return (
@@ -182,7 +278,7 @@ export default function Introduce() {
           {currentStep === 1 && (
             <div>
               <div className="font-bold text-2xl flex justify-center">
-                Cấu hình đề thi
+                Chọn lĩnh vực
               </div>
               <div className="font-normal text-base flex justify-center pb-3">
                 (Bạn hãy chọn tối thiểu 3 lĩnh vực quan tâm)
@@ -211,11 +307,12 @@ export default function Introduce() {
                 <div className="font-normal text-base">
                   (Bạn hãy chọn tối thiểu 1 đề thi)
                 </div>
-                {dataTopicChild?.map((x: any, key: any) => (
+                {dataExamTopicVersion?.map((x: any, key: any) => (
                   <div className={`pt-3`} key={key}>
                     <button
                       onClick={() => {
                         setValue(key);
+                        setActive(x);
                       }}
                       className={`md:w-[653px] md:h-[64px] w-[300px] h-[50px] flex items-center justify-between bg-[#E2F0F3] px-3 rounded-md cursor-pointer mb-2 ${
                         value === key
@@ -223,7 +320,9 @@ export default function Introduce() {
                           : "bg-[#F4F5F5]"
                       }`}
                     >
-                      <div className="font-semibold text-base">{x?.name}</div>
+                      <div className="font-semibold text-base">
+                        {x?.version?.name}
+                      </div>
                       <div className="w-[24px] h-[24px] border-[1px] border-[#9EA3B0] p-2 rounded-full flex justify-center items-center">
                         <div
                           className={`w-[15px] h-[15px] rounded-full ${
@@ -244,7 +343,7 @@ export default function Introduce() {
                   Cấu hình đợt thi với đề thi
                 </div>
                 <div className="font-bold text-2xl">
-                  “{dataTopicChild[value as number]?.name}”
+                  “{active?.version?.name}”
                 </div>
               </div>
               <CreateExaminationIntroduce />
@@ -259,7 +358,9 @@ export default function Introduce() {
                 htmlType="submit"
                 text={"Tiếp tục"}
                 disabled={selectedItems.length < 3}
-                onClick={handleContinue}
+                onClick={() => {
+                  handleContinue();
+                }}
               />
             )}
             {currentStep === 2 && (
@@ -267,7 +368,9 @@ export default function Introduce() {
                 htmlType="submit"
                 text={"Tiếp tục"}
                 disabled={value == null}
-                onClick={handleContinueStep2}
+                onClick={() => {
+                  handleContinueStep2();
+                }}
               />
             )}
             {currentStep === 3 && (

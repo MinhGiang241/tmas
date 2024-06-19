@@ -25,3 +25,24 @@ export const getTopicChild = async (parentId: any) => {
     { parentId }
   );
 };
+
+export const getExamTopic = async (topicIds: any) => {
+  return await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/onboarding.list_exam_by_topic`,
+    { topicIds }
+  );
+};
+
+// export const getExamversion = async (versionId: any) => {
+//   return await callApi.post(
+//     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/examversion.add_to_studio`,
+//     { versionId }
+//   );
+// };
+
+export const getListExam = async (topicIds: any) => {
+  return await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/onboarding.list_exam_by_topic`,
+    { topicIds }
+  );
+};
