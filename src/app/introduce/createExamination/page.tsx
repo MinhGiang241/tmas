@@ -41,6 +41,7 @@ import ValidExamination from "@/app/examination/components/ValidExamination";
 import ResultTest from "@/app/examination/components/ResultTest";
 import RequireInfo from "@/app/examination/components/RequireInfo";
 import PassPoint from "@/app/examination/components/PassPoint";
+import { trained } from "@/services/api_services/onboarding";
 const EditorHook = dynamic(
   () => import("../../exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -48,7 +49,15 @@ const EditorHook = dynamic(
   }
 );
 
-function CreateExaminationIntroduce({ examination }: any) {
+function CreateExaminationIntroduce({
+  examination,
+  idExam,
+  name,
+}: {
+  examination?: any;
+  idExam?: string;
+  name?: string;
+}) {
   const createSessionId = async () => {
     var dataSessionId = await createSession(examination?.idSession ?? "");
     console.log("dataSessionId", dataSessionId);
@@ -132,7 +141,7 @@ function CreateExaminationIntroduce({ examination }: any) {
 
   const [sessionId, setSessionId] = useState<string | undefined>();
   const [active, setActive] = useState<boolean>(false);
-  const [share, setShare] = useState<"Private" | "Public">("Public");
+  const [share, setShare] = useState<"Private" | "Public">("Private");
   const [code, setCode] = useState<"None" | "One" | "MultiCode" | undefined>(
     "None"
   );
@@ -142,9 +151,18 @@ function CreateExaminationIntroduce({ examination }: any) {
     "showPoint",
     "showPercent",
     "showPassOrFailDetail",
+    "showPassOrFail",
   ]);
-  const [infoChecked, setInfoChecked] = useState<any[]>(["email", "fullName"]);
-  const [preventCheched, setPreventChecked] = useState<any[]>([]);
+  const [infoChecked, setInfoChecked] = useState<any[]>([
+    "email",
+    "fullName",
+    "phoneNumber",
+  ]);
+  const [preventCheched, setPreventChecked] = useState<any[]>([
+    "disableCopy",
+    "disablePatse",
+    "limitExitScreen",
+  ]);
   const [codeList, setCodeList] = useState<ExaminationCode[]>([]);
   const [exam, setExam] = useState<ExamData | undefined>(undefined);
 
@@ -164,6 +182,7 @@ function CreateExaminationIntroduce({ examination }: any) {
       return;
     }
     setExam(res?.data?.records[0]);
+    // console.log("res?.data?.records[0]", res?.data?.records[0]);
   };
 
   interface FormValue {
@@ -206,7 +225,7 @@ function CreateExaminationIntroduce({ examination }: any) {
       examination?.passingSetting?.failMessage ??
       "Rất tiếc bạn đã không vượt qua. Chúc bạn lần sau đạt kết quả cao hơn!", //t("default_fail"),
     out_screen: examination?.cheatingSetting?.limitExitScreen?.toString(),
-    examination_name: examination?.name,
+    examination_name: name,
     avatarId: examination?.idAvatarThumbnail,
     description: examination?.description,
     turn_per_code:
@@ -263,6 +282,8 @@ function CreateExaminationIntroduce({ examination }: any) {
     initialValues,
     validate,
     onSubmit: async (values: FormValue) => {
+      console.log("submit");
+
       var idAvatarThumbnail = examination?.idAvatarThumbnail;
       setLoading(true);
       if (selectedAvatar) {
@@ -378,8 +399,7 @@ function CreateExaminationIntroduce({ examination }: any) {
                   ? dayjs(values?.end_time, dateFormat).toISOString()
                   : undefined,
               },
-        idExam:
-          exam?.id ?? examination?.id ?? search.get("examId") ?? undefined,
+        idExam: idExam,
         idSession: sessionId,
         isPushToBank: push,
         goldSetting:
@@ -409,9 +429,9 @@ function CreateExaminationIntroduce({ examination }: any) {
       }
 
       successToast(
-        examination
-          ? common.t("success_update")
-          : common.t("success_create_new")
+        common.t(
+          "Chúc mừng bạn đã tạo thành công đợt thi đầu tiên trên TmasChúc mừng bạn đã tạo thành công đợt thi đầu tiên trên Tmas"
+        )
       );
       setLoading(false);
       if (exam) {
@@ -446,6 +466,7 @@ function CreateExaminationIntroduce({ examination }: any) {
       <form
         onSubmit={(e: any) => {
           e.preventDefault();
+          formik.handleSubmit();
         }}
       >
         <input
@@ -512,7 +533,7 @@ function CreateExaminationIntroduce({ examination }: any) {
           </div>
           <div className="max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-6 col-span-12 bg-white h-fit rounded-lg">
             <MTextArea
-              // defaultValue={exam?.name}
+              // defaultValue={name}
               maxLength={255}
               required
               placeholder={t("enter_examination_name")}
@@ -537,6 +558,7 @@ function CreateExaminationIntroduce({ examination }: any) {
             <div className="body_semibold_14 mt-2">{t("web_avatar")}</div>
 
             <button
+              type="button"
               onClick={(e: any) => {
                 if (avatarRef) {
                   (avatarRef!.current! as any).click();
@@ -615,7 +637,7 @@ function CreateExaminationIntroduce({ examination }: any) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {exam?.name ?? ""}
+              {name ?? ""}
             </Link>
             {examination?.linkJoinTest ? (
               <>
@@ -646,6 +668,15 @@ function CreateExaminationIntroduce({ examination }: any) {
               </>
             ) : null}
           </div>
+        </div>
+        <div className="w-full flex justify-center items-center">
+          <MButton
+            htmlType="submit"
+            text={"Tiếp tục"}
+            onClick={() => {
+              trained();
+            }}
+          />
         </div>
       </form>
     </>

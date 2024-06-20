@@ -8,7 +8,7 @@ import { getExamById } from "@/services/api_services/examination_api";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
-import { Collapse, Input, Popover, Tooltip } from "antd";
+import { Collapse, Popover, Tooltip } from "antd";
 import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
 import EditIcon from "@/app/components/icons/edit-black.svg";
 import NewIcon from "@/app/components/icons/export.svg";
@@ -37,18 +37,15 @@ import {
 } from "@/services/api_services/question_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
-import { FormattedDate } from "react-intl";
 import Coding from "./question/Coding";
 import Connect from "./question/Connect";
 import Explain from "./question/Explain";
 import FillBlank from "./question/FillBlank";
 import Sql from "./question/Sql";
 import TrueFalse from "./question/TrueFalse";
-import toast from "react-hot-toast";
 import ManyResult from "./question/ManyResult";
 import ReactToPrint from "react-to-print";
 import { ExamPrint } from "../components/ExamPrint";
-import { color } from "@uiw/react-codemirror";
 import { RootState } from "@/redux/store";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
@@ -100,11 +97,11 @@ function ExamDetails({ params }: any) {
   };
 
   const user: UserData | undefined = useAppSelector(
-    (state: RootState) => state?.user?.user,
+    (state: RootState) => state?.user?.user
   );
   const dispatchGroup = useAppDispatch();
   const questionGroups: ExamGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.list,
+    (state: RootState) => state?.examGroup?.list
   );
   const loadQuestionGroupList = async (init?: boolean) => {
     if (init) {
@@ -113,7 +110,7 @@ function ExamDetails({ params }: any) {
 
     var dataResults: APIResults = await getQuestionGroups(
       "",
-      user?.studio?._id,
+      user?.studio?._id
     );
 
     if (dataResults.code != 0) {
@@ -127,7 +124,7 @@ function ExamDetails({ params }: any) {
   useEffect(() => {
     if (user?.studio?._id) {
       dispatchGroup(
-        fetchDataExamGroup(async () => loadQuestionGroupList(true)),
+        fetchDataExamGroup(async () => loadQuestionGroupList(true))
       );
     }
 
@@ -208,7 +205,7 @@ function ExamDetails({ params }: any) {
   );
 
   const handleNameChangeValid = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { value } = event.target;
     setName(value);
@@ -508,7 +505,7 @@ function ExamDetails({ params }: any) {
                 (to: any, quest: any) => {
                   return to + (quest?.numberPoint ?? 0);
                 },
-                0,
+                0
               );
               return total + point;
             }, 0)}{" "}
@@ -641,7 +638,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/add?partId=${x?.id}`,
+                                    `/exams/details/${params.id}/add?partId=${x?.id}`
                                   );
                                 }}
                                 className="text-left mb-2 pb-1"
@@ -652,7 +649,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/my_bank?tab=0&partId=${x?.id}`,
+                                    `/exams/details/${params.id}/my_bank?tab=0&partId=${x?.id}`
                                   );
                                 }}
                                 className="text-left mb-2 pb-1 "
@@ -663,7 +660,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/my_bank?tab=1&partId=${x?.id}`,
+                                    `/exams/details/${params.id}/my_bank?tab=1&partId=${x?.id}`
                                   );
                                 }}
                                 className="text-left mb-2 pb-1 "
@@ -733,12 +730,12 @@ function ExamDetails({ params }: any) {
                       a.createdTime < b.createdTime
                         ? -1
                         : a.createdTime > b.createdTime
-                          ? 1
-                          : 0,
+                        ? 1
+                        : 0
                     )
                     .map((e: any, key: any) => {
                       var questionGroup = questionGroups?.find(
-                        (v: any) => v.id === e.idGroupQuestion,
+                        (v: any) => v.id === e.idGroupQuestion
                       );
                       if (e.questionType == "Coding") {
                         return (

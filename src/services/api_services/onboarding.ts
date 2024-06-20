@@ -46,3 +46,10 @@ export const getListExam = async (topicIds: any) => {
     { topicIds }
   );
 };
+
+export const trained = async () => {
+  return await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.had_been_trained`,
+    {}
+  );
+};

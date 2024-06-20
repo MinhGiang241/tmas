@@ -34,6 +34,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const user = useSelector((state: RootState) => state.user?.user);
+  console.log(user);
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState("1");
@@ -169,7 +170,11 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
           <div className="max-w-[1140px] mx-auto">
             <div className=" w-full text-m_neutral_900">{children}</div>
           </div>
-          <Introduce />
+          {user?.trained === undefined || user?.trained === false ? (
+            <Introduce />
+          ) : (
+            ""
+          )}
         </main>
       )}
     </>

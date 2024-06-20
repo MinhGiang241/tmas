@@ -12,6 +12,7 @@ import {
   getTopic,
   getTopicChild,
   onBoardingTopic,
+  trained,
 } from "@/services/api_services/onboarding";
 import { createExamGroupTest } from "@/services/api_services/exam_api";
 import { errorToast, successToast } from "../components/toast/customToast";
@@ -29,7 +30,7 @@ export default function Introduce() {
   const router = useRouter();
   const user = useSelector((state: RootState) => state.user?.user);
   const [visible, setVisible] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [selectedItems, setSelectedItems] = useState<onBoardingTopic[]>([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [value, setValue] = useState<number | undefined>();
@@ -75,10 +76,6 @@ export default function Introduce() {
 
   useEffect(() => {
     setVisible(true);
-    const timer = setTimeout(() => {
-      setVisible(false);
-    }, 10000);
-    return () => clearTimeout(timer);
   }, []);
 
   function selected(item: onBoardingTopic, arr: any) {
@@ -132,8 +129,11 @@ export default function Introduce() {
   };
 
   const [active, setActive] = useState<TmasData | undefined>();
+  const [idExam, setIdExam] = useState();
 
   const handleContinueStep2 = async (idGroup?: string) => {
+    console.log("active", active);
+
     var documentObj: DocumentObject[] = (
       active?.version?.examData?.Documents ?? []
     ).map((e) => ({
@@ -198,7 +198,8 @@ export default function Introduce() {
         },
       ],
     });
-
+    setIdExam(res?.data[0]?.idExam);
+    console.log(res?.data[0]?.idExam);
     console.log(res, "examDataa123");
 
     if (res.code != 0) {
@@ -216,11 +217,30 @@ export default function Introduce() {
     <div>
       <Tooltip
         title={
-          <div>
-            Chào {user?.full_name} 🖐🏻 Mình là TmasAI ☺️, Mình sẽ hỗ trợ bạn
-            trong quá trình sử dụng Tmas. Đầu tiên hãy chọn lĩnh vực mà bạn đang
-            quan tâm...
-          </div>
+          currentStep === 1 ? (
+            <div>
+              Chào {user?.full_name} 🖐🏻 Mình là TmasAI ☺️, Mình sẽ hỗ trợ bạn
+              trong quá trình sử dụng Tmas. Đầu tiên hãy chọn lĩnh vực mà bạn
+              đang quan tâm...
+            </div>
+          ) : currentStep === 2 ? (
+            <div>
+              Tuyệt vời 🎉 Dựa theo các lĩnh vực mà bạn đã chọn, Tmas gợi ý các
+              đề thi đã có sẵn trên ngân hàng đề thi. Hãy chọn đề thi đầu tiên
+              cho đợt tuyển dụng của bạn...
+            </div>
+          ) : currentStep === 3 ? (
+            <div>
+              Sắp xong rồi 💪🏻 Đề thi đã được tạo sẵn cho bạn, Bây giờ hãy tạo
+              đợt thi đầu tiên và sẵn sàng gửi tới ứng viên ngay thôi...🥰
+            </div>
+          ) : (
+            <div>
+              Hurray! Bạn đã hoàn thành tạo đợt thi tuyển đầu tiên từ đề thi XXX
+              trên Tmas. Hãy kiểm tra lại các thông tin và gửi tới ứng viên ngay
+              thôi.
+            </div>
+          )
         }
         color={"#0B8199"}
         placement="top"
@@ -239,12 +259,20 @@ export default function Introduce() {
         />
       </Tooltip>
       <Modal
+        closeIcon={
+          <div
+            className="text-xs text-nowrap text-[#0D1939] border-b border-b-[#0D1939] hover:bg-white min-w-100px"
+            onClick={() => {
+              trained();
+              setOpen(false);
+            }}
+          >
+            Bỏ qua
+          </div>
+        }
         width={1000}
         footer={null}
         open={open}
-        onCancel={() => {
-          setOpen(false);
-        }}
       >
         <div className="p-4">
           <div className="flex justify-between items-center mb-4">
@@ -254,7 +282,7 @@ export default function Introduce() {
                 {user?.full_name}
               </span>
             </div>
-            <div className="flex justify-center items-center mr-[150px]">
+            <div className="flex justify-center items-center mr-[130px]">
               <div
                 className={`w-[8px] h-[8px] rounded-full ${
                   currentStep >= 1 ? "bg-black" : "bg-slate-400"
@@ -272,7 +300,20 @@ export default function Introduce() {
                   currentStep >= 3 ? "bg-black" : "bg-slate-400"
                 }`}
               />
+              {/* <div className="w-1" />
+              <div
+                className={`w-[8px] h-[8px] rounded-full ${
+                  currentStep >= 4 ? "" : ""
+                }`}
+              /> */}
             </div>
+            {/* <button
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              Bỏ qua
+            </button> */}
             <div />
           </div>
           {currentStep === 1 && (
@@ -346,7 +387,10 @@ export default function Introduce() {
                   “{active?.version?.name}”
                 </div>
               </div>
-              <CreateExaminationIntroduce />
+              <CreateExaminationIntroduce
+                idExam={idExam}
+                name={active?.version?.name}
+              />
             </div>
           )}
           <div className="flex justify-center items-center">
@@ -367,19 +411,6 @@ export default function Introduce() {
                 disabled={value == null}
                 onClick={() => {
                   handleContinueStep2();
-                }}
-              />
-            )}
-            {currentStep === 3 && (
-              <MButton
-                htmlType="submit"
-                text={"Tiếp tục"}
-                onClick={() => {
-                  successToast(
-                    "Chúc mừng bạn đã tạo thành công đợt thi đầu tiên trên Tmas"
-                  );
-                  setOpen(false);
-                  router.push(`/examination/${""}`);
                 }}
               />
             )}
