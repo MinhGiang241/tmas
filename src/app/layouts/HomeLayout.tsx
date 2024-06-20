@@ -163,7 +163,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
           <LoadingPage />
         </main>
       ) : (
-        <main className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900 relative">
+        <main>
           <Header />
           {user?._id && !user?.verified && <div className="h-[44px]" />}
           <div className="lg:h-[68px] h-14 " />

@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 import { ExamTestCounterData, FilterData } from "@/data/overview";
 import { Condition } from "@/data/exam";
 import Link from "next/link";
+import { Tooltip } from "antd";
 
 interface TableValue {
   id?: string;
@@ -58,7 +59,11 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
   const dataRows: TableDataRow[] = [
     {
       dataIndex: "name",
-      title: t("name"),
+      title: (
+        <button>
+          <Tooltip title={t("exam_name")}>{t("name")}</Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
       render: (text: any, data: any) => {
         var ref = createRef<any>();
@@ -86,58 +91,154 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         );
       },
     },
-    { dataIndex: "group", title: t("group"), classNameTitle: "min-w-20" },
-    { dataIndex: "tags", title: t("tags"), classNameTitle: "min-w-20" },
-    { dataIndex: "join_num", title: t("join_num"), classNameTitle: "min-w-20" },
     {
-      dataIndex: "today_join_num",
-      title: t("today_join_num"),
+      dataIndex: "group",
+      title: (
+        <button>
+          <Tooltip title={t("exam_group")}>{t("group")}</Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
-    { dataIndex: "dtb", title: t("dtb"), classNameTitle: "min-w-20" },
-    { dataIndex: "dtv", title: t("dtv"), classNameTitle: "min-w-20" },
+    {
+      dataIndex: "tags",
+      title: (
+        <button>
+          <Tooltip title={t("tags")}>{t("tags")}</Tooltip>
+        </button>
+      ),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "join_num",
+      title: (
+        <button>
+          <Tooltip title={t("amount_join")}>{t("join_num")}</Tooltip>
+        </button>
+      ),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "today_join_num",
+      title: (
+        <button>
+          <Tooltip title={t("amount_join_today")}>
+            {t("today_join_num")}
+          </Tooltip>
+        </button>
+      ),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "dtb",
+      title: (
+        <button>
+          <Tooltip title={t("ĐTV")}>{t("dtv")}</Tooltip>
+        </button>
+      ),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "dtv",
+      title: (
+        <button>
+          <Tooltip title={t("ĐTV")}>{t("dtv")}</Tooltip>
+        </button>
+      ),
+      classNameTitle: "min-w-20",
+    },
     {
       dataIndex: "percent_pass",
-      title: t("percent_pass"),
+      title: (
+        <button>
+          <Tooltip title={t("pass_rate")}>{t("percent_pass")}</Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "avg_test_time",
-      title: t("avg_test_time"),
+      title: (
+        <button>
+          <Tooltip title={t("avg_test_time_tooltip")}>
+            {t("avg_test_time")}
+          </Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "min_test_time",
-      title: t("min_test_time"),
+      title: (
+        <button>
+          <Tooltip title={t("min_test_time_tooltip")}>
+            {t("min_test_time")}
+          </Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "max_test_time",
-      title: t("max_test_time"),
+      title: (
+        <button>
+          <Tooltip title={t("max_test_time_tooltip")}>
+            {t("max_test_time")}
+          </Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "question_num",
-      title: t("question_num"),
+      title: (
+        <button>
+          <Tooltip title={t("question_num_tooltip")}>
+            {t("question_num")}
+          </Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "gold_price",
-      title: t("gold_price"),
+      title: (
+        <button>
+          <Tooltip title={t("gold_price")}>{t("gold_price")}</Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "pure_income",
-      title: t("pure_income"),
+      title: (
+        <button>
+          <Tooltip title={t("pure_income_tooltip")}>{t("pure_income")}</Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "from_date",
-      title: t("from_date"),
+      title: (
+        <button>
+          <Tooltip title={t("from_date_tooltip")}>{t("from_date")}</Tooltip>
+        </button>
+      ),
+
       classNameTitle: "min-w-20",
     },
-    { dataIndex: "to_date", title: t("to_date"), classNameTitle: "min-w-20" },
-    { dataIndex: "status", title: t("status"), classNameTitle: "min-w-20" },
+
+    {
+      dataIndex: "status",
+      title: (
+        <button>
+          <Tooltip title={t("examination_status")}>{t("status")}</Tooltip>
+        </button>
+      ),
+
+      classNameTitle: "min-w-20",
+    },
   ];
 
   const getListData = async () => {
@@ -220,10 +321,14 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         .format("HH:mm:ss"),
       today_join_num: `${t?.key?.couterByDate}`,
       from_date: t?.info?.examTest?.validAccessSetting?.validFrom
-        ? dayjs(t?.info?.examTest?.validAccessSetting?.validFrom)?.toISOString()
+        ? dayjs(t?.info?.examTest?.validAccessSetting?.validFrom)?.format(
+            "DD/MM/YYYY HH:mm:ss",
+          )
         : undefined,
       to_date: t?.info?.examTest?.validAccessSetting?.validTo
-        ? dayjs(t?.info?.examTest?.validAccessSetting?.validTo)?.toISOString()
+        ? dayjs(t?.info?.examTest?.validAccessSetting?.validTo)?.format(
+            "DD/MM/YYYY HH:mm:ss",
+          )
         : undefined,
       gold_price: t?.info?.examTest?.goldSetting?.goldPrice,
       pure_income: t?.couter?.goldCouter?.netRevenue,

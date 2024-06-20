@@ -14,16 +14,13 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   BarChart,
   Bar,
-  Rectangle,
 } from "recharts";
-import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
+
 import UpDownTrend from "../components/UpDownTrend";
 import {
-  overviewActivitiesReport,
   overviewGetNum,
   overviewGetRemaining,
   overviewGetTotalExamByExamGroup,
@@ -32,11 +29,6 @@ import { errorToast } from "@/app/components/toast/customToast";
 import { OverviewNumberData, TimeChart } from "@/data/overview";
 import dayjs from "dayjs";
 import LineChartOverTime from "../components/LineChartOverTime";
-import { getExamGroupTest } from "@/services/api_services/exam_api";
-import { APIResults } from "@/data/api_results";
-import { ExamGroupData } from "@/data/exam";
-import { useDispatch } from "react-redux";
-import { fetchDataExamGroup } from "@/redux/exam_group/examGroupSlice";
 
 function OverviewTab() {
   const { t } = useTranslation("overview");
@@ -59,7 +51,7 @@ function OverviewTab() {
   }
   var now = dayjs();
   var year = now.year();
-  const [lineData, setLineData] = useState<LineTableValue[]>([]);
+
   const [remain, setRemain] = useState<{
     number_of_test?: number;
     pkg_name?: string;
@@ -68,10 +60,6 @@ function OverviewTab() {
     pkg_name: "",
   });
   const [barData, setBarData] = useState<BarTableValue[]>([]);
-  const [startTime, setStartTime] = useState<string>(
-    dayjs(`1/1/${year}`).toISOString(),
-  );
-  const [endTime, setEndTime] = useState<string>(dayjs()?.toISOString());
 
   const getNum = async () => {
     const res = await overviewGetNum(user?.studio?._id);
@@ -88,7 +76,7 @@ function OverviewTab() {
       errorToast(res?.message ?? "");
       return;
     }
-    // console.log("bar data", res);
+
     setBarData(res.data);
   };
 
@@ -160,7 +148,7 @@ function OverviewTab() {
                 upText={t("user_test_today", {
                   num: overviewData?.totalUserTestToday ?? 0,
                 })}
-                up={(overviewData?.totalUserTestToday ?? 0) < 0}
+                up={(overviewData?.totalUserTestToday ?? 0) > 0}
                 num={Math.abs(overviewData?.totalUserTestToday ?? 0)}
               />
             )}

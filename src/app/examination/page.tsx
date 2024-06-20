@@ -656,6 +656,11 @@ function ExaminationPage() {
                       />
                       <div className="w-3" />
                       <Popover
+                        onOpenChange={(v) => {
+                          if (!v) {
+                            setOpenPop(undefined);
+                          }
+                        }}
                         open={openPop === v.id}
                         trigger={"click"}
                         placement="bottom"

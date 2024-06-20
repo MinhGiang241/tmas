@@ -39,6 +39,7 @@ import { ExamGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Tooltip } from "antd";
 
 function IncomeTab() {
   const { t } = useTranslation("overview");
@@ -103,14 +104,19 @@ function IncomeTab() {
     discount?: number;
     pure_income?: number;
     from_date?: string;
-    to_date?: string;
     status?: string;
   }
 
   const dataRows: TableDataRow[] = [
     {
       dataIndex: "name",
-      title: examTrans.t("name"),
+      title: (
+        <button>
+          <Tooltip title={examTrans.t("exam_name")}>
+            {examTrans.t("name")}
+          </Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-24",
       render: (text: any, data: any) => {
         var ref = createRef<any>();
@@ -136,7 +142,13 @@ function IncomeTab() {
     },
     {
       dataIndex: "group",
-      title: examTrans.t("group"),
+      title: (
+        <button>
+          <Tooltip title={examTrans.t("exam_group")}>
+            {examTrans.t("group")}
+          </Tooltip>
+        </button>
+      ),
       render: (text: any, data: any) => (
         <p key={text} className={"w-full  min-w-11  caption_regular_14"}>
           {text?.join(", ")}
@@ -145,26 +157,66 @@ function IncomeTab() {
     },
     {
       dataIndex: "tags",
-      title: examTrans.t("tags"),
+      title: (
+        <button>
+          <Tooltip title={examTrans.t("tags")}>{examTrans.t("tags")}</Tooltip>
+        </button>
+      ),
       render: (text: any, data: any) => (
         <p key={text} className={"w-full  min-w-11  caption_regular_14"}>
           {text?.join(", ")}
         </p>
       ),
     },
-    { dataIndex: "gold_price", title: examTrans.t("gold_price") },
-    { dataIndex: "income", title: t("income") },
+    {
+      dataIndex: "gold_price",
+      title: (
+        <button>
+          <Tooltip title={examTrans.t("gold_price")}>
+            {examTrans.t("gold_price")}
+          </Tooltip>
+        </button>
+      ),
+    },
+    {
+      dataIndex: "income",
+      title: (
+        <button>
+          <Tooltip title={t("income")}>{t("income")}</Tooltip>
+        </button>
+      ),
+    },
     { dataIndex: "discount", title: t("discount") },
-    { dataIndex: "pure_income", title: t("pure_income") },
+    {
+      dataIndex: "pure_income",
+      title: (
+        <button>
+          <Tooltip title={examTrans.t("pure_income_tooltip")}>
+            {examTrans.t("pure_income")}
+          </Tooltip>
+        </button>
+      ),
+    },
     {
       dataIndex: "from_date",
-      title: t("from_date"),
+      title: (
+        <button>
+          <Tooltip title={examTrans.t("from_date_tooltip")}>
+            {t("from_date")}
+          </Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
-    { dataIndex: "to_date", title: t("to_date") },
     {
       dataIndex: "status",
-      title: t("status"),
+      title: (
+        <button>
+          <Tooltip title={examTrans.t("examination_status")}>
+            {t("status")}
+          </Tooltip>
+        </button>
+      ),
       render: (text: any, data: any) => (
         <p key={text} className={"w-full  min-w-11  caption_regular_14"}>
           {examTrans.t(text)}
@@ -211,7 +263,7 @@ function IncomeTab() {
       pure_income: e.netRevenue,
       status: e.status,
       tags: e?.tagsName,
-      from_date: dayjs(e?.createdTime)?.format("DD/MM/YYYY"),
+      from_date: dayjs(e?.createdTime)?.format("DD/MM/YYYY HH:mm:ss"),
     }));
     setRevenueListData(list);
     setTotal(res?.records ?? 0);
@@ -362,17 +414,16 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {studioRevenueData?.subStudio?.totalToday !=
-              studioRevenueData?.subStudio?.totalYesterDay && (
+            {studioRevenueData?.subStudio?.totalToday && (
               <UpDownTrend
-                up={
-                  (studioRevenueData?.subStudio?.totalToday ?? 0) >
-                  (studioRevenueData?.subStudio?.totalYesterDay ?? 0)
-                }
-                num={Math.abs(
-                  (studioRevenueData?.subStudio?.totalToday ?? 0) -
-                    (studioRevenueData?.subStudio?.totalYesterDay ?? 0),
-                )}
+                upText={t("register_increase_in_day", {
+                  num: Math.abs(studioRevenueData?.subStudio?.totalToday ?? 0),
+                })}
+                downText={t("register_decrease_in_day", {
+                  num: Math.abs(studioRevenueData?.subStudio?.totalToday ?? 0),
+                })}
+                up={(studioRevenueData?.subStudio?.totalToday ?? 0) > 0}
+                num={Math.abs(studioRevenueData?.subStudio?.totalToday ?? 0)}
               />
             )}
           </div>
