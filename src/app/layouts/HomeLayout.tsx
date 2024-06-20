@@ -27,7 +27,7 @@ import { Button, Modal, Tabs, Tooltip } from "antd";
 import Image from "next/image";
 import BaseModal from "../components/config/BaseModal";
 import MButton from "../components/config/MButton";
-import Introduce from "../introduce/page";
+import Introduce from "../introduce/Introduce";
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const [isLogin, setIsLogin] = useState<boolean>(false);
