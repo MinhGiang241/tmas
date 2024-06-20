@@ -349,9 +349,6 @@ export default function Introduce() {
               <CreateExaminationIntroduce />
             </div>
           )}
-          {/* {currentStep === 4 && (
-            <div className="flex flex-wrap mb-3">step 4 success</div>
-          )} */}
           <div className="flex justify-center items-center">
             {currentStep === 1 && (
               <MButton
@@ -383,7 +380,6 @@ export default function Introduce() {
                   );
                   setOpen(false);
                   router.push(`/examination/${""}`);
-                  // createExamination(submitData);
                 }}
               />
             )}

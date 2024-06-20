@@ -63,7 +63,7 @@ function CreateExaminationIntroduce({ examination }: any) {
   //     var dataSessionId = await createSession(exam?.idSession);
   //     console.log("dataSessionId edit", dataSessionId);
   //     console.log("exam idSession", exam?.idSession);
-  //
+
   //     if (dataSessionId?.code == 0) {
   //       setIdSession(exam?.idSession);
   //     }
