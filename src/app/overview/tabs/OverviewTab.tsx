@@ -48,7 +48,7 @@ function OverviewTab() {
   const [lineField, setLineField] = useState<TimeChart | undefined>(
     TimeChart.Day,
   );
-  const dispatch = useAppDispatch();
+
   interface LineTableValue {
     name?: string;
     value?: number;
@@ -60,7 +60,13 @@ function OverviewTab() {
   var now = dayjs();
   var year = now.year();
   const [lineData, setLineData] = useState<LineTableValue[]>([]);
-  const [remain, setRemain] = useState<number | undefined>(0);
+  const [remain, setRemain] = useState<{
+    number_of_test?: number;
+    pkg_name?: string;
+  }>({
+    number_of_test: 0,
+    pkg_name: "",
+  });
   const [barData, setBarData] = useState<BarTableValue[]>([]);
   const [startTime, setStartTime] = useState<string>(
     dayjs(`1/1/${year}`).toISOString(),
@@ -91,7 +97,10 @@ function OverviewTab() {
     if (res?.code != 0) {
       return;
     }
-    setRemain(res?.data);
+    setRemain({
+      number_of_test: res?.data?.number_of_test,
+      pkg_name: res?.data?.pkg_name,
+    });
   };
 
   useEffect(() => {
@@ -124,17 +133,13 @@ function OverviewTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {overviewData?.totalTestToday !=
-              overviewData?.totalTestYesterday && (
+            {overviewData?.totalTestToday != 0 && (
               <UpDownTrend
-                up={
-                  (overviewData?.totalTestYesterday ?? 0) <
-                  (overviewData?.totalTestToday ?? 0)
-                }
-                num={Math.abs(
-                  (overviewData?.totalTestToday ?? 0) -
-                    (overviewData?.totalTestYesterday ?? 0),
-                )}
+                upText={t("day_test_increase", {
+                  num: Math.abs(overviewData?.totalTestToday ?? 0),
+                })}
+                up={(overviewData?.totalTestToday ?? 0) > 0}
+                num={Math.abs(overviewData?.totalTestToday ?? 0)}
               />
             )}
           </div>
@@ -150,17 +155,13 @@ function OverviewTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {overviewData?.totalUserTestToday !=
-              overviewData?.totalUserTestYesterday && (
+            {overviewData?.totalUserTestToday != 0 && (
               <UpDownTrend
-                up={
-                  (overviewData?.totalUserTestYesterday ?? 0) <
-                  (overviewData?.totalUserTestToday ?? 0)
-                }
-                num={Math.abs(
-                  (overviewData?.totalUserTestToday ?? 0) -
-                    (overviewData?.totalUserTestYesterday ?? 0),
-                )}
+                upText={t("user_test_today", {
+                  num: overviewData?.totalUserTestToday ?? 0,
+                })}
+                up={(overviewData?.totalUserTestToday ?? 0) < 0}
+                num={Math.abs(overviewData?.totalUserTestToday ?? 0)}
               />
             )}
           </div>
@@ -179,15 +180,14 @@ function OverviewTab() {
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
           <div className="body_regular_14">{t("service_package")}</div>
           <div className="h-2" />
-          <div className="heading_semibold_32">
-            {user?.licences?.enterprise?.pkg_name ??
-              user?.licences?.individual?.pkg_name}
-          </div>
+          <div className="heading_semibold_32">{remain?.pkg_name}</div>
         </div>
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
           <div className="body_regular_14">{t("remain_test")}</div>
           <div className="h-2" />
-          <div className="heading_semibold_32">{remain}/tháng</div>
+          <div className="heading_semibold_32">
+            {remain?.number_of_test}/tháng
+          </div>
         </div>
       </div>
 

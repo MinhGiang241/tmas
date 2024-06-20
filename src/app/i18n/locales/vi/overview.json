@@ -24,5 +24,11 @@
   "pure_income": "Doanh thu thuần",
   "from_date": "Từ ngày",
   "to_date": "Đến ngày",
-  "status": "Trạng thái"
+  "status": "Trạng thái",
+  "value": "Giá trị",
+  "day_test_increase": "Số bài làm mới phát sinh trong ngày {{num}}",
+  "user_test_today": "Số ứng viên có tài khoản TMAS thi trong ngày {{num}}",
+  "revenue_today": "Doanh thu phát sinh trong ngày hôm nay: {{num}}",
+  "discount_today": "Chiết khấu trong ngày hôm nay: {{num}}",
+  "net_revenue_today": "Doanh thu thuần trong ngày hôm nay: {{num}}"
 }

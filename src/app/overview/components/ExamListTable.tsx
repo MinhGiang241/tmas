@@ -67,13 +67,14 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
         return (
           <div className="w-full flex justify-start ">
             <Link
+              className="hidden"
               target="_blank"
               ref={ref}
               href={`/exams/details/${data.id}`}
             />
 
             <button
-              className="ml-2 text-m_primary_500 underline underline-offset-4"
+              className="text-start text-m_primary_500 underline underline-offset-4"
               onClick={() => {
                 (ref?.current as any).click();
               }}
@@ -183,16 +184,22 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
       name: t?.info?.exam?.name,
       tags: t?.info?.exam?.tags,
       dtv: t?.couter?.medianScoreAsInt,
-      dtb: (t?.couter?.totalScoreAsInt ?? 0) / (t?.couter?.numberOfTest ?? 0),
+      dtb: !t?.couter?.numberOfTest
+        ? 0
+        : (t?.couter?.totalScoreAsInt ?? 0) / (t?.couter?.numberOfTest ?? 0),
       join_num: t?.couter?.numberOfTest,
-      percent_pass:
-        ((t?.couter?.totalScoreAsInt ?? 0) / (t?.couter?.numberOfTest ?? 0)) *
-        100,
-      avg_test_time: dayjs
-        .duration(
-          (t?.couter?.totalTimeSeconds ?? 0) / (t?.couter?.numberOfTest ?? 0),
-        )
-        .format("HH:mm:ss"),
+      percent_pass: !t?.couter?.numberOfTest
+        ? 0
+        : ((t?.couter?.totalScoreAsInt ?? 0) / (t?.couter?.numberOfTest ?? 0)) *
+          100,
+      avg_test_time: !t?.couter?.numberOfTest
+        ? "00:00:00"
+        : dayjs
+            .duration(
+              (t?.couter?.totalTimeSeconds ?? 0) /
+                (t?.couter?.numberOfTest ?? 0),
+            )
+            .format("HH:mm:ss"),
       max_test_time: dayjs
         .duration(t?.couter?.maximumTimeSeconds ?? 0)
         .format("HH:mm:ss"),
