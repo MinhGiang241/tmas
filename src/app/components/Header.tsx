@@ -195,7 +195,7 @@ function Header({ path }: { path?: string }) {
   };
 
   return (
-    <div className="w-full fixed z-50">
+    <div className="w-full fixed z-50 ">
       <div className="w-full lg:h-[68px]  h-14 bg-m_primary_500 flex justify-center ">
         <div className="max-lg:hidden absolute h-full w-[233px] left-0 bg-[url('/images/left-header.png')] bg-no-repeat bg-contain" />
         <div className="max-lg:hidden absolute h-full w-[748px] right-0 bg-[url('/images/right-header.png')] bg-no-repeat bg-contain" />
@@ -234,16 +234,7 @@ function Header({ path }: { path?: string }) {
             <div className="h-4" />
             {links.map((v, i) => (
               <Link
-                href={
-                  !user?.verified
-                    ? "#"
-                    : v == "exam_group" ||
-                        v == "exams" ||
-                        v == "examination" ||
-                        v == "exam_bank"
-                      ? `/${v}`
-                      : "/"
-                }
+                href={!user?.verified ? "#" : `/${v}`}
                 onClick={() => {
                   if (
                     !user?.verified &&
@@ -385,7 +376,9 @@ function Header({ path }: { path?: string }) {
             </button>
           </div>
           {/* TODO */}
+
           <Notification />
+          <div className="lg:hidden max-lg:w-12" />
           <Popover
             onOpenChange={(v) => {
               setOpenPop(v);

@@ -598,7 +598,7 @@ function CodingQuestion({
             title={t("return_type")}
             h="h-9"
           />
-          <div className="body_regular_14">{t("parameter")}</div>
+          <div className="body_semibold_14">{t("parameter")}</div>
           {parameterList.map((l: ParameterType, i: number) => {
             return (
               <div key={l.id} className=" w-full  flex items-start">

@@ -30,5 +30,7 @@
   "user_test_today": "Number of candidates with TMAS accounts tested on the day {{num}}",
   "revenue_today": "Revenue generated today: {{num}}",
   "discount_today": "Discount today: {{num}}",
-  "net_revenue_today": "Net revenue today: {{num}}"
+  "net_revenue_today": "Net revenue today: {{num}}",
+  "register_increase_in_day": "Number of registrations arising in the day: {{num}}",
+  "register_decrease_in_day": "Number of registrations decreased during the day: {{num}}"
 }

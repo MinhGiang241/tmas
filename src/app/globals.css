@@ -20,8 +20,14 @@
 
 @layer base {
   html {
-    font-family: Montserrat, system-ui sans-serif;
+    font-family:
+      Montserrat,
+      system-ui sans-serif;
   }
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 body {
@@ -34,7 +40,9 @@ body {
 
 .modalStyle .ant-modal-content .ant-modal-body {
   background-color: #01579b;
-  font-family: Montserrat, system-ui sans-serif;
+  font-family:
+    Montserrat,
+    system-ui sans-serif;
 }
 
 .ant-tabs-ink-bar {

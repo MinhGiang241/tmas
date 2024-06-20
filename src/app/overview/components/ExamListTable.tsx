@@ -6,7 +6,7 @@ import DownloadIcon from "@/app/components/icons/white-import.svg";
 import MInput from "@/app/components/config/MInput";
 import { SearchOutlined } from "@ant-design/icons";
 import MDateTimeSelect from "@/app/components/config/MDateTimeSelect";
-import { Table } from "antd";
+import { Table, Tooltip } from "antd";
 import MTable, { TableDataRow } from "@/app/components/config/MTable";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
@@ -45,6 +45,7 @@ interface TableValue {
 
 function ExamListTable({ optionSelect }: { optionSelect: any }) {
   const { t } = useTranslation("exam");
+
   const [search, setSearch] = useState<string | undefined>();
   const [searchValue, setSearchValue] = useState<string | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -60,7 +61,11 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
   const dataRows: TableDataRow[] = [
     {
       dataIndex: "name",
-      title: t("name"),
+      title: (
+        <button>
+          <Tooltip title={t("exam_name")}>{t("name")}</Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
       render: (text: any, data: any) => {
         var ref = createRef<any>();
@@ -85,44 +90,129 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
         );
       },
     },
-    { dataIndex: "group", title: t("group"), classNameTitle: "min-w-20" },
-    { dataIndex: "tags", title: t("tags"), classNameTitle: "min-w-20" },
-    { dataIndex: "join_num", title: t("join_num"), classNameTitle: "min-w-20" },
     {
-      dataIndex: "today_join_num",
-      title: t("today_join_num"),
+      dataIndex: "group",
+      title: (
+        <button>
+          <Tooltip title={t("exam_group")}>{t("group")}</Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
-    { dataIndex: "dtb", title: t("dtb"), classNameTitle: "min-w-20" },
-    { dataIndex: "dtv", title: t("dtv"), classNameTitle: "min-w-20" },
+    {
+      dataIndex: "tags",
+      title: (
+        <button>
+          <Tooltip title={t("tags")}>{t("tags")}</Tooltip>
+        </button>
+      ),
+
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "join_num",
+      title: (
+        <button>
+          <Tooltip title={t("amount_join")}>{t("join_num")}</Tooltip>
+        </button>
+      ),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "today_join_num",
+      title: (
+        <button>
+          <Tooltip title={t("amount_join_today")}>
+            {t("today_join_num")}
+          </Tooltip>
+        </button>
+      ),
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "dtb",
+      title: (
+        <button>
+          <Tooltip title={t("ĐTB")}>{t("dtb")}</Tooltip>
+        </button>
+      ),
+
+      classNameTitle: "min-w-20",
+    },
+    {
+      dataIndex: "dtv",
+      title: (
+        <button>
+          <Tooltip title={t("ĐTV")}>{t("dtv")}</Tooltip>
+        </button>
+      ),
+
+      classNameTitle: "min-w-20",
+    },
     {
       dataIndex: "percent_pass",
-      title: t("percent_pass"),
+      title: (
+        <button>
+          <Tooltip title={t("pass_rate")}>{t("percent_pass")}</Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "avg_test_time",
-      title: t("avg_test_time"),
+      title: (
+        <button>
+          <Tooltip title={t("avg_test_time_tooltip")}>
+            {t("avg_test_time")}
+          </Tooltip>
+        </button>
+      ),
+
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "min_test_time",
-      title: t("min_test_time"),
+      title: (
+        <button>
+          <Tooltip title={t("min_test_time_tooltip")}>
+            {t("min_test_time")}
+          </Tooltip>
+        </button>
+      ),
+
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "max_test_time",
-      title: t("max_test_time"),
+      title: (
+        <button>
+          <Tooltip title={t("max_test_time_tooltip")}>
+            {t("max_test_time")}
+          </Tooltip>
+        </button>
+      ),
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "question_num",
-      title: t("question_num"),
+      title: (
+        <button>
+          <Tooltip title={t("question_num_tooltip")}>
+            {t("question_num")}
+          </Tooltip>
+        </button>
+      ),
+
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "created_date",
-      title: t("created_date"),
+      title: (
+        <button>
+          <Tooltip title={t("exam_created_date")}>{t("created_date")}</Tooltip>
+        </button>
+      ),
+
       classNameTitle: "min-w-20",
     },
   ];

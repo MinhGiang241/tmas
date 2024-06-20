@@ -427,5 +427,19 @@
   "not_approve_send_info": "The test has not been approved yet. Notifications cannot be sent to candidates",
   "reject_send_info": "The exam was refused approval. Notifications cannot be sent to candidates",
   "valid": "Valid",
-  "invalid": "Invalid"
+  "invalid": "Invalid",
+  "amount_join": "Amount of participation",
+  "amount_join_today": "Amount of participation today",
+  "pass_rate": "Pass rate",
+  "ĐTB": "Average score",
+  "ĐTV": "Median score",
+  "avg_test_time_tooltip": "Average time to complete the test",
+  "min_test_time_tooltip": "Minimum time to complete the test",
+  "max_test_time_tooltip": "Maximum time to complete the test",
+  "question_num_tooltip": "Number of questions in the exam",
+  "exam_created_date": "Exam creation date",
+  "pure_income_tooltip": "Contest revenue minus discount",
+  "from_date_tooltip": "Effective from date",
+  "to_date_tootip": "Valid until date",
+  "examination_status": "Examimation status"
 }

@@ -162,15 +162,17 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
           <LoadingPage />
         </main>
       ) : (
-        <main className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900 relative">
+        <>
           <Header />
-          {user?._id && !user?.verified && <div className="h-[44px]" />}
-          <div className="lg:h-[68px] h-14 " />
-          <div className="max-w-[1140px] mx-auto">
-            <div className=" w-full text-m_neutral_900">{children}</div>
-          </div>
-          <Introduce />
-        </main>
+          <main className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900 relative overflow-y-scroll">
+            {user?._id && !user?.verified && <div className="h-[44px]" />}
+            <div className="lg:h-[68px] h-14 " />
+            <div className="max-w-[1140px] mx-auto">
+              <div className=" w-full text-m_neutral_900">{children}</div>
+            </div>
+            <Introduce />
+          </main>
+        </>
       )}
     </>
   );
