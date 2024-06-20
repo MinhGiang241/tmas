@@ -15,6 +15,10 @@ function OverViewPage() {
   var tab = search.get("tab") ?? "0";
   var index = ["0", "1", "2"].includes(tab) ? tab : "0";
 
+  var key1 = Math.random();
+  var key2 = Math.random();
+  var key3 = Math.random();
+
   return (
     <HomeLayout>
       <div className="h-3  lg:h-1" />
@@ -48,9 +52,9 @@ function OverViewPage() {
         </button>
       </div>
       <div className="h-3 " />
-      {index === "0" && <OverviewTab />}
-      {index === "1" && <PerformanceTestTab />}
-      {index === "2" && <IncomeTab />}
+      {index === "0" && <OverviewTab key={key1} />}
+      {index === "1" && <PerformanceTestTab key={key2} />}
+      {index === "2" && <IncomeTab key={key3} />}
       <div className="h-3" />
     </HomeLayout>
   );

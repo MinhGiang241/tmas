@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormattedNumber } from "react-intl";
 import UpIcon from "@/app/components/icons/up.svg";
@@ -37,8 +37,8 @@ import {
 import { getExamGroupTest } from "@/services/api_services/exam_api";
 import { ExamGroupData } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
-import { saveAs } from "file-saver";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function IncomeTab() {
   const { t } = useTranslation("overview");
@@ -51,7 +51,7 @@ function IncomeTab() {
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(0);
-  const [status, setStatus] = useState<string | undefined>();
+  const [status, setStatus] = useState<string | undefined>("");
   const [startDate, setStartDate] = useState<string | undefined>();
   const [endDate, setEndDate] = useState<string | undefined>();
   const [revenueData, setRevenueData] = useState<RevenueData | undefined>();
@@ -66,7 +66,6 @@ function IncomeTab() {
   const examGroupList = useAppSelector(
     (state: RootState) => state.examGroup?.list,
   );
-
   const loadExamGroupList = async (init?: boolean) => {
     if (init) {
       dispatch(setExamGroupLoading(true));
@@ -95,6 +94,7 @@ function IncomeTab() {
   };
 
   interface TableValue {
+    id?: string;
     name?: string;
     group?: string[];
     tags?: string[];
@@ -112,6 +112,27 @@ function IncomeTab() {
       dataIndex: "name",
       title: examTrans.t("name"),
       classNameTitle: "min-w-24",
+      render: (text: any, data: any) => {
+        var ref = createRef<any>();
+        return (
+          <div className="w-full flex justify-start ">
+            <Link
+              target="_blank"
+              ref={ref}
+              href={`/examination/results/${data.id}`}
+            />
+
+            <button
+              className="ml-2 text-m_primary_500 underline underline-offset-4"
+              onClick={() => {
+                (ref?.current as any).click();
+              }}
+            >
+              {text}
+            </button>
+          </div>
+        );
+      },
     },
     {
       dataIndex: "group",
@@ -141,7 +162,15 @@ function IncomeTab() {
       classNameTitle: "min-w-20",
     },
     { dataIndex: "to_date", title: t("to_date") },
-    { dataIndex: "status", title: t("status") },
+    {
+      dataIndex: "status",
+      title: t("status"),
+      render: (text: any, data: any) => (
+        <p key={text} className={"w-full  min-w-11  caption_regular_14"}>
+          {examTrans.t(text)}
+        </p>
+      ),
+    },
   ];
 
   const getRevenue = async () => {
@@ -173,6 +202,7 @@ function IncomeTab() {
 
     var revenueData = res?.data as OverviewListRevenueData[];
     var list = revenueData?.map<TableValue>((e) => ({
+      id: e?._id,
       discount: e.discountRevenue,
       group: e.groupName,
       gold_price: e.goldExamTest,
@@ -228,6 +258,10 @@ function IncomeTab() {
   });
   const statusOption = [
     {
+      label: examTrans.t("all"),
+      value: "",
+    },
+    {
       label: t("valid"),
       value: "valid",
     },
@@ -262,17 +296,13 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.revenueData?.revenueYesterday !=
-              revenueData?.revenueData?.revenueToday && (
+            {revenueData?.revenueData?.revenueToday != 0 && (
               <UpDownTrend
-                up={
-                  (revenueData?.revenueData?.revenueYesterday ?? 0) <
-                  (revenueData?.revenueData?.revenueToday ?? 0)
-                }
-                num={Math.abs(
-                  (revenueData?.revenueData?.revenueToday ?? 0) -
-                    (revenueData?.revenueData?.revenueYesterday ?? 0),
-                )}
+                upText={t("revenue_today", {
+                  num: revenueData?.revenueData?.revenueToday ?? 0,
+                })}
+                up={(revenueData?.revenueData?.revenueToday ?? 0) > 0}
+                num={Math.abs(revenueData?.revenueData?.revenueToday ?? 0)}
               />
             )}
           </div>
@@ -288,17 +318,13 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.discountData?.revenueYesterday !=
-              revenueData?.discountData?.revenueToday && (
+            {revenueData?.discountData?.revenueToday != 0 && (
               <UpDownTrend
-                up={
-                  (revenueData?.discountData?.revenueYesterday ?? 0) <
-                  (revenueData?.discountData?.revenueToday ?? 0)
-                }
-                num={Math.abs(
-                  (revenueData?.discountData?.revenueToday ?? 0) -
-                    (revenueData?.discountData?.revenueYesterday ?? 0),
-                )}
+                upText={t("net_revenue_today", {
+                  num: revenueData?.discountData?.revenueToday ?? 0,
+                })}
+                up={(revenueData?.discountData?.revenueToday ?? 0) > 0}
+                num={Math.abs(revenueData?.discountData?.revenueToday ?? 0)}
               />
             )}
           </div>
@@ -314,17 +340,13 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.netData?.revenueYesterday !=
-              revenueData?.netData?.revenueToday && (
+            {revenueData?.netData?.revenueToday != 0 && (
               <UpDownTrend
-                up={
-                  (revenueData?.netData?.revenueYesterday ?? 0) <
-                  (revenueData?.netData?.revenueToday ?? 0)
-                }
-                num={Math.abs(
-                  (revenueData?.netData?.revenueToday ?? 0) -
-                    (revenueData?.netData?.revenueYesterday ?? 0),
-                )}
+                upText={t("net_revenue_today", {
+                  num: revenueData?.netData?.revenueToday ?? 0,
+                })}
+                up={(revenueData?.netData?.revenueToday ?? 0) > 0}
+                num={Math.abs(revenueData?.netData?.revenueToday ?? 0)}
               />
             )}
           </div>

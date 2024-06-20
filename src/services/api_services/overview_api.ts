@@ -5,9 +5,10 @@ import {
 } from "@/data/overview";
 import { callApi, callStudioAPI } from "./base_api";
 
-export const overviewGetNum = async () => {
+export const overviewGetNum = async (studioId?: string) => {
   const results = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/getNum`,
+    { params: { studioId } },
   );
   return results;
 };
@@ -27,9 +28,10 @@ export const overviewGetRemaining = async () => {
   return results;
 };
 
-export const overviewGetTotalExamByExamGroup = async () => {
+export const overviewGetTotalExamByExamGroup = async (studioId?: string) => {
   const results = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/getTotalExamByExamGroup`,
+    { params: { studioId } },
   );
   return results;
 };
@@ -88,7 +90,6 @@ export const overviewListRevenueExel = async (studioId?: string) => {
   const results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/goldtransaction.excelDowloadOverviewListRevenue`,
     { studioId },
-    { responseType: "blob" },
   );
   return results;
 };

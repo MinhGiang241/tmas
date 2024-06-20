@@ -26,6 +26,7 @@ interface LineTableValue {
 interface Props {}
 
 function LineChartOverTime(props: Props) {
+  const { t } = useTranslation("overview");
   const [lineData, setLineData] = useState<LineTableValue[]>([]);
   const [lineField, setLineField] = useState<TimeChart | undefined>(
     TimeChart.Day,
@@ -43,6 +44,7 @@ function LineChartOverTime(props: Props) {
       startTime: startTime,
       endTime: endTime,
       typeTime: lineField,
+      studioId: user?.studio?._id,
     });
 
     if (res?.code != 0) {
@@ -50,17 +52,20 @@ function LineChartOverTime(props: Props) {
       return;
     }
 
-    var dataLine = res?.data?.map((e: any) => ({
-      name:
-        lineField == TimeChart.Year
-          ? `${e?.year}`
-          : lineField == TimeChart.Month
-            ? `${e.month}/${e.year}`
-            : lineField == TimeChart.Week
-              ? `${e.week}/${e.year}`
-              : `${e.day}/${e?.month}/${e?.year}`,
-      value: e.total,
-    }));
+    var dataLine = res?.data?.map((e: any) => {
+      var k: { [key: string]: any } = {
+        name:
+          lineField == TimeChart.Year
+            ? `${e?.year}`
+            : lineField == TimeChart.Month
+              ? `${e.month}/${e.year}`
+              : lineField == TimeChart.Week
+                ? `${e.week}/${e.year}`
+                : `${e.day}/${e?.month}/${e?.year}`,
+      };
+      k[t("value") as any] = e.total;
+      return k;
+    });
     setLineData(dataLine);
   };
   const user = useAppSelector((state: RootState) => state.user.user);
@@ -187,7 +192,7 @@ function LineChartOverTime(props: Props) {
             <Line
               strokeWidth={2}
               type="monotone"
-              dataKey="value"
+              dataKey={t("value")}
               stroke="#0B8199"
               dot={false}
             />

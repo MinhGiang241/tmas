@@ -24,5 +24,11 @@
   "pure_income": "Net revenue",
   "from_date": "From date",
   "to_date": "To date",
-  "status": "Status"
+  "status": "Status",
+  "value": "Value",
+  "day_test_increase": "Number of new test today {{num}}",
+  "user_test_today": "Number of candidates with TMAS accounts tested on the day {{num}}",
+  "revenue_today": "Revenue generated today: {{num}}",
+  "discount_today": "Discount today: {{num}}",
+  "net_revenue_today": "Net revenue today: {{num}}"
 }

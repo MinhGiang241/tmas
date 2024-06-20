@@ -1,4 +1,4 @@
-import { Condition, ExamData } from "./exam";
+import { Condition, ExamData, ExaminationData } from "./exam";
 
 export interface OverviewNumberData {
   totalDoingTest?: number;
@@ -22,6 +22,7 @@ export interface ActivitiesParams {
   endTime?: string;
   typeTime?: TimeChart;
   lang?: string;
+  studioId?: string;
 }
 
 export interface TimeOnChartData {
@@ -29,6 +30,18 @@ export interface TimeOnChartData {
   month?: number;
   year?: number;
   total?: number;
+}
+
+export interface SortData {
+  fieldName?: string;
+  sort?: "-1" | "1";
+}
+
+export interface FilterData {
+  fieldName?: string;
+  condition?: Condition;
+  value?: string;
+  convertTextToUnsigned?: boolean;
 }
 
 export interface ExamCounterParams {
@@ -41,12 +54,7 @@ export interface ExamCounterParams {
     name?: string;
     isAsc?: boolean;
   }[];
-  filters?: {
-    fieldName?: string;
-    condition?: Condition;
-    value?: string;
-    convertTextToUnsigned: boolean;
-  }[];
+  filters?: FilterData[];
 }
 
 export interface RevenueData {
@@ -79,6 +87,7 @@ export interface OverviewListRevenueParams {
 }
 
 export interface OverviewListRevenueData {
+  _id?: string;
   createdTime?: string;
   discountRevenue?: number;
   examTestName?: string;
@@ -112,21 +121,7 @@ export interface ExamCounterData {
   id?: string;
   createdBy?: string;
   createdTime?: string;
-  couter?: {
-    goldCouter?: {
-      discount?: number;
-      netRevenue?: number;
-      revenue?: number;
-    };
-    maximumTimeSeconds?: number;
-    medianScoreAsInt?: number;
-    minimumTimeSeconds?: number;
-    numberOfQuestions?: number;
-    numberOfTest?: number;
-    totalPass?: number;
-    totalScoreAsInt?: number;
-    totalTimeSeconds?: number;
-  };
+  couter?: CouterData;
   info?: {
     exam?: ExamData;
     groupExam?: {
@@ -143,6 +138,54 @@ export interface ExamCounterData {
       updateTime?: string;
     };
   };
+  key?: {
+    couterByDate?: string;
+    idExam?: string;
+    idStudio?: string;
+  };
+  keyCouter?: string;
+  ownerId?: string;
+  studioId?: string;
+  updateBy?: string;
+  updateTime?: string;
+}
+
+export interface CouterData {
+  goldCouter?: {
+    discount?: number;
+    netRevenue?: number;
+    revenue?: number;
+  };
+  maximumTimeSeconds?: number;
+  medianScoreAsInt?: number;
+  minimumTimeSeconds?: number;
+  numberOfQuestions?: number;
+  numberOfTest?: number;
+  totalPass?: number;
+  totalScoreAsInt?: number;
+  totalTimeSeconds?: number;
+}
+
+export interface ExamTestInfoData {
+  examTest?: ExaminationData;
+  groupExam?: {
+    id?: string;
+    createdBy?: string;
+    createdTime?: string;
+    idParent?: string;
+    level?: number;
+    name?: string;
+    ownerId?: string;
+    studioId?: string;
+    unsignedName?: string;
+    updateBy?: string;
+    updateTime?: string;
+  };
+}
+
+export interface ExamTestCounterData {
+  couter?: CouterData;
+  info?: ExamTestInfoData;
   key?: {
     couterByDate?: string;
     idExam?: string;
