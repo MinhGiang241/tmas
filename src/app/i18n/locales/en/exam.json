@@ -441,5 +441,6 @@
   "pure_income_tooltip": "Contest revenue minus discount",
   "from_date_tooltip": "Effective from date",
   "to_date_tootip": "Valid until date",
-  "examination_status": "Examimation status"
+  "examination_status": "Examimation status",
+  "tags_tooltip": "Thẻ/tags"
 }

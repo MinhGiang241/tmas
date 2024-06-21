@@ -47,6 +47,7 @@ export default function Notification() {
 
   return (
     <Popover
+      getPopupContainer={(trigger: HTMLElement) => trigger.parentElement!}
       className="mx-4"
       placement="bottom"
       title={

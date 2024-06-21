@@ -20,9 +20,11 @@ import { ExamCounterData, FilterData } from "@/data/overview";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import duration from "dayjs/plugin/duration";
-import { Condition } from "@/data/exam";
+import { Condition, StudioSorter } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import Link from "next/link";
+
+import RenderSortterIcon from "./IconSorter";
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
 
@@ -57,13 +59,27 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
   const [startDate, setStartDate] = useState<string | undefined>();
   const [endDate, setEndDate] = useState<string | undefined>();
   const [groupId, setGroupId] = useState<string | undefined>();
+  const [sorter, setSorter] = useState<StudioSorter>({
+    name: "createdTime",
+    isAsc: false,
+  });
+
+  const addSorter = (name: string) => {
+    if (!sorter?.name || name != sorter.name) {
+      setSorter({ name, isAsc: true });
+      return;
+    }
+    setSorter({ name, isAsc: !sorter?.isAsc });
+    setIndexPage(1);
+  };
 
   const dataRows: TableDataRow[] = [
     {
       dataIndex: "name",
       title: (
-        <button>
+        <button onClick={() => addSorter("info.exam.unsignedName")}>
           <Tooltip title={t("exam_name")}>{t("name")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="info.exam.unsignedName" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -93,8 +109,9 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "group",
       title: (
-        <button>
+        <button onClick={() => addSorter("info.groupExam.name")}>
           <Tooltip title={t("exam_group")}>{t("group")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="info.groupExam.name" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -102,18 +119,24 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "tags",
       title: (
-        <button>
-          <Tooltip title={t("tags")}>{t("tags")}</Tooltip>
+        <button onClick={() => addSorter("info.tags")}>
+          <Tooltip title={t("tags_tooltip")}>{t("tags")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="info.tags" />
         </button>
       ),
-
       classNameTitle: "min-w-20",
+      render: (text: any, data: any) => {
+        return (
+          <div className="w-full flex justify-start ">{text?.join(", ")}</div>
+        );
+      },
     },
     {
       dataIndex: "join_num",
       title: (
-        <button>
+        <button onClick={() => addSorter("info.couter.numberOfTest")}>
           <Tooltip title={t("amount_join")}>{t("join_num")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="info.couter.numberOfTest" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -121,10 +144,11 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "today_join_num",
       title: (
-        <button>
+        <button onClick={() => addSorter("key.couterByDate")}>
           <Tooltip title={t("amount_join_today")}>
             {t("today_join_num")}
           </Tooltip>
+          <RenderSortterIcon sorter={sorter} name="key.couterByDate" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -132,8 +156,9 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "dtb",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.totalScoreAsInt")}>
           <Tooltip title={t("ĐTB")}>{t("dtb")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.totalScoreAsInt" />
         </button>
       ),
 
@@ -142,18 +167,19 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "dtv",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.medianScoreAsInt")}>
           <Tooltip title={t("ĐTV")}>{t("dtv")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.medianScoreAsInt" />
         </button>
       ),
-
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "percent_pass",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.totalPass")}>
           <Tooltip title={t("pass_rate")}>{t("percent_pass")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.totalPass" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -161,10 +187,11 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "avg_test_time",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.totalTimeSeconds")}>
           <Tooltip title={t("avg_test_time_tooltip")}>
             {t("avg_test_time")}
           </Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.totalTimeSeconds" />
         </button>
       ),
 
@@ -173,10 +200,11 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "min_test_time",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.minimumTimeSeconds")}>
           <Tooltip title={t("min_test_time_tooltip")}>
             {t("min_test_time")}
           </Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.minimumTimeSeconds" />
         </button>
       ),
 
@@ -185,10 +213,11 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "max_test_time",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.maximumTimeSeconds")}>
           <Tooltip title={t("max_test_time_tooltip")}>
             {t("max_test_time")}
           </Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.maximumTimeSeconds" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -196,10 +225,11 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "question_num",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.numberOfQuestions")}>
           <Tooltip title={t("question_num_tooltip")}>
             {t("question_num")}
           </Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.numberOfQuestions" />
         </button>
       ),
 
@@ -208,8 +238,9 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "created_date",
       title: (
-        <button>
+        <button onClick={() => addSorter("info.exam.createdTime")}>
           <Tooltip title={t("exam_created_date")}>{t("created_date")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="info.exam.createdTime" />
         </button>
       ),
 
@@ -248,16 +279,10 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
         condition: Condition.eq,
       });
     }
-
     var res = await overviewExamCounter({
       paging: { startIndex: indexPage, recordPerPage: recordNum },
       filters,
-      studioSorters: [
-        {
-          name: "createdTime",
-          isAsc: false,
-        },
-      ],
+      studioSorters: [sorter],
     });
     if (res?.code != 0) {
       return;
@@ -272,16 +297,17 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
       question_num: t?.couter?.numberOfQuestions ?? 0,
       group: t?.info?.groupExam?.name,
       name: t?.info?.exam?.name,
-      tags: t?.info?.exam?.tags,
+      tags: t?.info?.tags?.map((k: any) =>
+        typeof k == "string" ? k : k?.name,
+      ),
       dtv: t?.couter?.medianScoreAsInt,
       dtb: !t?.couter?.numberOfTest
         ? 0
         : (t?.couter?.totalScoreAsInt ?? 0) / (t?.couter?.numberOfTest ?? 0),
       join_num: t?.couter?.numberOfTest,
-      percent_pass: !t?.couter?.numberOfTest
+      percent_pass: !t?.couter?.totalPass
         ? 0
-        : ((t?.couter?.totalScoreAsInt ?? 0) / (t?.couter?.numberOfTest ?? 0)) *
-          100,
+        : ((t?.couter?.totalPass ?? 0) / (t?.couter?.numberOfTest ?? 0)) * 100,
       avg_test_time: !t?.couter?.numberOfTest
         ? "00:00:00"
         : dayjs
@@ -305,7 +331,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
 
   useEffect(() => {
     getListData();
-  }, [user, startDate, endDate, search, groupId]);
+  }, [user, startDate, endDate, search, groupId, sorter]);
 
   const downloadExell = async () => {
     var filters: FilterData[] = [];
