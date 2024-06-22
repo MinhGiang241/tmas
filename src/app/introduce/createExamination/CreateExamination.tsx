@@ -26,7 +26,11 @@ import {
   updateExamination,
   uploadStudioDocument,
 } from "@/services/api_services/examination_api";
-import { errorToast, successToast } from "@/app/components/toast/customToast";
+import {
+  errorToast,
+  successToast,
+  successToastIntroduce,
+} from "@/app/components/toast/customToast";
 import dayjs from "dayjs";
 import { ExamData } from "@/data/exam";
 import { v4 as uuidv4 } from "uuid";
@@ -53,10 +57,12 @@ function CreateExaminationIntroduce({
   examination,
   idExam,
   name,
+  step,
 }: {
   examination?: any;
   idExam?: string;
   name?: string;
+  step?: any;
 }) {
   const createSessionId = async () => {
     var dataSessionId = await createSession(examination?.idSession ?? "");
@@ -428,8 +434,12 @@ function CreateExaminationIntroduce({
         return;
       }
 
-      successToast(
-        common.t("Chúc mừng bạn đã tạo thành công đợt thi đầu tiên trên Tmas")
+      successToastIntroduce(
+        common.t("Chúc mừng bạn đã tạo thành công đợt thi đầu tiên trên Tmas"),
+        () => {
+          router.push(`/examination/${dataResults?.data}`);
+        },
+        "Xem ngay"
       );
       setLoading(false);
       if (exam) {
@@ -672,6 +682,7 @@ function CreateExaminationIntroduce({
             text={"Tiếp tục"}
             onClick={() => {
               trained();
+              step();
             }}
           />
         </div>

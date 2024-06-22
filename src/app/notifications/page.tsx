@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import BellIcon from "@/app/components/icons/notification.svg";
 import { Popover } from "antd";
 import { useRouter } from "next/navigation";
+import { BellOutlined } from "@ant-design/icons";
 
 export default function Notification() {
   const [getNoti, setGetNoti] = useState<ListNotification>();
@@ -94,23 +95,187 @@ export default function Notification() {
         </div>
       }
       content={
-        <div className="h-[700px] w-[600px] overflow-y-scroll">
-          {getNoti?.unAwared?.length! > 0 ? (
-            <div className="mb-2 mt-4 text-sm font-semibold">Mới</div>
-          ) : (
-            ""
-          )}
-          {(getNoti?.unAwared?.length || 0) > 0
-            ? getNoti?.unAwared?.map((key: any, index) => (
-                <>
+        getNoti?.unAwared?.length! === 0 && getNoti?.awared?.length! === 0 ? (
+          <>
+            <div className="my-5 h-[1px] w-full bg-[#DFDFE2]" />
+            <div className="h-[700px] w-[600px] overflow-y-scroll flex justify-center items-start">
+              <div className="flex flex-col justify-between items-center">
+                <BellOutlined className="text-[100px] pt-5 text-slate-300" />
+                <div className="text-base pt-2">Bạn chưa có thông báo nào</div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="h-[700px] w-[600px] overflow-y-scroll">
+            {getNoti?.unAwared?.length! > 0 ? (
+              <div className="mb-2 mt-4 text-sm font-semibold">Mới</div>
+            ) : (
+              ""
+            )}
+            {(getNoti?.unAwared?.length || 0) > 0
+              ? getNoti?.unAwared?.map((key: any, index) => (
+                  <>
+                    <div
+                      onMouseOver={() => {
+                        setShow(key?._id);
+                      }}
+                      onMouseLeave={() => {
+                        setShow(undefined);
+                      }}
+                      key={index}
+                    >
+                      <div
+                        className={`mb-2 flex cursor-pointer items-center justify-between rounded-md p-2 hover:bg-[#F4F5F5] ${
+                          !key?.read ? "bg-[#E2F0F3]" : ""
+                        }`}
+                      >
+                        <a
+                          onClick={async () => {
+                            await readNoti(key?._id);
+                            await dataNotify();
+                          }}
+                          href={key?.url}
+                          target="_blank"
+                          key={key?._id}
+                          className="flex w-full items-center justify-between text-[#0D1939]"
+                          rel="noreferrer"
+                        >
+                          <div className="relative mr-2 w-[40px]">
+                            {!key?.stu_logo ? (
+                              <img src="/tmas.png" alt="#" />
+                            ) : (
+                              <img
+                                className="h-[40px] w-[40px] rounded-full"
+                                src={key?.stu_logo}
+                              />
+                            )}
+                            {key?.type === "PublicExam" ? (
+                              <img
+                                className="absolute bottom-[-5px] right-[-5px] h-[20px] w-[20px] rounded-full"
+                                src="/notify/user.png"
+                              />
+                            ) : key?.type === "TestResults" ? (
+                              <img
+                                className="absolute bottom-[-5px] right-[-5px] h-[20px] w-[20px] rounded-full"
+                                src="/notify/note.png"
+                              />
+                            ) : key?.type === "ExamApproved" ? (
+                              <img
+                                className="absolute bottom-[-5px] right-[-5px] h-[20px] w-[20px] rounded-full"
+                                src="/notify/v.png"
+                              />
+                            ) : key?.type === "ExamNotApproved" ? (
+                              <img
+                                className="absolute bottom-[-5px] right-[-5px] h-[20px] w-[20px] rounded-full"
+                                src="/notify/x.png"
+                              />
+                            ) : (
+                              <img
+                                className="absolute bottom-[-5px] right-[-5px] h-[20px] w-[20px] rounded-full"
+                                src="/notify/dollar.png"
+                              />
+                            )}
+                          </div>
+                          <div className="flex flex-1 flex-col">
+                            <div className="">
+                              <b className="pr-1">{key?.subject}</b>
+                              <span className="">{key?.body}</span>
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {key?.timeJoined}
+                              &nbsp;
+                              {key?.timeJoinedUnit === "minute"
+                                ? "phút"
+                                : key?.timeJoinedUnit === "month"
+                                ? "Tháng"
+                                : key?.timeJoinedUnit === "hour"
+                                ? "Giờ"
+                                : key?.timeJoinedUnit === "second"
+                                ? "Giây"
+                                : ""}
+                              &nbsp; trước
+                            </div>
+                          </div>
+                          <div>
+                            {key?.imageLink ? (
+                              <img
+                                src={key?.imageLink}
+                                className="h-[50px] w-[129px]"
+                              />
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </a>
+                        <div className="flex items-center justify-center">
+                          <Popover
+                            placement="bottom"
+                            content={
+                              <div>
+                                <div
+                                  onClick={async () => {
+                                    await readNoti(key?._id);
+                                    await dataNotify();
+                                  }}
+                                  className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
+                                >
+                                  Đánh dấu đã đọc
+                                </div>
+                                <div
+                                  onClick={async () => {
+                                    await unReadNoti(key?._id);
+                                    await dataNotify();
+                                  }}
+                                  className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
+                                >
+                                  Đánh dấu chưa đọc
+                                </div>
+                                <div
+                                  onClick={async () => {
+                                    await deleteNoti(key?._id);
+                                    await dataNotify();
+                                  }}
+                                  className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
+                                >
+                                  Xóa thông báo
+                                </div>
+                              </div>
+                            }
+                            trigger={["click"]}
+                          >
+                            <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300 ml-1">
+                              <div className="pb-2">...</div>
+                            </div>
+                          </Popover>
+                        </div>
+                        {!key?.read ? (
+                          <div className="flex w-10 items-center justify-center">
+                            <div className=" h-[10px] w-[10px] rounded-full bg-[#0B8199]" />
+                          </div>
+                        ) : (
+                          <div className="w-10" />
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ))
+              : ""}
+            <div className="my-5 h-[1px] w-full bg-[#DFDFE2]" />
+            {getNoti?.awared?.length! > 0 ? (
+              <div className="mb-2 mt-4 text-sm font-semibold">Trước</div>
+            ) : (
+              ""
+            )}
+            {(getNoti?.awared?.length || 0) > 0
+              ? getNoti?.awared?.map((key: any, index) => (
                   <div
+                    key={index}
                     onMouseOver={() => {
                       setShow(key?._id);
                     }}
                     onMouseLeave={() => {
                       setShow(undefined);
                     }}
-                    key={index}
                   >
                     <div
                       className={`mb-2 flex cursor-pointer items-center justify-between rounded-md p-2 hover:bg-[#F4F5F5] ${
@@ -165,9 +330,9 @@ export default function Notification() {
                           )}
                         </div>
                         <div className="flex flex-1 flex-col">
-                          <div className="">
+                          <div>
                             <b className="pr-1">{key?.subject}</b>
-                            <span className="">{key?.body}</span>
+                            <span>{key?.body}</span>
                           </div>
                           <div className="text-sm text-gray-500">
                             {key?.timeJoined}
@@ -175,12 +340,12 @@ export default function Notification() {
                             {key?.timeJoinedUnit === "minute"
                               ? "phút"
                               : key?.timeJoinedUnit === "month"
-                                ? "Tháng"
-                                : key?.timeJoinedUnit === "hour"
-                                  ? "Giờ"
-                                  : key?.timeJoinedUnit === "second"
-                                    ? "Giây"
-                                    : ""}
+                              ? "Tháng"
+                              : key?.timeJoinedUnit === "hour"
+                              ? "Giờ"
+                              : key?.timeJoinedUnit === "second"
+                              ? "Giây"
+                              : ""}
                             &nbsp; trước
                           </div>
                         </div>
@@ -200,28 +365,32 @@ export default function Notification() {
                           placement="bottom"
                           content={
                             <div>
-                              <div
-                                onClick={async () => {
-                                  await readNoti(key?._id);
-                                  await dataNotify();
-                                }}
-                                className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
-                              >
-                                Đánh dấu đã đọc
-                              </div>
-                              <div
-                                onClick={async () => {
-                                  await unReadNoti(key?._id);
-                                  await dataNotify();
-                                }}
-                                className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
-                              >
-                                Đánh dấu chưa đọc
-                              </div>
+                              {key?.read ? (
+                                <div
+                                  onClick={async () => {
+                                    await unReadNoti(key?._id);
+                                    await dataNotify();
+                                  }}
+                                  className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
+                                >
+                                  Đánh dấu chưa đọc
+                                </div>
+                              ) : (
+                                <div
+                                  onClick={async () => {
+                                    await readNoti(key?._id);
+                                    await dataNotify();
+                                  }}
+                                  className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
+                                >
+                                  Đánh dấu đã đọc
+                                </div>
+                              )}
                               <div
                                 onClick={async () => {
                                   await deleteNoti(key?._id);
                                   await dataNotify();
+                                  setPopupVisible(undefined);
                                 }}
                                 className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
                               >
@@ -230,188 +399,32 @@ export default function Notification() {
                             </div>
                           }
                           trigger={["click"]}
+                          visible={popupVisible === key?._id}
+                          onVisibleChange={(visible) =>
+                            setPopupVisible(visible ? key?._id : undefined)
+                          }
                         >
-                          <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300 ml-1">
+                          <div
+                            // onClick={() => setPopup(true)}
+                            className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300 ml-1"
+                          >
                             <div className="pb-2">...</div>
                           </div>
                         </Popover>
                       </div>
                       {!key?.read ? (
                         <div className="flex w-10 items-center justify-center">
-                          <div className=" h-[10px] w-[10px] rounded-full bg-[#0B8199]" />
+                          <div className=" h-[10px] w-[10px]  rounded-full bg-[#0B8199]" />
                         </div>
                       ) : (
                         <div className="w-10" />
                       )}
                     </div>
                   </div>
-                </>
-              ))
-            : ""}
-          <div className="my-5 h-[1px] w-full bg-[#DFDFE2]" />
-          {getNoti?.awared?.length! > 0 ? (
-            <div className="mb-2 mt-4 text-sm font-semibold">Trước</div>
-          ) : (
-            ""
-          )}
-          {(getNoti?.awared?.length || 0) > 0
-            ? getNoti?.awared?.map((key: any, index) => (
-                <div
-                  key={index}
-                  onMouseOver={() => {
-                    setShow(key?._id);
-                  }}
-                  onMouseLeave={() => {
-                    setShow(undefined);
-                  }}
-                >
-                  <div
-                    className={`mb-2 flex cursor-pointer items-center justify-between rounded-md p-2 hover:bg-[#F4F5F5] ${
-                      !key?.read ? "bg-[#E2F0F3]" : ""
-                    }`}
-                  >
-                    <a
-                      onClick={async () => {
-                        await readNoti(key?._id);
-                        await dataNotify();
-                      }}
-                      href={key?.url}
-                      target="_blank"
-                      key={key?._id}
-                      className="flex w-full items-center justify-between text-[#0D1939]"
-                      rel="noreferrer"
-                    >
-                      <div className="relative mr-2 w-[40px]">
-                        {!key?.stu_logo ? (
-                          <img src="/tmas.png" alt="#" />
-                        ) : (
-                          <img
-                            className="h-[40px] w-[40px] rounded-full"
-                            src={key?.stu_logo}
-                          />
-                        )}
-                        {key?.type === "PublicExam" ? (
-                          <img
-                            className="absolute bottom-[-5px] right-[-5px] h-[20px] w-[20px] rounded-full"
-                            src="/notify/user.png"
-                          />
-                        ) : key?.type === "TestResults" ? (
-                          <img
-                            className="absolute bottom-[-5px] right-[-5px] h-[20px] w-[20px] rounded-full"
-                            src="/notify/note.png"
-                          />
-                        ) : key?.type === "ExamApproved" ? (
-                          <img
-                            className="absolute bottom-[-5px] right-[-5px] h-[20px] w-[20px] rounded-full"
-                            src="/notify/v.png"
-                          />
-                        ) : key?.type === "ExamNotApproved" ? (
-                          <img
-                            className="absolute bottom-[-5px] right-[-5px] h-[20px] w-[20px] rounded-full"
-                            src="/notify/x.png"
-                          />
-                        ) : (
-                          <img
-                            className="absolute bottom-[-5px] right-[-5px] h-[20px] w-[20px] rounded-full"
-                            src="/notify/dollar.png"
-                          />
-                        )}
-                      </div>
-                      <div className="flex flex-1 flex-col">
-                        <div>
-                          <b className="pr-1">{key?.subject}</b>
-                          <span>{key?.body}</span>
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {key?.timeJoined}
-                          &nbsp;
-                          {key?.timeJoinedUnit === "minute"
-                            ? "phút"
-                            : key?.timeJoinedUnit === "month"
-                              ? "Tháng"
-                              : key?.timeJoinedUnit === "hour"
-                                ? "Giờ"
-                                : key?.timeJoinedUnit === "second"
-                                  ? "Giây"
-                                  : ""}
-                          &nbsp; trước
-                        </div>
-                      </div>
-                      <div>
-                        {key?.imageLink ? (
-                          <img
-                            src={key?.imageLink}
-                            className="h-[50px] w-[129px]"
-                          />
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    </a>
-                    <div className="flex items-center justify-center">
-                      <Popover
-                        placement="bottom"
-                        content={
-                          <div>
-                            {key?.read ? (
-                              <div
-                                onClick={async () => {
-                                  await unReadNoti(key?._id);
-                                  await dataNotify();
-                                }}
-                                className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
-                              >
-                                Đánh dấu chưa đọc
-                              </div>
-                            ) : (
-                              <div
-                                onClick={async () => {
-                                  await readNoti(key?._id);
-                                  await dataNotify();
-                                }}
-                                className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
-                              >
-                                Đánh dấu đã đọc
-                              </div>
-                            )}
-                            <div
-                              onClick={async () => {
-                                await deleteNoti(key?._id);
-                                await dataNotify();
-                                setPopupVisible(undefined);
-                              }}
-                              className="cursor-pointer p-2 text-sm font-normal hover:bg-[#F4F5F5]"
-                            >
-                              Xóa thông báo
-                            </div>
-                          </div>
-                        }
-                        trigger={["click"]}
-                        visible={popupVisible === key?._id}
-                        onVisibleChange={(visible) =>
-                          setPopupVisible(visible ? key?._id : undefined)
-                        }
-                      >
-                        <div
-                          // onClick={() => setPopup(true)}
-                          className="flex h-[22px] w-[22px] items-center justify-center rounded-full border hover:border-[2px] hover:bg-slate-300 ml-1"
-                        >
-                          <div className="pb-2">...</div>
-                        </div>
-                      </Popover>
-                    </div>
-                    {!key?.read ? (
-                      <div className="flex w-10 items-center justify-center">
-                        <div className=" h-[10px] w-[10px]  rounded-full bg-[#0B8199]" />
-                      </div>
-                    ) : (
-                      <div className="w-10" />
-                    )}
-                  </div>
-                </div>
-              ))
-            : ""}
-        </div>
+                ))
+              : ""}
+          </div>
+        )
       }
       trigger={["click"]}
     >

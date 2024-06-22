@@ -151,7 +151,7 @@ export default function Introduce() {
   const [idExam, setIdExam] = useState();
 
   const handleContinueStep2 = async (idGroup?: string) => {
-    console.log("active", active);
+    // console.log("active", active);
 
     var documentObj: DocumentObject[] = (
       active?.version?.examData?.Documents ?? []
@@ -181,7 +181,7 @@ export default function Introduce() {
           e.IsQuestionBank = false;
           return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
-      }),
+      })
     );
 
     var examObj: ExamData = {
@@ -211,7 +211,7 @@ export default function Introduce() {
           exam: examObj,
           jsonExamQuestions: (partObj ?? []).reduce(
             (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
-            [],
+            []
           ),
           parts: partObj,
         },
@@ -413,6 +413,10 @@ export default function Introduce() {
               <CreateExaminationIntroduce
                 idExam={idExam}
                 name={active?.version?.name}
+                step={() => {
+                  setCurrentStep(4);
+                  setOpen(false);
+                }}
               />
             </div>
           )}
