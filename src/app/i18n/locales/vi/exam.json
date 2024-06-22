@@ -442,5 +442,6 @@
   "pure_income_tooltip": "Doanh thu của đợt thi đã trừ chiết khấu",
   "from_date_tooltip": "Có hiệu lực từ ngày",
   "to_date_tootip": "Có hiệu lực đến ngày",
-  "examination_status": "Trạng thái đợt thi"
+  "examination_status": "Trạng thái đợt thi",
+  "tags_tooltip": "Thẻ/tags"
 }

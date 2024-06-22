@@ -27,7 +27,8 @@ import { Button, Modal, Tabs, Tooltip } from "antd";
 import Image from "next/image";
 import BaseModal from "../components/config/BaseModal";
 import MButton from "../components/config/MButton";
-import Introduce from "../introduce/page";
+import Introduce from "../introduce/Introduce";
+import { errorToast } from "../components/toast/customToast";
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const [isLogin, setIsLogin] = useState<boolean>(false);
@@ -46,11 +47,6 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
     }, 10000);
     return () => clearTimeout(timer);
   }, []);
-
-  const nextTab = () => {
-    const nextTabIndex = (parseInt(currentTab) % 3) + 1;
-    setCurrentTab(nextTabIndex.toString());
-  };
 
   const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
@@ -105,7 +101,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, pathname]);
 
-  useEffect(() => {
+  useOnMountUnsafe(() => {
     const token =
       sessionStorage.getItem("access_token") ??
       localStorage.getItem("access_token");
@@ -115,18 +111,21 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
     } else {
       setIsLogin(true);
       dispatch(fetchDataUser(fetchUser));
-      // getUserMe()
-      //   .then((v) => {
-      //     loadData(v);
-      //   })
-      //   .catch((e) => {
-      //     console.log(e);
-      //     router.push("/signin");
-      //   });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  });
+  // useEffect(() => {
+  //   const token =
+  //     sessionStorage.getItem("access_token") ??
+  //     localStorage.getItem("access_token");
+  //   if (!token) {
+  //     setIsLogin(false);
+  //     redirect("/signin");
+  //   } else {
+  //     setIsLogin(true);
+  //     dispatch(fetchDataUser(fetchUser));
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
   const fetchUser = async () => {
     try {
       var data = await getUserMe();
@@ -134,24 +133,10 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       return data["user"];
     } catch (e: any) {
       setLoading(false);
+
+      errorToast(e);
       router.push("/signin");
       return {};
-    }
-  };
-
-  const loadData = async (v: any) => {
-    try {
-      var user = v["user"] as UserData;
-      console.log("set User lần 1", user);
-
-      dispatch(setUserData(user));
-      setLoading(false);
-
-      // await loadingQuestionsAndExams(false);
-    } catch (e: any) {
-      console.log(e);
-
-      dispatch(setLoadingMember(false));
     }
   };
 
@@ -163,14 +148,17 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
           <LoadingPage />
         </main>
       ) : (
-        <main>
+        <main className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900 relative">
           <Header />
           {user?._id && !user?.verified && <div className="h-[44px]" />}
           <div className="lg:h-[68px] h-14 " />
           <div className="max-w-[1140px] mx-auto">
-            <div className=" w-full text-m_neutral_900">{children}</div>
+            <div className=" w-full text-m_neutral_900">
+              {user?._id && children}
+            </div>
           </div>
-          {user?.trained === undefined || user?.trained === false ? (
+          {(user?.trained === undefined || user?.trained === false) &&
+          user?._id ? (
             <Introduce />
           ) : (
             ""

@@ -18,9 +18,10 @@ import saveAs from "file-saver";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import dayjs from "dayjs";
 import { ExamTestCounterData, FilterData } from "@/data/overview";
-import { Condition } from "@/data/exam";
+import { Condition, StudioSorter } from "@/data/exam";
 import Link from "next/link";
 import { Tooltip } from "antd";
+import RenderSortterIcon from "./IconSorter";
 
 interface TableValue {
   id?: string;
@@ -55,13 +56,30 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
   const [endDate, setEndDate] = useState<string | undefined>();
   const [groupId, setGroupId] = useState<string | undefined>();
   const [dataTable, setDataTable] = useState<TableValue[]>([]);
+  const [sorter, setSorter] = useState<StudioSorter>({
+    name: "createdTime",
+    isAsc: false,
+  });
+
+  const addSorter = (name: string) => {
+    if (!sorter?.name || name != sorter.name) {
+      setSorter({ name, isAsc: true });
+      return;
+    }
+    setSorter({ name, isAsc: !sorter?.isAsc });
+    setIndexPage(1);
+  };
 
   const dataRows: TableDataRow[] = [
     {
       dataIndex: "name",
       title: (
-        <button>
-          <Tooltip title={t("exam_name")}>{t("name")}</Tooltip>
+        <button onClick={() => addSorter("info.examTest.unsignedName")}>
+          <Tooltip title={t("examination_name")}>{t("name")}</Tooltip>
+          <RenderSortterIcon
+            sorter={sorter}
+            name="info.examTest.unsignedName"
+          />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -94,8 +112,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "group",
       title: (
-        <button>
+        <button onClick={() => addSorter("info.groupExam.name")}>
           <Tooltip title={t("exam_group")}>{t("group")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="info.groupExam.name" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -103,17 +122,24 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "tags",
       title: (
-        <button>
-          <Tooltip title={t("tags")}>{t("tags")}</Tooltip>
+        <button onClick={() => addSorter("info.exam.tags")}>
+          <Tooltip title={t("tags_tooltip")}>{t("tags")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="info.exam.tags" />
         </button>
       ),
       classNameTitle: "min-w-20",
+      render: (text: any, data: any) => {
+        return (
+          <div className="w-full flex justify-start ">{text?.join(", ")}</div>
+        );
+      },
     },
     {
       dataIndex: "join_num",
       title: (
-        <button>
+        <button onClick={() => addSorter("info.couter.numberOfTest")}>
           <Tooltip title={t("amount_join")}>{t("join_num")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="info.couter.numberOfTest" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -121,10 +147,11 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "today_join_num",
       title: (
-        <button>
+        <button onClick={() => addSorter("key.couterByDate")}>
           <Tooltip title={t("amount_join_today")}>
             {t("today_join_num")}
           </Tooltip>
+          <RenderSortterIcon sorter={sorter} name="key.couterByDate" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -132,8 +159,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "dtb",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.totalScoreAsInt")}>
           <Tooltip title={t("ĐTV")}>{t("dtv")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.totalScoreAsInt" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -141,8 +169,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "dtv",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.medianScoreAsInt")}>
           <Tooltip title={t("ĐTV")}>{t("dtv")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.medianScoreAsInt" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -150,8 +179,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "percent_pass",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.totalPass")}>
           <Tooltip title={t("pass_rate")}>{t("percent_pass")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.totalPass" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -159,10 +189,11 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "avg_test_time",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.totalTimeSeconds")}>
           <Tooltip title={t("avg_test_time_tooltip")}>
             {t("avg_test_time")}
           </Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.totalTimeSeconds" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -170,10 +201,11 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "min_test_time",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.minimumTimeSeconds")}>
           <Tooltip title={t("min_test_time_tooltip")}>
             {t("min_test_time")}
           </Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.minimumTimeSeconds" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -181,10 +213,11 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "max_test_time",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.maximumTimeSeconds")}>
           <Tooltip title={t("max_test_time_tooltip")}>
             {t("max_test_time")}
           </Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.maximumTimeSeconds" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -192,10 +225,11 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "question_num",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.numberOfQuestions")}>
           <Tooltip title={t("question_num_tooltip")}>
             {t("question_num")}
           </Tooltip>
+          <RenderSortterIcon sorter={sorter} name="couter.numberOfQuestions" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -203,8 +237,14 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "gold_price",
       title: (
-        <button>
+        <button
+          onClick={() => addSorter("info.examTest.goldSetting.goldPrice")}
+        >
           <Tooltip title={t("gold_price")}>{t("gold_price")}</Tooltip>
+          <RenderSortterIcon
+            sorter={sorter}
+            name="info.examTest.goldSetting.goldPrice"
+          />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -212,8 +252,12 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "pure_income",
       title: (
-        <button>
+        <button onClick={() => addSorter("couter.goldCouter.netRevenue")}>
           <Tooltip title={t("pure_income_tooltip")}>{t("pure_income")}</Tooltip>
+          <RenderSortterIcon
+            sorter={sorter}
+            name="couter.goldCouter.netRevenue"
+          />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -221,8 +265,16 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "from_date",
       title: (
-        <button>
+        <button
+          onClick={() =>
+            addSorter("info.examTest.validAccessSetting.validFrom")
+          }
+        >
           <Tooltip title={t("from_date_tooltip")}>{t("from_date")}</Tooltip>
+          <RenderSortterIcon
+            sorter={sorter}
+            name="info.examTest.validAccessSetting.validFrom"
+          />
         </button>
       ),
 
@@ -232,8 +284,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "status",
       title: (
-        <button>
+        <button onClick={() => addSorter("info.examTest.stateInfo")}>
           <Tooltip title={t("examination_status")}>{t("status")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="info.examTest.stateInfo" />
         </button>
       ),
 
@@ -276,12 +329,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     var res = await overviewExamTestCounter({
       paging: { startIndex: indexPage, recordPerPage: recordNum },
       filters,
-      studioSorters: [
-        {
-          name: "createdTime",
-          isAsc: false,
-        },
-      ],
+      studioSorters: [sorter],
     });
     if (res?.code != 0) {
       return;
@@ -295,7 +343,10 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       question_num: t?.couter?.numberOfQuestions ?? 0,
       group: t?.info?.groupExam?.name,
       name: t?.info?.examTest?.name,
-      tags: t?.info?.examTest?.examVersion?.exam?.tags,
+      tags: t?.info?.examTest?.examVersion?.exam?.tags?.map((k: any) =>
+        typeof k == "string" ? k : k?.name,
+      ),
+
       dtv: t?.couter?.medianScoreAsInt,
       dtb: !t?.couter?.numberOfTest
         ? 0
@@ -397,7 +448,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
 
   useEffect(() => {
     getListData();
-  }, [user, startDate, endDate, search, groupId]);
+  }, [user, startDate, endDate, search, groupId, sorter]);
 
   return (
     <>

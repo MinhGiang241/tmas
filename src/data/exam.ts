@@ -71,7 +71,7 @@ export interface ExamData {
   playAudio?: "OnlyOneTime" | "MultipleTimes";
   idDocuments?: string[];
   externalLinks?: string[];
-  tags?: string[];
+  tags?: any[];
   description?: string;
   id?: string;
   createdTime?: string;
@@ -459,6 +459,11 @@ export enum Condition {
   inArray = "inArray",
   ninArray = "ninArray",
   regex = "regex",
+}
+
+export interface StudioSorter {
+  name?: string;
+  isAsc?: boolean;
 }
 
 export interface PagingAdminExamTestResultParams {

@@ -1,4 +1,5 @@
 import { Condition, ExamData, ExaminationData } from "./exam";
+import { TagObject } from "./form_interface";
 
 export interface OverviewNumberData {
   totalDoingTest?: number;
@@ -84,6 +85,7 @@ export interface OverviewListRevenueParams {
   endDate?: string;
   search?: string;
   studioId?: string;
+  sort?: SortData;
 }
 
 export interface OverviewListRevenueData {
@@ -123,6 +125,7 @@ export interface ExamCounterData {
   createdTime?: string;
   couter?: CouterData;
   info?: {
+    tags?: TagObject[];
     exam?: ExamData;
     groupExam?: {
       id?: string;

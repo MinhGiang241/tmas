@@ -25,6 +25,7 @@ import {
   OverviewListRevenueData,
   RevenueData,
   RevenueDataTotal,
+  SortData,
   StuRevenueData,
 } from "@/data/overview";
 import { errorToast } from "@/app/components/toast/customToast";
@@ -40,6 +41,7 @@ import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tooltip } from "antd";
+import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
 
 function IncomeTab() {
   const { t } = useTranslation("overview");
@@ -64,6 +66,10 @@ function IncomeTab() {
     RevenueDataTotal | undefined
   >();
   const [groupId, setGroupId] = useState<string | undefined>();
+  const [sorter, setSorter] = useState<SortData>({
+    fieldName: "createdTime",
+    sort: "1",
+  });
   const examGroupList = useAppSelector(
     (state: RootState) => state.examGroup?.list,
   );
@@ -107,14 +113,24 @@ function IncomeTab() {
     status?: string;
   }
 
+  const addSorter = (name: string) => {
+    if (!sorter?.fieldName || name != sorter.fieldName) {
+      setSorter({ fieldName: name, sort: "-1" });
+      return;
+    }
+    setSorter({ fieldName: name, sort: sorter?.sort === "-1" ? "1" : "-1" });
+    setIndexPage(1);
+  };
+
   const dataRows: TableDataRow[] = [
     {
       dataIndex: "name",
       title: (
-        <button>
+        <button onClick={() => addSorter("name")}>
           <Tooltip title={examTrans.t("exam_name")}>
             {examTrans.t("name")}
           </Tooltip>
+          <SortterIcon sorter={sorter} name="name" />
         </button>
       ),
       classNameTitle: "min-w-24",
@@ -143,14 +159,15 @@ function IncomeTab() {
     {
       dataIndex: "group",
       title: (
-        <button>
+        <button onClick={() => addSorter("group")}>
           <Tooltip title={examTrans.t("exam_group")}>
             {examTrans.t("group")}
           </Tooltip>
+          <SortterIcon sorter={sorter} name="group" />
         </button>
       ),
       render: (text: any, data: any) => (
-        <p key={text} className={"w-full  min-w-11  caption_regular_14"}>
+        <p key={text} className={"w-full  min-w-20  caption_regular_14"}>
           {text?.join(", ")}
         </p>
       ),
@@ -158,8 +175,9 @@ function IncomeTab() {
     {
       dataIndex: "tags",
       title: (
-        <button>
+        <button onClick={() => addSorter("tags")}>
           <Tooltip title={examTrans.t("tags")}>{examTrans.t("tags")}</Tooltip>
+          <SortterIcon sorter={sorter} name="tags" />
         </button>
       ),
       render: (text: any, data: any) => (
@@ -171,39 +189,51 @@ function IncomeTab() {
     {
       dataIndex: "gold_price",
       title: (
-        <button>
+        <button onClick={() => addSorter("gold_price")}>
           <Tooltip title={examTrans.t("gold_price")}>
             {examTrans.t("gold_price")}
           </Tooltip>
+          <SortterIcon sorter={sorter} name="gold_price" />
         </button>
       ),
     },
     {
       dataIndex: "income",
       title: (
-        <button>
+        <button onClick={() => addSorter("revenue")}>
           <Tooltip title={t("income")}>{t("income")}</Tooltip>
+          <SortterIcon sorter={sorter} name="revenue" />
         </button>
       ),
     },
-    { dataIndex: "discount", title: t("discount") },
+    {
+      dataIndex: "discount",
+      title: (
+        <button onClick={() => addSorter("discount")}>
+          <Tooltip title={t("discount")}>{t("discount")}</Tooltip>
+          <SortterIcon sorter={sorter} name="discount" />
+        </button>
+      ),
+    },
     {
       dataIndex: "pure_income",
       title: (
-        <button>
+        <button onClick={() => addSorter("net_revenue")}>
           <Tooltip title={examTrans.t("pure_income_tooltip")}>
             {examTrans.t("pure_income")}
           </Tooltip>
+          <SortterIcon sorter={sorter} name="net_revenue" />
         </button>
       ),
     },
     {
       dataIndex: "from_date",
       title: (
-        <button>
+        <button onClick={() => addSorter("from_date")}>
           <Tooltip title={examTrans.t("from_date_tooltip")}>
             {t("from_date")}
           </Tooltip>
+          <SortterIcon sorter={sorter} name="from_date" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -211,10 +241,11 @@ function IncomeTab() {
     {
       dataIndex: "status",
       title: (
-        <button>
+        <button onClick={() => addSorter("status")}>
           <Tooltip title={examTrans.t("examination_status")}>
             {t("status")}
           </Tooltip>
+          <SortterIcon sorter={sorter} name="status" />
         </button>
       ),
       render: (text: any, data: any) => (
@@ -237,6 +268,7 @@ function IncomeTab() {
   const getRevenueList = async () => {
     setLoading(true);
     const res = await overviewListRevenue({
+      sort: sorter,
       skip: recordNum * (indexPage - 1),
       limit: recordNum,
       studioId: user?.studio?._id,
@@ -280,7 +312,17 @@ function IncomeTab() {
 
   useEffect(() => {
     getRevenueList();
-  }, [user, indexPage, recordNum, search, groupId, status, startDate, endDate]);
+  }, [
+    sorter,
+    user,
+    indexPage,
+    recordNum,
+    search,
+    groupId,
+    status,
+    startDate,
+    endDate,
+  ]);
   useEffect(() => {
     if (user?.studio?._id) {
       dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
@@ -336,7 +378,7 @@ function IncomeTab() {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-x-5 gap-y-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-4">
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
           <div className="body_regular_14">{t("income_total")}</div>
           <div className="h-2" />
@@ -576,6 +618,14 @@ function IncomeTab() {
       </div>
     </>
   );
+}
+
+function SortterIcon({ sorter, name }: { sorter: SortData; name?: string }) {
+  return name === sorter.fieldName && sorter?.sort === "-1" ? (
+    <CaretDownOutlined />
+  ) : name === sorter.fieldName && sorter?.sort === "1" ? (
+    <CaretUpOutlined />
+  ) : null;
 }
 
 export default IncomeTab;

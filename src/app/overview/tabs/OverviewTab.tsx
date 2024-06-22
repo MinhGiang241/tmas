@@ -96,9 +96,23 @@ function OverviewTab() {
     getRemaining();
     getTotalExamByExamGroup();
   }, [user]);
+
+  const tickFormatter = (value: string) => {
+    const limit = 10; // put your maximum character
+
+    if (value.length < limit) return value;
+    return `${value.split(" ").join("\n")}...`;
+  };
+  var bars =
+    barData?.length != 0
+      ? Object.keys(barData?.reduce((a, b) => ({ ...a, ...b }), {})).filter(
+          (l) => l != "name",
+        )
+      : [];
+
   return (
     <>
-      <div className="grid grid-cols-3 gap-x-5 gap-y-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-4">
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
           <div className="body_regular_14">{t("sum_doing_test")}</div>
           <div className="h-2" />
@@ -188,7 +202,7 @@ function OverviewTab() {
       <div className="rounded-lg bg-white p-4 mt-4">
         <div className="body_semibold_20">{t("sum_exam_by_group")}</div>
         <Divider className="my-4" />
-        <div className="w-full h-96">
+        <div className="w-full h-[450px] overflow-visible">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               width={500}
@@ -198,32 +212,41 @@ function OverviewTab() {
                 top: 5,
                 right: 30,
                 left: 20,
-                bottom: 5,
+                bottom: bars?.length > 5 ? 100 : 5,
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis
+                dataKey="name"
+                interval={bars?.length > 5 ? 0 : "preserveStartEnd"}
+                angle={-35}
+                tickFormatter={bars?.length > 5 ? tickFormatter : undefined}
+                textAnchor={"end"}
+                axisLine={false}
+                offset={5}
+                tickMargin={10}
+                style={{
+                  // fill: colorMode === "dark" ? "#FFFFFF" : "#1A202C",
+                  textAlign: "center",
+                }}
+              />
               <YAxis />
               <Tooltip cursor={{ fill: "transparent" }} />
               {/* <Legend /> */}
-              {barData?.length != 0 &&
-                Object.keys(barData?.reduce((a, b) => ({ ...a, ...b }), {}))
-                  .filter((l) => l != "name")
-                  //barData
-                  .map((e, i) => (
-                    <Bar
-                      barSize={100}
-                      key={e}
-                      dataKey={e}
-                      stackId={"a"}
-                      fill={
-                        "#" +
-                        (((1 << 24) * Math.random()) | 0)
-                          .toString(16)
-                          .padStart(6, "0")
-                      }
-                    />
-                  ))}
+              {bars?.map((e, i) => (
+                <Bar
+                  barSize={100}
+                  key={e}
+                  dataKey={e}
+                  stackId={"a"}
+                  fill={
+                    "#" +
+                    (((1 << 24) * Math.random()) | 0)
+                      .toString(16)
+                      .padStart(6, "0")
+                  }
+                />
+              ))}
             </BarChart>
           </ResponsiveContainer>
         </div>

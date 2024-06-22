@@ -5,7 +5,7 @@ import Image from "next/image";
 import MButton from "../components/config/MButton";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import CreateExaminationIntroduce from "./createExamination/page";
+import CreateExaminationIntroduce from "./createExamination/CreateExamination";
 import {
   getExamTopic,
   getListExam,
@@ -181,7 +181,7 @@ export default function Introduce() {
           e.IsQuestionBank = false;
           return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
-      })
+      }),
     );
 
     var examObj: ExamData = {
@@ -211,7 +211,7 @@ export default function Introduce() {
           exam: examObj,
           jsonExamQuestions: (partObj ?? []).reduce(
             (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
-            []
+            [],
           ),
           parts: partObj,
         },
