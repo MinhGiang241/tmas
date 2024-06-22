@@ -20,12 +20,14 @@ const CustomToast = ({
   c,
   namespace,
   text,
+  fn,
 }: {
   type: ToastType;
   content: string;
   c: any;
   namespace?: string;
   text?: string;
+  fn?: () => void;
 }) => {
   const { t } = useTranslation();
 
@@ -67,17 +69,20 @@ const CustomToast = ({
                 {type == ToastType.SUCCESS
                   ? t("success")
                   : type === ToastType.ERROR
-                    ? t("fail")
-                    : t("notify")}
+                  ? t("fail")
+                  : t("notify")}
               </h4>
               <p>{content}</p>
             </div>
             <div className="flex justify-center my-6">
               <MButton
                 className="w-36"
-                text={t("finished")}
+                text={text ?? t("finished")}
                 onClick={() => {
                   toast.dismiss(c.id);
+                  if (fn) {
+                    fn();
+                  }
                 }}
               />
             </div>
@@ -109,5 +114,21 @@ export const errorToast = (content: string) => {
 export const notifyToast = (content: string) => {
   toast.custom((e) => (
     <CustomToast type={ToastType.INFORM} content={content} c={e} />
+  ));
+};
+
+export const successToastIntroduce = (
+  content: string,
+  fn: () => void,
+  text?: string
+) => {
+  toast.custom((e) => (
+    <CustomToast
+      type={ToastType.SUCCESS}
+      content={content}
+      c={e}
+      text={text}
+      fn={fn}
+    />
   ));
 };

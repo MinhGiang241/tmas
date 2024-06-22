@@ -26,7 +26,11 @@ import {
   updateExamination,
   uploadStudioDocument,
 } from "@/services/api_services/examination_api";
-import { errorToast, successToast } from "@/app/components/toast/customToast";
+import {
+  errorToast,
+  successToast,
+  successToastIntroduce,
+} from "@/app/components/toast/customToast";
 import dayjs from "dayjs";
 import { ExamData } from "@/data/exam";
 import { v4 as uuidv4 } from "uuid";
@@ -53,10 +57,12 @@ function CreateExaminationIntroduce({
   examination,
   idExam,
   name,
+  step,
 }: {
   examination?: any;
   idExam?: string;
   name?: string;
+  step?: any;
 }) {
   const createSessionId = async () => {
     var dataSessionId = await createSession(examination?.idSession ?? "");
@@ -413,7 +419,7 @@ function CreateExaminationIntroduce({
               },
       };
 
-      console.log("submitData", submitData);
+      // console.log("submitData", submitData);
 
       // setLoading(false);
       // return;
@@ -428,17 +434,19 @@ function CreateExaminationIntroduce({
         return;
       }
 
-      successToast(
-        common.t(
-          "Chúc mừng bạn đã tạo thành công đợt thi đầu tiên trên TmasChúc mừng bạn đã tạo thành công đợt thi đầu tiên trên Tmas"
-        )
+      successToastIntroduce(
+        common.t("Chúc mừng bạn đã tạo thành công đợt thi đầu tiên trên Tmas"),
+        () => {
+          router.push(`/examination/${dataResults?.data}`);
+        },
+        "Xem ngay"
       );
       setLoading(false);
       if (exam) {
         createSessionId();
         router?.refresh();
       }
-      router.push(`/examination/${dataResults?.data}`);
+      // router.push(`/examination/${dataResults?.data}`);
     },
   });
 
@@ -462,7 +470,7 @@ function CreateExaminationIntroduce({
   const [push, setPush] = useState<boolean>(false);
 
   return (
-    <>
+    <div className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900 relative">
       <form
         onSubmit={(e: any) => {
           e.preventDefault();
@@ -629,9 +637,7 @@ function CreateExaminationIntroduce({
             <div className="body_semibold_14">{t("selected_exam")}</div>
             <Link
               // Link ở đây
-              href={`/examination/details?examId=${exam?.id}&examTestId=${
-                examination?.id ?? ""
-              }`}
+              href={`/examination/details?examId=${idExam}&examTestId=${""}`}
               // href={`/exams/details/${exam?.id}`}
               className="text-[#4D7EFF] body_regular_14 underline underline-offset-4"
               target="_blank"
@@ -671,15 +677,17 @@ function CreateExaminationIntroduce({
         </div>
         <div className="w-full flex justify-center items-center">
           <MButton
+            className="w-[168px]"
             htmlType="submit"
             text={"Tiếp tục"}
             onClick={() => {
               trained();
+              step();
             }}
           />
         </div>
       </form>
-    </>
+    </div>
   );
 }
 

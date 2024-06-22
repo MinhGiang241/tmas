@@ -23,6 +23,10 @@ import { mapTmasQuestionToStudioQuestion } from "@/services/ui/mapTmasToSTudio";
 import _ from "lodash";
 import { importTmasExamData } from "@/services/api_services/question_api";
 import { countExamQuestion } from "@/services/api_services/count_exam_api";
+import { changeStudio } from "@/services/api_services/account_services";
+import { setUserData, userClear } from "@/redux/user/userSlice";
+import { useAppDispatch } from "@/redux/hooks";
+import { UserData } from "@/data/user";
 
 let mapping: { [key: string]: string } = {};
 var childrenIds: string[] = [];
@@ -69,10 +73,25 @@ export default function Introduce() {
       setDataExamTopicVersion(res?.data);
     }
   };
+  const dispatch = useAppDispatch();
+  const onChangeStudio = async (ownerId?: string) => {
+    try {
+      var data = await changeStudio(ownerId);
+      localStorage.removeItem("access_token");
+      if (sessionStorage.getItem("access_token")) {
+        sessionStorage.removeItem("access_token");
+        sessionStorage.setItem("access_token", data["token"]);
+      } else {
+        localStorage.setItem("access_token", data["token"]);
+      }
+      var userNew = data["user"] as UserData;
+      dispatch(userClear({}));
+      dispatch(setUserData(userNew));
 
-  // useEffect(() => {
-  //   dataExamByTopic();
-  // }, []);
+      // await loadMembersWhenChangeStudio();
+      // await loadingQuestionsAndExams(true, userNew.studio?._id);
+    } catch (e: any) {}
+  };
 
   useEffect(() => {
     setVisible(true);
@@ -132,7 +151,7 @@ export default function Introduce() {
   const [idExam, setIdExam] = useState();
 
   const handleContinueStep2 = async (idGroup?: string) => {
-    console.log("active", active);
+    // console.log("active", active);
 
     var documentObj: DocumentObject[] = (
       active?.version?.examData?.Documents ?? []
@@ -162,7 +181,7 @@ export default function Introduce() {
           e.IsQuestionBank = false;
           return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
-      }),
+      })
     );
 
     var examObj: ExamData = {
@@ -192,7 +211,7 @@ export default function Introduce() {
           exam: examObj,
           jsonExamQuestions: (partObj ?? []).reduce(
             (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
-            [],
+            []
           ),
           parts: partObj,
         },
@@ -243,7 +262,7 @@ export default function Introduce() {
           )
         }
         color={"#0B8199"}
-        placement="top"
+        placement="leftTop"
         visible={visible}
       >
         <Image
@@ -261,16 +280,20 @@ export default function Introduce() {
       <Modal
         closeIcon={
           <div
-            className="text-xs text-nowrap text-[#0D1939] border-b border-b-[#0D1939] hover:bg-white min-w-100px"
-            onClick={() => {
-              trained();
-              setOpen(false);
+            className="text-xs text-nowrap text-[#0D1939] border-b border-b-[#0D1939] hover:bg-white min-w-100px mr-6"
+            onClick={async () => {
+              await trained();
+              await onChangeStudio();
+              await setOpen(false);
             }}
           >
             Bỏ qua
           </div>
         }
-        width={1000}
+        // onCancel={() => {
+        //   setOpen(false);
+        // }}
+        width={1036}
         footer={null}
         open={open}
       >
@@ -346,7 +369,7 @@ export default function Introduce() {
               <div className="flex justify-center flex-col items-center">
                 <div className="font-bold text-2xl">Cấu hình đề thi</div>
                 <div className="font-normal text-base">
-                  (Bạn hãy chọn tối thiểu 1 đề thi)
+                  (Bạn hãy chọn tối đa 1 đề thi)
                 </div>
                 {dataExamTopicVersion?.map((x: any, key: any) => (
                   <div className={`pt-3`} key={key}>
@@ -390,12 +413,17 @@ export default function Introduce() {
               <CreateExaminationIntroduce
                 idExam={idExam}
                 name={active?.version?.name}
+                step={() => {
+                  setCurrentStep(4);
+                  setOpen(false);
+                }}
               />
             </div>
           )}
           <div className="flex justify-center items-center">
             {currentStep === 1 && (
               <MButton
+                className="w-[168px]"
                 htmlType="submit"
                 text={"Tiếp tục"}
                 disabled={selectedItems.length < 3}
@@ -406,6 +434,7 @@ export default function Introduce() {
             )}
             {currentStep === 2 && (
               <MButton
+                className="w-[168px]"
                 htmlType="submit"
                 text={"Tiếp tục"}
                 disabled={value == null}
