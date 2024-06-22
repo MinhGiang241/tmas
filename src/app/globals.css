@@ -20,9 +20,7 @@
 
 @layer base {
   html {
-    font-family:
-      Montserrat,
-      system-ui sans-serif;
+    font-family: Montserrat, system-ui sans-serif;
   }
 }
 
@@ -40,9 +38,7 @@ body {
 
 .modalStyle .ant-modal-content .ant-modal-body {
   background-color: #01579b;
-  font-family:
-    Montserrat,
-    system-ui sans-serif;
+  font-family: Montserrat, system-ui sans-serif;
 }
 
 .ant-tabs-ink-bar {
@@ -276,6 +272,39 @@ body {
 }
 div.ql-container.ql-snow > .ql-editor {
   min-height: 200px !important;
+}
+
+.ant-tooltip-arrow {
+  position: absolute !important;
+  bottom: 40px !important;
+  left: 50% !important;
+  transform: translateX(-75%) !important;
+  width: 0 !important;
+  height: 0 !important;
+  border-left: 20px solid transparent !important;
+  border-right: 20px solid transparent !important;
+  border-bottom: 22px solid #0b8199 !important;
+}
+
+.ant-tooltip-arrow::after {
+  content: "";
+  position: absolute !important;
+  top: 0 !important;
+  left: -20px !important;
+  width: 40px !important;
+  height: 20px !important;
+  background: #0b8199 !important;
+  border-radius: 50% 50% 0 0 !important;
+}
+
+.ant-tooltip-inner {
+  position: absolute !important;
+  bottom: -30px !important;
+  right: 10px !important;
+  width: 236px !important;
+  border-radius: 4px !important;
+  padding: 10px !important;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* @font-face { */

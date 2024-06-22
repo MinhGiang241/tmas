@@ -413,7 +413,7 @@ function CreateExaminationIntroduce({
               },
       };
 
-      console.log("submitData", submitData);
+      // console.log("submitData", submitData);
 
       // setLoading(false);
       // return;
@@ -429,16 +429,14 @@ function CreateExaminationIntroduce({
       }
 
       successToast(
-        common.t(
-          "Chúc mừng bạn đã tạo thành công đợt thi đầu tiên trên TmasChúc mừng bạn đã tạo thành công đợt thi đầu tiên trên Tmas"
-        )
+        common.t("Chúc mừng bạn đã tạo thành công đợt thi đầu tiên trên Tmas")
       );
       setLoading(false);
       if (exam) {
         createSessionId();
         router?.refresh();
       }
-      router.push(`/examination/${dataResults?.data}`);
+      // router.push(`/examination/${dataResults?.data}`);
     },
   });
 
@@ -462,7 +460,7 @@ function CreateExaminationIntroduce({
   const [push, setPush] = useState<boolean>(false);
 
   return (
-    <>
+    <div className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900 relative">
       <form
         onSubmit={(e: any) => {
           e.preventDefault();
@@ -629,9 +627,7 @@ function CreateExaminationIntroduce({
             <div className="body_semibold_14">{t("selected_exam")}</div>
             <Link
               // Link ở đây
-              href={`/examination/details?examId=${exam?.id}&examTestId=${
-                examination?.id ?? ""
-              }`}
+              href={`/examination/details?examId=${idExam}&examTestId=${""}`}
               // href={`/exams/details/${exam?.id}`}
               className="text-[#4D7EFF] body_regular_14 underline underline-offset-4"
               target="_blank"
@@ -671,6 +667,7 @@ function CreateExaminationIntroduce({
         </div>
         <div className="w-full flex justify-center items-center">
           <MButton
+            className="w-[168px]"
             htmlType="submit"
             text={"Tiếp tục"}
             onClick={() => {
@@ -679,7 +676,7 @@ function CreateExaminationIntroduce({
           />
         </div>
       </form>
-    </>
+    </div>
   );
 }
 
