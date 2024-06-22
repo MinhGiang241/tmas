@@ -14,6 +14,7 @@ import BellIcon from "@/app/components/icons/notification.svg";
 import { Popover } from "antd";
 import { useRouter } from "next/navigation";
 import { BellOutlined } from "@ant-design/icons";
+import { errorToast } from "../components/toast/customToast";
 
 export default function Notification() {
   const [getNoti, setGetNoti] = useState<ListNotification>();
@@ -33,9 +34,11 @@ export default function Notification() {
 
   const totalUnread = async () => {
     const res = await totalUnreadNoti();
-    if (res) {
+    if (res?.code === 0) {
       setTotalNum(res?.data);
+      return;
     }
+    errorToast(res?.message ?? "");
   };
 
   useEffect(() => {
@@ -187,12 +190,12 @@ export default function Notification() {
                               {key?.timeJoinedUnit === "minute"
                                 ? "phút"
                                 : key?.timeJoinedUnit === "month"
-                                ? "Tháng"
-                                : key?.timeJoinedUnit === "hour"
-                                ? "Giờ"
-                                : key?.timeJoinedUnit === "second"
-                                ? "Giây"
-                                : ""}
+                                  ? "Tháng"
+                                  : key?.timeJoinedUnit === "hour"
+                                    ? "Giờ"
+                                    : key?.timeJoinedUnit === "second"
+                                      ? "Giây"
+                                      : ""}
                               &nbsp; trước
                             </div>
                           </div>
@@ -340,12 +343,12 @@ export default function Notification() {
                             {key?.timeJoinedUnit === "minute"
                               ? "phút"
                               : key?.timeJoinedUnit === "month"
-                              ? "Tháng"
-                              : key?.timeJoinedUnit === "hour"
-                              ? "Giờ"
-                              : key?.timeJoinedUnit === "second"
-                              ? "Giây"
-                              : ""}
+                                ? "Tháng"
+                                : key?.timeJoinedUnit === "hour"
+                                  ? "Giờ"
+                                  : key?.timeJoinedUnit === "second"
+                                    ? "Giây"
+                                    : ""}
                             &nbsp; trước
                           </div>
                         </div>
