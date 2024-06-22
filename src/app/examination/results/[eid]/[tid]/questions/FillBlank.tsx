@@ -15,6 +15,7 @@ import {
   rowStyle,
 } from "@/app/account/account-info/AccountInfo";
 import { ColumnsType } from "antd/es/table";
+import MTable from "@/app/components/config/MTable";
 
 export default function FillBlank({
   index,
@@ -61,7 +62,7 @@ export default function FillBlank({
       dataIndex: "blank",
       key: "blank",
       render: (text, data, ind) => (
-        <p key={text} className="w-full  min-w-11 break-all caption_regular_14">
+        <p key={text} className="w-full  min-w-20 break-all caption_regular_14">
           {text}
         </p>
       ),
@@ -94,7 +95,7 @@ export default function FillBlank({
           {text?.map((t: any, i: any) => (
             <div
               key={i}
-              className="border flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100"
+              className="border min-w-14 flex justify-center mr-1 px-1 rounded-md bg-m_neutral_100"
             >
               {t}
             </div>
@@ -107,7 +108,9 @@ export default function FillBlank({
       title: t("result"),
       dataIndex: "result",
       key: "result",
-      render: (text, data) => <div>{text ? <Tick /> : <Close />}</div>,
+      render: (text, data) => (
+        <div className="min-w-14">{text ? <Tick /> : <Close />}</div>
+      ),
     },
   ];
   interface TableValue {
@@ -196,8 +199,8 @@ export default function FillBlank({
             <div className="h-[1px] bg-m_primary_200 mb-3" />
             <div className="">
               <div>
-                <Table columns={columns} dataSource={data} pagination={false} />
-                <div className="max-lg:flex-col lg:items-center flex justify-between items-center pt-4">
+                <MTable columns={columns} dataSource={data} isHidePagination />
+                <div className="max-lg:flex-col lg:items-center flex lg:justify-between justify-start items-start pt-4 w-full">
                   <div className="flex">
                     {t("point")}:{" "}
                     <div className="pl-1 font-semibold">

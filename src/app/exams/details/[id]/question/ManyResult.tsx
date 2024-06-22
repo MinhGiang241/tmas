@@ -136,11 +136,11 @@ export default function ManyResult({
       >
         <Collapse.Panel
           header={
-            <div className="my-3 flex justify-between items-center">
-              <div className="flex flex-col">
+            <div className="my-3 flex justify-between lg:items-center max-lg:flex-col items-start">
+              <div className="flex flex-col  max-lg:mb-2">
                 <div
                   ref={containerRef}
-                  className={`body_semibold_14 ${
+                  className={`body_semibold_14  ${
                     expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
                   }`}
                 >
@@ -177,29 +177,36 @@ export default function ManyResult({
 
               {tmasQuest ? (
                 isExist ? (
-                  <MButton
-                    type="error"
-                    className="flex items-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteExamBank!(e, question);
-                    }}
-                    h="h-11"
-                    icon={<DeleteRedIcon />}
-                    text={deleteText ?? t("delete_bank")}
-                  />
+                  <div className="flex justify-between w-full">
+                    <div className="w-1" />
+                    <MButton
+                      type="error"
+                      className="flex items-center "
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteExamBank!(e, question);
+                      }}
+                      h="h-11"
+                      icon={<DeleteRedIcon />}
+                      text={deleteText ?? t("delete_bank")}
+                    />
+                  </div>
                 ) : (
-                  <MButton
-                    className="flex items-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addExamBank!(e, question);
-                    }}
-                    h="h-11"
-                    type="secondary"
-                    icon={<AddIcon />}
-                    text={addText ?? t("add_bank")}
-                  />
+                  <div className="flex justify-between w-full">
+                    <div className="w-1" />
+
+                    <MButton
+                      className="flex items-center"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addExamBank!(e, question);
+                      }}
+                      h="h-11"
+                      type="secondary"
+                      icon={<AddIcon />}
+                      text={addText ?? t("add_bank")}
+                    />
+                  </div>
                 )
               ) : (
                 <div className="min-w-28 pl-4">

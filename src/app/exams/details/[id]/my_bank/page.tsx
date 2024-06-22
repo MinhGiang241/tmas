@@ -111,6 +111,7 @@ function AddFromMyBank({ params }: any) {
           ]}
         />
         <MButton
+          className="max-lg:mr-5"
           type="secondary"
           onClick={() => {
             router.back();

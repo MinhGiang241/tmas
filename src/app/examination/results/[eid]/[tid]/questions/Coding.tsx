@@ -22,6 +22,7 @@ import {
   rowStartStyle,
   rowStyle,
 } from "@/app/account/account-info/AccountInfo";
+import MTable from "@/app/components/config/MTable";
 
 export default function Coding({
   getData,
@@ -80,33 +81,38 @@ export default function Coding({
       dataIndex: "testcase",
       key: "testcase",
       render: (text, data) => (
-        <div className=" flex justify-start mr-1 px-1 rounded-md ">{text}</div>
+        <div className="min-w-16 flex justify-start mr-1 px-1 rounded-md ">
+          {text}
+        </div>
       ),
     },
     {
       onHeaderCell: (_) => rowStyle,
-      title: t("inputT"),
+
+      title: <div className="text-nowrap">{t("inputT")}</div>,
       dataIndex: "input",
       key: "input",
       render: (text, data) => (
-        <div className=" flex justify-start mr-1 px-1  ">{text}</div>
+        <div className="min-14 flex justify-start mr-1 px-1  ">{text}</div>
       ),
     },
     {
       onHeaderCell: (_) => rowStyle,
-      title: t("outputT"),
+      title: <div className="text-nowrap">{t("outputT")}</div>,
       dataIndex: "output",
       key: "output",
       render: (text, data) => (
-        <div className="flex justify-start mr-1 px-1 ">{text}</div>
+        <div className="min-w-16 flex justify-start mr-1 px-1 ">{text}</div>
       ),
     },
     {
       onHeaderCell: (_) => rowEndStyle,
-      title: t("result"),
+      title: <div className="text-nowrap">{t("result")}</div>,
       dataIndex: "result",
       key: "result",
-      render: (text, data, ind) => <div>{text ? <Tick /> : <Close />}</div>,
+      render: (text, data, ind) => (
+        <div className="min-w-16">{text ? <Tick /> : <Close />}</div>
+      ),
     },
   ];
 
@@ -197,8 +203,9 @@ export default function Coding({
           >
             <div className="h-[1px] bg-m_primary_200 mb-3" />
             <div>
-              <Table columns={columns} dataSource={data} pagination={false} />
-              <div className="max-lg:flex-col lg:items-center flex justify-between items-center pt-4">
+              {/* <Table columns={columns} dataSource={data} pagination={false} /> */}
+              <MTable columns={columns} dataSource={data} isHidePagination />
+              <div className="max-lg:flex-col lg:items-center flex lg:justify-between justify-start items-start pt-4 w-full">
                 <div className="flex">
                   {t("point")}:{" "}
                   <div className="pl-1 font-semibold">
