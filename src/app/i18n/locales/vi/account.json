@@ -108,5 +108,11 @@
   "confirm_delete_acc": "Khi tài khoản bị xóa, mọi giao dịch mua gói và Gold đã thực hiện trong quá khứ sẽ không còn hiệu lực. Vui lòng nhấn đồng ý để xác nhận !",
   "delete_acc": "Xóa tài khoản",
   "aggree": "Đồng ý",
-  "success_delete_acc": "Xóa tài khoản thành công"
+  "success_delete_acc": "Xóa tài khoản thành công",
+  "account?tab=0": "Quản lý tài khoản",
+  "account?tab=1": "Quản lý gold",
+  "account?tab=2": "Thông tin cá nhân",
+  "account?tab=3": "Thông tin studio",
+  "account?tab=4": "Lịch sử nâng cấp",
+  "account?tab=5": "Quản lý thông báo"
 }

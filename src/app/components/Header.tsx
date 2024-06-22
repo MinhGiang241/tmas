@@ -53,13 +53,19 @@ function Header({ path }: { path?: string }) {
   const { t, i18n } = useTranslation("account");
   const common = useTranslation();
   const router = useRouter();
-  const links = [
+  const links = ["overview", "exam_group", "exams", "examination", "exam_bank"];
+  const mobileLinks = [
     "overview",
     "exam_group",
     "exams",
     "examination",
     "exam_bank",
-    "account",
+    "account?tab=0",
+    "account?tab=1",
+    "account?tab=2",
+    "account?tab=3",
+    "account?tab=4",
+    "account?tab=5",
   ];
 
   const user = useSelector((state: RootState) => state.user.user);
@@ -232,7 +238,7 @@ function Header({ path }: { path?: string }) {
               </button>
             </div>
             <div className="h-4" />
-            {links.map((v, i) => (
+            {mobileLinks.map((v, i) => (
               <Link
                 href={!user?.verified ? "#" : `/${v}`}
                 onClick={() => {

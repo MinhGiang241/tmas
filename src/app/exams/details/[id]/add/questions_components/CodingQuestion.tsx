@@ -530,18 +530,6 @@ function CodingQuestion({
           </div>
 
           <div className="flex items-center">
-            {/* <Select */}
-            {/*   className="min-w-40" */}
-            {/*   placeholder={t("op")} */}
-            {/*   options={[ */}
-            {/*     common.t("delete"), */}
-            {/*     t("hide_testcase"), */}
-            {/*     t("normal_testcase"), */}
-            {/*   ].map((a: any, i: number) => ({ */}
-            {/*     value: i, */}
-            {/*     label: a, */}
-            {/*   }))} */}
-            {/* /> */}
             <div>
               <button
                 onClick={() => {
@@ -601,60 +589,72 @@ function CodingQuestion({
           <div className="body_semibold_14">{t("parameter")}</div>
           {parameterList.map((l: ParameterType, i: number) => {
             return (
-              <div key={l.id} className=" w-full  flex items-start">
-                <div className="w-2/5">
-                  <MDropdown
-                    touch={formik.touched[`param_type_${l?.id}`] as boolean}
-                    error={formik.errors[`param_type_${l?.id}`] as string}
-                    onBlur={async (_) => {
-                      await formik.setFieldTouched(`param_type_${l?.id}`, true);
-                      formik.validateForm();
-                    }}
-                    h="h-9"
-                    id={`pram_type_${l?.id}`}
-                    name={`param_type_${l?.id}`}
-                    value={l.returnType}
-                    setValue={async (na: any, val: any) => {
-                      var newList = _.cloneDeep(parameterList);
-                      newList[i].returnType = val;
-                      await setParameterList(newList);
-                      formik.validateForm();
-                    }}
-                    options={serverLanguageList.map((r: CodingDataType) => ({
-                      value: r,
-                      label: r,
-                    }))}
-                    className=" h-9"
-                  />
-                </div>
-                <div className="w-3" />
-                {/* {formik.errors[`param_name_${i + 1}`]?.toString()} */}
-                <div className="w-3/5">
-                  <MInput
-                    extend
-                    isTextRequire={false}
-                    onBlur={async (s) => {
-                      await formik.setFieldTouched(`param_name_${l?.id}`, true);
-                      formik.validateForm();
-                    }}
-                    error={formik.errors[`param_name_${l?.id}`] as string}
-                    touch={formik.touched[`param_name_${l?.id}`] as boolean}
-                    value={l.nameParameter}
-                    onChange={async (val) => {
-                      var newList = _.cloneDeep(parameterList);
-                      newList[i].nameParameter = val.target.value;
-                      setParameterList(newList);
-                      await formik.setFieldValue(
-                        `param_name_${l?.id}`,
-                        val.target.value,
-                      );
-                      formik.validateForm();
-                    }}
-                    placeholder={`Parameter ${i + 1}`}
-                    h="h-9"
-                    id={`pram_name_${l?.id}`}
-                    name={`param_name-${l?.id}`}
-                  />
+              <div
+                key={l.id}
+                className=" w-full flex  lg:items-start items-center mb-4"
+              >
+                <div className="w-full flex max-lg:flex-col items-center ">
+                  <div className="lg:w-2/5 w-full">
+                    <MDropdown
+                      isTextRequire={false}
+                      touch={formik.touched[`param_type_${l?.id}`] as boolean}
+                      error={formik.errors[`param_type_${l?.id}`] as string}
+                      onBlur={async (_) => {
+                        await formik.setFieldTouched(
+                          `param_type_${l?.id}`,
+                          true,
+                        );
+                        formik.validateForm();
+                      }}
+                      h="h-9"
+                      id={`pram_type_${l?.id}`}
+                      name={`param_type_${l?.id}`}
+                      value={l.returnType}
+                      setValue={async (na: any, val: any) => {
+                        var newList = _.cloneDeep(parameterList);
+                        newList[i].returnType = val;
+                        await setParameterList(newList);
+                        formik.validateForm();
+                      }}
+                      options={serverLanguageList.map((r: CodingDataType) => ({
+                        value: r,
+                        label: r,
+                      }))}
+                      className=" h-9"
+                    />
+                  </div>
+                  <div className="lg:w-3 h-2" />
+                  {/* {formik.errors[`param_name_${i + 1}`]?.toString()} */}
+                  <div className="lg:w-3/5 w-full">
+                    <MInput
+                      extend
+                      isTextRequire={false}
+                      onBlur={async (s) => {
+                        await formik.setFieldTouched(
+                          `param_name_${l?.id}`,
+                          true,
+                        );
+                        formik.validateForm();
+                      }}
+                      error={formik.errors[`param_name_${l?.id}`] as string}
+                      touch={formik.touched[`param_name_${l?.id}`] as boolean}
+                      value={l.nameParameter}
+                      onChange={async (val) => {
+                        var newList = _.cloneDeep(parameterList);
+                        newList[i].nameParameter = val.target.value;
+                        setParameterList(newList);
+                        await formik.setFieldValue(
+                          `param_name_${l?.id}`,
+                          val.target.value,
+                        );
+                        formik.validateForm();
+                      }}
+                      placeholder={`Parameter ${i + 1}`}
+                      h="h-9"
+                      id={`pram_name_${l?.id}`}
+                      name={`param_name-${l?.id}`}
+                    />
+                  </div>
                 </div>
 
                 <button
@@ -664,7 +664,7 @@ function CodingQuestion({
                     setParameterList(newList);
                     formik.validateForm();
                   }}
-                  className="text-neutral-500 text-2xl mt-[8px] ml-2"
+                  className="text-neutral-500 text-2xl  ml-2"
                 >
                   <CloseCircleOutlined />
                 </button>

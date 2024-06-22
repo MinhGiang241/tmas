@@ -107,5 +107,11 @@
   "confirm_delete_acc": "Once an account is deleted, any Gold and package purchases made in the past will no longer be valid. Please click OK to confirm!",
   "delete_acc": "Delete account",
   "aggree": "Aggree",
-  "success_delete_acc": "Account deleted successfully"
+  "success_delete_acc": "Account deleted successfully",
+  "account?tab=0": "Account management",
+  "account?tab=1": "Gold management",
+  "account?tab=2": "Personal information",
+  "account?tab=3": "Studio information",
+  "account?tab=4": "Upgrade history",
+  "account?tab=5": "Notification management"
 }

@@ -111,7 +111,7 @@ function CreateQuestionPage({ params, question }: any) {
   const submitRef = useRef(undefined);
   return (
     <HomeLayout>
-      <div className="w-full flex mt-4 items-center justify-between">
+      <div className="w-full flex mt-4 items-center lg:justify-between justify-start">
         <MBreadcrumb
           items={
             exam?.id
@@ -134,7 +134,7 @@ function CreateQuestionPage({ params, question }: any) {
                 ]
           }
         />
-        <div className="flex items-center">
+        <div className="flex items-center max-lg:ml-5 max-lg:hidden">
           <MButton
             h="h-11"
             className="min-w-20"
@@ -261,6 +261,29 @@ function CreateQuestionPage({ params, question }: any) {
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
+
+      <div className="lg:hidden flex items-center max-lg:ml-5 w-full justify-center bg-white pb-9">
+        <MButton
+          h="h-11"
+          className="min-w-20"
+          onClick={() => {
+            dispatch(resetMultiAnswer(1));
+            router.back();
+          }}
+          type="secondary"
+          text={t("cancel_reject")}
+        />
+        <div className="w-4" />
+        <MButton
+          loading={questionLoading}
+          className="min-w-20"
+          h="h-11"
+          onClick={() => {
+            (submitRef.current as any).click();
+          }}
+          text={question ? common.t("update") : common.t("create_new")}
+        />
+      </div>
     </HomeLayout>
   );
 }

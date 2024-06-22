@@ -97,11 +97,11 @@ function ExamDetails({ params }: any) {
   };
 
   const user: UserData | undefined = useAppSelector(
-    (state: RootState) => state?.user?.user
+    (state: RootState) => state?.user?.user,
   );
   const dispatchGroup = useAppDispatch();
   const questionGroups: ExamGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.list
+    (state: RootState) => state?.examGroup?.list,
   );
   const loadQuestionGroupList = async (init?: boolean) => {
     if (init) {
@@ -110,7 +110,7 @@ function ExamDetails({ params }: any) {
 
     var dataResults: APIResults = await getQuestionGroups(
       "",
-      user?.studio?._id
+      user?.studio?._id,
     );
 
     if (dataResults.code != 0) {
@@ -124,7 +124,7 @@ function ExamDetails({ params }: any) {
   useEffect(() => {
     if (user?.studio?._id) {
       dispatchGroup(
-        fetchDataExamGroup(async () => loadQuestionGroupList(true))
+        fetchDataExamGroup(async () => loadQuestionGroupList(true)),
       );
     }
 
@@ -205,7 +205,7 @@ function ExamDetails({ params }: any) {
   );
 
   const handleNameChangeValid = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { value } = event.target;
     setName(value);
@@ -476,58 +476,60 @@ function ExamDetails({ params }: any) {
           {exam?.description}
         </div> */}
         <div className="h-[1px] bg-m_neutral_200 mt-10" />
-        <div className="flex justify-between items-center mt-6 mb-6">
-          <div className="text-sm text-m_neutral_900 flex">
-            <Menu className="mr-1" />
-            {data?.totalOfRecords} {t("part")}
-          </div>
-          <div className="text-sm text-m_neutral_900 flex">
-            <Play className="mr-1" />
-            {exam?.examNextQuestion === "FreeByUser"
-              ? t("free_change_part")
-              : t("part_in_row")}
-          </div>
-          <div className="text-sm text-m_neutral_900 flex">
-            <MessageQuestion className="mr-1 scale-75" />
-            {/* {data?.records?.[0]?.examQuestions?.length ?? 0} câu hỏi */}
-            {data?.records?.reduce(function (total: any, question: any) {
-              return total + question?.examQuestions?.length;
-            }, 0)}{" "}
-            {t("question")}
-          </div>
-          <div className="text-sm text-m_neutral_900 flex">
-            <Cup className="mr-1 scale-75" />
-            {/* {data?.records?.[0]?.examQuestions?.reduce(function (total: any, question: any) {
+        <div className="flex justify-between items-center mt-6 mb-6 ">
+          <div className="flex flex-wrap">
+            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+              <Menu className="mr-1  min-w-5" />
+              {data?.totalOfRecords} {t("part")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+              <Play className="mr-1" min-w-5 />
+              {exam?.examNextQuestion === "FreeByUser"
+                ? t("free_change_part")
+                : t("part_in_row")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+              <MessageQuestion className="mr-1 scale-75  min-w-5" />
+              {/* {data?.records?.[0]?.examQuestions?.length ?? 0} câu hỏi */}
+              {data?.records?.reduce(function (total: any, question: any) {
+                return total + question?.examQuestions?.length;
+              }, 0)}{" "}
+              {t("question")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+              <Cup className="mr-1 scale-75  min-w-5" />
+              {/* {data?.records?.[0]?.examQuestions?.reduce(function (total: any, question: any) {
               return total + question.numberPoint;
             }, 0)} điểm */}
-            {data?.records?.reduce(function (total: any, question: any) {
-              var point = question?.examQuestions?.reduce(
-                (to: any, quest: any) => {
-                  return to + (quest?.numberPoint ?? 0);
-                },
-                0
-              );
-              return total + point;
-            }, 0)}{" "}
-            {t("point")}
-          </div>
-          <div className="text-sm text-m_neutral_900 flex">
-            <Time className="mr-1" />
-            {exam?.timeLimitMinutes
-              ? `${exam?.timeLimitMinutes} ${t("minute")}`
-              : t("unlimited")}
-          </div>
-          <div className="text-sm text-m_neutral_900 flex">
-            <Document className="mr-1" />
-            {exam?.examViewQuestionType === "MultiplePages"
-              ? t("all_quest_page")
-              : t("quest_per_page")}
-          </div>
-          <div className="text-sm text-m_neutral_900 flex">
-            <Group className="mr-1" />
-            {exam?.changePositionQuestion === false
-              ? t("keep_quest_order")
-              : t("change_quest_order")}
+              {data?.records?.reduce(function (total: any, question: any) {
+                var point = question?.examQuestions?.reduce(
+                  (to: any, quest: any) => {
+                    return to + (quest?.numberPoint ?? 0);
+                  },
+                  0,
+                );
+                return total + point;
+              }, 0)}{" "}
+              {t("point")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+              <Time className="mr-1 min-w-5" />
+              {exam?.timeLimitMinutes
+                ? `${exam?.timeLimitMinutes} ${t("minute")}`
+                : t("unlimited")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+              <Document className="mr-1 min-w-5" />
+              {exam?.examViewQuestionType === "MultiplePages"
+                ? t("all_quest_page")
+                : t("quest_per_page")}
+            </div>
+            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+              <Group className="mr-1 min-w-5" />
+              {exam?.changePositionQuestion === false
+                ? t("keep_quest_order")
+                : t("change_quest_order")}
+            </div>
           </div>
           <MButton
             h="h-11"
@@ -638,7 +640,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/add?partId=${x?.id}`
+                                    `/exams/details/${params.id}/add?partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1"
@@ -649,7 +651,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/my_bank?tab=0&partId=${x?.id}`
+                                    `/exams/details/${params.id}/my_bank?tab=0&partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1 "
@@ -660,7 +662,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/my_bank?tab=1&partId=${x?.id}`
+                                    `/exams/details/${params.id}/my_bank?tab=1&partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1 "
@@ -730,12 +732,12 @@ function ExamDetails({ params }: any) {
                       a.createdTime < b.createdTime
                         ? -1
                         : a.createdTime > b.createdTime
-                        ? 1
-                        : 0
+                          ? 1
+                          : 0,
                     )
                     .map((e: any, key: any) => {
                       var questionGroup = questionGroups?.find(
-                        (v: any) => v.id === e.idGroupQuestion
+                        (v: any) => v.id === e.idGroupQuestion,
                       );
                       if (e.questionType == "Coding") {
                         return (

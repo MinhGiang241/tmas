@@ -321,9 +321,9 @@ export default function Result({ params }: any) {
           },
         ]}
       />
-      <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center pb-4">
-        <div>{t("test_detail")}</div>
-        <div className="flex">
+      <div className="body_semibold_20 mt-3 w-full flex  justify-between items-center pb-4 ">
+        <div className="max-lg:ml-5">{t("test_detail")}</div>
+        <div className="flex max-lg:mr-5">
           <MButton
             type="secondary"
             text={common.t("back")}
@@ -373,7 +373,7 @@ export default function Result({ params }: any) {
               key="1"
               header={
                 <div>
-                  <div className="my-3 flex justify-between items-center">
+                  <div className="my-3 flex justify-between lg:items-center items-start max-lg:flex-col">
                     <div className="">
                       <div className="text-base font-semibold">
                         {t("question_list")}
