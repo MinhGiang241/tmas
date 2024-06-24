@@ -45,9 +45,12 @@ export default function Introduce() {
   const getDataTopic = async () => {
     const res = await getTopic();
     // console.log("getDataTopic", res);
-    if (res) {
+
+    if (res?.code === 0) {
       setDataTopic(res?.data);
+      return;
     }
+    errorToast(res?.message ?? "");
   };
 
   useEffect(() => {
@@ -57,9 +60,12 @@ export default function Introduce() {
   const getDataTopicChild = async () => {
     const res = await getTopicChild(selectedItems.map((x: any) => x?._id));
     // console.log("getTopicChild", res);
-    if (res) {
-      setDataTopicChild(res.data);
+
+    if (res?.code === 0) {
+      setDataTopicChild(res?.data);
+      return;
     }
+    errorToast(res?.message ?? "");
   };
 
   useEffect(() => {
@@ -240,9 +246,9 @@ export default function Introduce() {
           currentStep === 1 ? (
             <div>
               <div>
-                Chào <span className="font-medium">{user?.full_name}</span>
+                Chào <span className="font-medium">{user?.full_name}</span>🖐🏻
               </div>
-              🖐🏻 Mình là TmasAI ☺️, Mình sẽ hỗ trợ bạn trong quá trình sử dụng
+              Mình là TmasAI 😊, Mình sẽ hỗ trợ bạn trong quá trình sử dụng
               Tmas. Đầu tiên hãy chọn lĩnh vực mà bạn đang quan tâm...
             </div>
           ) : currentStep === 2 ? (
