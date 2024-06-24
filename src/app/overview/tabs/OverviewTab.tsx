@@ -77,7 +77,13 @@ function OverviewTab() {
       return;
     }
 
-    setBarData(res.data);
+    setBarData(() => {
+      var s = res?.data?.sort(
+        (a: BarTableValue, b: BarTableValue) =>
+          a?.name?.localeCompare(b?.name ?? ""),
+      );
+      return s;
+    });
   };
 
   const getRemaining = async () => {
@@ -105,9 +111,9 @@ function OverviewTab() {
   };
   var bars =
     barData?.length != 0
-      ? Object.keys(barData?.reduce((a, b) => ({ ...a, ...b }), {})).filter(
-          (l) => l != "name",
-        )
+      ? Object.keys(barData?.reduce((a, b) => ({ ...a, ...b }), {}))
+          .filter((l) => l != "name")
+          ?.sort((a, b) => a.localeCompare(b))
       : [];
 
   return (

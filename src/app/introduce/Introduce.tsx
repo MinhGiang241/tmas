@@ -181,7 +181,7 @@ export default function Introduce() {
           e.IsQuestionBank = false;
           return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
-      })
+      }),
     );
 
     var examObj: ExamData = {
@@ -211,7 +211,7 @@ export default function Introduce() {
           exam: examObj,
           jsonExamQuestions: (partObj ?? []).reduce(
             (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
-            []
+            [],
           ),
           parts: partObj,
         },
