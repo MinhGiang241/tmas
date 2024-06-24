@@ -53,7 +53,14 @@ function Header({ path }: { path?: string }) {
   const { t, i18n } = useTranslation("account");
   const common = useTranslation();
   const router = useRouter();
-  const links = ["overview", "exam_group", "exams", "examination", "exam_bank"];
+  const links = [
+    "overview",
+    "exam_group",
+    "exams",
+    "examination",
+    "exam_bank",
+    "account",
+  ];
   const mobileLinks = [
     "overview",
     "exam_group",
