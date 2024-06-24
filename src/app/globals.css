@@ -274,7 +274,7 @@ div.ql-container.ql-snow > .ql-editor {
   min-height: 200px !important;
 }
 
-.ant-tooltip-arrow {
+.onboarding .ant-tooltip-arrow {
   position: absolute !important;
   bottom: 40px !important;
   left: 50% !important;
@@ -286,7 +286,7 @@ div.ql-container.ql-snow > .ql-editor {
   border-bottom: 22px solid #0b8199 !important;
 }
 
-.ant-tooltip-arrow::after {
+.onboarding .ant-tooltip-arrow::after {
   content: "";
   position: absolute !important;
   top: 0 !important;
@@ -297,7 +297,7 @@ div.ql-container.ql-snow > .ql-editor {
   border-radius: 50% 50% 0 0 !important;
 }
 
-.ant-tooltip-inner {
+.onboarding .ant-tooltip-inner {
   position: absolute !important;
   bottom: -30px !important;
   right: 10px !important;
