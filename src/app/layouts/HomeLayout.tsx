@@ -35,7 +35,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const user = useSelector((state: RootState) => state.user?.user);
-  console.log(user);
+  // console.log(user);
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState("1");
