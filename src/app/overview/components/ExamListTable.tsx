@@ -13,14 +13,16 @@ import { RootState } from "@/redux/store";
 import {
   overviewExamCounter,
   overviewExamCounterExcel,
+  overviewExamGetPaging,
+  overviewExamStatiticExcel,
 } from "@/services/api_services/overview_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import { saveAs } from "file-saver";
-import { ExamCounterData, FilterData } from "@/data/overview";
+import { ExamCounterData, ExamPagingData, FilterData } from "@/data/overview";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import duration from "dayjs/plugin/duration";
-import { Condition, StudioSorter } from "@/data/exam";
+import { Condition, ExamData, StudioSorter } from "@/data/exam";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import Link from "next/link";
 
@@ -59,6 +61,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
   const [startDate, setStartDate] = useState<string | undefined>();
   const [endDate, setEndDate] = useState<string | undefined>();
   const [groupId, setGroupId] = useState<string | undefined>();
+  const [dataList, setDataList] = useState<ExamPagingData | undefined>();
   const [sorter, setSorter] = useState<StudioSorter>({
     name: "createdTime",
     isAsc: false,
@@ -279,27 +282,43 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
         condition: Condition.eq,
       });
     }
-    var res = await overviewExamCounter({
+    var res = await //   overviewExamCounter({
+    //   paging: { startIndex: indexPage, recordPerPage: recordNum },
+    //   filters,
+    //   studioSorters: [sorter],
+    // });
+    overviewExamGetPaging({
       paging: { startIndex: indexPage, recordPerPage: recordNum },
-      filters,
-      studioSorters: [sorter],
+      isReportTotal: true,
+      filterByNameOrTag: search?.trim()
+        ? {
+            name: "unsignedName",
+            inValues: [search?.trim()!],
+          }
+        : undefined,
+      filterByExamGroupId: groupId
+        ? {
+            name: "ExamGroup",
+            inValues: [groupId],
+          }
+        : undefined,
+      fromTime: startDate,
+      toTime: endDate,
     });
     if (res?.code != 0) {
       return;
     }
     setTotal(res?.data?.totalOfRecords ?? 0);
-    var examData: ExamCounterData[] = res?.data?.records ?? [];
+    var result: ExamPagingData = res?.data;
+    setDataList(result);
+    var examData: ExamData[] = res?.data?.records ?? [];
     var examTableData = examData?.map<TableValue>((t) => ({
-      id: t?.info?.exam?.id,
-      created_date: dayjs(t?.info?.exam?.createdTime).format(
-        "DD:MM:YYYY HH:mm:ss",
-      ),
-      question_num: t?.couter?.numberOfQuestions ?? 0,
-      group: t?.info?.groupExam?.name,
-      name: t?.info?.exam?.name,
-      tags: t?.info?.tags?.map((k: any) =>
-        typeof k == "string" ? k : k?.name,
-      ),
+      id: t?.id,
+      created_date: dayjs(t?.createdTime).format("DD:MM:YYYY HH:mm:ss"),
+      question_num: t?.numberOfQuestions ?? 0,
+      group: t?.groupExams?.name,
+      name: t?.name,
+      tags: t?.tags?.map((k: any) => (typeof k == "string" ? k : k?.name)),
       dtv: t?.couter?.medianScoreAsInt,
       dtb: !t?.couter?.numberOfTest
         ? 0
@@ -322,7 +341,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
       min_test_time: dayjs
         .duration(t?.couter?.minimumTimeSeconds ?? 0)
         .format("HH:mm:ss"),
-      today_join_num: `${t?.key?.couterByDate}`,
+      today_join_num: ``,
 
       // avg_test_time: t?.couter?.
     }));
@@ -364,18 +383,14 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
         condition: Condition.eq,
       });
     }
-    var res = await overviewExamCounterExcel({
+    var res = await //overviewExamCounterExcel
+    overviewExamStatiticExcel({
       filters,
       paging: {
         startIndex: indexPage,
         recordPerPage: recordNum,
       },
-      studioSorters: [
-        {
-          name: "createdTime",
-          isAsc: false,
-        },
-      ],
+      studioSorters: [sorter],
     });
 
     if (res?.code != 0) {
@@ -390,8 +405,8 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     <>
       <div className="w-full body_semibold_20 mb-4">{t("exam_list")}</div>
       <div className="flex justify-between w-full items-center">
-        <div className="flex  items-center">
-          <div className="w-52 mr-4">
+        <div className="flex  lg:items-center max-lg:flex-col">
+          <div className="lg:w-52 lg:mr-4">
             <MTreeSelect
               value={groupId}
               setValue={(name: any, e: any) => {
@@ -401,7 +416,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
               defaultValue=""
               id="question_group"
               name="question_group"
-              className="w-52"
+              className="lg:w-52"
               isTextRequire={false}
               h="h-11"
               options={optionSelect}
@@ -495,7 +510,10 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
         setRecordNum={setRecordNum}
         total={total}
         dataRows={dataRows}
-        sumData={{ name: `${t("sum")}:` }}
+        sumData={{
+          name: `${t("sum")}:`,
+          join_num: dataList?.additionData?.numberOfTest,
+        }}
       />
     </>
   );

@@ -3,9 +3,11 @@ import {
   AccessCodeExaminantionSetting,
   CodingDataType,
   PartObject,
+  TagObject,
 } from "./form_interface";
 import { BaseQuestionData, QuestionType } from "./question";
 import { TagData } from "./tag";
+import { CouterData } from "./overview";
 
 export interface ExamGroupData {
   name?: string;
@@ -81,6 +83,9 @@ export interface ExamData {
   unsignedName?: string;
   studioId?: string;
   idSession?: string;
+
+  groupExams?: ExamGroupData;
+  couter?: CouterData;
 }
 
 export enum AppovedState {
@@ -140,7 +145,13 @@ export interface ExaminationData {
   idSession?: string;
   updateTime?: string;
   createdTime?: string;
-  examVersion?: { exam?: ExamVersion };
+  examVersion?: {
+    exam?: ExamVersion;
+    groupExams?: ExamGroupData[];
+    jsonExamQuestions?: string;
+    parts?: PartObject[];
+    tags?: TagObject[];
+  };
   examTestCode?: string;
   accessCodeSettingType?: "None" | "One" | "MultiCode";
   accessCodeSettings?: AccessCodeExaminantionSetting[];
@@ -192,6 +203,8 @@ export interface ExaminationData {
     goldPrice?: number;
   };
   statisticExamTest?: StatisticExamTest;
+
+  couter?: CouterData;
 }
 
 export interface TmasExamVersion {

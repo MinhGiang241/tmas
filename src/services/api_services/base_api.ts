@@ -139,6 +139,7 @@ export class callStudioAPI {
 
       if (response?.data?.isSuccess === false) {
         return {
+          response: response.data,
           code: 1,
           data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
@@ -147,6 +148,7 @@ export class callStudioAPI {
         return {
           code: 0,
           data: response?.data?.data ?? response.data,
+          response: response.data,
         };
       }
 
@@ -154,6 +156,7 @@ export class callStudioAPI {
         code: 1,
         data: response.statusText,
         message: response.statusText,
+        response: response.data,
       };
     } catch (error: any) {
       return {
@@ -182,11 +185,13 @@ export class callStudioAPI {
           code: 1,
           data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
+          response: response.data,
         };
       } else if (response.status === 200) {
         return {
           code: 0,
           data: response?.data?.data ?? response.data,
+          response: response.data,
         };
       }
 
@@ -194,6 +199,7 @@ export class callStudioAPI {
         code: 1,
         data: response.statusText,
         message: response.statusText,
+        response: response.data,
       };
     } catch (error: any) {
       return {
@@ -223,6 +229,7 @@ export class callStudioAPI {
           code: 1,
           data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
+          response: response.data,
         };
       } else if (response.status === 200) {
         return {
@@ -235,6 +242,7 @@ export class callStudioAPI {
         code: 1,
         data: response.statusText,
         message: response.statusText,
+        response: response.data,
       };
     } catch (error: any) {
       return {
@@ -264,6 +272,7 @@ export class callStudioAPI {
           code: 1,
           data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
+          response: response.data,
         };
       } else if (response.status === 200) {
         return {
@@ -276,6 +285,7 @@ export class callStudioAPI {
         code: 1,
         data: response.statusText,
         message: response.statusText,
+        response: response.data,
       };
     } catch (error: any) {
       return {

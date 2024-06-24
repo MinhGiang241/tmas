@@ -1,6 +1,7 @@
 import {
   ActivitiesParams,
   ExamCounterParams,
+  ExamGetPagingParams,
   OverviewListRevenueParams,
 } from "@/data/overview";
 import { callApi, callStudioAPI } from "./base_api";
@@ -39,6 +40,7 @@ export const overviewGetTotalExamByExamGroup = async (studioId?: string) => {
 export const overviewExamCounter = async (data: ExamCounterParams) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamCounter/GetPaging`,
+    // `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/GetPaging`,
     data,
   );
   return results;
@@ -98,6 +100,42 @@ export const overviewRevenueStu = async (studioId?: string) => {
   const results = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/getOverViewRevenue`,
     { params: { studioId } },
+  );
+  return results;
+};
+
+export const overviewExamGetPaging = async (data: ExamGetPagingParams) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/GetPaging`,
+    data,
+  );
+  return results;
+};
+
+export const overviewExamTestGetPaging = async (data: ExamGetPagingParams) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/GetPaging`,
+    data,
+  );
+  return results;
+};
+
+export const overviewExamStatiticExcel = async (data: ExamCounterParams) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/ExportStatisticExcel`,
+    data,
+    { responseType: "blob" },
+  );
+  return results;
+};
+
+export const overviewExamTestStatiticExcel = async (
+  data: ExamCounterParams,
+) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/ExportStatisticExcel`,
+    data,
+    { responseType: "blob" },
   );
   return results;
 };

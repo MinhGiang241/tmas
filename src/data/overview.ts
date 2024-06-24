@@ -200,3 +200,85 @@ export interface ExamTestCounterData {
   updateBy?: string;
   updateTime?: string;
 }
+
+export interface ExamGetPagingParams {
+  paging?: {
+    startIndex?: number;
+    recordPerPage?: number;
+  };
+  filterByIds?: {
+    name?: string;
+    inValues?: string[];
+  };
+  filterByNameOrTag?: {
+    name?: string;
+    inValues?: string[];
+  };
+  filterByIdTag?: {
+    name?: string;
+    inValues?: string[];
+  };
+  filterByExamGroupId?: {
+    name?: string;
+    inValues?: string[];
+  };
+  sortByCreateTime?: {
+    name?: string;
+    isAsc?: boolean;
+  };
+  sortByName?: {
+    name?: string;
+    isAsc?: boolean;
+  };
+  isReportTotal?: boolean;
+  fromTime?: string;
+  toTime?: string;
+
+  isIncludeExamVersion?: boolean;
+}
+
+export interface ExamPagingData {
+  additionData?: {
+    maximumTimeSeconds?: number;
+    medianScoreAsInt?: number;
+    minimumTimeSeconds?: number;
+    numberOfQuestions?: number;
+    numberOfTest?: number;
+    totalPass?: number;
+    totalScoreAsInt?: number;
+    totalTimeSeconds?: number;
+    goldCouter?: {
+      discount?: number;
+      netRevenue?: number;
+      revenue?: number;
+    };
+    numberOfTestByDay?: {
+      couterByDate?: string;
+      numberOfData?: number;
+    };
+    resords?: ExamData[];
+  };
+}
+
+export interface ExamTestPagingData {
+  additionData?: {
+    maximumTimeSeconds?: number;
+    medianScoreAsInt?: number;
+    minimumTimeSeconds?: number;
+    numberOfQuestions?: number;
+    numberOfTest?: number;
+    totalPass?: number;
+    totalScoreAsInt?: number;
+    totalTimeSeconds?: number;
+    goldCouter?: {
+      discount?: number;
+      netRevenue?: number;
+      revenue?: number;
+    };
+    numberOfTestByDay?: {
+      couterByDate?: string;
+      numberOfData?: number;
+    };
+    resords?: ExaminationData[];
+  };
+}

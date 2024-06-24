@@ -12,13 +12,19 @@ import { RootState } from "@/redux/store";
 import {
   overviewExamTestCounter,
   overviewExamTestCounterExcel,
+  overviewExamTestGetPaging,
+  overviewExamTestStatiticExcel,
 } from "@/services/api_services/overview_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import saveAs from "file-saver";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import dayjs from "dayjs";
-import { ExamTestCounterData, FilterData } from "@/data/overview";
-import { Condition, StudioSorter } from "@/data/exam";
+import {
+  ExamTestCounterData,
+  ExamTestPagingData,
+  FilterData,
+} from "@/data/overview";
+import { Condition, ExaminationData, StudioSorter } from "@/data/exam";
 import Link from "next/link";
 import { Tooltip } from "antd";
 import RenderSortterIcon from "./IconSorter";
@@ -60,6 +66,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     name: "createdTime",
     isAsc: false,
   });
+  const [dataList, setDataList] = useState<ExamTestPagingData | undefined>();
 
   const addSorter = (name: string) => {
     if (!sorter?.name || name != sorter.name) {
@@ -326,64 +333,89 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       });
     }
 
-    var res = await overviewExamTestCounter({
+    var res = await //   overviewExamTestCounter({
+    //   paging: { startIndex: indexPage, recordPerPage: recordNum },
+    //   filters,
+    //   studioSorters: [sorter],
+    // });
+    overviewExamTestGetPaging({
       paging: { startIndex: indexPage, recordPerPage: recordNum },
-      filters,
-      studioSorters: [sorter],
+      isReportTotal: true,
+      filterByNameOrTag: search?.trim()
+        ? {
+            name: "unsignedName",
+            inValues: [search?.trim()!],
+          }
+        : undefined,
+      filterByExamGroupId: groupId
+        ? {
+            name: "ExamGroup",
+            inValues: [groupId],
+          }
+        : undefined,
+      fromTime: startDate,
+      toTime: endDate,
+      isIncludeExamVersion: true,
     });
     if (res?.code != 0) {
       return;
     }
-    var examData: ExamTestCounterData[] = res?.data?.records ?? [];
-    var examTableData = examData?.map<TableValue>((t) => ({
-      id: t?.info?.examTest?.id,
-      created_date: dayjs(t?.info?.examTest?.createdTime).format(
-        "DD:MM:YYYY HH:mm:ss",
-      ),
-      question_num: t?.couter?.numberOfQuestions ?? 0,
-      group: t?.info?.groupExam?.name,
-      name: t?.info?.examTest?.name,
-      tags: t?.info?.examTest?.examVersion?.exam?.tags?.map((k: any) =>
-        typeof k == "string" ? k : k?.name,
-      ),
+    var result: ExamTestPagingData = res?.data;
+    setDataList(result);
+    var examData: ExaminationData[] = res?.data?.records ?? [];
+    var examTableData = examData?.map<TableValue>((ex) => ({
+      id: ex?.id,
+      created_date: dayjs(ex?.createdTime).format("DD:MM:YYYY HH:mm:ss"),
+      question_num: ex?.couter?.numberOfQuestions ?? 0,
+      group:
+        ex?.examVersion?.groupExams &&
+        (ex?.examVersion?.groupExams as any).length != 0
+          ? (ex?.examVersion?.groupExams as any[])[0].name
+          : "",
+      name: ex?.name,
+      tags: ex?.examVersion?.tags?.map((y) => y?.name ?? ""),
+      // ex?.examVersion?.exam?.tags?.map((k: any) =>
+      //   typeof k == "string" ? k : k?.name,
+      // ),
 
-      dtv: t?.couter?.medianScoreAsInt,
-      dtb: !t?.couter?.numberOfTest
+      dtv: ex?.couter?.medianScoreAsInt,
+      dtb: !ex?.couter?.numberOfTest
         ? 0
-        : (t?.couter?.totalScoreAsInt ?? 0) / (t?.couter?.numberOfTest ?? 0),
-      join_num: t?.couter?.numberOfTest,
-      percent_pass: !t?.couter?.numberOfTest
+        : (ex?.couter?.totalScoreAsInt ?? 0) / (ex?.couter?.numberOfTest ?? 0),
+      join_num: ex?.couter?.numberOfTest,
+      percent_pass: !ex?.couter?.numberOfTest
         ? 0
-        : ((t?.couter?.totalScoreAsInt ?? 0) / (t?.couter?.numberOfTest ?? 0)) *
+        : ((ex?.couter?.totalScoreAsInt ?? 0) /
+            (ex?.couter?.numberOfTest ?? 0)) *
           100,
-      avg_test_time: !t?.couter?.numberOfTest
+      avg_test_time: !ex?.couter?.numberOfTest
         ? "00:00:00"
         : dayjs
             .duration(
-              (t?.couter?.totalTimeSeconds ?? 0) /
-                (t?.couter?.numberOfTest ?? 0),
+              (ex?.couter?.totalTimeSeconds ?? 0) /
+                (ex?.couter?.numberOfTest ?? 0),
             )
             .format("HH:mm:ss"),
       max_test_time: dayjs
-        .duration(t?.couter?.maximumTimeSeconds ?? 0)
+        .duration(ex?.couter?.maximumTimeSeconds ?? 0)
         .format("HH:mm:ss"),
       min_test_time: dayjs
-        .duration(t?.couter?.minimumTimeSeconds ?? 0)
+        .duration(ex?.couter?.minimumTimeSeconds ?? 0)
         .format("HH:mm:ss"),
-      today_join_num: `${t?.key?.couterByDate}`,
-      from_date: t?.info?.examTest?.validAccessSetting?.validFrom
-        ? dayjs(t?.info?.examTest?.validAccessSetting?.validFrom)?.format(
+      today_join_num: ``,
+      from_date: ex?.validAccessSetting?.validFrom
+        ? dayjs(ex?.validAccessSetting?.validFrom)?.format(
             "DD/MM/YYYY HH:mm:ss",
           )
         : undefined,
-      to_date: t?.info?.examTest?.validAccessSetting?.validTo
-        ? dayjs(t?.info?.examTest?.validAccessSetting?.validTo)?.format(
-            "DD/MM/YYYY HH:mm:ss",
-          )
+      to_date: ex?.validAccessSetting?.validTo
+        ? dayjs(ex?.validAccessSetting?.validTo)?.format("DD/MM/YYYY HH:mm:ss")
         : undefined,
-      gold_price: t?.info?.examTest?.goldSetting?.goldPrice,
-      pure_income: t?.couter?.goldCouter?.netRevenue,
-      status: `${t?.info?.examTest?.stateInfo ?? ""}`,
+      gold_price: ex?.goldSetting?.goldPrice,
+      pure_income: ex?.couter?.goldCouter?.netRevenue,
+      status: `${
+        ex?.stateInfo?.approvedState ? t(ex?.stateInfo?.approvedState) : ""
+      }`,
 
       // avg_test_time: t?.couter?.
     }));
@@ -424,18 +456,14 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       });
     }
 
-    var res = await overviewExamTestCounterExcel({
+    var res = await //overviewExamTestCounterExcel
+    overviewExamTestStatiticExcel({
       paging: {
         startIndex: indexPage,
         recordPerPage: recordNum,
       },
       filters,
-      studioSorters: [
-        {
-          name: "createdTime",
-          isAsc: false,
-        },
-      ],
+      studioSorters: [sorter],
     });
 
     if (res?.code != 0) {
@@ -456,8 +484,8 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         {t("examination_list")}
       </div>
       <div className="flex justify-between w-full items-center">
-        <div className="flex  items-center">
-          <div className="w-52 mr-4">
+        <div className="flex  lg:items-center max-lg:flex-col">
+          <div className="lg:w-52 lg:mr-4">
             <MTreeSelect
               value={groupId}
               setValue={(name: any, e: any) => {
@@ -467,7 +495,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
               defaultValue=""
               id="question_group"
               name="question_group"
-              className="w-52"
+              className="lg:w-52"
               isTextRequire={false}
               h="h-11"
               options={optionSelect}
@@ -561,7 +589,10 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         setRecordNum={setRecordNum}
         total={total}
         dataRows={dataRows}
-        sumData={{ name: `${t("sum")}:` }}
+        sumData={{
+          name: `${t("sum")}:`,
+          join_num: dataList?.additionData?.numberOfTest,
+        }}
       />
     </>
   );

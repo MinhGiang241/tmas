@@ -219,7 +219,7 @@ function OverviewTab() {
               <XAxis
                 dataKey="name"
                 interval={bars?.length > 5 ? 0 : "preserveStartEnd"}
-                angle={-35}
+                angle={bars?.length > 5 ? -35 : 0}
                 tickFormatter={bars?.length > 5 ? tickFormatter : undefined}
                 textAnchor={"end"}
                 axisLine={false}
