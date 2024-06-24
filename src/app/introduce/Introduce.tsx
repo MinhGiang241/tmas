@@ -218,8 +218,8 @@ export default function Introduce() {
       ],
     });
     setIdExam(res?.data[0]?.idExam);
-    console.log(res?.data[0]?.idExam);
-    console.log(res, "examDataa123");
+    // console.log(res?.data[0]?.idExam);
+    // console.log(res, "examDataa123");
 
     if (res.code != 0) {
       errorToast(res.message ?? "");
@@ -235,29 +235,35 @@ export default function Introduce() {
   return (
     <div>
       <Tooltip
+        rootClassName="onboarding"
         title={
           currentStep === 1 ? (
             <div>
-              Chào {user?.full_name} 🖐🏻 Mình là TmasAI ☺️, Mình sẽ hỗ trợ bạn
-              trong quá trình sử dụng Tmas. Đầu tiên hãy chọn lĩnh vực mà bạn
-              đang quan tâm...
+              <div>
+                Chào <span className="font-medium">{user?.full_name}</span>
+              </div>
+              🖐🏻 Mình là TmasAI ☺️, Mình sẽ hỗ trợ bạn trong quá trình sử dụng
+              Tmas. Đầu tiên hãy chọn lĩnh vực mà bạn đang quan tâm...
             </div>
           ) : currentStep === 2 ? (
             <div>
-              Tuyệt vời 🎉 Dựa theo các lĩnh vực mà bạn đã chọn, Tmas gợi ý các
-              đề thi đã có sẵn trên ngân hàng đề thi. Hãy chọn đề thi đầu tiên
-              cho đợt tuyển dụng của bạn...
+              <div>Tuyệt vời🎉</div>
+              Dựa theo các lĩnh vực mà bạn đã chọn, Tmas gợi ý các đề thi đã có
+              sẵn trên ngân hàng đề thi. Hãy chọn đề thi đầu tiên cho đợt tuyển
+              dụng của bạn...
             </div>
           ) : currentStep === 3 ? (
             <div>
-              Sắp xong rồi 💪🏻 Đề thi đã được tạo sẵn cho bạn, Bây giờ hãy tạo
-              đợt thi đầu tiên và sẵn sàng gửi tới ứng viên ngay thôi...🥰
+              <div>Sắp xong rồi 💪🏻</div>
+              Đề thi đã được tạo sẵn cho bạn, Bây giờ hãy tạo đợt thi đầu tiên
+              và sẵn sàng gửi tới ứng viên ngay thôi...🥰
             </div>
           ) : (
             <div>
-              Hurray! Bạn đã hoàn thành tạo đợt thi tuyển đầu tiên từ đề thi XXX
-              trên Tmas. Hãy kiểm tra lại các thông tin và gửi tới ứng viên ngay
-              thôi.
+              <div>Hurray!</div>
+              Bạn đã hoàn thành tạo đợt thi tuyển đầu tiên từ đề thi{" "}
+              {active?.version?.name} trên Tmas. Hãy kiểm tra lại các thông tin
+              và gửi tới ứng viên ngay thôi.
             </div>
           )
         }
@@ -416,6 +422,9 @@ export default function Introduce() {
                 step={() => {
                   setCurrentStep(4);
                   setOpen(false);
+                  setTimeout(() => {
+                    onChangeStudio();
+                  }, 5000);
                 }}
               />
             </div>
