@@ -63,6 +63,9 @@ function CreateExaminationIntroduce({
   idExam?: string;
   name?: string;
   step?: any;
+  // content: string,
+  // fn: () => void,
+  // text?: string
 }) {
   const createSessionId = async () => {
     var dataSessionId = await createSession(examination?.idSession ?? "");
@@ -683,6 +686,7 @@ function CreateExaminationIntroduce({
             onClick={() => {
               trained();
               step();
+              // fn() => ()
             }}
           />
         </div>
