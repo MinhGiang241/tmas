@@ -15,7 +15,7 @@ import Image from "next/image";
 import { CameraFilled } from "@ant-design/icons";
 import { ExaminationFormData } from "@/data/form_interface";
 import PreventTrick from "@/app/examination/components/PreventTrick";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import {
   createExamination,
@@ -46,6 +46,9 @@ import ResultTest from "@/app/examination/components/ResultTest";
 import RequireInfo from "@/app/examination/components/RequireInfo";
 import PassPoint from "@/app/examination/components/PassPoint";
 import { trained } from "@/services/api_services/onboarding";
+import { changeStudio } from "@/services/api_services/account_services";
+import { setUserData, userClear } from "@/redux/user/userSlice";
+import { UserData } from "@/data/user";
 const EditorHook = dynamic(
   () => import("../../exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -63,9 +66,6 @@ function CreateExaminationIntroduce({
   idExam?: string;
   name?: string;
   step?: any;
-  // content: string,
-  // fn: () => void,
-  // text?: string
 }) {
   const createSessionId = async () => {
     var dataSessionId = await createSession(examination?.idSession ?? "");
@@ -93,6 +93,26 @@ function CreateExaminationIntroduce({
   //     }
   //   }
   // };
+
+  const dispatch = useAppDispatch();
+  const onChangeStudio = async (ownerId?: string) => {
+    try {
+      var data = await changeStudio(ownerId);
+      localStorage.removeItem("access_token");
+      if (sessionStorage.getItem("access_token")) {
+        sessionStorage.removeItem("access_token");
+        sessionStorage.setItem("access_token", data["token"]);
+      } else {
+        localStorage.setItem("access_token", data["token"]);
+      }
+      var userNew = data["user"] as UserData;
+      dispatch(userClear({}));
+      dispatch(setUserData(userNew));
+
+      // await loadMembersWhenChangeStudio();
+      // await loadingQuestionsAndExams(true, userNew.studio?._id);
+    } catch (e: any) {}
+  };
 
   useEffect(() => {
     loadExam();
@@ -448,6 +468,7 @@ function CreateExaminationIntroduce({
       if (exam) {
         createSessionId();
         router?.refresh();
+        onChangeStudio();
       }
       // router.push(`/examination/${dataResults?.data}`);
     },
@@ -473,7 +494,7 @@ function CreateExaminationIntroduce({
   const [push, setPush] = useState<boolean>(false);
 
   return (
-    <div className="bg-neutral-100  h-fit min-h-screen text-m_neutral_900 relative">
+    <div className="bg-neutral-100 h-screen text-m_neutral_900 relative overflow-y-scroll">
       <form
         onSubmit={(e: any) => {
           e.preventDefault();
@@ -683,10 +704,9 @@ function CreateExaminationIntroduce({
             className="w-[168px]"
             htmlType="submit"
             text={"Tiếp tục"}
-            onClick={() => {
-              trained();
+            onClick={async () => {
+              await trained();
               step();
-              // fn() => ()
             }}
           />
         </div>

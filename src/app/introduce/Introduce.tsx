@@ -422,6 +422,9 @@ export default function Introduce() {
                 step={() => {
                   setCurrentStep(4);
                   setOpen(false);
+                  setTimeout(() => {
+                    onChangeStudio();
+                  }, 5000);
                 }}
               />
             </div>
