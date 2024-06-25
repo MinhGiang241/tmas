@@ -92,12 +92,11 @@ export default function Introduce() {
         selectedItems.map((x: onBoardingTopic) => x?._id)
       );
       console.log("getTopicChild response", res);
-
       if (res?.code === 0) {
         setDataTopicChild(res?.data);
         var transformedData: DataGroupChild[] = selectedItems.map((item) => {
           var children = res.data
-            .filter((child: any) => child.parentId === item._id)
+            .filter((w: any) => w.parentId === item._id)
             .map((child: any) => ({ id: child?._id, name: child.name }));
           return {
             parent: {
@@ -107,20 +106,15 @@ export default function Introduce() {
             children,
           };
         });
-
         setDataTopicNew([...transformedData]);
         const listExamChildResponse = await getListExamChild(transformedData);
-
-        console.log("getListExamChild response", listExamChildResponse);
-        // if (listExamChildResponse.code != 0) {
-        //   return;
-        // }
         const arr = listExamChildResponse?.data?.reduce(
           (a: any, b: any) => [...a, ...b?.children],
           []
         );
 
         setDataNewChildren(arr);
+        dataExamByTopic(res?.data);
       } else {
         errorToast(res?.message ?? "An error occurred");
       }
@@ -130,20 +124,28 @@ export default function Introduce() {
     }
   };
 
-  useEffect(() => {
-    if (selectedItems?.length != 0) {
-      getDataTopicChild();
-    }
-  }, [selectedItems]);
+  // useEffect(() => {
+  //   if (selectedItems?.length != 0) {
+  //     getDataTopicChild();
+  //   }
+  // }, [selectedItems]);
 
-  const dataExamByTopic = async () => {
-    const res = await getListExam(childrenIds);
+  const dataExamByTopic = async (childs: onBoardingTopic[]) => {
+    console.log("dataTopicChild", childs);
+
+    const res = await getListExam(childs?.map((e) => e._id));
     console.log("getListExam", res?.data);
     if (res) {
-      setDataExamTopicVersion(res?.data);
+      setDataExamTopicVersion(res?.data?.filter(onlyUnique));
     }
   };
-
+  function onlyUnique(value: any, index: any, array: any) {
+    return (
+      array.findIndex(
+        (t: any) => t?.version?.examId == value?.version?.examId
+      ) === index
+    );
+  }
   const dispatch = useAppDispatch();
   const onChangeStudio = async (ownerId?: string) => {
     try {
@@ -187,35 +189,36 @@ export default function Introduce() {
   const handleContinue = async () => {
     if (selectedItems.length >= 3) {
       setCurrentStep(currentStep + 1);
-      for (let i of selectedItems) {
-        let submitData = {
-          name: i?.name,
-          level: 0,
-          studioId: user?.studio?._id,
-          requiredCheckName: true,
-        };
-        var res = await createExamGroupTest(submitData);
-        if (res?.code != 0) {
-          continue;
-        }
+      // for (let i of selectedItems) {
+      //   let submitData = {
+      //     name: i?.name,
+      //     level: 0,
+      //     studioId: user?.studio?._id,
+      //     requiredCheckName: true,
+      //   };
+      //   var res = await createExamGroupTest(submitData);
+      //   if (res?.code != 0) {
+      //     continue;
+      //   }
 
-        var newChildren = dataTopicChild.filter((d) => d.parentId == i?._id);
-        for (let j of newChildren) {
-          let submitDataChild = {
-            name: j.name,
-            level: 1,
-            idParent: res.data,
-            studioId: user?.studio?._id,
-          };
-          var res = await createExamGroupTest(submitDataChild);
-          if (res?.code != 0) {
-            continue;
-          }
-          childrenIds.push(j._id!);
-          mapping[j._id!] = res.data;
-        }
-      }
-      dataExamByTopic();
+      //   var newChildren = dataTopicChild.filter((d) => d.parentId == i?._id);
+      //   for (let j of newChildren) {
+      //     let submitDataChild = {
+      //       name: j.name,
+      //       level: 1,
+      //       idParent: res.data,
+      //       studioId: user?.studio?._id,
+      //     };
+      //     var res = await createExamGroupTest(submitDataChild);
+      //     if (res?.code != 0) {
+      //       continue;
+      //     }
+      //     childrenIds.push(j._id!);
+      //     mapping[j._id!] = res.data;
+      //   }
+      // }
+
+      getDataTopicChild();
     }
   };
 
@@ -255,7 +258,7 @@ export default function Introduce() {
     );
 
     var indexIdGroup = dataNewChildren?.findIndex(
-      (e) => e?.oldId === active?.version?.examData?.IdExamGroup
+      (e) => e?.oldId === active?._id
     );
     console.log("indexIdGroup", indexIdGroup, active, dataNewChildren);
 
