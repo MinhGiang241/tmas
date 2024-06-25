@@ -47,6 +47,26 @@ export const getListExam = async (topicIds: any) => {
   );
 };
 
+export interface DataGroupChild {
+  parent?: {
+    id?: string;
+    name?: string;
+  };
+  children?: {
+    id?: string;
+    name?: string;
+  }[];
+}
+
+export const getListExamChild = async (data: DataGroupChild[]) => {
+  return await callApi.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/GroupExam/Import`,
+    {
+      groupExams: data,
+    }
+  );
+};
+
 export const trained = async () => {
   return await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.had_been_trained`,
