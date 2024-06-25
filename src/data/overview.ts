@@ -256,8 +256,14 @@ export interface ExamPagingData {
       couterByDate?: string;
       numberOfData?: number;
     };
-    resords?: ExamData[];
   };
+  paging?: {
+    recordPerPage?: number;
+    startIndex?: number;
+  };
+  totalOfRecords?: number;
+
+  records?: ExamData[];
 }
 
 export interface ExamTestPagingData {
@@ -279,6 +285,11 @@ export interface ExamTestPagingData {
       couterByDate?: string;
       numberOfData?: number;
     };
-    resords?: ExaminationData[];
   };
+  paging?: {
+    recordPerPage?: number;
+    startIndex?: number;
+  };
+  totalOfRecords?: number;
+  records?: ExaminationData[];
 }

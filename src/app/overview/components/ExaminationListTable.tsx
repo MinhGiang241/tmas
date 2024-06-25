@@ -366,7 +366,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     var examTableData = examData?.map<TableValue>((ex) => ({
       id: ex?.id,
       created_date: dayjs(ex?.createdTime).format("DD:MM:YYYY HH:mm:ss"),
-      question_num: ex?.couter?.numberOfQuestions ?? 0,
+      question_num: ex?.statisticExamTest?.couter?.numberOfQuestions ?? 0,
       group:
         ex?.examVersion?.groupExams &&
         (ex?.examVersion?.groupExams as any).length != 0
@@ -378,29 +378,30 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       //   typeof k == "string" ? k : k?.name,
       // ),
 
-      dtv: ex?.couter?.medianScoreAsInt,
-      dtb: !ex?.couter?.numberOfTest
+      dtv: ex?.statisticExamTest?.couter?.medianScoreAsInt,
+      dtb: !ex?.statisticExamTest?.couter?.numberOfTest
         ? 0
-        : (ex?.couter?.totalScoreAsInt ?? 0) / (ex?.couter?.numberOfTest ?? 0),
-      join_num: ex?.couter?.numberOfTest,
-      percent_pass: !ex?.couter?.numberOfTest
+        : (ex?.statisticExamTest?.couter?.totalScoreAsInt ?? 0) /
+          (ex?.statisticExamTest?.couter?.numberOfTest ?? 0),
+      join_num: ex?.statisticExamTest?.couter?.numberOfTest,
+      percent_pass: !ex?.statisticExamTest?.couter?.numberOfTest
         ? 0
-        : ((ex?.couter?.totalScoreAsInt ?? 0) /
-            (ex?.couter?.numberOfTest ?? 0)) *
+        : ((ex?.statisticExamTest?.couter?.totalScoreAsInt ?? 0) /
+            (ex?.statisticExamTest?.couter?.numberOfTest ?? 0)) *
           100,
-      avg_test_time: !ex?.couter?.numberOfTest
+      avg_test_time: !ex?.statisticExamTest?.couter?.numberOfTest
         ? "00:00:00"
         : dayjs
             .duration(
-              (ex?.couter?.totalTimeSeconds ?? 0) /
-                (ex?.couter?.numberOfTest ?? 0),
+              (ex?.statisticExamTest?.couter?.totalTimeSeconds ?? 0) /
+                (ex?.statisticExamTest?.couter?.numberOfTest ?? 0),
             )
             .format("HH:mm:ss"),
       max_test_time: dayjs
-        .duration(ex?.couter?.maximumTimeSeconds ?? 0)
+        .duration(ex?.statisticExamTest?.couter?.maximumTimeSeconds ?? 0)
         .format("HH:mm:ss"),
       min_test_time: dayjs
-        .duration(ex?.couter?.minimumTimeSeconds ?? 0)
+        .duration(ex?.statisticExamTest?.couter?.minimumTimeSeconds ?? 0)
         .format("HH:mm:ss"),
       today_join_num: ``,
       from_date: ex?.validAccessSetting?.validFrom
@@ -412,7 +413,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         ? dayjs(ex?.validAccessSetting?.validTo)?.format("DD/MM/YYYY HH:mm:ss")
         : undefined,
       gold_price: ex?.goldSetting?.goldPrice,
-      pure_income: ex?.couter?.goldCouter?.netRevenue,
+      pure_income: ex?.statisticExamTest?.couter?.goldCouter?.netRevenue,
       status: `${
         ex?.stateInfo?.approvedState ? t(ex?.stateInfo?.approvedState) : ""
       }`,
@@ -476,7 +477,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
 
   useEffect(() => {
     getListData();
-  }, [user, startDate, endDate, search, groupId, sorter]);
+  }, [user, startDate, endDate, search, groupId, sorter, indexPage, recordNum]);
 
   return (
     <>

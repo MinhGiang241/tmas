@@ -202,9 +202,8 @@ export interface ExaminationData {
     isEnable?: boolean;
     goldPrice?: number;
   };
-  statisticExamTest?: StatisticExamTest;
 
-  couter?: CouterData;
+  statisticExamTest?: StatisticExamTest;
 }
 
 export interface TmasExamVersion {
@@ -649,6 +648,11 @@ export interface StatisticExamTestInfo {
   totalNotAnwser?: number;
   totalExamTestResult?: number;
   totalNotCheck?: number;
+  maximumTimeSeconds?: number;
+  medianScoreAsInt?: number;
+  minimumTimeSeconds?: number;
+  numberOfQuestionCorrect?: number;
+  goldCouter?: { discount?: number; netRevenue?: number; revenue?: number };
 }
 
 export interface StatisticExamTest {
@@ -660,11 +664,24 @@ export interface StatisticExamTest {
   score?: number;
   scoreAsInt?: number;
   completionState?: ExamCompletionState;
+  totalScoreAsInt?: number;
   couter?: {
+    goldCouter?: any;
+    maximumTimeSeconds?: number;
+    medianScoreAsInt?: number;
+    minimumTimeSeconds?: number;
     numberOfQuestionCorrect?: number;
     numberOfQuestionNotComplete?: number;
+    numberOfQuestionNotEssayCorrect?: number;
+    numberOfQuestionWrong?: number;
     numberOfQuestions?: number;
+    numberOfTest?: number;
+    numberOfTestByDay?: number;
     numberQuestionEssay?: number;
     numberQuestionNeedCheck?: number;
+    totalPass?: number;
+    totalScoreAsInt?: number;
+    totalTimeDoTestSeconds?: number;
+    totalTimeSeconds?: number;
   };
 }

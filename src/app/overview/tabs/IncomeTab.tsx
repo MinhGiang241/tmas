@@ -135,23 +135,22 @@ function IncomeTab() {
       ),
       classNameTitle: "min-w-24",
       render: (text: any, data: any) => {
-        var ref = createRef<any>();
+        // var ref = createRef<any>();
         return (
           <div className="w-full flex justify-start ">
+            {/* <button */}
+            {/*   className="ml-2 text-m_primary_500 underline underline-offset-4" */}
+            {/*   onClick={() => { */}
+            {/*     (ref?.current as any).click(); */}
+            {/*   }} */}
+            {/* ></button> */}
             <Link
-              target="_blank"
-              ref={ref}
-              href={`/examination/results/${data.id}`}
-            />
-
-            <button
               className="ml-2 text-m_primary_500 underline underline-offset-4"
-              onClick={() => {
-                (ref?.current as any).click();
-              }}
+              target="_blank"
+              href={`/examination/results/${data.id}`}
             >
               {text}
-            </button>
+            </Link>
           </div>
         );
       },

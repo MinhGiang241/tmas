@@ -350,7 +350,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
 
   useEffect(() => {
     getListData();
-  }, [user, startDate, endDate, search, groupId, sorter]);
+  }, [user, startDate, endDate, search, groupId, sorter, indexPage, recordNum]);
 
   const downloadExell = async () => {
     var filters: FilterData[] = [];

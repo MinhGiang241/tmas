@@ -53,10 +53,10 @@ function OverviewTab() {
   var year = now.year();
 
   const [remain, setRemain] = useState<{
-    number_of_test?: number;
+    number_of_test?: string;
     pkg_name?: string;
   }>({
-    number_of_test: 0,
+    number_of_test: "",
     pkg_name: "",
   });
   const [barData, setBarData] = useState<BarTableValue[]>([]);
@@ -92,7 +92,7 @@ function OverviewTab() {
       return;
     }
     setRemain({
-      number_of_test: res?.data?.number_of_test,
+      number_of_test: `${res?.data?.number_of_test}`,
       pkg_name: res?.data?.pkg_name,
     });
   };
@@ -193,9 +193,7 @@ function OverviewTab() {
         <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
           <div className="body_regular_14">{t("remain_test")}</div>
           <div className="h-2" />
-          <div className="heading_semibold_32">
-            {remain?.number_of_test}/tháng
-          </div>
+          <div className="heading_semibold_32">{remain?.number_of_test}</div>
         </div>
       </div>
 
