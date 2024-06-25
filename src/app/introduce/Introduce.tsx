@@ -7,8 +7,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import CreateExaminationIntroduce from "./createExamination/CreateExamination";
 import {
+  DataGroupChild,
   getExamTopic,
   getListExam,
+  getListExamChild,
   getTopic,
   getTopicChild,
   onBoardingTopic,
@@ -41,6 +43,10 @@ export default function Introduce() {
   const [dataTopic, setDataTopic] = useState<onBoardingTopic[]>([]);
   const [dataTopicChild, setDataTopicChild] = useState<onBoardingTopic[]>([]);
   const [dataExamTopicVersion, setDataExamTopicVersion] = useState([]);
+  const [dataTopicNew, setDataTopicNew] = useState<DataGroupChild[]>([]);
+  const [dataNewChildren, setDataNewChildren] = useState<
+    { id?: string; oldId?: string; [key: string]: any }[]
+  >([]);
 
   const getDataTopic = async () => {
     const res = await getTopic();
@@ -57,19 +63,77 @@ export default function Introduce() {
     getDataTopic();
   }, []);
 
-  const getDataTopicChild = async () => {
-    const res = await getTopicChild(selectedItems.map((x: any) => x?._id));
-    // console.log("getTopicChild", res);
+  // const getDataTopicChild = async () => {
+  //   const res = await getTopicChild(
+  //     selectedItems.map((x: onBoardingTopic) => x?._id)
+  //   );
+  //   console.log("getTopicChild aa", res);
 
-    if (res?.code === 0) {
-      setDataTopicChild(res?.data);
-      return;
+  //   if (res?.code === 0) {
+  //     setDataTopicChild(res?.data);
+  //     var a: DataGroupChild[] = selectedItems?.map<DataGroupChild>((e) => {
+  //       var children = res?.data
+  //         ?.filter((c: any) => c?.parentId == e?._id)
+  //         ?.map((r: any) => r?.name);
+  //       return {
+  //         id: e?._id,
+  //         name: e?.name
+  //       };
+  //     });
+  //     setDataTopicNew([...a]);
+  //     return;
+  //   }
+  //   errorToast(res?.message ?? "");
+  // };
+
+  const getDataTopicChild = async () => {
+    try {
+      const res = await getTopicChild(
+        selectedItems.map((x: onBoardingTopic) => x?._id)
+      );
+      console.log("getTopicChild response", res);
+
+      if (res?.code === 0) {
+        setDataTopicChild(res?.data);
+        var transformedData: DataGroupChild[] = selectedItems.map((item) => {
+          var children = res.data
+            .filter((child: any) => child.parentId === item._id)
+            .map((child: any) => ({ id: child?._id, name: child.name }));
+          return {
+            parent: {
+              id: item._id,
+              name: item.name,
+            },
+            children,
+          };
+        });
+
+        setDataTopicNew([...transformedData]);
+        const listExamChildResponse = await getListExamChild(transformedData);
+
+        console.log("getListExamChild response", listExamChildResponse);
+        // if (listExamChildResponse.code != 0) {
+        //   return;
+        // }
+        const arr = listExamChildResponse?.data?.reduce(
+          (a: any, b: any) => [...a, ...b?.children],
+          []
+        );
+
+        setDataNewChildren(arr);
+      } else {
+        errorToast(res?.message ?? "An error occurred");
+      }
+    } catch (error) {
+      console.error("Error in getDataTopicChild:", error);
+      errorToast("An unexpected error occurred");
     }
-    errorToast(res?.message ?? "");
   };
 
   useEffect(() => {
-    getDataTopicChild();
+    if (selectedItems?.length != 0) {
+      getDataTopicChild();
+    }
   }, [selectedItems]);
 
   const dataExamByTopic = async () => {
@@ -79,6 +143,7 @@ export default function Introduce() {
       setDataExamTopicVersion(res?.data);
     }
   };
+
   const dispatch = useAppDispatch();
   const onChangeStudio = async (ownerId?: string) => {
     try {
@@ -127,6 +192,7 @@ export default function Introduce() {
           name: i?.name,
           level: 0,
           studioId: user?.studio?._id,
+          requiredCheckName: true,
         };
         var res = await createExamGroupTest(submitData);
         if (res?.code != 0) {
@@ -156,9 +222,7 @@ export default function Introduce() {
   const [active, setActive] = useState<TmasData | undefined>();
   const [idExam, setIdExam] = useState();
 
-  const handleContinueStep2 = async (idGroup?: string) => {
-    // console.log("active", active);
-
+  const handleContinueStep2 = async () => {
     var documentObj: DocumentObject[] = (
       active?.version?.examData?.Documents ?? []
     ).map((e) => ({
@@ -190,6 +254,14 @@ export default function Introduce() {
       }),
     );
 
+    var indexIdGroup = dataNewChildren?.findIndex(
+      (e) => e?.oldId === active?.version?.examData?.IdExamGroup
+    );
+    console.log("indexIdGroup", indexIdGroup, active, dataNewChildren);
+
+    var groupId =
+      indexIdGroup != -1 ? dataNewChildren[indexIdGroup]?.id : undefined;
+
     var examObj: ExamData = {
       timeLimitMinutes: active?.version?.examData?.TimeLimitMinutes,
       changePositionQuestion: active?.version?.examData?.ChangePositionQuestion,
@@ -198,7 +270,12 @@ export default function Introduce() {
       examViewQuestionType: active?.version?.examData?.ExamViewQuestionType,
       externalLinks: active?.version?.examData?.ExternalLinks,
       idDocuments: active?.version?.examData?.IdDocuments,
-      idExamGroup: idGroup,
+      idExamGroup:
+        dataNewChildren?.length === 0
+          ? undefined
+          : indexIdGroup === -1
+          ? dataNewChildren[0]?.id
+          : groupId,
       idSession: active?.version?.examData?.IdSession,
       studioId: active?.version?.examData?.StudioId,
       name: active?.version?.name,
@@ -225,7 +302,7 @@ export default function Introduce() {
     });
     setIdExam(res?.data[0]?.idExam);
     // console.log(res?.data[0]?.idExam);
-    // console.log(res, "examDataa123");
+    console.log(res, "examDataa123");
 
     if (res.code != 0) {
       errorToast(res.message ?? "");
