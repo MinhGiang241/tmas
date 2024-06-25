@@ -211,6 +211,7 @@ export interface TmasExamVersion {
 }
 
 export interface TmasData {
+  _id?: string;
   code?: string;
   createdTime?: string;
   examId?: string;
@@ -476,7 +477,7 @@ export interface PagingAdminExamTestResultParams {
     {
       name?: string;
       isAsc?: boolean;
-    },
+    }
   ];
   filters?: {
     fieldName?: string;
