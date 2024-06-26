@@ -36,7 +36,7 @@ export const examGroupSlice = createSlice({
       return { ...state, loading: false, list: action.payload };
     },
     setExamGroupLoading: (state, action) => {
-      return { ...state, loading: true };
+      return { ...state, loading: true, list: [] };
     },
     setquestionGroupList: (state, action) => {
       return { ...state, loading: false, questions: action.payload };

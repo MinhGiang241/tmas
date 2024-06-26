@@ -50,6 +50,7 @@ import { RootState } from "@/redux/store";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   fetchDataExamGroup,
+  fetchDataQuestionGroup,
   setquestionGroupLoading,
 } from "@/redux/exam_group/examGroupSlice";
 import { getQuestionGroups } from "@/services/api_services/exam_api";
@@ -100,8 +101,8 @@ function ExamDetails({ params }: any) {
     (state: RootState) => state?.user?.user,
   );
   const dispatchGroup = useAppDispatch();
-  const questionGroups: ExamGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.list,
+  const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
+    (state: RootState) => state?.examGroup?.questions,
   );
   const loadQuestionGroupList = async (init?: boolean) => {
     if (init) {
@@ -124,7 +125,7 @@ function ExamDetails({ params }: any) {
   useEffect(() => {
     if (user?.studio?._id) {
       dispatchGroup(
-        fetchDataExamGroup(async () => loadQuestionGroupList(true)),
+        fetchDataQuestionGroup(async () => loadQuestionGroupList(true)),
       );
     }
 
@@ -478,17 +479,17 @@ function ExamDetails({ params }: any) {
         <div className="h-[1px] bg-m_neutral_200 mt-10" />
         <div className="flex justify-between items-center mt-6 mb-6 ">
           <div className="flex flex-wrap">
-            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-2">
               <Menu className="mr-1  min-w-5" />
               {data?.totalOfRecords} {t("part")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-2">
               <Play className="mr-1" min-w-5 />
               {exam?.examNextQuestion === "FreeByUser"
                 ? t("free_change_part")
                 : t("part_in_row")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-2">
               <MessageQuestion className="mr-1 scale-75  min-w-5" />
               {/* {data?.records?.[0]?.examQuestions?.length ?? 0} câu hỏi */}
               {data?.records?.reduce(function (total: any, question: any) {
@@ -496,7 +497,7 @@ function ExamDetails({ params }: any) {
               }, 0)}{" "}
               {t("question")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-2">
               <Cup className="mr-1 scale-75  min-w-5" />
               {/* {data?.records?.[0]?.examQuestions?.reduce(function (total: any, question: any) {
               return total + question.numberPoint;
@@ -512,19 +513,19 @@ function ExamDetails({ params }: any) {
               }, 0)}{" "}
               {t("point")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-2">
               <Time className="mr-1 min-w-5" />
               {exam?.timeLimitMinutes
                 ? `${exam?.timeLimitMinutes} ${t("minute")}`
                 : t("unlimited")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-2">
               <Document className="mr-1 min-w-5" />
               {exam?.examViewQuestionType === "MultiplePages"
                 ? t("all_quest_page")
                 : t("quest_per_page")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex max-lg:mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-2">
               <Group className="mr-1 min-w-5" />
               {exam?.changePositionQuestion === false
                 ? t("keep_quest_order")

@@ -38,6 +38,7 @@ import {
   getQuestionById,
 } from "@/services/api_services/question_api";
 import { renderQuestTypeRoute } from "@/services/ui/navigate";
+import EvaluationQuestion from "./questions_components/EvaluationQuestion";
 
 function CreateQuestionPage({ params, question }: any) {
   const { t } = useTranslation("exam");
@@ -98,6 +99,7 @@ function CreateQuestionPage({ params, question }: any) {
   );
 
   const questionList = [
+    "evaluation",
     "many_results",
     "true_false",
     "connect_quest",
@@ -255,6 +257,14 @@ function CreateQuestionPage({ params, question }: any) {
       )}
       {questionType == "random" && params?.id != "u" && (
         <RandomQuestion
+          question={question}
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
+        />
+      )}
+      {questionType == "evaluation" && params?.id != "u" && (
+        <EvaluationQuestion
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}

@@ -668,6 +668,23 @@ function ExaminationPage() {
                           <div className="flex flex-col items-start">
                             <button
                               onClick={(e) => {
+                                if (
+                                  v?.sharingSetting == "Public" &&
+                                  v?.stateInfo?.approvedState ==
+                                    AppovedState.Pending
+                                ) {
+                                  errorToast(t("not_approve_send_info"));
+                                  return;
+                                }
+                                if (
+                                  v?.sharingSetting == "Public" &&
+                                  v?.stateInfo?.approvedState ==
+                                    AppovedState.Rejected
+                                ) {
+                                  errorToast(t("reject_send_info"));
+                                  return;
+                                }
+
                                 setOpenPop(undefined);
                                 setActive(v);
                                 setOpenExaminationInfo(true);

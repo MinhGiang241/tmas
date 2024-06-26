@@ -1,7 +1,15 @@
 "use client";
 import HomeLayout from "@/app/layouts/HomeLayout";
 import React, { useEffect, useState } from "react";
-import { Breadcrumb, Radio, Space, Switch, Tree, TreeSelect } from "antd";
+import {
+  Breadcrumb,
+  Radio,
+  Space,
+  Switch,
+  Tooltip,
+  Tree,
+  TreeSelect,
+} from "antd";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import MButton from "@/app/components/config/MButton";
@@ -25,22 +33,16 @@ import { getExamGroupTest } from "@/services/api_services/exam_api";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import { ExamFormData } from "@/data/form_interface";
 import { RightOutlined } from "@ant-design/icons";
+import NoticeIcon from "@/app/components/icons/blue-notice.svg";
 
-import { auth } from "@/firebase/config";
 import {
   createExaminationList,
   createSession,
-  createSessionUpload,
-  getInfoStudioDocuments,
   updateExam,
 } from "@/services/api_services/examination_api";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
-import TextArea from "antd/es/input/TextArea";
-import { createTag, getTags } from "@/services/api_services/tag_api";
-import { title } from "process";
-import TagSearchSelect from "@/app/components/config/TagsSearch";
+import { getTags } from "@/services/api_services/tag_api";
 import { TagData } from "@/data/tag";
-import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 const EditorHook = dynamic(
   () => import("../components/react_quill/EditorWithUseQuill"),
   {
@@ -467,7 +469,7 @@ function CreatePage({ exam, isEdit }: any) {
         </div>
 
         <div className="max-lg:mx-5 max-lg:grid-cols-1 max-lg:mb-5 lg:col-span-8 col-span-12 bg-white h-fit rounded-lg p-4">
-          {/* <CustomEditor /> */}
+          {/* <Cus etomEditor /> */}
 
           <MTextArea
             defaultValue={exam?.name}
@@ -485,6 +487,73 @@ function CreatePage({ exam, isEdit }: any) {
             formik={formik}
           />
 
+          <div className="p-3 border-m_neutral_200 border rounded-lg mb-3 flex flex-col items-start">
+            <div className="body_semibold_14">{t("exam_form")} *</div>
+            <div className="body_regular_14 ml-3">{t("exam_form_1")}</div>
+            <div className="body_regular_14 ml-3">{t("exam_form_2")}</div>
+            <div className="body_semibold_14 flex ml-3 w-full mt-3">
+              <button
+                className={`w-1/2 flex justify-center items-center py-2 border relative`}
+              >
+                <span>{t("specific")}</span>
+                <Tooltip
+                  className="absolute right-2"
+                  arrow={false}
+                  overlayInnerStyle={{
+                    width: "482px",
+                    background: "white",
+                    color: "black",
+                  }}
+                  placement="bottom"
+                  title={
+                    <>
+                      <div className="body_semibold_14">{t("specific_1")}</div>
+                      <div>{t("specific_2")}</div>
+                      <div>{t("specific_3")}</div>
+                      <div className="ml-2">• {t("yesnoquestion")}</div>
+                      <div className="ml-2">• {t("multianswer")}</div>
+                      <div className="ml-2">• {t("coding")}</div>
+                      <div className="ml-2">• {t("SQL")}</div>
+                      <div className="ml-2">• {t("fillblank")}</div>
+                      <div className="ml-2">• {t("pairing")}</div>
+                      <div className="ml-2">• {t("essay")}</div>
+                      <div>{t("specific_4")}</div>
+                      <div>{t("specific_5")}</div>
+                    </>
+                  }
+                >
+                  <NoticeIcon />
+                </Tooltip>
+              </button>
+              <button
+                className={`w-1/2 flex justify-center items-center py-2 border`}
+              >
+                <span>{t("servey")}</span>
+                <Tooltip
+                  className="absolute right-2"
+                  arrow={false}
+                  overlayInnerStyle={{
+                    width: "482px",
+                    background: "white",
+                    color: "black",
+                  }}
+                  placement="bottom"
+                  title={
+                    <>
+                      <div className="body_semibold_14">{t("specific_1")}</div>
+                      <div>{t("specific_2")}</div>
+                      <div>{t("specific_3")}</div>
+                      <div>{t("specific_4")}</div>
+                      <div>{t("specific_5")}</div>
+                    </>
+                  }
+                >
+                  <NoticeIcon />
+                </Tooltip>
+              </button>
+            </div>
+          </div>
+
           <MDropdown
             namespace="exam"
             onSearch={onSearchTags}
@@ -497,21 +566,6 @@ function CreatePage({ exam, isEdit }: any) {
             formik={formik}
           />
 
-          {/*
-          <MRichText
-            id="describe"
-            name="describe"
-            formik={formik}
-            title={t("describe")}
-            action={
-              <div className="body_regular_14 text-m_neutral_500">
-                {"0/500"}
-              </div>
-            }
-          />
-          <LexicalEditor />
-                    <Editor />
-          */}
           <EditorHook
             defaultValue={exam?.description}
             id="describe"
