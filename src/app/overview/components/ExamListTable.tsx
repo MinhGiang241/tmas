@@ -316,7 +316,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
       id: t?.id,
       created_date: dayjs(t?.createdTime).format("DD:MM:YYYY HH:mm:ss"),
       question_num: t?.numberOfQuestions ?? 0,
-      group: t?.groupExams?.join(", "),
+      group: t?.groupExams?.map((e) => e.name).join(", "),
       name: t?.name,
       tags: t?.tags?.map((k: any) => (typeof k == "string" ? k : k?.name)),
       dtv: t?.couter?.medianScoreAsInt,

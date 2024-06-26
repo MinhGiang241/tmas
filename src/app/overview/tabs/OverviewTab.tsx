@@ -237,7 +237,7 @@ function OverviewTab() {
               <YAxis />
               <Tooltip
                 cursor={{ fill: "transparent" }}
-                reverseDirection={true}
+                reverseDirection={{ y: true }}
               />
               {/* <Legend /> */}
               {bars?.map((e, i) => (

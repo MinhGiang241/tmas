@@ -10,6 +10,7 @@ import MButton from "@/app/components/config/MButton";
 import DownloadIcon from "@/app/components/icons/download.svg";
 import FilterIcon from "@/app/components/icons/filter.svg";
 import EyeIcon from "@/app/components/icons/eye.svg";
+import EditIcon from "@/app/components/icons/edit-black.svg";
 import {
   rowEndStyle,
   rowStartStyle,
@@ -582,6 +583,62 @@ function ResultPage({ params }: any) {
           },
         ]}
       />
+      <div className="body_bold_20 mb-5">
+        {t("result_examnination_evaluation")?.toUpperCase()}
+      </div>
+      <div className="grid grid-cols-3 gap-5 w-full  mb-5">
+        <div className="col-span-1 rounded-lg   bg-white mr-[7px]">
+          <div className=" w-full flex p-5 items-center">
+            <div className="w-1/3 text-5xl">😊</div>
+            <div className="w-2/3 flex flex-col items-start">
+              <div>{t("examination_expect")}</div>
+              <div className={`text-m_warning_500 title_semibold_24 `}>
+                {t("not_expected")}
+              </div>
+            </div>
+          </div>
+          <div className="h-8 body_semibold_14 w-full bg-neutral-300 flex justify-start pl-5 items-center">
+            {t("result")}
+          </div>
+          <div className="mt-5 my-5 grid grid-cols-3 gap-3 w-full ">
+            <div className="ml-3 p-3 border rounded-lg h-20 flex flex-col justify-center items-center col-span-1">
+              <div>{t("require")}</div>
+              <div className="title_semibold_20 text-m_primary_500">{"10"}</div>
+            </div>
+            <div className="mr-3 p-3 border rounded-lg h-20 col-span-2 flex flex-col">
+              <div className="w-full text-center">{t("actual")}</div>
+              <div className="flex justify-between mx-3">
+                <div className="flex items-center">
+                  <span>{t("pass")}</span>
+                  <span className="ml-1 body_semibold_14 text-m_primary_500">
+                    {"8"}
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <span>{t("account_for")}</span>
+                  <span className="ml-1 body_semibold_14 text-m_primary_500">
+                    {"8"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-span-2 rounded-lg  bg-white  ">
+          <div className="px-5 pt-5 flex w-full justify-between items-center">
+            <div>{t("overvie_judgement")}</div>
+            <button>
+              <EditIcon />
+            </button>
+          </div>
+
+          <Divider className="my-2" />
+          <div className=" mx-5 h-44 overflow-y-scroll scroll-smooth break-all ">
+            {""}
+          </div>
+        </div>
+      </div>
+
       <div className="flex justify-between  max-lg:flex-col max-lg:gap-3 max-lg:items-center max-lg:mx-5">
         <Chart
           data={[
