@@ -38,6 +38,8 @@ import {
   getQuestionById,
 } from "@/services/api_services/question_api";
 import { renderQuestTypeRoute } from "@/services/ui/navigate";
+import NewQuestion from "./questions_components/ManagementSkills";
+import ManagementSkills from "./questions_components/ManagementSkills";
 
 function CreateQuestionPage({ params, question }: any) {
   const { t } = useTranslation("exam");
@@ -46,7 +48,7 @@ function CreateQuestionPage({ params, question }: any) {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state: RootState) => state?.user?.user);
   const questionGroups = useAppSelector(
-    (state: RootState) => state?.examGroup?.questions,
+    (state: RootState) => state?.examGroup?.questions
   );
   var search = useSearchParams();
   var questionType = search.get("question");
@@ -72,7 +74,7 @@ function CreateQuestionPage({ params, question }: any) {
 
     var dataResults: APIResults = await getQuestionGroups(
       "",
-      user?.studio?._id,
+      user?.studio?._id
     );
 
     if (dataResults.code != 0) {
@@ -94,7 +96,7 @@ function CreateQuestionPage({ params, question }: any) {
   }, [user]);
 
   const questionLoading = useAppSelector(
-    (state: RootState) => state.question.loading,
+    (state: RootState) => state.question.loading
   );
 
   const questionList = [
@@ -106,6 +108,7 @@ function CreateQuestionPage({ params, question }: any) {
     "sql",
     "fill_blank",
     "random",
+    "ManagementSkill",
   ];
 
   const submitRef = useRef(undefined);
@@ -165,7 +168,7 @@ function CreateQuestionPage({ params, question }: any) {
             onClick={() => {
               if (question) {
                 router.replace(
-                  `?partId=${partId ?? ""}&questId=${questId}&question=${a}`,
+                  `?partId=${partId ?? ""}&questId=${questId}&question=${a}`
                 );
                 return;
               }
@@ -183,11 +186,11 @@ function CreateQuestionPage({ params, question }: any) {
               params?.id == "u" && a == "random"
                 ? "bg-neutral-300"
                 : a == "many_results" &&
-                    !questionList.some((a: any) => a == questionType)
-                  ? "bg-m_primary_100"
-                  : a == questionType
-                    ? "bg-m_primary_100"
-                    : "bg-white "
+                  !questionList.some((a: any) => a == questionType)
+                ? "bg-m_primary_100"
+                : a == questionType
+                ? "bg-m_primary_100"
+                : "bg-white "
             }`}
             key={i}
           >
@@ -259,6 +262,14 @@ function CreateQuestionPage({ params, question }: any) {
           questionGroups={questionGroups}
           submitRef={submitRef}
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
+        />
+      )}
+      {questionType == "ManagementSkill" && params?.id != "u" && (
+        <ManagementSkills
+        // question={question}
+        // questionGroups={questionGroups}
+        // submitRef={submitRef}
+        // idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
 

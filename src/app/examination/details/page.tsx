@@ -53,11 +53,11 @@ function DetailsPage({ params }: any) {
   // const { t } = useTranslation("question");
 
   const user: UserData | undefined = useAppSelector(
-    (state: RootState) => state?.user?.user,
+    (state: RootState) => state?.user?.user
   );
   const dispatchGroup = useAppDispatch();
   const questionGroups: ExamGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.list,
+    (state: RootState) => state?.examGroup?.list
   );
   const loadQuestionGroupList = async (init?: boolean) => {
     if (init) {
@@ -66,7 +66,7 @@ function DetailsPage({ params }: any) {
 
     var dataResults: APIResults = await getQuestionGroups(
       "",
-      user?.studio?._id,
+      user?.studio?._id
     );
 
     if (dataResults.code != 0) {
@@ -81,7 +81,7 @@ function DetailsPage({ params }: any) {
   useEffect(() => {
     if (user?.studio?._id) {
       dispatchGroup(
-        fetchDataExamGroup(async () => loadQuestionGroupList(true)),
+        fetchDataExamGroup(async () => loadQuestionGroupList(true))
       );
     }
 
@@ -282,7 +282,7 @@ function DetailsPage({ params }: any) {
                           // var d = mapTmasQuestionToStudioQuestion(e)
                           // console.log('d', d);
                           return e;
-                        },
+                        }
                       )
                     )
                       ?.filter((a: any) => a.idExamQuestionPart == x.id)
@@ -290,12 +290,12 @@ function DetailsPage({ params }: any) {
                         a.createdTime < b.createdTime
                           ? -1
                           : a.createdTime > b.createdTime
-                            ? 1
-                            : 0,
+                          ? 1
+                          : 0
                       )
                       .map((e: any, key: any) => {
                         var questionGroup = questionGroups?.find(
-                          (v: any) => v.id === e.idGroupQuestion,
+                          (v: any) => v.id === e.idGroupQuestion
                         );
 
                         if (e.questionType == "Coding") {
@@ -395,7 +395,7 @@ function DetailsPage({ params }: any) {
                       })}
                   </Collapse.Panel>
                 </Collapse>
-              ),
+              )
             )}
             {/* <div>123123</div> */}
           </div>
