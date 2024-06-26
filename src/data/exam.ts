@@ -84,7 +84,12 @@ export interface ExamData {
   studioId?: string;
   idSession?: string;
 
-  groupExams?: ExamGroupData;
+  groupExams?: {
+    name?: string;
+    level?: number;
+    idParent?: string;
+    unsignedName?: string;
+  }[];
   couter?: CouterData;
 }
 
@@ -489,7 +494,7 @@ export interface PagingAdminExamTestResultParams {
     {
       name?: string;
       isAsc?: boolean;
-    }
+    },
   ];
   filters?: {
     fieldName?: string;

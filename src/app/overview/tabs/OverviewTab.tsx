@@ -235,7 +235,10 @@ function OverviewTab() {
                 }}
               />
               <YAxis />
-              <Tooltip cursor={{ fill: "transparent" }} />
+              <Tooltip
+                cursor={{ fill: "transparent" }}
+                reverseDirection={true}
+              />
               {/* <Legend /> */}
               {bars?.map((e, i) => (
                 <Bar

@@ -33,13 +33,7 @@ import {
   resetConnectAnswer,
   resetMultiAnswer,
 } from "@/redux/questions/questionSlice";
-import {
-  getExamQuestionPartList,
-  getQuestionById,
-} from "@/services/api_services/question_api";
-import { renderQuestTypeRoute } from "@/services/ui/navigate";
-import NewQuestion from "./questions_components/ManagementSkills";
-import ManagementSkills from "./questions_components/ManagementSkills";
+import EvaluationQuestion from "./questions_components/EvaluationQuestion";
 
 function CreateQuestionPage({ params, question }: any) {
   const { t } = useTranslation("exam");
@@ -100,6 +94,7 @@ function CreateQuestionPage({ params, question }: any) {
   );
 
   const questionList = [
+    "evaluation",
     "many_results",
     "true_false",
     "connect_quest",
@@ -108,7 +103,6 @@ function CreateQuestionPage({ params, question }: any) {
     "sql",
     "fill_blank",
     "random",
-    "ManagementSkill",
   ];
 
   const submitRef = useRef(undefined);
@@ -264,12 +258,12 @@ function CreateQuestionPage({ params, question }: any) {
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
-      {questionType == "ManagementSkill" && params?.id != "u" && (
-        <ManagementSkills
-        // question={question}
-        // questionGroups={questionGroups}
-        // submitRef={submitRef}
-        // idExam={params?.id && params?.id != "u" ? params?.id : undefined}
+      {questionType == "evaluation" && params?.id != "u" && (
+        <EvaluationQuestion
+          question={question}
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
 
