@@ -9,6 +9,7 @@ export interface TableDataRow {
   classNameTitle?: string;
   classNameRow?: string;
   render?: any;
+  children?: { [key: string]: any }[];
 }
 
 interface Props {
@@ -27,6 +28,7 @@ interface Props {
   rowEndStyle?: { [key: string]: any };
   totalComponent?: ReactNode;
   sumData?: { [key: string]: any };
+  showHeader?: boolean;
 }
 
 function MTable(props: Props) {
@@ -73,6 +75,7 @@ function MTable(props: Props) {
       ),
       dataIndex: e?.dataIndex,
       key: e?.dataIndex,
+      children: e?.children,
       render: e?.render
         ? e?.render
         : (text: any, data: any) => (
@@ -92,6 +95,7 @@ function MTable(props: Props) {
   return (
     <div className="w-full ">
       <Table
+        showHeader={props.showHeader != undefined ? props.showHeader : true}
         // locale={{
         //   emptyText: <div className="bg-m_primary_300">HelloWOrld</div>,
         // }}
@@ -114,11 +118,19 @@ function MTable(props: Props) {
         summary={
           props.sumData
             ? (data) => {
-                var d = props.dataRows?.map((y) => y?.dataIndex);
+                var d =
+                  props.dataRows
+                    ?.reduce((a: any, b: any) => {
+                      if (b?.children && b?.children?.length > 0) {
+                        return [...a, ...b.children];
+                      }
+                      return [...a, b];
+                    }, [])
+                    ?.map((y) => y?.dataIndex) ?? [];
 
                 return (
                   <Table.Summary.Row className="w-full bg-m_primary_100 h-12 rounded-b-lg body_semibold_14">
-                    {d?.map((k, i) => (
+                    {d?.map((k: any, i: any) => (
                       <Table.Summary.Cell key={k} index={i}>
                         {(props.sumData as any)[k as string]}
                       </Table.Summary.Cell>
@@ -129,7 +141,7 @@ function MTable(props: Props) {
             : undefined
         }
       />
-      <div className="h-4" />
+      {!props.isHidePagination && <div className="h-4" />}
       {!props.isHidePagination && (
         <MPagination
           recordNum={props.recordNum}

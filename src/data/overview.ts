@@ -293,3 +293,56 @@ export interface ExamTestPagingData {
   totalOfRecords?: number;
   records?: ExaminationData[];
 }
+
+export interface ListExamTestReportParams {
+  _id?: string;
+  name?: string;
+  createdTime?: string;
+  updatedTime?: string;
+  creator?: string;
+  updater?: string;
+  version?: {};
+  target_schema?: string;
+  segment_schema?: boolean;
+  output_schema?: string;
+  collection?: string;
+  postQuery?: string;
+  preQuery?: string;
+  withMergeValidation?: boolean;
+  mergeValidationScript?: string;
+  showMergeError?: boolean;
+  mergeErrorMessage?: string;
+  postQueryBeforePaging?: boolean;
+  group?: DGroupFilter;
+  description?: string;
+  sorted?: DSort[];
+  text?: string;
+  skipDefaultTextSearch?: boolean;
+  search_fields?: string[];
+  skip?: number;
+  limit?: number;
+  withRecords?: boolean;
+  fields?: string;
+  inline?: boolean;
+  delimiter?: string;
+  is_debug?: boolean;
+  unionWiths?: string[];
+  unionLimit?: number;
+}
+
+export interface DGroupFilter {
+  id?: string;
+  value?: string;
+  propType?: string;
+  namespace?: string;
+  operation?: string;
+  customQuery?: string;
+  rawFilter?: boolean;
+  op?: "AND" | "OR";
+  children?: string[];
+}
+
+export interface DSort {
+  id?: string;
+  desc?: boolean;
+}

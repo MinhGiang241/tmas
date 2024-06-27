@@ -2,6 +2,7 @@ import {
   ActivitiesParams,
   ExamCounterParams,
   ExamGetPagingParams,
+  ListExamTestReportParams,
   OverviewListRevenueParams,
 } from "@/data/overview";
 import { callApi, callStudioAPI } from "./base_api";
@@ -136,6 +137,26 @@ export const overviewExamTestStatiticExcel = async (
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/ExportStatisticExcel`,
     data,
     { responseType: "blob" },
+  );
+  return results;
+};
+
+export const overviewListExamTestReport = async (
+  data: ListExamTestReportParams,
+) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/DntExamTestReport/ListExamTestReport`,
+    data,
+  );
+  return results;
+};
+
+export const overviewListExamTestReportReport = async (
+  data: ListExamTestReportParams,
+) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/DntExamTestReport/ListExamTestReport`,
+    data,
   );
   return results;
 };

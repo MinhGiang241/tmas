@@ -48,6 +48,16 @@ import examGroupSlice, {
 import { APIResults } from "@/data/api_results";
 import { getExamGroupTest } from "@/services/api_services/exam_api";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import MTable, { TableDataRow } from "@/app/components/config/MTable";
+import {
+  Legend,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+} from "recharts";
 
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
@@ -180,6 +190,8 @@ function ResultPage({ params }: any) {
     }
   };
 
+  const listRow: TableDataRow[] = [];
+
   const columns: ColumnsType<any> = [
     {
       onHeaderCell: (_) => rowStartStyle,
@@ -221,6 +233,22 @@ function ResultPage({ params }: any) {
       ),
       dataIndex: "percent_complete",
       key: "complete_percent",
+      render: (text) => (
+        <p
+          key={text}
+          className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
+        >
+          {text}
+        </p>
+      ),
+    },
+    {
+      onHeaderCell: (_) => rowStyle,
+      title: (
+        <div className="min-w-32 w-full flex justify-start">{t("rank")}</div>
+      ),
+      dataIndex: "rank",
+      key: "rank",
       render: (text) => (
         <p
           key={text}
@@ -501,6 +529,72 @@ function ResultPage({ params }: any) {
       dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
     }
   }, [user, filters, testDate, recordNum, indexPage]);
+  const questDataRows: TableDataRow[] = [
+    { title: t("question") },
+    { title: t("max_score") },
+    { title: t("has_result") },
+    { title: t("average_answered") },
+    { title: t("average_total_exaxm") },
+  ];
+  const partDataRows: TableDataRow[] = [
+    {
+      title: t("ability"),
+      dataIndex: "name",
+    },
+    {
+      title: t("weight"),
+    },
+    {
+      title: t("level"),
+      children: [
+        {
+          title: t("require"),
+        },
+        {
+          title: t("evaluate"),
+        },
+      ],
+    },
+  ];
+
+  const partDataChart = [
+    {
+      subject: "Math",
+      A: 120,
+      B: 110,
+      fullMark: 150,
+    },
+    {
+      subject: "Chinese",
+      A: 98,
+      B: 130,
+      fullMark: 150,
+    },
+    {
+      subject: "English",
+      A: 86,
+      B: 130,
+      fullMark: 150,
+    },
+    {
+      subject: "Geography",
+      A: 99,
+      B: 100,
+      fullMark: 150,
+    },
+    {
+      subject: "Physics",
+      A: 85,
+      B: 90,
+      fullMark: 150,
+    },
+    {
+      subject: "History",
+      A: 65,
+      B: 85,
+      fullMark: 150,
+    },
+  ];
 
   return (
     <HomeLayout>
@@ -583,11 +677,11 @@ function ResultPage({ params }: any) {
           },
         ]}
       />
-      <div className="body_bold_20 mb-5">
+      <div className="body_bold_16 mb-5 max-lg:ml-5">
         {t("result_examnination_evaluation")?.toUpperCase()}
       </div>
-      <div className="grid grid-cols-3 gap-5 w-full  mb-5">
-        <div className="col-span-1 rounded-lg   bg-white mr-[7px]">
+      <div className="grid grid-cols-3 gap-5 w-full  mb-5 ">
+        <div className="col-span-3 lg:col-span-1 rounded-lg max-lg:mx-5 bg-white mr-[7px]">
           <div className=" w-full flex p-5 items-center">
             <div className="w-1/3 text-5xl">😊</div>
             <div className="w-2/3 flex flex-col items-start">
@@ -624,9 +718,9 @@ function ResultPage({ params }: any) {
             </div>
           </div>
         </div>
-        <div className="col-span-2 rounded-lg  bg-white  ">
+        <div className="col-span-3 lg:col-span-2 rounded-lg  bg-white max-lg:mx-5">
           <div className="px-5 pt-5 flex w-full justify-between items-center">
-            <div>{t("overvie_judgement")}</div>
+            <div>{t("overview_judgement")}</div>
             <button>
               <EditIcon />
             </button>
@@ -639,7 +733,67 @@ function ResultPage({ params }: any) {
         </div>
       </div>
 
-      <div className="flex justify-between  max-lg:flex-col max-lg:gap-3 max-lg:items-center max-lg:mx-5">
+      <div className="body_bold_16 mb-5 max-lg:ml-5">
+        {t("exam_part_records")?.toUpperCase()}
+      </div>
+
+      <div className="flex max-lg:flex-col w-full items-stretch mb-5">
+        <div className="lg:w-1/2 max-lg:mx-5">
+          <MTable
+            sumData={{ name: t("total_ability_score") }}
+            dataRows={partDataRows}
+            dataSource={[]}
+            isHidePagination
+          />
+        </div>
+        <div className="lg:w-5 h-5" />
+        <div className="lg:w-1/2 bg-white rounded-lg max-lg:h-72 max-lg:mx-5">
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart
+              cx="50%"
+              cy="50%"
+              outerRadius="80%"
+              data={partDataChart}
+            >
+              <PolarGrid />
+              <PolarAngleAxis dataKey="subject" />
+              <PolarRadiusAxis />
+              <Radar
+                name="Mike"
+                dataKey="A"
+                stroke="#8884d8"
+                fill="#8884d8"
+                fillOpacity={0.6}
+              />
+              <Legend />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div className="body_bold_16 mb-5 max-lg:ml-5">
+        {t("candidadte_rank_record")?.toUpperCase()}
+      </div>
+      <div className="flex  items-center justify-between w-full mb-5">
+        <Chart
+          h={500}
+          w={500}
+          className="w-full bg-white rounded-lg flex flex-row-reverse items-center max-lg:mx-5"
+          data={[
+            {
+              label: "pass",
+              name: "Phần 1",
+              value: 10,
+            },
+            {
+              label: "not_pass",
+              name: "Phần 2",
+              value: 20,
+            },
+          ]}
+        />
+      </div>
+
+      <div className="flex justify-between max-lg:flex-col max-lg:gap-3 max-lg:items-center max-lg:mx-5">
         <Chart
           data={[
             {
@@ -818,61 +972,20 @@ function ResultPage({ params }: any) {
         </div>
         <Divider className="mb-7" />
         <div className="overflow-scroll ">
-          <Table
-            className="w-full max-lg:overflow-scroll"
-            bordered={false}
+          <MTable
             columns={columns}
             dataSource={infos}
-            pagination={false}
-            rowKey={"id"}
-            onRow={(data: any, index: any) =>
-              ({
-                style: {
-                  background: "#FFFFFF",
-                  borderRadius: "20px",
-                },
-              }) as HTMLAttributes<any>
-            }
-          />
-        </div>
-        <div className="w-full flex items-center justify-center mt-5">
-          <span className="body_regular_14 mr-2">{`${total} ${t(
-            "result",
-          )}`}</span>
-
-          <Pagination
-            pageSize={recordNum}
-            onChange={(v) => {
-              setIndexPage(v);
-            }}
-            current={indexPage}
+            recordNum={recordNum}
+            indexPage={indexPage}
             total={total}
-            showSizeChanger={false}
           />
-          <div className="hidden ml-2 lg:flex items-center">
-            <Select
-              optionRender={(oriOption) => (
-                <div className="flex justify-center">{oriOption?.label}</div>
-              )}
-              value={recordNum}
-              onChange={(v) => {
-                setRecordNum(v);
-                setIndexPage(1);
-              }}
-              options={[
-                ...[15, 25, 30, 50, 100].map((i: number) => ({
-                  value: i,
-                  label: (
-                    <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                      "page",
-                    )}`}</span>
-                  ),
-                })),
-              ]}
-              className="select-page min-w-[124px]"
-            />
-          </div>
         </div>
+      </div>
+      <div className="mt-5 p-5 bg-white rounded-lg">
+        <div className="body_semibold_20 mb-5">
+          {t("question_details_records")}
+        </div>
+        <MTable dataRows={questDataRows} />
       </div>
     </HomeLayout>
   );

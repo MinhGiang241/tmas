@@ -247,7 +247,7 @@ function Header({ path }: { path?: string }) {
             <div className="h-4" />
             {mobileLinks.map((v, i) => (
               <Link
-                href={!user?.verified ? "#" : `/${v}`}
+                href={!user?.verified ? "#" : v == "overview" ? "/" : `/${v}`}
                 onClick={() => {
                   if (
                     !user?.verified &&

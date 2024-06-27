@@ -167,7 +167,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       dataIndex: "dtb",
       title: (
         <button onClick={() => addSorter("couter.totalScoreAsInt")}>
-          <Tooltip title={t("ĐTV")}>{t("dtv")}</Tooltip>
+          <Tooltip title={t("ĐTB")}>{t("dtb")}</Tooltip>
           <RenderSortterIcon sorter={sorter} name="couter.totalScoreAsInt" />
         </button>
       ),

@@ -6,9 +6,12 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 interface Props {
   examination?: ExaminationData;
   data?: any[];
+  className?: string;
+  h?: number;
+  w?: number;
 }
 
-function Chart({ data, examination }: Props) {
+function Chart({ data, examination, className, h, w }: Props) {
   const { t } = useTranslation("exam");
 
   const COLORS = ["#6DB3C2", "#FC8800", "#775DA6"];
@@ -21,6 +24,7 @@ function Chart({ data, examination }: Props) {
     innerRadius,
     outerRadius,
     percent,
+
     index,
   }: any) => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -45,8 +49,12 @@ function Chart({ data, examination }: Props) {
   };
 
   return (
-    <div className=" w-full lg:w-[calc(33%-1rem)] bg-white rounded-lg">
-      <div className="h-[220px] pt-4 ">
+    <div
+      className={
+        className ?? " w-full lg:w-[calc(33%-1rem)] bg-white rounded-lg"
+      }
+    >
+      <div className={`${`h-[220px]`} pt-4 w-full`}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart className="flex" width={200} height={200}>
             <Pie

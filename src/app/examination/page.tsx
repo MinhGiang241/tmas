@@ -696,6 +696,23 @@ function ExaminationPage() {
 
                             <button
                               onClick={() => {
+                                if (
+                                  v?.sharingSetting == "Public" &&
+                                  v?.stateInfo?.approvedState ==
+                                    AppovedState.Pending
+                                ) {
+                                  errorToast(t("not_approve_send_result"));
+                                  return;
+                                }
+                                if (
+                                  v?.sharingSetting == "Public" &&
+                                  v?.stateInfo?.approvedState ==
+                                    AppovedState.Rejected
+                                ) {
+                                  errorToast(t("reject_send_result"));
+                                  return;
+                                }
+
                                 setOpenPop(undefined);
                                 setActive(v);
                                 setOpenExaminationResults(true);

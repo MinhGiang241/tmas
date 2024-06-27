@@ -15,6 +15,7 @@ import {
   overviewExamCounterExcel,
   overviewExamGetPaging,
   overviewExamStatiticExcel,
+  overviewListExamTestReport,
 } from "@/services/api_services/overview_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import { saveAs } from "file-saver";
@@ -282,11 +283,15 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
         condition: Condition.eq,
       });
     }
-    var res = await //   overviewExamCounter({
-    //   paging: { startIndex: indexPage, recordPerPage: recordNum },
-    //   filters,
-    //   studioSorters: [sorter],
-    // });
+    var res = await // overviewListExamTestReport({
+    //         skip:(indexPage-1)*recordNum,
+    //         limit:recordNum
+    //       })
+    overviewExamCounter({
+      paging: { startIndex: indexPage, recordPerPage: recordNum },
+      filters,
+      studioSorters: [sorter],
+    });
     overviewExamGetPaging({
       paging: { startIndex: indexPage, recordPerPage: recordNum },
       isReportTotal: true,
