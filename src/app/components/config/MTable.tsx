@@ -10,6 +10,7 @@ export interface TableDataRow {
   classNameRow?: string;
   render?: any;
   children?: { [key: string]: any }[];
+  onCell?: Function;
 }
 
 interface Props {
@@ -76,6 +77,7 @@ function MTable(props: Props) {
       dataIndex: e?.dataIndex,
       key: e?.dataIndex,
       children: e?.children,
+      onCell: props.onCell,
       render: e?.render
         ? e?.render
         : (text: any, data: any) => (
