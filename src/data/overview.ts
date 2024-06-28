@@ -294,6 +294,34 @@ export interface ExamTestPagingData {
   records?: ExaminationData[];
 }
 
+export interface ListExamReportParams {
+  target_schema?: string;
+  segment_schema?: boolean;
+  output_schema?: string;
+  collection?: string;
+  postQuery?: string;
+  preQuery?: string;
+  withMergeValidation?: boolean;
+  mergeValidationScript?: string;
+  showMergeError?: boolean;
+  mergeErrorMessage?: string;
+  postQueryBeforePaging?: boolean;
+  group?: DGroupFilter;
+  sorted?: DSort[];
+  text?: string;
+  skipDefaultTextSearch?: boolean;
+  search_fields?: string[];
+  skip?: number;
+  limit?: number;
+  withRecords?: boolean;
+  fields?: string;
+  inline?: boolean;
+  delimiter?: string;
+  is_debug?: boolean;
+  unionWiths?: string[];
+  unionLimit?: number;
+}
+
 export interface ListExamTestReportParams {
   _id?: string;
   name?: string;
@@ -301,7 +329,7 @@ export interface ListExamTestReportParams {
   updatedTime?: string;
   creator?: string;
   updater?: string;
-  version?: {};
+  version?: any;
   target_schema?: string;
   segment_schema?: boolean;
   output_schema?: string;
@@ -339,10 +367,96 @@ export interface DGroupFilter {
   customQuery?: string;
   rawFilter?: boolean;
   op?: "AND" | "OR";
-  children?: string[];
+  children?: DGroupFilter[];
 }
 
 export interface DSort {
   id?: string;
   desc?: boolean;
+}
+
+export interface ExamReportData {
+  data?: ListExamReportData;
+  records?: number;
+  summary?: {
+    numberOfQuestions?: number;
+    totalExamTestResult?: number;
+    totalExamTestResultToday?: number;
+    totalGold?: number;
+  };
+}
+export interface ListExamReportData {
+  _id?: string;
+  createdTime?: string;
+  groupName?: string;
+  name?: string;
+  numberOfQuestions?: number;
+  tags?: string[];
+  totalGold?: number;
+  totalPoints?: number;
+  totalPointsAsInt?: number;
+  testResultReport?: {
+    avgScore?: number;
+    avgTimeDoTestSeconds?: number;
+    maxTimeDoTestSeconds?: number;
+    medianScore?: number;
+    minTimeDoTestSeconds?: number;
+    totalExamTestResult?: number;
+    totalExamTestResultToday?: number;
+    totalFailed?: number;
+    totalPass?: number;
+    totalPassPercent?: number;
+  };
+}
+
+export interface ExamTestReportData {
+  data?: ListExamTestReportData;
+  records?: number;
+  summary?: {
+    numberOfQuestions?: number;
+    totalExamTestResult?: number;
+    totalExamTestResultToday?: number;
+    totalGold?: number;
+  };
+}
+
+export interface ListExamTestReportData {
+  _id?: string;
+  goldSetting?: { isEnable?: boolean; goldPrice?: number };
+  groupName?: string;
+  name?: string;
+  numberOfQuestions?: number;
+  passingSetting?: {
+    failMessage?: string;
+    passMessage?: string;
+    passPointPercent?: number;
+  };
+  sharingSetting?: "Private" | "Public";
+  stateInfo?: {
+    approvedState?: "Approved" | "Pending" | "Rejected";
+    isLibrary?: boolean;
+    lockState?: "Unlock" | "Lock";
+    visibleState?: "On" | "Off";
+  };
+  tags?: string[];
+  testResultReport?: {
+    avgScore?: number;
+    avgTimeDoTestSeconds?: number;
+    maxTimeDoTestSeconds?: number;
+    medianScore?: number;
+    minTimeDoTestSeconds?: number;
+    totalExamTestResult?: number;
+    totalExamTestResultToday?: number;
+    totalFailed?: number;
+    totalPass?: number;
+    totalPassPercent?: number;
+  };
+  totalGold?: number;
+  totalPoints?: number;
+  totalPointsAsInt?: number;
+  validAccessSetting?: {
+    ipWhiteLists?: string[];
+    validFrom?: string;
+    validTo?: string;
+  };
 }

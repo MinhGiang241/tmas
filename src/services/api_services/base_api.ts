@@ -143,12 +143,14 @@ export class callStudioAPI {
           code: 1,
           data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
+          records: response.data?.records,
         };
       } else if (response.status === 200) {
         return {
           code: 0,
           data: response?.data?.data ?? response.data,
           response: response.data,
+          records: response.data?.records,
         };
       }
 
@@ -157,6 +159,7 @@ export class callStudioAPI {
         data: response.statusText,
         message: response.statusText,
         response: response.data,
+        records: response.data?.records,
       };
     } catch (error: any) {
       return {
