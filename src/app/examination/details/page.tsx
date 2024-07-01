@@ -37,6 +37,7 @@ import Random from "./question/Random";
 import { getExamById } from "@/services/api_services/examination_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import { mapTmasQuestionToStudioQuestion } from "@/services/ui/mapTmasToSTudio";
+import Evaluation from "./question/Evaluation";
 
 function DetailsPage({ params }: any) {
   const [data, setData] = useState<any>();
@@ -142,11 +143,12 @@ function DetailsPage({ params }: any) {
     if (res) {
       if (res?.data?.records?.length > 0) {
         setData(res?.data?.records[0]);
-        console.log("dataget", res?.data?.records[0]);
+        // console.log("dataget", res?.data?.records[0]);
       }
-      console.log(res?.data?.records[0], "data res");
+      console.log(res?.data, "data res");
     }
   };
+
   useEffect(() => {
     if (examTestId) {
       getDataDetail();
@@ -373,6 +375,18 @@ function DetailsPage({ params }: any) {
                         if (e.questionType == "YesNoQuestion") {
                           return (
                             <TrueFalse
+                              index={key + 1}
+                              key={e.id}
+                              examId={examId}
+                              question={e}
+                              getData={getDataDetail}
+                              questionGroup={questionGroup}
+                            />
+                          );
+                        }
+                        if (e.questionType == "Evaluation") {
+                          return (
+                            <Evaluation
                               index={key + 1}
                               key={e.id}
                               examId={examId}

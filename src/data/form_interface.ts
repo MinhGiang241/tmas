@@ -110,6 +110,7 @@ export interface AccessCodeExaminantionSetting {
 
 export interface ExaminationFormData {
   id?: string;
+  expectPassedNumb?: number;
   idSession?: string;
   isActive?: boolean;
   accessCodeSettingType?: "None" | "One" | "MultiCode";

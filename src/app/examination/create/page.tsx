@@ -1,6 +1,6 @@
 "use client";
 import HomeLayout from "@/app/layouts/HomeLayout";
-import { Breadcrumb, Switch } from "antd";
+import { Breadcrumb, Input, Switch } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ import dynamic from "next/dynamic";
 import { FormikErrors, useFormik } from "formik";
 import Image from "next/image";
 import { CameraFilled } from "@ant-design/icons";
-import { ExaminationFormData } from "@/data/form_interface";
+import { ExamType, ExaminationFormData } from "@/data/form_interface";
 import { format } from "path";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
@@ -46,13 +46,13 @@ const EditorHook = dynamic(
   () => import("../../exams/components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  },
+  }
 );
 
 function CreateExaminationPage({ examination }: any) {
+  // console.log("examination", examination);
   const createSessionId = async () => {
     var dataSessionId = await createSession(examination?.idSession ?? "");
-    console.log("dataSessionId", dataSessionId);
 
     if (dataSessionId?.code == 0) {
       setSessionId(dataSessionId?.data);
@@ -78,21 +78,21 @@ function CreateExaminationPage({ examination }: any) {
   // };
 
   useEffect(() => {
-    loadExam();
     if (examination) {
-      console.log("examination", examination);
+      loadExam();
       setPush(examination?.isPushToBank ?? false);
       setActive(examination?.isActive ?? false);
       setStartTime(
         examination?.validAccessSetting?.validFrom
           ? dayjs(examination?.validAccessSetting?.validFrom).format(dateFormat)
-          : undefined,
+          : undefined
       );
       setEndTime(
         examination?.validAccessSetting?.validTo
           ? dayjs(examination?.validAccessSetting?.validTo).format(dateFormat)
-          : undefined,
+          : undefined
       );
+      // console.log("examination", examination);
 
       setShare(examination?.sharingSetting ?? "Public");
       setCode(examination?.accessCodeSettingType);
@@ -104,21 +104,21 @@ function CreateExaminationPage({ examination }: any) {
               createdDate: Date.now(),
               code: i.code,
             };
-          }) ?? [],
+          }) ?? []
         );
       }
       var results = Object.keys(examination?.testResultSetting as any)?.filter(
-        (s: any) => (examination?.testResultSetting as any)[s],
+        (s: any) => (examination?.testResultSetting as any)[s]
       );
       setResultChecked(results);
 
       var required = Object.keys(
-        examination?.requiredInfoSetting as any,
+        examination?.requiredInfoSetting as any
       )?.filter((s: any) => (examination?.requiredInfoSetting as any)[s]);
       setInfoChecked(required);
 
       var tricks = Object.keys(examination?.cheatingSetting ?? {})?.filter(
-        (s: any) => (examination?.cheatingSetting as any)[s],
+        (s: any) => (examination?.cheatingSetting as any)[s]
       );
       setPreventChecked(tricks);
     }
@@ -135,7 +135,7 @@ function CreateExaminationPage({ examination }: any) {
   const [active, setActive] = useState<boolean>(false);
   const [share, setShare] = useState<"Private" | "Public">("Public");
   const [code, setCode] = useState<"None" | "One" | "MultiCode" | undefined>(
-    "None",
+    "None"
   );
   const [startTime, setStartTime] = useState<string | undefined>();
   const [endTime, setEndTime] = useState<string | undefined>();
@@ -148,6 +148,15 @@ function CreateExaminationPage({ examination }: any) {
   const [preventCheched, setPreventChecked] = useState<any[]>([]);
   const [codeList, setCodeList] = useState<ExaminationCode[]>([]);
   const [exam, setExam] = useState<ExamData | undefined>(undefined);
+  const [expectPassedNumb, setExpectPassedNumb] = useState<number>(1);
+  // console.log(exam, "exam");
+  const handleExpectPassedNumbChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setExpectPassedNumb(parseInt(event.target.value));
+    console.log(event.target.value, "event.target.value");
+  };
+  console.log(expectPassedNumb);
 
   const dateFormat = "DD/MM/YYYY HH:mm";
   const search = useSearchParams();
@@ -158,7 +167,7 @@ function CreateExaminationPage({ examination }: any) {
       return;
     }
     const res = await getExamById(
-      examination?.idExam ? examination?.idExam : examId,
+      examination?.idExam ? examination?.idExam : examId
     );
     if (res.code != 0) {
       errorToast(res?.message ?? "");
@@ -316,31 +325,32 @@ function CreateExaminationPage({ examination }: any) {
         id: examination?.id,
         accessCodeSettingType: code,
         isActive: active,
+        expectPassedNumb: expectPassedNumb,
         accessCodeSettings:
           code == "None" || share === "Public"
             ? []
             : code == "One"
-              ? [
-                  {
-                    //TODO: sửa sau cái này để vì _id trong studio là ownerId
-                    studioId: studio?._id,
-                    ownerId: user?._id,
-                    code: formik.values["one_code"],
-                    numberOfAccess: 0,
-                  },
-                ]
-              : [
-                  ...codeList.map((e: any) => ({
-                    //TODO: sửa sau cái này để vì _id trong studio là ownerId
-                    studioId: studio?._id,
-                    ownerId: user?._id,
-                    code: e.code,
-                    limitOfAccess: formik.values["turn_per_code"]
-                      ? parseInt(formik.values["turn_per_code"])
-                      : undefined,
-                    numberOfAccess: 0,
-                  })),
-                ],
+            ? [
+                {
+                  //TODO: sửa sau cái này để vì _id trong studio là ownerId
+                  studioId: studio?._id,
+                  ownerId: user?._id,
+                  code: formik.values["one_code"],
+                  numberOfAccess: 0,
+                },
+              ]
+            : [
+                ...codeList.map((e: any) => ({
+                  //TODO: sửa sau cái này để vì _id trong studio là ownerId
+                  studioId: studio?._id,
+                  ownerId: user?._id,
+                  code: e.code,
+                  limitOfAccess: formik.values["turn_per_code"]
+                    ? parseInt(formik.values["turn_per_code"])
+                    : undefined,
+                  numberOfAccess: 0,
+                })),
+              ],
         cheatingSetting,
         description: values?.description?.trim(),
         name: values?.examination_name?.trim(),
@@ -412,7 +422,7 @@ function CreateExaminationPage({ examination }: any) {
       successToast(
         examination
           ? common.t("success_update")
-          : common.t("success_create_new"),
+          : common.t("success_create_new")
       );
       setLoading(false);
       if (exam) {
@@ -515,7 +525,7 @@ function CreateExaminationPage({ examination }: any) {
                 <MButton
                   onClick={() => {
                     router.push(
-                      `/examination/results/${examination?.id}?from=EditExam`,
+                      `/examination/results/${examination?.id}?from=EditExam`
                     );
                   }}
                   h="h-11"
@@ -585,6 +595,33 @@ function CreateExaminationPage({ examination }: any) {
               setValues={setPreventChecked}
             />
             <div className="lg:h-4" />
+            {exam?.examType === ExamType.Survey ? (
+              <div className=" p-4 bg-white">
+                <div className="rounded-lg  overflow-hidden body_semibold_16 text-m_neutral_900 pb-2">
+                  {t("specific_8")}
+                </div>
+                <Input
+                  className="rounded-md"
+                  type="number"
+                  onChange={handleExpectPassedNumbChange}
+                />
+                <div className="text-xs text-m_neutral_900 body_semibold_16 pt-2">
+                  Phân hạng kết quả
+                </div>
+                <div className="bg-slate-300 rounded-md p-2 mt-2">
+                  {exam?.scoreRanks?.map((x: any, key: any) => (
+                    <div
+                      key={key}
+                      className="text-sm text-m_neutral_900 body_semibold_16"
+                    >
+                      {x?.label}: Từ {x?.fromScore} - {x?.toScore} Điểm
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div className="max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-6 col-span-12 bg-white h-fit rounded-lg">
             <MTextArea

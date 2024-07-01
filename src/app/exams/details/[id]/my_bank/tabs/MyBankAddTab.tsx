@@ -36,6 +36,7 @@ import {
 } from "@/redux/exam_group/examGroupSlice";
 import { getQuestionGroups } from "@/services/api_services/exam_api";
 import { APIResults } from "@/data/api_results";
+import { ExamType } from "@/data/form_interface";
 
 function MyBankAddTab({
   hidden,
@@ -62,7 +63,7 @@ function MyBankAddTab({
   const [sort, setSort] = useState<string>("recently_create");
   const [valueSearch, setValueSearch] = useState<string | undefined>();
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.questions,
+    (state: RootState) => state?.examGroup?.questions
   );
   const dispatch = useAppDispatch();
 
@@ -77,7 +78,7 @@ function MyBankAddTab({
     }
     var dataResults: APIResults = await getQuestionGroups(
       "",
-      user?.studio?._id,
+      user?.studio?._id
     );
     dispatch(setquestionGroupLoading(false));
     console.log("dataResults", dataResults);
@@ -126,7 +127,12 @@ function MyBankAddTab({
             },
       ],
 
-      andQuestionTypes: questionType ? [questionType] : undefined,
+      andQuestionTypes:
+        exam?.examType == ExamType.Survey
+          ? [QuestionType.Essay, QuestionType.Evaluation]
+          : questionType
+          ? [questionType]
+          : undefined,
       // andIdExamQuestionParts: "",
       // andQuestionTypes: "",
       // idExams: "",
@@ -150,7 +156,7 @@ function MyBankAddTab({
     cloneQuestion.idExamQuestionPart = partId;
     cloneQuestion.isQuestionBank = false;
     const res = await cloneQuestionFromTmas(
-      cloneQuestion,
+      cloneQuestion
       // {idExams: exam?.id ? [exam?.id] : undefined,
       // ids: question?.id ? [question.id] : undefined,
       // newIdExamQuestionPart: partId,}
@@ -190,7 +196,7 @@ function MyBankAddTab({
   const onChangeCheck = (checkedList: any) => {};
   const renderQuestion: (
     e: BaseQuestionData,
-    index: number,
+    index: number
   ) => React.ReactNode = (e: BaseQuestionData, index: number) => {
     var group = questionGroups?.find((v: any) => v.id === e.idGroupQuestion);
     var isExist = isAdd[e.id as string] ? true : false;
@@ -398,7 +404,7 @@ function MyBankAddTab({
   const addManyQuestion = async (e: any) => {
     setLoadingMany(true);
     var list = questionList.filter((d) =>
-      selectedList.some((s: any) => s === d.id),
+      selectedList.some((s: any) => s === d.id)
     );
     var cloneQuestions = _.cloneDeep(list);
     var cloneQuestionList = cloneQuestions.map((k) => {
@@ -577,7 +583,7 @@ function MyBankAddTab({
             className="flex flex-col"
           >
             {questionList.map((e: BaseQuestionData, i: number) =>
-              renderQuestion(e, i),
+              renderQuestion(e, i)
             )}
           </CheckboxGroup>
         </div>
@@ -586,7 +592,7 @@ function MyBankAddTab({
       {questionList.length != 0 && (
         <div className="w-full flex items-center justify-center">
           <span className="body_regular_14 mr-2">{`${total} ${t(
-            "result",
+            "result"
           )}`}</span>
 
           <Pagination
@@ -613,7 +619,7 @@ function MyBankAddTab({
                   value: i,
                   label: (
                     <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                      "page",
+                      "page"
                     )}`}</span>
                   ),
                 })),

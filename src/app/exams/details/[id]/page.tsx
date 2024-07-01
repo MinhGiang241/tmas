@@ -57,6 +57,7 @@ import { getQuestionGroups } from "@/services/api_services/exam_api";
 import { UserData } from "@/data/user";
 import Random from "./question/Random";
 import { FormattedNumber } from "react-intl";
+import Evaluation from "./question/Evaluation";
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -897,6 +898,19 @@ function ExamDetails({ params }: any) {
                       if (e.questionType == "YesNoQuestion") {
                         return (
                           <TrueFalse
+                            isBank={false}
+                            index={key + 1}
+                            key={e.id}
+                            examId={params.id}
+                            question={e}
+                            getData={getData}
+                            questionGroup={questionGroup}
+                          />
+                        );
+                      }
+                      if (e.questionType == "Evaluation") {
+                        return (
+                          <Evaluation
                             isBank={false}
                             index={key + 1}
                             key={e.id}

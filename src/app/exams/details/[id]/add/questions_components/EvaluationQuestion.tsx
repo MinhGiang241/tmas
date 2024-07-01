@@ -16,7 +16,6 @@ import {
 import { useAppDispatch } from "@/redux/hooks";
 import {
   createEvaluationQuestion,
-  updateEssayQuestion,
   updateEvaluationQuestion,
 } from "@/services/api_services/question_api";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -41,6 +40,7 @@ export interface QuestionEvaluation {
     }[];
   };
 }
+
 interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
@@ -63,113 +63,99 @@ function EvaluationQuestion({
 }: Props) {
   const [isChangePosition, setIsChangePosition] = useState<boolean>(false);
   const { t } = useTranslation("exam");
-  const optionSelect = (examGroups ?? []).map<any>(
-    (v: QuestionGroupData, i: number) => ({
-      label: v?.name,
-      value: v?.id,
-    })
-  );
-  // const [point, setPoint] = useState<any>(0);
+  const dispatch = useAppDispatch();
+  const search = useSearchParams();
+  const idExamQuestionPart = search.get("partId") ?? undefined;
+  const optionSelect = (examGroups ?? []).map((v: QuestionGroupData) => ({
+    label: v.name,
+    value: v.id,
+  }));
+
   const [fields, setFields] = useState([
     { id: 1, name: "", points: 0, idIcon: "" },
   ]);
-  // console.log(fields, "fields");
 
-  const dispatch = useAppDispatch();
+  const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setFields([
+      ...fields,
+      { id: fields.length + 1, name: "", points: 0, idIcon: "" },
+    ]);
+  };
 
-  interface EvaluationQuestion {
+  const removeField = (id: number) => {
+    setFields(fields.filter((field) => field.id !== id));
+  };
+
+  interface QuestionEvaluation {
     point?: string;
     question_group?: string;
     question?: string;
     explain?: string;
     [key: string]: any;
   }
-  const existedQuest =
-    question && question?.questionType === "Evaluation"
-      ? (question as EvaluationQuestion)
-      : undefined;
 
-  const initialValues: EvaluationQuestion = {
-    point: question?.numberPoint?.toString() ?? undefined,
-    question_group: question?.idGroupQuestion ?? undefined,
-    question: question?.question ?? undefined,
-    explain: existedQuest?.content?.explainAnswer ?? undefined,
+  const initialValues: QuestionEvaluation = {
+    point: question?.numberPoint?.toString() ?? "",
+    question_group: question?.idGroupQuestion ?? "",
+    question: question?.question ?? "",
+    explain: question?.content?.explainAnswer ?? "",
   };
-
-  const search = useSearchParams();
-  const idExamQuestionPart =
-    search.get("partId") != null ? search.get("partId") : undefined;
-  // console.log("idExamQuestionPart", search.get("partId"));
-
+  const router = useRouter();
   const formik = useFormik({
     initialValues,
-    onSubmit: async (values: EvaluationQuestion) => {
-      console.log("values", values);
+    onSubmit: async (values) => {
       dispatch(setQuestionLoading(true));
       const answers = fields.map((field) => ({
-        // label: "Chưa rõ label ở đâu",
         text: field.name,
         point: field.points,
         idIcon: field.idIcon,
       }));
-      var submitData: QuestionEvaluation = {
+      const submitData: QuestionEvaluation = {
+        id: question?.id,
         question: values.question,
-        numberPoint: 0,
-        idGroupQuestion: values?.question_group,
+        idExam: question?.idExam ?? idExam,
+        numberPoint: fields.reduce((sum, field) => sum + field.points, 0),
+        idGroupQuestion: values.question_group,
         questionType: "Evaluation",
-        idExamQuestionPart:
-          question?.idExamQuestionPart ??
-          (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
-          undefined,
-        isQuestionBank: idExam ? false : true,
+        idExamQuestionPart: question?.idExamQuestionPart ?? idExamQuestionPart,
+        isQuestionBank: !idExam,
         content: {
-          explainAnswer: values?.explain,
+          explainAnswer: values.explain,
           isChangePosition,
-          answers: answers.map((x: any) => ({
-            // label: "Chưa rõ label ở đâu",
-            text: x?.text,
-            point: x?.point,
-            idIcon: x?.idIcon,
-          })),
+          answers,
         },
       };
-      console.log(submitData, "submitData");
-      var res = question
+
+      const res = question
         ? await updateEvaluationQuestion(submitData)
         : await createEvaluationQuestion(submitData);
       dispatch(setQuestionLoading(false));
-      if (res.code != 0) {
+
+      if (res.code !== 0) {
         errorToast(res.message ?? "");
         return;
       }
       dispatch(resetMultiAnswer(1));
-      question
-        ? successToast(t("Cập nhật thành công"))
-        : successToast(t("Thêm mới thành công"));
+      successToast(
+        question ? t("Cập nhật thành công") : t("Thêm mới thành công")
+      );
+      router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },
   });
-
-  const handleFieldsChange = (newFields: any) => {
-    setFields(newFields);
-  };
 
   return (
     <form
       className="grid grid-cols-12 gap-4 max-lg:px-5"
       onSubmit={(e) => {
         e.preventDefault();
+        formik.handleSubmit();
+        Object.keys(formik.errors).forEach(async (key) => {
+          await formik.setFieldTouched(key, true);
+        });
       }}
     >
-      <button
-        className="hidden"
-        onClick={() => {
-          formik.handleSubmit();
-          Object.keys(formik.errors).forEach(async (v) => {
-            await formik.setFieldTouched(v, true);
-          });
-        }}
-        ref={submitRef}
-      />
+      <button className="hidden" ref={submitRef} />
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
           namespace="exam"
@@ -177,9 +163,9 @@ function EvaluationQuestion({
           name="point"
           id="point"
           title={t("point")}
-          value={fields.reduce((sum: any, field) => sum + field.points, 0)}
-          // disable
-          formik={formik}
+          value={fields.reduce((sum: any, field: any) => sum + field.points, 0)}
+          // formik={formik}
+          disable
         />
         <MDropdown
           formik={formik}
@@ -192,12 +178,7 @@ function EvaluationQuestion({
           name="question_group"
         />
         <div className="body_semibold_14 mb-2">{t("relocate_result")}</div>
-        <Switch
-          value={isChangePosition}
-          onChange={(p) => {
-            setIsChangePosition(p);
-          }}
-        />
+        <Switch checked={isChangePosition} onChange={setIsChangePosition} />
       </div>
       <div className="bg-white rounded-lg lg:col-span-8 col-span-12 p-5 h-fit">
         <EditorHook
@@ -210,10 +191,66 @@ function EvaluationQuestion({
         />
         <div className="border rounded-lg p-4">
           <div className="text-sm font-semibold">{t("specific_7")}</div>
-          <EvaluationUploadQuestion
-            fields={fields}
-            onFieldsChange={handleFieldsChange}
-          />
+          <Radio.Group className="w-full">
+            {fields.map((field, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between pt-2"
+              >
+                <Radio className="font-semibold" value={field.id}>
+                  {index + 1}.
+                </Radio>
+                <Input
+                  className="rounded-md h-9 w-[50%]"
+                  placeholder={t("Tên nhãn lựa chọn")}
+                  value={field.name}
+                  onChange={(e) =>
+                    setFields(
+                      fields.map((f) =>
+                        f.id === field.id ? { ...f, name: e.target.value } : f
+                      )
+                    )
+                  }
+                />
+                <Input
+                  className="rounded-md h-9 w-[15%]"
+                  type="number"
+                  placeholder={t("Điểm lựa chọn")}
+                  value={field.points}
+                  onChange={(e) =>
+                    setFields(
+                      fields.map((f) =>
+                        f.id === field.id
+                          ? { ...f, points: parseFloat(e.target.value) || 0 }
+                          : f
+                      )
+                    )
+                  }
+                />
+                <input
+                  value={field.idIcon}
+                  type="file"
+                  accept=".svg,.jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*"
+                  className="w-28 h-14"
+                  placeholder={t("Hình ảnh")}
+                />
+                <button
+                  onClick={() => removeField(field.id)}
+                  className="text-neutral-500 text-2xl mt-[6px] ml-2"
+                >
+                  <CloseCircleOutlined />
+                </button>
+              </div>
+            ))}
+          </Radio.Group>
+          <div className="w-full flex justify-end pt-2">
+            <button
+              onClick={addField}
+              className="underline body_regular_14 underline-offset-4"
+            >
+              <PlusOutlined /> {t("add_result")}
+            </button>
+          </div>
         </div>
       </div>
     </form>
