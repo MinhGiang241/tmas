@@ -2,7 +2,7 @@
 "use client";
 import MBreadcrumb from "@/app/components/config/MBreadcrumb";
 import HomeLayout from "@/app/layouts/HomeLayout";
-import { Divider, Pagination, Select, Table } from "antd";
+import { Divider, Pagination, Select, Table, TableColumnsType } from "antd";
 import React, { HTMLAttributes, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _, { keys } from "lodash";
@@ -26,6 +26,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   exportExelFile,
   getOverViewExamination,
+  getQuestionPartDetails,
 } from "@/services/api_services/examination_api";
 import {
   Condition,
@@ -33,6 +34,8 @@ import {
   ExamGroupData,
   ExamTestResulstData,
   ExaminationData,
+  QuestionPartDetailsData,
+  QuestionPartTableValue,
 } from "@/data/exam";
 import Chart from "./components/Chart";
 import { getPagingAdminExamTestResult } from "@/services/api_services/result_exam_api";
@@ -523,8 +526,22 @@ function ResultPage({ params }: any) {
   const search = useSearchParams();
   var from = search.get("from");
   const [testDate, setTestDate] = useState<string | undefined>();
+  const [questionPartDetail, setQuestionPartDetails] = useState<
+    QuestionPartDetailsData[]
+  >([]);
+
+  const getQuestionPartDetail = async () => {
+    const res = await getQuestionPartDetails(params.eid);
+    console.log("detail part", res);
+    if (res?.code != 0) {
+      return;
+    }
+    setQuestionPartDetails(res?.data);
+  };
+
   useEffect(() => {
     getExaminationDetail();
+    getQuestionPartDetail();
     if (user?._id) {
       dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
     }
@@ -595,6 +612,35 @@ function ResultPage({ params }: any) {
       fullMark: 150,
     },
   ];
+
+  const expandedRowRender = () => {
+    const questColumns: TableColumnsType<QuestionPartTableValue> = [
+      { title: "questionName", dataIndex: "questionName" },
+      { title: "numberPoint", dataIndex: "numberPoint", key: "name" },
+      {
+        title: "numberOfQuestionsAnswered",
+        key: "numberOfQuestionsAnswered",
+        render: (text: any, data: any) => <div>{text}</div>,
+      },
+      {
+        title: "averageScorePerAnswered",
+        dataIndex: "averageScorePerAnswered",
+        key: "averageScorePerAnswered",
+      },
+      {
+        title: "averageScorePerTotalTest",
+        dataIndex: "averageScorePerTotalTest",
+        key: "averageScorePerTotalTest",
+      },
+    ];
+    return (
+      <MTable
+        columns={questColumns}
+        dataSource={[questionPartDetail[0]]}
+        isHidePagination
+      />
+    );
+  };
 
   return (
     <HomeLayout>
@@ -971,7 +1017,7 @@ function ResultPage({ params }: any) {
           })}
         </div>
         <Divider className="mb-7" />
-        <div className="overflow-scroll ">
+        <div className=" ">
           <MTable
             columns={columns}
             dataSource={infos}

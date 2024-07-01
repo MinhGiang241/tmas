@@ -298,3 +298,11 @@ export const exportExelFile = async (examinationId?: string) => {
   );
   return results;
 };
+
+export const getQuestionPartDetails = async (examTestId?: string) => {
+  const results = await callApi.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/DeTailListQuestionByPart`,
+    { params: { examTestId } },
+  );
+  return results;
+};

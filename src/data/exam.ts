@@ -691,3 +691,21 @@ export interface StatisticExamTest {
     totalTimeSeconds?: number;
   };
 }
+
+export interface QuestionPartDetailsData {
+  numberPointQuestionPart?: number;
+  numberOfQuestionsAnsweredQuestionPart?: number;
+  nameQuestionPart?: string;
+  idExamQuestionPart?: string;
+  averageScorePerTotalTestQuestionPart?: number;
+  averageScorePerAnsweredQuestionPart?: number;
+  questions?: QuestionPartTableValue[];
+}
+
+export interface QuestionPartTableValue {
+  averageScorePerAnswered?: number;
+  averageScorePerTotalTest?: number;
+  numberOfQuestionsAnswered?: number;
+  numberPoint?: number;
+  questionName?: string;
+}

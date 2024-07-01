@@ -2,6 +2,7 @@ import React, { HTMLAttributes, ReactNode } from "react";
 import MPagination from "./MPagination";
 import { Table } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { ExpandableConfig } from "antd/es/table/interface";
 
 export interface TableDataRow {
   title?: ReactNode;
@@ -30,6 +31,7 @@ interface Props {
   totalComponent?: ReactNode;
   sumData?: { [key: string]: any };
   showHeader?: boolean;
+  expandable?: ExpandableConfig<any>;
 }
 
 function MTable(props: Props) {
@@ -61,6 +63,7 @@ function MTable(props: Props) {
     },
   };
 
+  //@ts-ignore
   var columns: ColumnsType<any> = props.columns ?? [
     ...(props?.dataRows ?? []).map((e, i) => ({
       onHeaderCell: (_: any) =>
@@ -77,7 +80,7 @@ function MTable(props: Props) {
       dataIndex: e?.dataIndex,
       key: e?.dataIndex,
       children: e?.children,
-      onCell: props.onCell,
+      onCell: e?.onCell,
       render: e?.render
         ? e?.render
         : (text: any, data: any) => (
@@ -101,7 +104,7 @@ function MTable(props: Props) {
         // locale={{
         //   emptyText: <div className="bg-m_primary_300">HelloWOrld</div>,
         // }}
-
+        expandable={props.expandable}
         loading={props.loading}
         className="w-full overflow-scroll"
         bordered={false}
