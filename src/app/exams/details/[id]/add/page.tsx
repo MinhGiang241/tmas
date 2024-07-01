@@ -34,6 +34,7 @@ import {
   resetMultiAnswer,
 } from "@/redux/questions/questionSlice";
 import EvaluationQuestion from "./questions_components/EvaluationQuestion";
+import { ExamType } from "@/data/form_interface";
 
 function CreateQuestionPage({ params, question }: any) {
   const { t } = useTranslation("exam");
@@ -50,6 +51,17 @@ function CreateQuestionPage({ params, question }: any) {
   var questId = search.get("questId");
 
   const [exam, setExam] = useState<ExamData | undefined>();
+  const [questionList, setQuestionList] = useState<string[]>([
+    "evaluation",
+    "many_results",
+    "true_false",
+    "connect_quest",
+    "explain",
+    "coding",
+    "sql",
+    "fill_blank",
+    "random",
+  ]);
 
   const loadExamById = async () => {
     var res = await getExamById(params?.id);
@@ -58,6 +70,15 @@ function CreateQuestionPage({ params, question }: any) {
       return;
     }
     setExam(res?.data?.records[0]);
+
+    var exam: ExamData = res?.data?.records[0];
+
+    setQuestionList(() => {
+      if (exam.examType === ExamType.Survey) {
+        return questionList?.filter((e) => e == "evaluation" || e == "explain");
+      }
+      return questionList?.filter((e) => e != "evaluation");
+    });
     console.log("exam", exam);
   };
 
@@ -92,18 +113,6 @@ function CreateQuestionPage({ params, question }: any) {
   const questionLoading = useAppSelector(
     (state: RootState) => state.question.loading
   );
-
-  const questionList = [
-    "evaluation",
-    "many_results",
-    "true_false",
-    "connect_quest",
-    "explain",
-    "coding",
-    "sql",
-    "fill_blank",
-    "random",
-  ];
 
   const submitRef = useRef(undefined);
   return (

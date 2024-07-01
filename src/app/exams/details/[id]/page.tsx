@@ -8,7 +8,7 @@ import { getExamById } from "@/services/api_services/examination_api";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
-import { Collapse, Popover, Tooltip } from "antd";
+import { Collapse, Input, Popover, Tooltip } from "antd";
 import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
 import EditIcon from "@/app/components/icons/edit-black.svg";
 import NewIcon from "@/app/components/icons/export.svg";
@@ -56,6 +56,7 @@ import {
 import { getQuestionGroups } from "@/services/api_services/exam_api";
 import { UserData } from "@/data/user";
 import Random from "./question/Random";
+import { FormattedNumber } from "react-intl";
 
 function ExamDetails({ params }: any) {
   const [exam, setExam] = useState<ExamData | undefined>();
@@ -81,8 +82,10 @@ function ExamDetails({ params }: any) {
   const [name, setName] = React.useState<string>("");
   const [nameError, setNameError] = useState<string>();
   const [note, setNote] = React.useState<string>("");
+  const [expectedPoint, setExpectedPoint] = React.useState(0);
   const [customName, setCustomName] = useState("");
   const [customNote, setCustomNote] = useState("");
+  const [customExpectedPoint, setCustomExpectedPoint] = React.useState(0);
   //
   const [active, setActive] = useState("");
   const router = useRouter();
@@ -97,6 +100,11 @@ function ExamDetails({ params }: any) {
     setNote(event.target.value);
   };
 
+  const handleExpectedPointChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setExpectedPoint(Number(event.target.value));
+  };
   const user: UserData | undefined = useAppSelector(
     (state: RootState) => state?.user?.user
   );
@@ -145,6 +153,7 @@ function ExamDetails({ params }: any) {
     }
 
     setExam(res?.data?.records[0]);
+    console.log(res?.data?.records, "res");
   };
 
   useEffect(() => {
@@ -224,6 +233,7 @@ function ExamDetails({ params }: any) {
       idExam: params.id,
       name: name,
       description: note,
+      expectedPoint: expectedPoint,
     });
     // console.log(res);
     setAddLoading(false);
@@ -269,6 +279,7 @@ function ExamDetails({ params }: any) {
     if (partToEdit) {
       setCustomName(partToEdit.name);
       setCustomNote(partToEdit.description);
+      setCustomExpectedPoint(partToEdit.expectedPoint);
       setOpenEdit(true);
     }
   };
@@ -280,6 +291,20 @@ function ExamDetails({ params }: any) {
   }, []);
 
   const [activeDelete, setActiveDelete] = useState<any>();
+  // console.log(activeDelete, "activeDelete");
+  const expectedPointTotal = () => {
+    const part = data?.records.find(
+      (part: any) => part.id === activeDelete?.id
+    );
+    if (!part) return 0;
+
+    return (
+      part.examQuestions?.reduce((total: any, question: any) => {
+        return total + (question?.numberPoint ?? 0);
+      }, 0) ?? 0
+    );
+  };
+
   return (
     <HomeLayout>
       <BaseModal
@@ -326,6 +351,45 @@ function ExamDetails({ params }: any) {
           value={customNote}
           onChange={(event) => setCustomNote(event.target.value)}
         />
+        <div>
+          <div className="text-sm font-semibold">{t("expected_point")}</div>
+          <div className="text-xs py-2">{t("servey_1")}</div>
+          <Input
+            className="h-12 rounded-md mb-4"
+            id="expectedPoint"
+            name="expectedPoint"
+            type="number"
+            value={customExpectedPoint}
+            onChange={(event: any) =>
+              setCustomExpectedPoint(event.target.value)
+            }
+            // onChange={handleExpectedPointChange}
+          />
+          <div className="flex">
+            <div className="flex w-[50%] justify-center items-center h-12 bg-slate-300 rounded-md">
+              <div className="md:text-base text-xs">Tổng điểm câu hỏi</div>
+              <div className="w-3" />
+              <div className="md:text-xl text-base text-red-500 font-semibold">
+                {exam?.totalPoints ?? 0}
+              </div>
+            </div>
+            <div className="w-2" />
+            <div className="flex w-[50%] justify-center items-center h-12 bg-slate-300 rounded-md">
+              <div className="md:text-base text-xs">Trọng số theo chủ đề</div>
+              <div className="w-3" />
+              <div className="md:text-xl text-base text-red-500 font-semibold">
+                <FormattedNumber
+                  value={
+                    (expectedPointTotal() / (exam?.totalPoints || 0)) * 100 ?? 0
+                  }
+                  style="decimal"
+                  maximumFractionDigits={0}
+                />
+                %
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="w-full flex justify-center mt-7">
           <MButton
             className="w-36"
@@ -338,6 +402,7 @@ function ExamDetails({ params }: any) {
               setNameError("");
               setName("");
               setNote("");
+              setCustomExpectedPoint(Number || undefined);
             }}
           />
           <div className="w-5" />
@@ -355,6 +420,7 @@ function ExamDetails({ params }: any) {
                 ...activeDelete,
                 name: customName,
                 description: customNote,
+                expectedPoint: customExpectedPoint,
               });
               setOpenEdit(false);
               getData();
@@ -363,6 +429,7 @@ function ExamDetails({ params }: any) {
               setNameError("");
               setName("");
               setNote("");
+              setCustomExpectedPoint(Number || undefined);
               // setActiveDelete(undefined)
               // successToast(t("success_edit_question"));
             }}
@@ -498,10 +565,7 @@ function ExamDetails({ params }: any) {
               {t("question")}
             </div>
             <div className="text-sm text-m_neutral_900 flex mr-2">
-              <Cup className="mr-1 scale-75  min-w-5" />
-              {/* {data?.records?.[0]?.examQuestions?.reduce(function (total: any, question: any) {
-              return total + question.numberPoint;
-            }, 0)} điểm */}
+              <Cup className="mr-1 scale-75 min-w-5" />
               {data?.records?.reduce(function (total: any, question: any) {
                 var point = question?.examQuestions?.reduce(
                   (to: any, quest: any) => {
@@ -510,7 +574,7 @@ function ExamDetails({ params }: any) {
                   0
                 );
                 return total + point;
-              }, 0)}{" "}
+              }, 0)}
               {t("point")}
             </div>
             <div className="text-sm text-m_neutral_900 flex mr-2">
@@ -585,6 +649,18 @@ function ExamDetails({ params }: any) {
               placeholder={examTrans.t("enter_content")}
               maxLength={500}
             />
+            <div>
+              <div className="text-sm font-semibold">{t("expected_point")}</div>
+              <div className="text-xs py-2">{t("servey_1")}</div>
+              <Input
+                className="h-12 rounded-md mb-4"
+                id="expectedPoint"
+                name="expectedPoint"
+                type="number"
+                value={expectedPoint}
+                onChange={handleExpectedPointChange}
+              />
+            </div>
             <div className="w-full flex justify-center mt-7">
               <MButton
                 // onClick={onCancel}

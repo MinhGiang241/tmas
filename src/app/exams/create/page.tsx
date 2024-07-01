@@ -1,15 +1,7 @@
 "use client";
 import HomeLayout from "@/app/layouts/HomeLayout";
 import React, { useEffect, useState } from "react";
-import {
-  Breadcrumb,
-  Radio,
-  Space,
-  Switch,
-  Tooltip,
-  Tree,
-  TreeSelect,
-} from "antd";
+import { Breadcrumb, Input, Radio, Space, Switch, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import MButton from "@/app/components/config/MButton";
@@ -21,7 +13,7 @@ import MDropdown from "@/app/components/config/MDropdown";
 import DragDropUpload, { UploadedFile } from "../components/DragDropUpload";
 import { FormikErrors, useFormik } from "formik";
 import dynamic from "next/dynamic";
-import { ExamData, ExamGroupData } from "@/data/exam";
+import { ExamGroupData } from "@/data/exam";
 import { RootState } from "@/redux/store";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { APIResults } from "@/data/api_results";
@@ -31,9 +23,10 @@ import {
 } from "@/redux/exam_group/examGroupSlice";
 import { getExamGroupTest } from "@/services/api_services/exam_api";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
-import { ExamFormData } from "@/data/form_interface";
+import { ExamFormData, ExamType, ScoreRank } from "@/data/form_interface";
 import { RightOutlined } from "@ant-design/icons";
 import NoticeIcon from "@/app/components/icons/blue-notice.svg";
+import { CloseCircleOutlined, PlusOutlined } from "@ant-design/icons";
 
 import {
   createExaminationList,
@@ -43,11 +36,12 @@ import {
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { getTags } from "@/services/api_services/tag_api";
 import { TagData } from "@/data/tag";
+import { addMoreAnswer } from "@/redux/questions/questionSlice";
 const EditorHook = dynamic(
   () => import("../components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  },
+  }
 );
 
 function CreatePage({ exam, isEdit }: any) {
@@ -61,13 +55,61 @@ function CreatePage({ exam, isEdit }: any) {
   const [lang, setLang] = useState<any>(exam?.language ?? "Vietnamese");
   const [transfer, setTransfer] = useState<any>("FreeByUser");
   const [page, setPage] = useState<any>(
-    exam?.examViewQuestionType ?? "SinglePage",
+    exam?.examViewQuestionType ?? "SinglePage"
   );
   const [sw, setSw] = useState<boolean>(
-    !exam ? false : exam?.changePositionQuestion ?? false,
+    !exam ? false : exam?.changePositionQuestion ?? false
   );
   const [files, setFiles] = useState([]);
   const [idSession, setIdSession] = useState<string | undefined>();
+  const [selectedButton, setSelectedButton] = useState<ExamType>(
+    exam?.id ? exam?.examType : ExamType.Test
+  );
+
+  const handleButtonClick = (buttonType: any) => {
+    setSelectedButton(buttonType);
+  };
+
+  const [inputFields, setInputFields] = useState<ScoreRank[]>(
+    exam?.id ? exam?.scoreRanks : [{ label: "", fromScore: 0, toScore: 0 }]
+  );
+
+  const handleAddFields = () => {
+    const lastField =
+      inputFields.length == 0
+        ? { toScore: 0 }
+        : inputFields[inputFields.length - 1];
+    const newFromValue = lastField.toScore;
+    setInputFields([
+      ...inputFields,
+      { label: "", fromScore: newFromValue, toScore: undefined },
+    ]);
+  };
+
+  const handleRemoveFields = (index: any) => {
+    const values = [...inputFields];
+    values.splice(index, 1);
+    setInputFields(values);
+  };
+
+  const handleInputChange = (index: any, event: any) => {
+    const values = [...inputFields];
+    if (event.target.name === "point_evaluation") {
+      values[index].label = event.target.value;
+    } else if (event.target.name === "from") {
+      values[index].fromScore = event.target.value;
+    } else if (event.target.name === "to") {
+      // values[index].to = event.target.value;
+      const newToValue = event.target.value;
+      const fromValue = values[index].fromScore;
+      // if (fromValue && newToValue <= fromValue) {
+      //   errorToast(`"Đến điểm" phải lớn hơn "Từ điểm" (${fromValue})`);
+      //   return;
+      // }
+      values[index].toScore = newToValue;
+    }
+    setInputFields(values);
+  };
 
   const createSessionId = async () => {
     if (isEdit && exam) {
@@ -87,7 +129,7 @@ function CreatePage({ exam, isEdit }: any) {
     }
   };
   // useOnMountUnsafe(createSessionId, [exam]);
-
+  console.log("exam", exam, selectedButton, inputFields);
   useEffect(() => {
     createSessionId();
     if (exam) {
@@ -109,7 +151,7 @@ function CreatePage({ exam, isEdit }: any) {
     describe?: string;
     tag?: string[];
   }
-  console.log("exammmm", exam);
+  // console.log("exammmm", exam);
 
   const initialValues: FormValue = {
     test_time: exam?.timeLimitMinutes?.toString(),
@@ -173,6 +215,8 @@ function CreatePage({ exam, isEdit }: any) {
         idExamGroup: values?.exam_group,
         idDocuments: submitDocs,
         idSession: idSession,
+        examType: selectedButton,
+        scoreRanks: inputFields,
       };
 
       const results = exam?.id
@@ -232,7 +276,7 @@ function CreatePage({ exam, isEdit }: any) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id,
+          (ch: ExamGroupData) => ch.idParent === e.id
         );
         return { ...e, childs };
       });
@@ -267,7 +311,7 @@ function CreatePage({ exam, isEdit }: any) {
             "Paging.StartIndex": 0,
             "Paging.RecordPerPage": 100,
           }
-        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
+        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 }
     );
     if (data?.code != 0) {
       return [];
@@ -466,8 +510,65 @@ function CreatePage({ exam, isEdit }: any) {
             placeholder={t("paste_link")}
             formik={formik}
           />
+          <div className="h-4" />
+          <div>
+            <div className="text-sm font-semibold pb-1">{t("specific_6")}</div>
+            <div className="caption_regular_14">{t("servey_9")}</div>
+            <div className="caption_regular_14 font-semibold py-2">
+              {t("total_point")}: 100
+            </div>
+            {inputFields?.map((inputField, index) => (
+              <div className="flex items-center pb-2" key={index}>
+                <MInput
+                  placeholder="Tên hạng"
+                  h="h-9"
+                  id={`point_evaluation_${index}`}
+                  name="point_evaluation"
+                  value={inputField.label}
+                  onChange={(event) => handleInputChange(index, event)}
+                  required
+                  isTextRequire={false}
+                />
+                <div className="w-8" />
+                <Input
+                  disabled
+                  placeholder="Từ điểm"
+                  className="h-9 w-[10rem] border-[0.5px] rounded-md hover:border-cyan-600"
+                  id={`from_${index}`}
+                  name="from"
+                  type="number"
+                  value={inputField.fromScore}
+                  onChange={(event) => handleInputChange(index, event)}
+                />
+                <Input
+                  placeholder="Đến điểm"
+                  className="h-9 w-[10rem] border-[0.5px] rounded-md hover:border-cyan-600"
+                  id={`to_${index}`}
+                  name="to"
+                  type="number"
+                  value={inputField.toScore}
+                  onChange={(event) => handleInputChange(index, event)}
+                />
+                <button
+                  onClick={() => handleRemoveFields(index)}
+                  className="text-neutral-500 text-2xl mt-[6px] ml-2"
+                >
+                  <CloseCircleOutlined />
+                </button>
+              </div>
+            ))}
+            <div className="w-full flex justify-end pt-2">
+              <div className="w-full flex justify-end pt-2">
+                <button
+                  onClick={handleAddFields}
+                  className="underline body_regular_14 underline-offset-4"
+                >
+                  <PlusOutlined /> {t("add_result")}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-
         <div className="max-lg:mx-5 max-lg:grid-cols-1 max-lg:mb-5 lg:col-span-8 col-span-12 bg-white h-fit rounded-lg p-4">
           {/* <Cus etomEditor /> */}
 
@@ -493,11 +594,17 @@ function CreatePage({ exam, isEdit }: any) {
             <div className="body_regular_14 ml-3">{t("exam_form_2")}</div>
             <div className="body_semibold_14 flex ml-3 w-full mt-3">
               <button
-                className={`w-1/2 flex justify-center items-center py-2 border relative`}
+                // className={`w-1/2 flex justify-center items-center py-2 border relative`}
+                className={`w-1/2 flex justify-center items-center py-2 border relative ${
+                  selectedButton === ExamType.Test
+                    ? "bg-m_primary_200 text-white"
+                    : "bg-white text-black"
+                }`}
+                onClick={() => handleButtonClick(ExamType.Test)}
               >
                 <span>{t("specific")}</span>
                 <Tooltip
-                  className="absolute right-2"
+                  className="absolute right-2 body_regular_14"
                   arrow={false}
                   overlayInnerStyle={{
                     width: "482px",
@@ -526,11 +633,17 @@ function CreatePage({ exam, isEdit }: any) {
                 </Tooltip>
               </button>
               <button
-                className={`w-1/2 flex justify-center items-center py-2 border`}
+                // className={`w-1/2 flex justify-center items-center py-2 relative border`}
+                className={`w-1/2 flex justify-center items-center py-2 border relative ${
+                  selectedButton === ExamType.Survey
+                    ? "bg-m_primary_200 text-white"
+                    : "bg-white text-black"
+                }`}
+                onClick={() => handleButtonClick(ExamType.Survey)}
               >
                 <span>{t("servey")}</span>
                 <Tooltip
-                  className="absolute right-2"
+                  className="absolute right-2 body_regular_14"
                   arrow={false}
                   overlayInnerStyle={{
                     width: "482px",
@@ -540,11 +653,15 @@ function CreatePage({ exam, isEdit }: any) {
                   placement="bottom"
                   title={
                     <>
-                      <div className="body_semibold_14">{t("specific_1")}</div>
-                      <div>{t("specific_2")}</div>
-                      <div>{t("specific_3")}</div>
-                      <div>{t("specific_4")}</div>
-                      <div>{t("specific_5")}</div>
+                      <div className="body_semibold_14">{t("servey")}</div>
+                      <div>{t("servey_1")}</div>
+                      <div>{t("servey_2")}</div>
+                      <div>{t("servey_3")}</div>
+                      <div>{t("servey_4")}</div>
+                      <div>{t("servey_5")}</div>
+                      <div className="ml-2">• {t("servey_6")}</div>
+                      <div className="ml-2">• {t("servey_7")}</div>
+                      <div>{t("servey_8")}</div>
                     </>
                   }
                 >
@@ -553,7 +670,6 @@ function CreatePage({ exam, isEdit }: any) {
               </button>
             </div>
           </div>
-
           <MDropdown
             namespace="exam"
             onSearch={onSearchTags}
@@ -565,7 +681,6 @@ function CreatePage({ exam, isEdit }: any) {
             title={t("tag")}
             formik={formik}
           />
-
           <EditorHook
             defaultValue={exam?.description}
             id="describe"

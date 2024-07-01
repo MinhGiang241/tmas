@@ -22,11 +22,12 @@ import {
   QuestionType,
   ParamsCheckMultiAnswer,
 } from "@/data/question";
+import { QuestionEvaluation } from "@/app/exams/details/[id]/add/questions_components/EvaluationQuestion";
 
 export const createCodingQuestion = async (data: CodingQuestionFormData) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionCoding`,
-    data,
+    data
   );
 
   return results;
@@ -35,7 +36,7 @@ export const createCodingQuestion = async (data: CodingQuestionFormData) => {
 export const updateCodingQuestion = async (data: CodingQuestionFormData) => {
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionCoding`,
-    data,
+    data
   );
 
   return results;
@@ -44,7 +45,7 @@ export const updateCodingQuestion = async (data: CodingQuestionFormData) => {
 export const createEssayQuestion = async (data: EssayQuestionFormData) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionEssay`,
-    data,
+    data
   );
 
   return results;
@@ -53,73 +54,73 @@ export const createEssayQuestion = async (data: EssayQuestionFormData) => {
 export const updateEssayQuestion = async (data: EssayQuestionFormData) => {
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionEssay`,
-    data,
+    data
   );
 
   return results;
 };
 
 export const createFillBlankQuestion = async (
-  data: FillBlankQuestionFormData,
+  data: FillBlankQuestionFormData
 ) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionFillBlank`,
-    data,
+    data
   );
 
   return results;
 };
 
 export const updateFillBlankQuestion = async (
-  data: FillBlankQuestionFormData,
+  data: FillBlankQuestionFormData
 ) => {
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionFillBlank`,
-    data,
+    data
   );
 
   return results;
 };
 
 export const createMultiAnswerQuestion = async (
-  data: MultiAnswerQuestionFormData,
+  data: MultiAnswerQuestionFormData
 ) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMultiAnswer`,
-    data,
+    data
   );
 
   return results;
 };
 
 export const createTrueFalseQuestion = async (
-  data: MultiAnswerQuestionFormData,
+  data: MultiAnswerQuestionFormData
 ) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionYesNo`,
-    data,
+    data
   );
 
   return results;
 };
 
 export const updateTrueFalseQuestion = async (
-  data: MultiAnswerQuestionFormData,
+  data: MultiAnswerQuestionFormData
 ) => {
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionYesNo`,
-    data,
+    data
   );
 
   return results;
 };
 
 export const updateMultiAnswerQuestion = async (
-  data: MultiAnswerQuestionFormData,
+  data: MultiAnswerQuestionFormData
 ) => {
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMultiAnswer`,
-    data,
+    data
   );
 
   return results;
@@ -128,7 +129,7 @@ export const updateMultiAnswerQuestion = async (
 export const createConnectQuestion = async (data: ConnectQuestionFormData) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPairing`,
-    data,
+    data
   );
 
   return results;
@@ -137,7 +138,7 @@ export const createConnectQuestion = async (data: ConnectQuestionFormData) => {
 export const updateConnectQuestion = async (data: ConnectQuestionFormData) => {
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPairing`,
-    data,
+    data
   );
 
   return results;
@@ -146,7 +147,7 @@ export const updateConnectQuestion = async (data: ConnectQuestionFormData) => {
 export const createRandomQuestion = async (data: RandomQuestionFormData) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionRandom`,
-    data,
+    data
   );
 
   return results;
@@ -155,7 +156,7 @@ export const createRandomQuestion = async (data: RandomQuestionFormData) => {
 export const updateRandomQuestion = async (data: RandomQuestionFormData) => {
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionRandom`,
-    data,
+    data
   );
 
   return results;
@@ -164,7 +165,7 @@ export const updateRandomQuestion = async (data: RandomQuestionFormData) => {
 export const createSqlQuestion = async (data: SqlQuestionFormData) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionSql`,
-    data,
+    data
   );
 
   return results;
@@ -173,7 +174,7 @@ export const createSqlQuestion = async (data: SqlQuestionFormData) => {
 export const updateSqlQuestion = async (data: SqlQuestionFormData) => {
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionSql`,
-    data,
+    data
   );
 
   return results;
@@ -182,7 +183,7 @@ export const updateSqlQuestion = async (data: SqlQuestionFormData) => {
 export const getQuestionList = async (data: PagingGetData) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/Paging`,
-    data,
+    data
   );
 
   return results;
@@ -190,10 +191,10 @@ export const getQuestionList = async (data: PagingGetData) => {
 
 export const getQuestionById = async (
   questId?: string,
-  isQuestionBank?: boolean,
+  isQuestionBank?: boolean
 ) => {
   const results = await callStudioAPI.get(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/${questId}?isQuestionBank=${isQuestionBank}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/${questId}?isQuestionBank=${isQuestionBank}`
   );
 
   return results;
@@ -201,7 +202,7 @@ export const getQuestionById = async (
 
 export const deleteQuestionById = async (questId?: string) => {
   const results = await callStudioAPI.delete(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/${questId}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/${questId}`
   );
 
   return results;
@@ -210,7 +211,7 @@ export const deleteQuestionById = async (questId?: string) => {
 export const deleteManyQuestion = async (data: { ids?: string[] }) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/PostDelete`,
-    data,
+    data
   );
 
   return results;
@@ -219,7 +220,7 @@ export const deleteManyQuestion = async (data: { ids?: string[] }) => {
 export const getExamQuestionPartList = async (data?: PagingGetData) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/GetPagingDetail`,
-    data,
+    data
   );
   return results;
 };
@@ -227,7 +228,7 @@ export const getExamQuestionPartList = async (data?: PagingGetData) => {
 export const createAExamQuestionPart = async (data?: ExamQuestionPart) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart`,
-    data,
+    data
   );
   return results;
 };
@@ -237,7 +238,7 @@ export const createManyExamQuestionPart = async (data?: {
 }) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/CreateList`,
-    data,
+    data
   );
 
   return results;
@@ -246,7 +247,7 @@ export const createManyExamQuestionPart = async (data?: {
 export const updateAExamQuestionPart = async (data?: ExamQuestionPart) => {
   const results = await callStudioAPI.put(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${data?.id}`,
-    data,
+    data
   );
   return results;
 };
@@ -262,7 +263,7 @@ export const updateManyExamQuestionPart = async (data?: ExamQuestionPart[]) => {
           description: d?.description,
         },
       })),
-    },
+    }
   );
 
   return results;
@@ -270,7 +271,7 @@ export const updateManyExamQuestionPart = async (data?: ExamQuestionPart[]) => {
 
 export const getExamQuestionPartById = async (examPartId?: string) => {
   const results = await callStudioAPI.get(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${examPartId}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${examPartId}`
   );
 
   return results;
@@ -278,7 +279,7 @@ export const getExamQuestionPartById = async (examPartId?: string) => {
 
 export const deleteQuestionPartById = async (id?: string) => {
   const results = await callStudioAPI.delete(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${id}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/${id}`
   );
   return results;
 };
@@ -286,7 +287,7 @@ export const deleteQuestionPartById = async (id?: string) => {
 export const ExamQuestionPartById = async (data?: PagingGetData) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionPart/GetPagingDetail`,
-    data,
+    data
   );
   return results;
 };
@@ -294,21 +295,21 @@ export const ExamQuestionPartById = async (data?: PagingGetData) => {
 export const CopyQuestion = async (id?: string) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Copy/${id}`,
-    {},
+    {}
   );
   return results;
 };
 
 export const deleteQuestionPart = async (id?: string) => {
   const results = await callStudioAPI.delete(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${id}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${id}`
   );
   return results;
 };
 
 export const getExamById = async (id?: string) => {
   const results = await callStudioAPI.get(
-    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${id}`,
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/${id}`
   );
   return results;
 };
@@ -316,7 +317,7 @@ export const getExamById = async (id?: string) => {
 export const duplicateQuestion = async (data: DuplicateQuestionParams) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/Copy`,
-    data,
+    data
   );
   return results;
 };
@@ -343,7 +344,7 @@ export const getTmasQuestList = async ({
       limit,
       type,
       tags,
-    },
+    }
   );
   return results;
 };
@@ -382,7 +383,7 @@ export const cloneQuestionFromTmas = async (question: BaseQuestionData) => {
 export const createBatchQuestion = async (items: BaseQuestionData[]) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/CreateBatch`,
-    { items },
+    { items }
   );
   return results;
 };
@@ -390,7 +391,7 @@ export const createBatchQuestion = async (items: BaseQuestionData[]) => {
 export const importTmasExamData = async (data: ImportTmasExamParams) => {
   var results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Import`,
-    data,
+    data
   );
   return results;
 };
@@ -408,7 +409,7 @@ export const getExamTestId = async (params: any) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/GetExamVersion`,
     { ...params },
-    { params },
+    { params }
   );
 
   return results;
@@ -417,7 +418,7 @@ export const getExamTestId = async (params: any) => {
 export const getExamExport = async (data: any) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Exam/Export`,
-    data,
+    data
   );
 
   return results;
@@ -426,7 +427,25 @@ export const getExamExport = async (data: any) => {
 export const submitCheckMultiAnswer = async (data: ParamsCheckMultiAnswer) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/AdminExamTestResult/SubmitCheckingMultiAnswer`,
-    data,
+    data
+  );
+
+  return results;
+};
+
+export const createEvaluationQuestion = async (data: QuestionEvaluation) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionEvaluation`,
+    data
+  );
+
+  return results;
+};
+
+export const updateEvaluationQuestion = async (data: QuestionEvaluation) => {
+  const results = await callStudioAPI.put(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionEvaluation`,
+    data
   );
 
   return results;

@@ -62,5 +62,7 @@
   "finished": "Đóng",
   "answer": "Trả lời",
   "blank": "Chỗ trống",
-  "true_answer": "Đáp án đúng"
+  "true_answer": "Đáp án đúng",
+  "expected_point": "Điểm kỳ vọng",
+  "servey_1": "Điểm kỳ vọng giúp xác lập biểu đồ lưới nhện, phù hợp với mục đích đánh giá thí sinh theo các nhóm kỹ năng (phần thi)"
 }
