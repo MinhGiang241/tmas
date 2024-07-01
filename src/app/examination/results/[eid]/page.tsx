@@ -25,6 +25,7 @@ import { CloseOutlined } from "@ant-design/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   exportExelFile,
+  getAbilityReport,
   getOverViewExamination,
   getQuestionPartDetails,
 } from "@/services/api_services/examination_api";
@@ -61,6 +62,8 @@ import {
   RadarChart,
   ResponsiveContainer,
 } from "recharts";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import MTextArea from "@/app/components/config/MTextArea";
 
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
@@ -72,6 +75,7 @@ function ResultPage({ params }: any) {
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(1);
+  const [isEditJudge, setIsEditJudge] = useState<boolean>(false);
   const router = useRouter();
 
   interface TableValue {
@@ -87,6 +91,7 @@ function ResultPage({ params }: any) {
     group?: string;
     identify_code?: string;
     seconds?: number;
+    rank?: string;
   }
   interface FilterObject {
     fieldName?: string;
@@ -142,6 +147,7 @@ function ResultPage({ params }: any) {
       status: e?.result?.completionState,
       seconds: e?.timeLine?.totalTimeDoTestSeconds,
       group: e?.candidate?.groupTest,
+      rank: e?.result?.couter?.rankLabel,
     }));
 
     setTotal(res?.data?.totalOfRecords);
@@ -532,26 +538,56 @@ function ResultPage({ params }: any) {
 
   const getQuestionPartDetail = async () => {
     const res = await getQuestionPartDetails(params.eid);
-    console.log("detail part", res);
     if (res?.code != 0) {
       return;
     }
     setQuestionPartDetails(res?.data);
   };
 
+  const getAbilityReportTable = async () => {
+    const res = await getAbilityReport(params.eid);
+    console.log("res ability", res);
+    if (res?.code != 0) {
+      return;
+    }
+  };
+
+  useEffect(() => {
+    getQuestionPartDetail();
+    getAbilityReportTable();
+  }, [user]);
+
   useEffect(() => {
     getExaminationDetail();
-    getQuestionPartDetail();
     if (user?._id) {
       dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
     }
   }, [user, filters, testDate, recordNum, indexPage]);
-  const questDataRows: TableDataRow[] = [
-    { title: t("question") },
-    { title: t("max_score") },
-    { title: t("has_result") },
-    { title: t("average_answered") },
-    { title: t("average_total_exaxm") },
+  const questDataRows: ColumnsType<QuestionPartTableValue> = [
+    {
+      title: t("question"),
+      dataIndex: "questionName",
+      width: "40%",
+      render: (text: any, data: any) => (
+        <div dangerouslySetInnerHTML={{ __html: text }}></div>
+      ),
+    },
+    { title: t("max_score"), dataIndex: "numberPoint", width: "15%" },
+    {
+      title: t("has_result"),
+      dataIndex: "numberOfQuestionsAnswered",
+      width: "15%",
+    },
+    {
+      title: t("average_answered"),
+      dataIndex: "averageScorePerAnswered",
+      width: "15%",
+    },
+    {
+      title: t("average_total_exaxm"),
+      dataIndex: "averageScorePerTotalTest",
+      width: "15%",
+    },
   ];
   const partDataRows: TableDataRow[] = [
     {
@@ -613,32 +649,25 @@ function ResultPage({ params }: any) {
     },
   ];
 
-  const expandedRowRender = () => {
-    const questColumns: TableColumnsType<QuestionPartTableValue> = [
-      { title: "questionName", dataIndex: "questionName" },
-      { title: "numberPoint", dataIndex: "numberPoint", key: "name" },
-      {
-        title: "numberOfQuestionsAnswered",
-        key: "numberOfQuestionsAnswered",
-        render: (text: any, data: any) => <div>{text}</div>,
-      },
-      {
-        title: "averageScorePerAnswered",
-        dataIndex: "averageScorePerAnswered",
-        key: "averageScorePerAnswered",
-      },
-      {
-        title: "averageScorePerTotalTest",
-        dataIndex: "averageScorePerTotalTest",
-        key: "averageScorePerTotalTest",
-      },
-    ];
+  const expandedRowRender = (e: { questions: QuestionPartTableValue[] }) => {
+    console.log("e render", e);
+
     return (
-      <MTable
-        columns={questColumns}
-        dataSource={[questionPartDetail[0]]}
-        isHidePagination
+      <Table
+        // rowStartStyle={{}}
+        // rowEndStyle={{}}
+        // rowStyle={{}}
+        showHeader={false}
+        //@ts-ignore
+        columns={questDataRows}
+        dataSource={[...e?.questions]}
+        pagination={false}
       />
+      // <MTable
+      //   columns={questColumns}
+      //   dataSource={[{ key: "1", questionName: "Giang" }]}
+      //   isHidePagination
+      // />
     );
   };
 
@@ -767,15 +796,25 @@ function ResultPage({ params }: any) {
         <div className="col-span-3 lg:col-span-2 rounded-lg  bg-white max-lg:mx-5">
           <div className="px-5 pt-5 flex w-full justify-between items-center">
             <div>{t("overview_judgement")}</div>
-            <button>
+            <button
+              onClick={() => {
+                setIsEditJudge(!isEditJudge);
+              }}
+            >
               <EditIcon />
             </button>
           </div>
 
           <Divider className="my-2" />
-          <div className=" mx-5 h-44 overflow-y-scroll scroll-smooth break-all ">
-            {""}
-          </div>
+          {isEditJudge ? (
+            <div className=" mx-5 h-44 overflow-y-scroll scroll-smooth break-all ">
+              {""}
+            </div>
+          ) : (
+            <div className="mx-5">
+              <MTextArea id="judge" name="judge" line={8} />
+            </div>
+          )}
         </div>
       </div>
 
@@ -1031,8 +1070,32 @@ function ResultPage({ params }: any) {
         <div className="body_semibold_20 mb-5">
           {t("question_details_records")}
         </div>
-        <MTable dataRows={questDataRows} />
+        <MTable
+          // rowStartStyle={{}}
+          // rowEndStyle={{}}
+          // rowStyle={{}}
+          rowKey={"key"}
+          // @ts-ignore
+          columns={questDataRows}
+          //@ts-ignore
+          dataSource={[
+            ...questionPartDetail?.map((s, i) => ({
+              key: i,
+              questionName: s?.nameQuestionPart ?? "",
+              questions: s?.questions,
+              averageScorePerAnswered: s?.averageScorePerAnsweredQuestionPart,
+              averageScorePerTotalTest: s?.averageScorePerTotalTestQuestionPart,
+              numberPoint: s?.numberPointQuestionPart,
+              numberOfQuestionsAnswered:
+                s?.numberOfQuestionsAnsweredQuestionPart,
+            })),
+          ]}
+          expandable={{ expandedRowRender }}
+          isHidePagination
+          //pagination={false}
+        />
       </div>
+      <div className="h-44" />
     </HomeLayout>
   );
 }

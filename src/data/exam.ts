@@ -498,7 +498,7 @@ export interface PagingAdminExamTestResultParams {
     {
       name?: string;
       isAsc?: boolean;
-    }
+    },
   ];
   filters?: {
     fieldName?: string;
@@ -602,6 +602,7 @@ export interface ExamTestResulstData {
   result?: {
     completionState?: ExamCompletionState;
     couter?: {
+      rankLabel?: string;
       numberOfQuestionCorrect?: number;
       numberOfQuestionNotComplete?: number;
       numberOfQuestionWrong?: number;

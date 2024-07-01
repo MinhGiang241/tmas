@@ -306,3 +306,11 @@ export const getQuestionPartDetails = async (examTestId?: string) => {
   );
   return results;
 };
+
+export const getAbilityReport = async (examTestId?: string) => {
+  const results = await callApi.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/TableStatisticalReportByExamQuestionPart`,
+    { params: { examTestId } },
+  );
+  return results;
+};

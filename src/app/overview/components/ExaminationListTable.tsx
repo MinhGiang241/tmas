@@ -35,6 +35,10 @@ import { Condition, ExaminationData, StudioSorter } from "@/data/exam";
 import Link from "next/link";
 import { Tooltip } from "antd";
 import RenderSortterIcon from "./IconSorter";
+import duration from "dayjs/plugin/duration";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(duration);
+dayjs.extend(customParseFormat);
 
 interface TableValue {
   id?: string;
@@ -311,6 +315,20 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
 
       classNameTitle: "min-w-20",
     },
+    {
+      dataIndex: "to_date",
+      title: (
+        <button onClick={() => addSorter("ValidAccessSetting.ValidTo")}>
+          <Tooltip title={t("to_date_tooltip")}>{t("to_date")}</Tooltip>
+          <RenderSortterIcon
+            sorter={sorter}
+            name="ValidAccessSetting.ValidTo"
+          />
+        </button>
+      ),
+
+      classNameTitle: "min-w-24",
+    },
 
     {
       dataIndex: "status",
@@ -321,7 +339,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         </button>
       ),
 
-      classNameTitle: "min-w-20",
+      classNameTitle: "min-w-24",
     },
   ];
 
@@ -395,14 +413,16 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       dtb: ex?.testResultReport?.avgScore,
       join_num: ex?.testResultReport?.totalExamTestResult,
       percent_pass: ex?.testResultReport?.totalPassPercent,
-      avg_test_time: dayjs
-        .duration(ex?.testResultReport?.avgTimeDoTestSeconds ?? 0)
-        .format("HH:mm:ss"),
+      avg_test_time:
+        //ex?.testResultReport?.avgTimeDoTestSeconds,
+        dayjs
+          .duration((ex?.testResultReport?.avgTimeDoTestSeconds ?? 0) * 1000)
+          .format("HH:mm:ss"),
       max_test_time: dayjs
-        .duration(ex?.testResultReport?.maxTimeDoTestSeconds ?? 0)
+        .duration((ex?.testResultReport?.maxTimeDoTestSeconds ?? 0) * 1000)
         .format("HH:mm:ss"),
       min_test_time: dayjs
-        .duration(ex?.testResultReport?.minTimeDoTestSeconds ?? 0)
+        .duration((ex?.testResultReport?.minTimeDoTestSeconds ?? 0) * 1000)
         .format("HH:mm:ss"),
       today_join_num: ex?.testResultReport?.totalExamTestResult,
       from_date: ex?.validAccessSetting?.validFrom
@@ -421,6 +441,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
 
       // avg_test_time: t?.couter?.
     }));
+    console.log("examTestTableData", examTestTableData, listExamTestData);
+    console.log("dayjs duration", dayjs.duration(57 * 1000).format("HH:mm:ss"));
+
     setDataTable(examTestTableData);
   };
 

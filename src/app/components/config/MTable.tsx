@@ -12,6 +12,7 @@ export interface TableDataRow {
   render?: any;
   children?: { [key: string]: any }[];
   onCell?: Function;
+  key?: any;
 }
 
 interface Props {
@@ -32,6 +33,7 @@ interface Props {
   sumData?: { [key: string]: any };
   showHeader?: boolean;
   expandable?: ExpandableConfig<any>;
+  rowKey?: any;
 }
 
 function MTable(props: Props) {
@@ -78,7 +80,7 @@ function MTable(props: Props) {
         </div>
       ),
       dataIndex: e?.dataIndex,
-      key: e?.dataIndex,
+      key: e?.key,
       children: e?.children,
       onCell: e?.onCell,
       render: e?.render
@@ -111,7 +113,7 @@ function MTable(props: Props) {
         columns={columns}
         dataSource={props.dataSource}
         pagination={false}
-        rowKey={"id"}
+        rowKey={props?.rowKey ?? "key"}
         onRow={(data: any, index: any) =>
           ({
             style: {
