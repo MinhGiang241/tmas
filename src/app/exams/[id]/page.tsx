@@ -36,11 +36,7 @@ function ExamDetail({ params }: { params: { id: string } }) {
     }
     console.log("ress", results);
   };
-  return (
-    <>
-      <CreatePage exam={exam} isEdit />
-    </>
-  );
+  return <>{exam?.id && <CreatePage exam={exam} isEdit />}</>;
 }
 
 export default ExamDetail;

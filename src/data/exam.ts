@@ -2,7 +2,9 @@ import { ExaminationVersionState } from "@/services/api_services/examination_bc_
 import {
   AccessCodeExaminantionSetting,
   CodingDataType,
+  ExamType,
   PartObject,
+  ScoreRank,
   TagObject,
 } from "./form_interface";
 import { BaseQuestionData, QuestionType } from "./question";
@@ -53,6 +55,8 @@ export interface ExamListDataResult {
 }
 
 export interface ExamData {
+  examType?: ExamType;
+  scoreRanks?: ScoreRank[];
   examinations?: ExaminationData[];
   approvedState?: {
     approvedState?: "Approved" | "Pending" | "Rejected";
@@ -494,7 +498,7 @@ export interface PagingAdminExamTestResultParams {
     {
       name?: string;
       isAsc?: boolean;
-    },
+    }
   ];
   filters?: {
     fieldName?: string;

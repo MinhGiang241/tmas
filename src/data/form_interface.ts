@@ -67,6 +67,19 @@ export interface ExamFormData {
     rejectedMessage?: string;
   };
   idSession?: string;
+  scoreRanks?: ScoreRank[];
+  examType?: ExamType;
+}
+
+export interface ScoreRank {
+  label?: string;
+  fromScore?: number;
+  toScore?: number;
+}
+
+export enum ExamType {
+  Test = "Test",
+  Survey = "Survey",
 }
 
 export interface ParamGetExamList {
@@ -194,6 +207,7 @@ export type CodingDataType =
   | "Void";
 
 export type QuestionType =
+  | "Evaluation"
   | "MutilAnswer"
   | "YesNoQuestion"
   | "Pairing"
@@ -251,6 +265,7 @@ export interface ExamQuestionPart {
   name?: string;
   description?: string;
   idExam?: string;
+  expectedPoint?: number;
 }
 
 export interface PagingGetData {
@@ -290,6 +305,21 @@ export interface MultiAnswerQuestionFormData extends BaseQuestionFormData {
     explainAnswer?: string;
     isChangePosition?: boolean;
     answers?: { label?: string; text?: string; isCorrectAnswer?: boolean }[];
+  };
+}
+
+export interface EvaluationQuestionFormData extends BaseQuestionFormData {
+  content: {
+    explainAnswer?: string;
+    isChangePosition?: boolean;
+    answers?: [
+      {
+        label?: string;
+        text?: string;
+        point?: number;
+        idIcon?: string;
+      }
+    ];
   };
 }
 
