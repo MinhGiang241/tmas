@@ -147,12 +147,11 @@ function ResultPage({ params }: any) {
       status: e?.result?.completionState,
       seconds: e?.timeLine?.totalTimeDoTestSeconds,
       group: e?.candidate?.groupTest,
-      rank: e?.result?.couter?.rankLabel,
+      rank: e?.result?.rankLabel,
     }));
 
     setTotal(res?.data?.totalOfRecords);
     setInfos(s);
-    console.log("esss", res);
   };
 
   const [filterValues, setFilterValues] = useState<FormFilterValue>({});

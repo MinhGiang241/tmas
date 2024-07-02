@@ -75,7 +75,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
   const [groupId, setGroupId] = useState<string | undefined>();
   const [dataList, setDataList] = useState<ExamReportData | undefined>();
   const [sorter, setSorter] = useState<DSort>({
-    desc: false,
+    desc: true,
     id: "CreatedTime",
   });
 
@@ -355,16 +355,14 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
       dtb: t?.testResultReport?.avgScore,
       join_num: t?.testResultReport?.totalExamTestResult,
       percent_pass: t?.testResultReport?.totalPassPercent,
-      avg_test_time: !t?.testResultReport?.avgTimeDoTestSeconds
-        ? "00:00:00"
-        : dayjs
-            .duration((t?.testResultReport?.avgTimeDoTestSeconds ?? 0) * 1000)
-            .format("HH:mm:ss"),
+      avg_test_time: dayjs
+        .duration((t?.testResultReport?.avgTimeDoTestSeconds ?? 0) * 1000)
+        .format("HH:mm:ss"),
       max_test_time: dayjs
-        .duration(t?.testResultReport?.maxTimeDoTestSeconds ?? 0)
+        .duration((t?.testResultReport?.maxTimeDoTestSeconds ?? 0) * 1000)
         .format("HH:mm:ss"),
       min_test_time: dayjs
-        .duration(t?.testResultReport?.minTimeDoTestSeconds ?? 0)
+        .duration((t?.testResultReport?.minTimeDoTestSeconds ?? 0) * 1000)
         .format("HH:mm:ss"),
       today_join_num: t?.testResultReport?.totalExamTestResultToday,
     }));

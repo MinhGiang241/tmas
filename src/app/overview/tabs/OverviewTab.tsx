@@ -141,7 +141,7 @@ function OverviewTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {overviewData?.totalTestToday != 0 && (
+            {!!overviewData?.totalTestToday && (
               <UpDownTrend
                 upText={t("day_test_increase", {
                   num: Math.abs(overviewData?.totalTestToday ?? 0),
@@ -163,7 +163,7 @@ function OverviewTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {overviewData?.totalUserTestToday != 0 && (
+            {!!overviewData?.totalUserTestToday && (
               <UpDownTrend
                 upText={t("user_test_today", {
                   num: overviewData?.totalUserTestToday ?? 0,

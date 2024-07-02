@@ -27,13 +27,10 @@ export default function Coding({
   onChangeCheck?: Function;
 }) {
   const { t } = useTranslation("question");
-  // console.log(examId);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
-  // console.log(questionGroup, "questionGroup");
-  // console.log(question, "question");
 
   useEffect(() => {
     setIsOverflowing(

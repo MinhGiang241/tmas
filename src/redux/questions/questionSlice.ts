@@ -194,8 +194,6 @@ export const questionSlice = createSlice({
     updateAnswerToQuestion: (state, action) => {
       var newList = _.cloneDeep(state.connectQuestions);
       var questionIndex = action.payload.index;
-      console.log("newList", newList, questionIndex);
-      console.log("newList2", newList, questionIndex);
       return { ...state, connectQuestions: newList };
     },
     setConnectPairing: (state, action) => {

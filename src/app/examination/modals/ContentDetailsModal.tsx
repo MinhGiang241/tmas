@@ -16,7 +16,6 @@ interface Props extends BaseModalProps {
 function ContentDetailsModal(props: Props) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
-  console.log("data", props.data);
 
   return (
     <BaseModal {...props}>

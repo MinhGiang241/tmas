@@ -38,10 +38,8 @@ function FilterModal(props: Props) {
             onClick={async () => {
               var cloneCategories = _.cloneDeep(categories);
               cloneCategories[i].isSelect = !cloneCategories[i].isSelect;
-              console.log("isSelect", cloneCategories[i].isSelect);
 
               if (!cloneCategories[i].isSelect) {
-                console.log("dddddd", e);
                 props.clearFieldValue(e.name);
               }
               setCategories(cloneCategories);

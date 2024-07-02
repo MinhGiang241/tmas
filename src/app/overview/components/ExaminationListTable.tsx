@@ -74,7 +74,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
   const [groupId, setGroupId] = useState<string | undefined>();
   const [dataTable, setDataTable] = useState<TableValue[]>([]);
   const [sorter, setSorter] = useState<DSort>({
-    desc: false,
+    desc: true,
     id: "CreatedTime",
   });
   const [dataList, setDataList] = useState<ExamTestReportData | undefined>();
@@ -424,7 +424,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       min_test_time: dayjs
         .duration((ex?.testResultReport?.minTimeDoTestSeconds ?? 0) * 1000)
         .format("HH:mm:ss"),
-      today_join_num: ex?.testResultReport?.totalExamTestResult,
+      today_join_num: ex?.testResultReport?.totalExamTestResultToday,
       from_date: ex?.validAccessSetting?.validFrom
         ? dayjs(ex?.validAccessSetting?.validFrom)?.format(
             "DD/MM/YYYY HH:mm:ss",
@@ -435,9 +435,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         : undefined,
       gold_price: ex?.goldSetting?.goldPrice,
       pure_income: ex?.totalGold,
-      status: `${
-        ex?.stateInfo?.approvedState ? t(ex?.stateInfo?.approvedState) : ""
-      }`,
+      status: `${ex?.visibleState == "Active" ? t("valid") : t("invalid")}`,
 
       // avg_test_time: t?.couter?.
     }));

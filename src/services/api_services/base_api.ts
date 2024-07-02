@@ -136,7 +136,7 @@ export class callStudioAPI {
     };
     try {
       var response = await axios.post(url, data, { headers, ...config });
-      console.log("res", response);
+
       if (response?.data?.isSuccess === false) {
         return {
           response: response.data,

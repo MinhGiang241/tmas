@@ -601,8 +601,8 @@ export interface ExamTestResulstData {
   ownerId?: string;
   result?: {
     completionState?: ExamCompletionState;
+    rankLabel?: string;
     couter?: {
-      rankLabel?: string;
       numberOfQuestionCorrect?: number;
       numberOfQuestionNotComplete?: number;
       numberOfQuestionWrong?: number;

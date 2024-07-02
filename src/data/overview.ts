@@ -438,6 +438,7 @@ export interface ListExamTestReportData {
     lockState?: "Unlock" | "Lock";
     visibleState?: "On" | "Off";
   };
+  visibleState?: "Active" | "Inactive";
   tags?: string[];
   testResultReport?: {
     avgScore?: number;
