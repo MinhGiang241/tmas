@@ -50,7 +50,7 @@ const EditorHook = dynamic(
 );
 
 function CreateExaminationPage({ examination }: any) {
-  // console.log("examination", examination);
+  console.log("examination", examination);
   const createSessionId = async () => {
     var dataSessionId = await createSession(examination?.idSession ?? "");
 
@@ -148,13 +148,15 @@ function CreateExaminationPage({ examination }: any) {
   const [preventCheched, setPreventChecked] = useState<any[]>([]);
   const [codeList, setCodeList] = useState<ExaminationCode[]>([]);
   const [exam, setExam] = useState<ExamData | undefined>(undefined);
-  const [expectPassedNumb, setExpectPassedNumb] = useState<number>(1);
+  const [expectPassedNumb, setExpectPassedNumb] = useState<number>(
+    examination?.expectPassedNumb ?? 1
+  );
   // console.log(exam, "exam");
   const handleExpectPassedNumbChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setExpectPassedNumb(parseInt(event.target.value));
-    console.log(event.target.value, "event.target.value");
+    // console.log(event.target.value, "event.target.value");
   };
   console.log(expectPassedNumb);
 
@@ -174,6 +176,8 @@ function CreateExaminationPage({ examination }: any) {
       return;
     }
     setExam(res?.data?.records[0]);
+
+    console.log(res?.data, "res?.data");
   };
 
   interface FormValue {
@@ -604,6 +608,7 @@ function CreateExaminationPage({ examination }: any) {
                   className="rounded-md"
                   type="number"
                   onChange={handleExpectPassedNumbChange}
+                  value={expectPassedNumb}
                 />
                 <div className="text-xs text-m_neutral_900 body_semibold_16 pt-2">
                   Phân hạng kết quả
