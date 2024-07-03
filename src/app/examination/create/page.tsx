@@ -158,7 +158,7 @@ function CreateExaminationPage({ examination }: any) {
     setExpectPassedNumb(parseInt(event.target.value));
     // console.log(event.target.value, "event.target.value");
   };
-  console.log(expectPassedNumb);
+  // console.log(expectPassedNumb);
 
   const dateFormat = "DD/MM/YYYY HH:mm";
   const search = useSearchParams();

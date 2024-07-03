@@ -61,7 +61,7 @@ function EvaluationQuestion({
   idExam,
   question,
 }: Props) {
-  const [isChangePosition, setIsChangePosition] = useState<boolean>(false);
+  // const [isChangePosition, setIsChangePosition] = useState<boolean>(false);
   const { t } = useTranslation("exam");
   const dispatch = useAppDispatch();
   const search = useSearchParams();
@@ -72,15 +72,30 @@ function EvaluationQuestion({
   }));
 
   const [fields, setFields] = useState(
-    question?.content?.answers ?? [{ id: 1, name: "", point: 0, idIcon: "" }]
+    question?.content?.answers ?? [
+      { label: "A", id: 1, name: "", point: 0, idIcon: "" },
+    ]
   );
+
+  // const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   e.preventDefault();
+  //   setFields([
+  //     ...fields,
+  //     { label: "", id: fields.length + 1, name: "", point: 0, idIcon: "" },
+  //   ]);
+  // };
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setFields([
-      ...fields,
-      { id: fields.length + 1, name: "", point: 0, idIcon: "" },
-    ]);
+    const newLabel = String.fromCharCode(65 + fields.length);
+    const newField = {
+      id: fields.length + 1,
+      label: newLabel,
+      text: "",
+      point: 0,
+      idIcon: "",
+    };
+    setFields([...fields, newField]);
   };
 
   const removeField = (id: number) => {
@@ -107,10 +122,12 @@ function EvaluationQuestion({
     onSubmit: async (values) => {
       dispatch(setQuestionLoading(true));
       const answers = fields.map((field: any) => ({
+        label: field.label,
         text: field.text,
         point: field.point,
         idIcon: field.idIcon,
       }));
+      console.log("Answers:", answers);
       const submitData: QuestionEvaluation = {
         id: question?.id,
         question: values.question,
@@ -125,7 +142,7 @@ function EvaluationQuestion({
         isQuestionBank: !idExam,
         content: {
           explainAnswer: values.explain,
-          isChangePosition,
+          // isChangePosition,
           answers,
         },
       };
@@ -180,8 +197,8 @@ function EvaluationQuestion({
           id="question_group"
           name="question_group"
         />
-        <div className="body_semibold_14 mb-2">{t("relocate_result")}</div>
-        <Switch checked={isChangePosition} onChange={setIsChangePosition} />
+        {/* <div className="body_semibold_14 mb-2">{t("relocate_result")}</div> */}
+        {/* <Switch checked={isChangePosition} onChange={setIsChangePosition} /> */}
       </div>
       <div className="bg-white rounded-lg lg:col-span-8 col-span-12 p-5 h-fit">
         <EditorHook
@@ -201,7 +218,38 @@ function EvaluationQuestion({
                 className="flex items-center justify-between pt-2"
               >
                 {/* <Radio className="font-semibold">{index + 1}.</Radio> */}
-                <div className="font-semibold">{index + 1}.</div>
+                {/* <div
+                  className="font-semibold"
+                  contentEditable={true}
+                  suppressContentEditableWarning={true}
+                  onBlur={(e) =>
+                    setFields(
+                      fields.map((f: any) =>
+                        f.id === field.id
+                          ? { ...f, label: e.target.textContent }
+                          : f
+                      )
+                    )
+                  }
+                >
+                  {String.fromCharCode(65 + index)}.
+                </div> */}
+                <div
+                  className="font-semibold"
+                  contentEditable={true}
+                  suppressContentEditableWarning={true}
+                  onBlur={(e) =>
+                    setFields(
+                      fields.map((f: any) =>
+                        f.id === field.id
+                          ? { ...f, label: e.target.textContent }
+                          : f
+                      )
+                    )
+                  }
+                >
+                  {field.label}.
+                </div>
                 <Input
                   className="rounded-md h-9 w-[50%]"
                   placeholder={t("Tên nhãn lựa chọn")}

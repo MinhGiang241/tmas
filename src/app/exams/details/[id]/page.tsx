@@ -669,7 +669,7 @@ function ExamDetails({ params }: any) {
             />
             <div>
               <div className="text-sm font-semibold">{t("expected_point")}</div>
-              <div className="text-xs py-2">{t("servey_1")}</div>
+              <i className="text-xs py-2 font-medium">{t("servey_1")}</i>
               <Input
                 className="h-12 rounded-md mb-4"
                 id="expectedPoint"

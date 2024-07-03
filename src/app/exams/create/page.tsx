@@ -73,7 +73,7 @@ function CreatePage({ exam, isEdit }: any) {
 
   const [inputFields, setInputFields] = useState<ScoreRank[]>(
     exam?.id
-      ? exam?.scoreRanks
+      ? exam?.scoreRanks ?? []
       : [{ label: "", fromScore: 0, toScore: undefined }]
   );
 
@@ -98,7 +98,7 @@ function CreatePage({ exam, isEdit }: any) {
         { label: "", fromScore: lastField.toScore, toScore: 0 || undefined },
       ]);
     } else {
-      errorToast("Vui lòng nhập giá trị Đến điểm cho phân hạng kết quả");
+      // errorToast("Vui lòng nhập giá trị Đến điểm cho phân hạng kết quả");
     }
   };
 
@@ -108,12 +108,12 @@ function CreatePage({ exam, isEdit }: any) {
   //   setInputFields(values);
   // };
   const handleRemoveFields = (index: any) => {
-    if (inputFields.length === 1) {
-      errorToast(
-        "Tên hạng là trường bắt buộc, tiếp tục thiết lập để phân hạng cho kết quả"
-      );
-      return;
-    }
+    // if (inputFields.length === 1) {
+    //   errorToast(
+    //     "Tên hạng là trường bắt buộc, tiếp tục thiết lập để phân hạng cho kết quả"
+    //   );
+    //   return;
+    // }
 
     const values = [...inputFields];
     values.splice(index, 1);
@@ -137,7 +137,7 @@ function CreatePage({ exam, isEdit }: any) {
   const [totalToScore, setTotalToScore] = useState(0);
 
   useEffect(() => {
-    const total = inputFields.reduce(
+    const total = inputFields?.reduce(
       (accumulator, field) => accumulator + (Number(field.toScore) || 0),
       0
     );
@@ -217,15 +217,15 @@ function CreatePage({ exam, isEdit }: any) {
     initialValues,
     validate,
     onSubmit: async (values: FormValue) => {
-      const hasEmptyLabel =
-        selectedButton === ExamType.Survey &&
-        inputFields.some((x: any) => x?.label.trim() === "");
-      if (hasEmptyLabel) {
-        errorToast(
-          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả."
-        );
-        return;
-      }
+      // const hasEmptyLabel =
+      //   selectedButton === ExamType.Survey &&
+      //   inputFields.some((x: any) => x?.label.trim() === "");
+      // if (hasEmptyLabel) {
+      //   errorToast(
+      //     "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả."
+      //   );
+      //   return;
+      // }
       setLoading(true);
 
       var submitDocs = [
@@ -651,7 +651,7 @@ function CreatePage({ exam, isEdit }: any) {
                 // className={`w-1/2 flex justify-center items-center py-2 border relative`}
                 className={`w-1/2 flex justify-center items-center py-2 border relative ${
                   selectedButton === ExamType.Test
-                    ? "bg-m_primary_200 text-black"
+                    ? "bg-sky-300 text-black"
                     : "bg-white text-black"
                 }`}
                 onClick={() => handleButtonClick(ExamType.Test)}
@@ -690,7 +690,7 @@ function CreatePage({ exam, isEdit }: any) {
                 // className={`w-1/2 flex justify-center items-center py-2 relative border`}
                 className={`w-1/2 flex justify-center items-center py-2 border relative ${
                   selectedButton === ExamType.Survey
-                    ? "bg-m_primary_200 text-black"
+                    ? "bg-sky-300 text-black"
                     : "bg-white text-black"
                 }`}
                 onClick={() => handleButtonClick(ExamType.Survey)}
