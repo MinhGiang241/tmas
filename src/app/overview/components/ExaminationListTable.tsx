@@ -558,6 +558,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
               value={groupId}
               setValue={(name: any, e: any) => {
                 setGroupId(e);
+                setIndexPage(1);
               }}
               allowClear={false}
               defaultValue=""
@@ -576,6 +577,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
               options={statusOption}
               setValue={(name: string, val: string) => {
                 setStatus(val);
+                setIndexPage(1);
               }}
               id="valid"
               name="valid"
