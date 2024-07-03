@@ -41,7 +41,7 @@ const EditorHook = dynamic(
   () => import("../components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  }
+  },
 );
 
 function CreatePage({ exam, isEdit }: any) {
@@ -56,15 +56,15 @@ function CreatePage({ exam, isEdit }: any) {
   const [lang, setLang] = useState<any>(exam?.language ?? "Vietnamese");
   const [transfer, setTransfer] = useState<any>("FreeByUser");
   const [page, setPage] = useState<any>(
-    exam?.examViewQuestionType ?? "SinglePage"
+    exam?.examViewQuestionType ?? "SinglePage",
   );
   const [sw, setSw] = useState<boolean>(
-    !exam ? false : exam?.changePositionQuestion ?? false
+    !exam ? false : exam?.changePositionQuestion ?? false,
   );
   const [files, setFiles] = useState([]);
   const [idSession, setIdSession] = useState<string | undefined>();
   const [selectedButton, setSelectedButton] = useState<ExamType>(
-    exam?.id ? exam?.examType : ExamType.Test
+    exam?.id ? exam?.examType : ExamType.Test,
   );
 
   const handleButtonClick = (buttonType: any) => {
@@ -73,8 +73,8 @@ function CreatePage({ exam, isEdit }: any) {
 
   const [inputFields, setInputFields] = useState<ScoreRank[]>(
     exam?.id
-      ? exam?.scoreRanks
-      : [{ label: "", fromScore: 0, toScore: undefined }]
+      ? exam?.scoreRanks ?? []
+      : [{ label: "", fromScore: 0, toScore: undefined }],
   );
 
   // const handleAddFields = () => {
@@ -110,7 +110,7 @@ function CreatePage({ exam, isEdit }: any) {
   const handleRemoveFields = (index: any) => {
     if (inputFields.length === 1) {
       errorToast(
-        "Tên hạng là trường bắt buộc, tiếp tục thiết lập để phân hạng cho kết quả"
+        "Tên hạng là trường bắt buộc, tiếp tục thiết lập để phân hạng cho kết quả",
       );
       return;
     }
@@ -137,9 +137,9 @@ function CreatePage({ exam, isEdit }: any) {
   const [totalToScore, setTotalToScore] = useState(0);
 
   useEffect(() => {
-    const total = inputFields.reduce(
+    const total = inputFields?.reduce(
       (accumulator, field) => accumulator + (Number(field.toScore) || 0),
-      0
+      0,
     );
     setTotalToScore(total);
   }, [inputFields]);
@@ -222,7 +222,7 @@ function CreatePage({ exam, isEdit }: any) {
         inputFields.some((x: any) => x?.label.trim() === "");
       if (hasEmptyLabel) {
         errorToast(
-          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả."
+          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả.",
         );
         return;
       }
@@ -318,7 +318,7 @@ function CreatePage({ exam, isEdit }: any) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id
+          (ch: ExamGroupData) => ch.idParent === e.id,
         );
         return { ...e, childs };
       });
@@ -353,7 +353,7 @@ function CreatePage({ exam, isEdit }: any) {
             "Paging.StartIndex": 0,
             "Paging.RecordPerPage": 100,
           }
-        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 }
+        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
     );
     if (data?.code != 0) {
       return [];
