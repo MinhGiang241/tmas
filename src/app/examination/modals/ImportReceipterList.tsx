@@ -72,7 +72,6 @@ function ImportReceipterList(props: Props) {
   };
 
   const validateImportData = (data: any) => {
-    console.log("data", data);
     // bắt trùng mail
     setDataList(data);
     var map: any = {};

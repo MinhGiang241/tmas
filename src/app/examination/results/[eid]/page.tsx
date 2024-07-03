@@ -2,7 +2,7 @@
 "use client";
 import MBreadcrumb from "@/app/components/config/MBreadcrumb";
 import HomeLayout from "@/app/layouts/HomeLayout";
-import { Divider, Pagination, Select, Table } from "antd";
+import { Divider, Pagination, Select, Table, TableColumnsType } from "antd";
 import React, { HTMLAttributes, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _, { keys } from "lodash";
@@ -10,6 +10,7 @@ import MButton from "@/app/components/config/MButton";
 import DownloadIcon from "@/app/components/icons/download.svg";
 import FilterIcon from "@/app/components/icons/filter.svg";
 import EyeIcon from "@/app/components/icons/eye.svg";
+import EditIcon from "@/app/components/icons/edit-black.svg";
 import {
   rowEndStyle,
   rowStartStyle,
@@ -24,7 +25,13 @@ import { CloseOutlined } from "@ant-design/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   exportExelFile,
+  getAbilityDataChart,
+  getAbilityReport,
+  getCandidateRankReport,
+  getExpectationReport,
   getOverViewExamination,
+  getQuestionPartDetails,
+  updateOverallConclusion,
 } from "@/services/api_services/examination_api";
 import {
   Condition,
@@ -32,6 +39,10 @@ import {
   ExamGroupData,
   ExamTestResulstData,
   ExaminationData,
+  ExpectedReportData,
+  QuestionPartDetailsData,
+  QuestionPartTableValue,
+  TableStatisticalReportData,
 } from "@/data/exam";
 import Chart from "./components/Chart";
 import { getPagingAdminExamTestResult } from "@/services/api_services/result_exam_api";
@@ -47,6 +58,19 @@ import examGroupSlice, {
 import { APIResults } from "@/data/api_results";
 import { getExamGroupTest } from "@/services/api_services/exam_api";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import MTable, { TableDataRow } from "@/app/components/config/MTable";
+import {
+  Legend,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+} from "recharts";
+import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import MTextArea from "@/app/components/config/MTextArea";
+import { FormattedDate, FormattedNumber } from "react-intl";
 
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
@@ -58,6 +82,10 @@ function ResultPage({ params }: any) {
   const [indexPage, setIndexPage] = useState<number>(1);
   const [recordNum, setRecordNum] = useState<number>(15);
   const [total, setTotal] = useState<number>(1);
+  const [isEditJudge, setIsEditJudge] = useState<boolean>(false);
+  const [abilityData, setAbilityData] = useState<TableStatisticalReportData[]>(
+    [],
+  );
   const router = useRouter();
 
   interface TableValue {
@@ -73,6 +101,7 @@ function ResultPage({ params }: any) {
     group?: string;
     identify_code?: string;
     seconds?: number;
+    rank?: string;
   }
   interface FilterObject {
     fieldName?: string;
@@ -82,6 +111,7 @@ function ResultPage({ params }: any) {
 
   const [infos, setInfos] = useState<TableValue[]>([]);
   const [filters, setFilters] = useState<FilterObject[]>([]);
+  const [overall, setOverAll] = useState<string | undefined>();
 
   const [examination, setExamination] = useState<ExaminationData | undefined>();
 
@@ -92,6 +122,7 @@ function ResultPage({ params }: any) {
     }
     setExamination(res?.data?.records[0]);
     getListResults(res?.data?.records[0]);
+    setOverAll(res?.data?.records[0]?.overallConclusion);
   };
   const examGroups = useAppSelector(
     (state: RootState) => state?.examGroup?.list,
@@ -128,11 +159,11 @@ function ResultPage({ params }: any) {
       status: e?.result?.completionState,
       seconds: e?.timeLine?.totalTimeDoTestSeconds,
       group: e?.candidate?.groupTest,
+      rank: e?.result?.rankLabel,
     }));
 
     setTotal(res?.data?.totalOfRecords);
     setInfos(s);
-    console.log("esss", res);
   };
 
   const [filterValues, setFilterValues] = useState<FormFilterValue>({});
@@ -179,6 +210,8 @@ function ResultPage({ params }: any) {
     }
   };
 
+  const listRow: TableDataRow[] = [];
+
   const columns: ColumnsType<any> = [
     {
       onHeaderCell: (_) => rowStartStyle,
@@ -220,6 +253,22 @@ function ResultPage({ params }: any) {
       ),
       dataIndex: "percent_complete",
       key: "complete_percent",
+      render: (text) => (
+        <p
+          key={text}
+          className="w-full  break-all  flex  min-w-11 justify-start caption_regular_14"
+        >
+          {text}
+        </p>
+      ),
+    },
+    {
+      onHeaderCell: (_) => rowStyle,
+      title: (
+        <div className="min-w-32 w-full flex justify-start">{t("rank")}</div>
+      ),
+      dataIndex: "rank",
+      key: "rank",
       render: (text) => (
         <p
           key={text}
@@ -494,12 +543,179 @@ function ResultPage({ params }: any) {
   const search = useSearchParams();
   var from = search.get("from");
   const [testDate, setTestDate] = useState<string | undefined>();
+  const [partDataChart, setPartDataChart] = useState([]);
+  const [rankData, setRankData] = useState([]);
+  const [expectedData, setExpectedData] = useState<
+    ExpectedReportData | undefined
+  >();
+  const [questionPartDetail, setQuestionPartDetails] = useState<
+    QuestionPartDetailsData[]
+  >([]);
+
+  const getQuestionPartDetail = async () => {
+    const res = await getQuestionPartDetails(params.eid);
+    if (res?.code != 0) {
+      return;
+    }
+    setQuestionPartDetails(res?.data);
+  };
+
+  const getAbilityReportTable = async () => {
+    const res = await getAbilityReport(params.eid);
+    if (res?.code != 0) {
+      return;
+    }
+    setAbilityData(res?.data);
+  };
+
+  const getPartDataChart = async () => {
+    const res = await getAbilityDataChart(params.eid);
+    if (res?.code != 0) {
+      return;
+    }
+    setPartDataChart(res?.data);
+  };
+
+  const getExpectationReportData = async () => {
+    const res = await getExpectationReport(params.eid);
+    if (res?.code != 0) {
+      return;
+    }
+    setExpectedData(res?.data);
+  };
+
+  const getCandidateRankReportData = async () => {
+    const res = await getCandidateRankReport(params.eid);
+    console.log("res ability", res);
+    if (res?.code != 0) {
+      return;
+    }
+    setRankData(res?.data);
+  };
+
+  useEffect(() => {
+    getQuestionPartDetail();
+    getAbilityReportTable();
+    getPartDataChart();
+    getCandidateRankReportData();
+    getExpectationReportData();
+  }, [user]);
+
   useEffect(() => {
     getExaminationDetail();
     if (user?._id) {
       dispatch(fetchDataExamGroup(async () => loadExamGroupList(true)));
     }
   }, [user, filters, testDate, recordNum, indexPage]);
+
+  const [colors, setColors] = useState(["#6DB3C2", "#FC8800", "#775DA6"]);
+  useEffect(() => {
+    for (let i in rankData) {
+      if (parseInt(i) > 2) {
+        setColors([
+          ...colors,
+          "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0"),
+        ]);
+      }
+    }
+  }, [rankData]);
+
+  const questDataRows: ColumnsType<QuestionPartTableValue> = [
+    {
+      title: t("question"),
+      dataIndex: "questionName",
+      width: "40%",
+      render: (text: any, data: any) => (
+        <div dangerouslySetInnerHTML={{ __html: text }}></div>
+      ),
+    },
+    { title: t("max_score"), dataIndex: "numberPoint", width: "15%" },
+    {
+      title: t("has_result"),
+      dataIndex: "numberOfQuestionsAnswered",
+      width: "15%",
+    },
+    {
+      title: t("average_answered"),
+      dataIndex: "averageScorePerAnswered",
+      width: "15%",
+    },
+    {
+      title: t("average_total_exaxm"),
+      dataIndex: "averageScorePerTotalTest",
+      width: "15%",
+    },
+  ];
+  const partDataRows: TableDataRow[] = [
+    {
+      title: t("ability"),
+      dataIndex: "name",
+    },
+    {
+      title: t("weight"),
+      dataIndex: "trongso",
+      render: (text: any, data: any) => (
+        <>
+          <FormattedNumber
+            value={text ?? 0}
+            style="decimal"
+            maximumFractionDigits={2}
+          />
+          {" %"}
+        </>
+      ),
+    },
+    {
+      title: t("level"),
+      classNameTitle: "flex justify-center",
+      children: [
+        {
+          title: t("require"),
+          dataIndex: "diemyeucau",
+        },
+        {
+          title: t("sobaidat"),
+          dataIndex: "sobaidat",
+        },
+        {
+          title: t("titrongdat"),
+          dataIndex: "titrongdat",
+          render: (text: any, data: any) => (
+            <>
+              <FormattedNumber
+                value={text ?? 0}
+                style="decimal"
+                maximumFractionDigits={2}
+              />
+              {" %"}
+            </>
+          ),
+        },
+      ],
+    },
+  ];
+
+  const expandedRowRender = (e: { questions: QuestionPartTableValue[] }) => {
+    console.log("e render", e);
+
+    return (
+      <Table
+        // rowStartStyle={{}}
+        // rowEndStyle={{}}
+        // rowStyle={{}}
+        showHeader={false}
+        //@ts-ignore
+        columns={questDataRows}
+        dataSource={[...e?.questions]}
+        pagination={false}
+      />
+      // <MTable
+      //   columns={questColumns}
+      //   dataSource={[{ key: "1", questionName: "Giang" }]}
+      //   isHidePagination
+      // />
+    );
+  };
 
   return (
     <HomeLayout>
@@ -582,7 +798,208 @@ function ResultPage({ params }: any) {
           },
         ]}
       />
-      <div className="flex justify-between  max-lg:flex-col max-lg:gap-3 max-lg:items-center max-lg:mx-5">
+      <div className="body_bold_16 mb-5 max-lg:ml-5">
+        {t("result_examnination_evaluation")?.toUpperCase()}
+      </div>
+      <div className="grid grid-cols-3 gap-5 w-full  mb-5 ">
+        <div className="col-span-3 lg:col-span-1 rounded-lg max-lg:mx-5 bg-white mr-[7px]">
+          <div className=" w-full flex p-5 items-center">
+            <div className="w-1/3 text-5xl">
+              {expectedData?.status == "pass" ? "😊" : "😭"}
+            </div>
+            <div className="w-2/3 flex flex-col items-start">
+              <div>{t("examination_expect")}</div>
+              <div className={`text-m_warning_500 title_semibold_24 `}>
+                {expectedData?.status == "pass"
+                  ? t("expected")
+                  : t("not_expected")}
+              </div>
+            </div>
+          </div>
+          <div className="h-8 body_semibold_14 w-full bg-neutral-300 flex justify-start pl-5 items-center">
+            {t("result")}
+          </div>
+          <div className="mt-5 my-5 grid grid-cols-3 gap-3 w-full ">
+            <div className="ml-3 p-3 border rounded-lg h-20 flex flex-col justify-center items-center col-span-1">
+              <div>{t("require")}</div>
+              <div className="title_semibold_20 text-m_primary_500">
+                {expectedData?.expectPassedNumb}
+              </div>
+            </div>
+            <div className="mr-3 p-3 border rounded-lg h-20 col-span-2 flex flex-col">
+              <div className="w-full text-center">{t("actual")}</div>
+              <div className="flex justify-between mx-3">
+                <div className="flex items-center">
+                  <span>{t("pass")}</span>
+                  <span className="ml-1 body_semibold_14 text-m_primary_500">
+                    {expectedData?.realityPassedNumb}
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <span>{t("account_for")}</span>
+                  <span className="ml-1 body_semibold_14 text-m_primary_500">
+                    <FormattedNumber
+                      value={expectedData?.realityPassedPercent ?? 0}
+                      style="decimal"
+                      maximumFractionDigits={2}
+                    />{" "}
+                    %
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-span-3 lg:col-span-2 rounded-lg  bg-white max-lg:mx-5">
+          <div className="px-5 pt-5 flex w-full justify-between items-center">
+            <div>{t("overview_judgement")}</div>
+            <div className="flex">
+              {isEditJudge && (
+                <button
+                  onClick={() => {
+                    setIsEditJudge(!isEditJudge);
+                  }}
+                  className="text-m_primary_500 mr-3"
+                >
+                  {t("save")}
+                </button>
+              )}
+              <button
+                onClick={async () => {
+                  await updateOverallConclusion({
+                    id: params.eid,
+                    overallConclusion: overall,
+                  });
+                  getExaminationDetail();
+                  setIsEditJudge(!isEditJudge);
+                }}
+              >
+                <EditIcon />
+              </button>
+            </div>
+          </div>
+
+          <Divider className="my-2" />
+          {!isEditJudge ? (
+            <div className=" mx-5 h-44 overflow-y-scroll scroll-smooth break-all ">
+              {overall}
+            </div>
+          ) : (
+            <div className="mx-5">
+              <MTextArea
+                value={overall}
+                onChange={(e) => {
+                  setOverAll(e.target.value);
+                }}
+                id="judge"
+                name="judge"
+                line={7}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="body_bold_16 mb-5 max-lg:ml-5">
+        {t("exam_part_records")?.toUpperCase()}
+      </div>
+
+      <div className="flex max-lg:flex-col w-full items-stretch mb-5">
+        <div className="lg:w-1/2 max-lg:mx-5">
+          <MTable
+            sumData={{
+              name: t("total_ability_score"),
+              diemyeucau: abilityData?.reduce(
+                (a: number, b: TableStatisticalReportData) =>
+                  a + (b.diemyeucau ?? 0),
+                0,
+              ),
+            }}
+            dataRows={partDataRows}
+            dataSource={abilityData}
+            isHidePagination
+          />
+        </div>
+        <div className="lg:w-5 h-5" />
+        <div
+          key={params.eid}
+          className="lg:w-1/2 bg-white rounded-lg max-lg:h-72 max-lg:mx-5"
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart
+              cx="50%"
+              cy="50%"
+              outerRadius="80%"
+              data={partDataChart}
+            >
+              <PolarGrid />
+              <PolarAngleAxis dataKey="subject" />
+              <PolarRadiusAxis />
+              <Radar
+                key={"expectedPoint"}
+                name={t("expectedPoint")}
+                dataKey={"expectedPoint"}
+                stroke={"#775DA6"}
+                fill={"#775DA6"}
+                fillOpacity={0.6}
+              />
+              <Radar
+                key={"actualAverageScore"}
+                name={t("actualAverageScore")}
+                dataKey={"actualAverageScore"}
+                stroke={"#FC8800"}
+                fill={"#FC8800"}
+                fillOpacity={0.6}
+              />
+
+              {/* {partDataChart?.length != 0 && */}
+              {/*   Object.keys(partDataChart[0])?.map((e) => { */}
+              {/*     var c = */}
+              {/*       "#" + */}
+              {/*       (((1 << 24) * Math.random()) | 0) */}
+              {/*         .toString(16) */}
+              {/*         .padStart(6, "0"); */}
+              {/**/}
+              {/*     return e != "subject" && e != "fullMark" ? ( */}
+              {/*       <Radar */}
+              {/*         key={e} */}
+              {/*         name={e} */}
+              {/*         dataKey={e} */}
+              {/*         stroke={c} */}
+              {/*         fill={c} */}
+              {/*         fillOpacity={0.6} */}
+              {/*       /> */}
+              {/*     ) : null; */}
+              {/*   })} */}
+              <Legend
+                formatter={(value: string, entry: any, index: number) => {
+                  const customNames = {
+                    expectedPoint: t("expectedPoint"),
+                    actualAverageScore: t("actualAverageScore"),
+                  };
+                  //@ts-ignore
+                  return (customNames[value] || value) as string;
+                }}
+              />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div className="body_bold_16 mb-5 max-lg:ml-5">
+        {t("candidadte_rank_record")?.toUpperCase()}
+      </div>
+      <div className="flex  items-center justify-between w-full mb-5">
+        <Chart
+          colors={colors}
+          key={params.eid}
+          h={500}
+          w={500}
+          className="w-full bg-white rounded-lg flex flex-row-reverse items-center max-lg:mx-5"
+          data={rankData}
+        />
+      </div>
+
+      <div className="flex justify-between max-lg:flex-col max-lg:gap-3 max-lg:items-center max-lg:mx-5">
         <Chart
           data={[
             {
@@ -760,63 +1177,46 @@ function ResultPage({ params }: any) {
           })}
         </div>
         <Divider className="mb-7" />
-        <div className="overflow-scroll ">
-          <Table
-            className="w-full max-lg:overflow-scroll"
-            bordered={false}
+        <div className=" ">
+          <MTable
             columns={columns}
             dataSource={infos}
-            pagination={false}
-            rowKey={"id"}
-            onRow={(data: any, index: any) =>
-              ({
-                style: {
-                  background: "#FFFFFF",
-                  borderRadius: "20px",
-                },
-              }) as HTMLAttributes<any>
-            }
-          />
-        </div>
-        <div className="w-full flex items-center justify-center mt-5">
-          <span className="body_regular_14 mr-2">{`${total} ${t(
-            "result",
-          )}`}</span>
-
-          <Pagination
-            pageSize={recordNum}
-            onChange={(v) => {
-              setIndexPage(v);
-            }}
-            current={indexPage}
+            recordNum={recordNum}
+            indexPage={indexPage}
             total={total}
-            showSizeChanger={false}
           />
-          <div className="hidden ml-2 lg:flex items-center">
-            <Select
-              optionRender={(oriOption) => (
-                <div className="flex justify-center">{oriOption?.label}</div>
-              )}
-              value={recordNum}
-              onChange={(v) => {
-                setRecordNum(v);
-                setIndexPage(1);
-              }}
-              options={[
-                ...[15, 25, 30, 50, 100].map((i: number) => ({
-                  value: i,
-                  label: (
-                    <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                      "page",
-                    )}`}</span>
-                  ),
-                })),
-              ]}
-              className="select-page min-w-[124px]"
-            />
-          </div>
         </div>
       </div>
+      <div className="mt-5 p-5 bg-white rounded-lg">
+        <div className="body_semibold_20 mb-5">
+          {t("question_details_records")}
+        </div>
+        <MTable
+          // rowStartStyle={{}}
+          // rowEndStyle={{}}
+          // rowStyle={{}}
+          rowKey={"key"}
+          // @ts-ignore
+          columns={questDataRows}
+          //@ts-ignore
+          dataSource={[
+            ...questionPartDetail?.map((s, i) => ({
+              key: i,
+              questionName: s?.nameQuestionPart ?? "",
+              questions: s?.questions,
+              averageScorePerAnswered: s?.averageScorePerAnsweredQuestionPart,
+              averageScorePerTotalTest: s?.averageScorePerTotalTestQuestionPart,
+              numberPoint: s?.numberPointQuestionPart,
+              numberOfQuestionsAnswered:
+                s?.numberOfQuestionsAnsweredQuestionPart,
+            })),
+          ]}
+          expandable={{ expandedRowRender }}
+          isHidePagination
+          //pagination={false}
+        />
+      </div>
+      <div className="h-44" />
     </HomeLayout>
   );
 }

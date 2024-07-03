@@ -160,8 +160,6 @@ function DragDropUpload({
           isExist={false}
           key={v.id}
           deleteDoc={async (e: any) => {
-            console.log(e);
-            console.log(files);
             await deleteDocumentById(idSession, v?.id ?? "");
             // e.stopPropagation();
             // e.nativeEvent.stopImmediatePropagation();

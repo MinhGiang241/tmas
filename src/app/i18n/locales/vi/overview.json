@@ -26,11 +26,11 @@
   "to_date": "Đến ngày",
   "status": "Trạng thái",
   "value": "Giá trị",
-  "day_test_increase": "Số bài làm mới phát sinh trong ngày {{num}}",
-  "user_test_today": "Số ứng viên có tài khoản TMAS thi trong ngày {{num}}",
-  "revenue_today": "Doanh thu phát sinh trong ngày hôm nay: {{num}}",
-  "discount_today": "Chiết khấu trong ngày hôm nay: {{num}}",
-  "net_revenue_today": "Doanh thu thuần trong ngày hôm nay: {{num}}",
-  "register_increase_in_day": "Số lượng đăng ký phát sinh trong ngày: {{num}}",
-  "register_decrease_in_day": "Số lượng đăng ký giảm trong ngày: {{num}}"
+  "day_test_increase": "Số bài làm mới phát sinh trong ngày",
+  "user_test_today": "Số ứng viên có tài khoản TMAS thi trong ngày",
+  "revenue_today": "Doanh thu phát sinh trong ngày hôm nay",
+  "discount_today": "Chiết khấu trong ngày hôm nay",
+  "net_revenue_today": "Doanh thu thuần trong ngày hôm nay",
+  "register_increase_in_day": "Số lượng đăng ký phát sinh trong ngày",
+  "register_decrease_in_day": "Số lượng đăng ký giảm trong ngày"
 }

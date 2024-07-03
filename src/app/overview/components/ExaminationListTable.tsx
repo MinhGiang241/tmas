@@ -14,20 +14,32 @@ import {
   overviewExamTestCounterExcel,
   overviewExamTestGetPaging,
   overviewExamTestStatiticExcel,
+  overviewListExamTestReport,
+  overviewListExamTestReportExel,
 } from "@/services/api_services/overview_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import saveAs from "file-saver";
 import MTreeSelect from "@/app/components/config/MTreeSelect";
 import dayjs from "dayjs";
 import {
+  DGroupFilter,
+  DSort,
   ExamTestCounterData,
   ExamTestPagingData,
+  ExamTestReportData,
   FilterData,
+  ListExamReportData,
+  ListExamTestReportData,
 } from "@/data/overview";
 import { Condition, ExaminationData, StudioSorter } from "@/data/exam";
 import Link from "next/link";
 import { Tooltip } from "antd";
 import RenderSortterIcon from "./IconSorter";
+import duration from "dayjs/plugin/duration";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import MDropdown from "@/app/components/config/MDropdown";
+dayjs.extend(duration);
+dayjs.extend(customParseFormat);
 
 interface TableValue {
   id?: string;
@@ -62,18 +74,18 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
   const [endDate, setEndDate] = useState<string | undefined>();
   const [groupId, setGroupId] = useState<string | undefined>();
   const [dataTable, setDataTable] = useState<TableValue[]>([]);
-  const [sorter, setSorter] = useState<StudioSorter>({
-    name: "createdTime",
-    isAsc: false,
+  const [sorter, setSorter] = useState<DSort>({
+    desc: true,
+    id: "CreatedTime",
   });
-  const [dataList, setDataList] = useState<ExamTestPagingData | undefined>();
+  const [dataList, setDataList] = useState<ExamTestReportData | undefined>();
 
   const addSorter = (name: string) => {
-    if (!sorter?.name || name != sorter.name) {
-      setSorter({ name, isAsc: true });
+    if (!sorter?.id || name != sorter.id) {
+      setSorter({ id: name, desc: true });
       return;
     }
-    setSorter({ name, isAsc: !sorter?.isAsc });
+    setSorter({ id: name, desc: !sorter?.desc });
     setIndexPage(1);
   };
 
@@ -81,12 +93,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "name",
       title: (
-        <button onClick={() => addSorter("info.examTest.unsignedName")}>
+        <button onClick={() => addSorter("Name")}>
           <Tooltip title={t("examination_name")}>{t("name")}</Tooltip>
-          <RenderSortterIcon
-            sorter={sorter}
-            name="info.examTest.unsignedName"
-          />
+          <RenderSortterIcon sorter={sorter} name="Name" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -119,9 +128,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "group",
       title: (
-        <button onClick={() => addSorter("info.groupExam.name")}>
+        <button onClick={() => addSorter("GroupName")}>
           <Tooltip title={t("exam_group")}>{t("group")}</Tooltip>
-          <RenderSortterIcon sorter={sorter} name="info.groupExam.name" />
+          <RenderSortterIcon sorter={sorter} name="GroupName" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -129,9 +138,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "tags",
       title: (
-        <button onClick={() => addSorter("info.exam.tags")}>
+        <button onClick={() => addSorter("Tags")}>
           <Tooltip title={t("tags_tooltip")}>{t("tags")}</Tooltip>
-          <RenderSortterIcon sorter={sorter} name="info.exam.tags" />
+          <RenderSortterIcon sorter={sorter} name="Tags" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -144,9 +153,14 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "join_num",
       title: (
-        <button onClick={() => addSorter("info.couter.numberOfTest")}>
+        <button
+          onClick={() => addSorter("TestResultReport.TotalExamTestResult")}
+        >
           <Tooltip title={t("amount_join")}>{t("join_num")}</Tooltip>
-          <RenderSortterIcon sorter={sorter} name="info.couter.numberOfTest" />
+          <RenderSortterIcon
+            sorter={sorter}
+            name="TestResultReport.TotalExamTestResult"
+          />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -154,11 +168,16 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "today_join_num",
       title: (
-        <button onClick={() => addSorter("key.couterByDate")}>
+        <button
+          onClick={() => addSorter("TestResultReport.TotalExamTestResultToday")}
+        >
           <Tooltip title={t("amount_join_today")}>
             {t("today_join_num")}
           </Tooltip>
-          <RenderSortterIcon sorter={sorter} name="key.couterByDate" />
+          <RenderSortterIcon
+            sorter={sorter}
+            name="TestResultReport.TotalExamTestResultToday"
+          />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -166,9 +185,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "dtb",
       title: (
-        <button onClick={() => addSorter("couter.totalScoreAsInt")}>
-          <Tooltip title={t("ĐTV")}>{t("dtv")}</Tooltip>
-          <RenderSortterIcon sorter={sorter} name="couter.totalScoreAsInt" />
+        <button onClick={() => addSorter("TestResultReport.AvgScore")}>
+          <Tooltip title={t("ĐTB")}>{t("dtb")}</Tooltip>
+          <RenderSortterIcon sorter={sorter} name="TestResultReport.AvgScore" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -176,9 +195,12 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "dtv",
       title: (
-        <button onClick={() => addSorter("couter.medianScoreAsInt")}>
+        <button onClick={() => addSorter("TestResultReport.MedianScore")}>
           <Tooltip title={t("ĐTV")}>{t("dtv")}</Tooltip>
-          <RenderSortterIcon sorter={sorter} name="couter.medianScoreAsInt" />
+          <RenderSortterIcon
+            sorter={sorter}
+            name="TestResultReport.MedianScore"
+          />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -186,9 +208,12 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "percent_pass",
       title: (
-        <button onClick={() => addSorter("couter.totalPass")}>
+        <button onClick={() => addSorter("TestResultReport.TotalPassPercent")}>
           <Tooltip title={t("pass_rate")}>{t("percent_pass")}</Tooltip>
-          <RenderSortterIcon sorter={sorter} name="couter.totalPass" />
+          <RenderSortterIcon
+            sorter={sorter}
+            name="TestResultReport.TotalPassPercent"
+          />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -196,23 +221,34 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "avg_test_time",
       title: (
-        <button onClick={() => addSorter("couter.totalTimeSeconds")}>
+        <button
+          onClick={() => addSorter("TestResultReport.AvgTimeDoTestSeconds")}
+        >
           <Tooltip title={t("avg_test_time_tooltip")}>
             {t("avg_test_time")}
           </Tooltip>
-          <RenderSortterIcon sorter={sorter} name="couter.totalTimeSeconds" />
+          <RenderSortterIcon
+            sorter={sorter}
+            name="TestResultReport.AvgTimeDoTestSeconds"
+          />
         </button>
       ),
+
       classNameTitle: "min-w-20",
     },
     {
       dataIndex: "min_test_time",
       title: (
-        <button onClick={() => addSorter("couter.minimumTimeSeconds")}>
+        <button
+          onClick={() => addSorter("TestResultReport.MinTimeDoTestSeconds")}
+        >
           <Tooltip title={t("min_test_time_tooltip")}>
             {t("min_test_time")}
           </Tooltip>
-          <RenderSortterIcon sorter={sorter} name="couter.minimumTimeSeconds" />
+          <RenderSortterIcon
+            sorter={sorter}
+            name="TestResultReport.MinTimeDoTestSeconds"
+          />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -220,11 +256,16 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "max_test_time",
       title: (
-        <button onClick={() => addSorter("couter.maximumTimeSeconds")}>
+        <button
+          onClick={() => addSorter("TestResultReport.MaxTimeDoTestSeconds")}
+        >
           <Tooltip title={t("max_test_time_tooltip")}>
             {t("max_test_time")}
           </Tooltip>
-          <RenderSortterIcon sorter={sorter} name="couter.maximumTimeSeconds" />
+          <RenderSortterIcon
+            sorter={sorter}
+            name="TestResultReport.MaxTimeDoTestSeconds"
+          />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -232,11 +273,11 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "question_num",
       title: (
-        <button onClick={() => addSorter("couter.numberOfQuestions")}>
+        <button onClick={() => addSorter("NumberOfQuestions")}>
           <Tooltip title={t("question_num_tooltip")}>
             {t("question_num")}
           </Tooltip>
-          <RenderSortterIcon sorter={sorter} name="couter.numberOfQuestions" />
+          <RenderSortterIcon sorter={sorter} name="NumberOfQuestions" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -244,14 +285,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "gold_price",
       title: (
-        <button
-          onClick={() => addSorter("info.examTest.goldSetting.goldPrice")}
-        >
+        <button onClick={() => addSorter("GoldSetting.GoldPrice")}>
           <Tooltip title={t("gold_price")}>{t("gold_price")}</Tooltip>
-          <RenderSortterIcon
-            sorter={sorter}
-            name="info.examTest.goldSetting.goldPrice"
-          />
+          <RenderSortterIcon sorter={sorter} name="GoldSetting.GoldPrice" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -259,12 +295,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "pure_income",
       title: (
-        <button onClick={() => addSorter("couter.goldCouter.netRevenue")}>
+        <button onClick={() => addSorter("TotalGold")}>
           <Tooltip title={t("pure_income_tooltip")}>{t("pure_income")}</Tooltip>
-          <RenderSortterIcon
-            sorter={sorter}
-            name="couter.goldCouter.netRevenue"
-          />
+          <RenderSortterIcon sorter={sorter} name="TotalGold" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -272,138 +305,134 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "from_date",
       title: (
-        <button
-          onClick={() =>
-            addSorter("info.examTest.validAccessSetting.validFrom")
-          }
-        >
+        <button onClick={() => addSorter("ValidAccessSetting.ValidFrom")}>
           <Tooltip title={t("from_date_tooltip")}>{t("from_date")}</Tooltip>
           <RenderSortterIcon
             sorter={sorter}
-            name="info.examTest.validAccessSetting.validFrom"
+            name="ValidAccessSetting.ValidFrom"
           />
         </button>
       ),
 
       classNameTitle: "min-w-20",
     },
+    {
+      dataIndex: "to_date",
+      title: (
+        <button onClick={() => addSorter("ValidAccessSetting.ValidTo")}>
+          <Tooltip title={t("to_date_tooltip")}>{t("to_date")}</Tooltip>
+          <RenderSortterIcon
+            sorter={sorter}
+            name="ValidAccessSetting.ValidTo"
+          />
+        </button>
+      ),
+
+      classNameTitle: "min-w-24",
+    },
 
     {
       dataIndex: "status",
       title: (
-        <button onClick={() => addSorter("info.examTest.stateInfo")}>
+        <button onClick={() => addSorter("VisibleState")}>
           <Tooltip title={t("examination_status")}>{t("status")}</Tooltip>
-          <RenderSortterIcon sorter={sorter} name="info.examTest.stateInfo" />
+          <RenderSortterIcon sorter={sorter} name="VisibleState" />
         </button>
       ),
 
-      classNameTitle: "min-w-20",
+      classNameTitle: "min-w-24",
     },
   ];
 
   const getListData = async () => {
-    var filters: FilterData[] = [];
+    var filters: DGroupFilter[] = [];
+    if (status) {
+      filters.push({
+        id: "VisibleState",
+        value: status == "valid" ? "Active" : "Inactive",
+        operation: "==",
+      });
+    }
     if (search) {
       filters.push({
-        fieldName: "info.examTest.unsignedName",
-        value: `/${search?.trim()}/i`,
-        condition: Condition.regex,
-        convertTextToUnsigned: true,
+        op: "OR",
+        children: [
+          { id: "Name", value: search, operation: "~" },
+          {
+            id: "Tags",
+            value: search,
+            operation: "~",
+          },
+        ],
       });
     }
     if (startDate) {
       filters.push({
-        fieldName: "info.examTest.createdTime",
-        value: `${startDate}`,
-        condition: Condition.gte,
+        id: "ValidAccessSetting.ValidFrom",
+        value: startDate,
+        operation: ">=",
       });
     }
     if (endDate) {
       filters.push({
-        fieldName: "info.examTest.createdTime",
-        value: `${endDate}`,
-        condition: Condition.lte,
+        id: "ValidAccessSetting.ValidFrom",
+        value: endDate,
+        operation: "<=",
       });
     }
     if (groupId) {
       filters.push({
-        fieldName: "info.groupExam.id",
+        id: "GroupId",
         value: groupId,
-        condition: Condition.eq,
+        operation: "==",
       });
     }
+    setLoading(true);
 
-    var res = await //   overviewExamTestCounter({
-    //   paging: { startIndex: indexPage, recordPerPage: recordNum },
-    //   filters,
-    //   studioSorters: [sorter],
-    // });
-    overviewExamTestGetPaging({
-      paging: { startIndex: indexPage, recordPerPage: recordNum },
-      isReportTotal: true,
-      filterByNameOrTag: search?.trim()
-        ? {
-            name: "unsignedName",
-            inValues: [search?.trim()!],
-          }
-        : undefined,
-      filterByExamGroupId: groupId
-        ? {
-            name: "ExamGroup",
-            inValues: [groupId],
-          }
-        : undefined,
-      fromTime: startDate,
-      toTime: endDate,
-      isIncludeExamVersion: true,
+    var res = await overviewListExamTestReport({
+      skip: (indexPage - 1) * recordNum,
+      limit: recordNum,
+      group: {
+        children: [...filters],
+      },
+
+      sorted: [sorter],
     });
+
+    setLoading(false);
     if (res?.code != 0) {
       return;
     }
-    var result: ExamTestPagingData = res?.data;
-    setDataList(result);
-    var examData: ExaminationData[] = res?.data?.records ?? [];
-    var examTableData = examData?.map<TableValue>((ex) => ({
-      id: ex?.id,
-      created_date: dayjs(ex?.createdTime).format("DD:MM:YYYY HH:mm:ss"),
-      question_num: ex?.statisticExamTest?.couter?.numberOfQuestions ?? 0,
-      group:
-        ex?.examVersion?.groupExams &&
-        (ex?.examVersion?.groupExams as any).length != 0
-          ? (ex?.examVersion?.groupExams as any[])[0].name
-          : "",
-      name: ex?.name,
-      tags: ex?.examVersion?.tags?.map((y) => y?.name ?? ""),
-      // ex?.examVersion?.exam?.tags?.map((k: any) =>
-      //   typeof k == "string" ? k : k?.name,
-      // ),
 
-      dtv: ex?.statisticExamTest?.couter?.medianScoreAsInt,
-      dtb: !ex?.statisticExamTest?.couter?.numberOfTest
-        ? 0
-        : (ex?.statisticExamTest?.couter?.totalScoreAsInt ?? 0) /
-          (ex?.statisticExamTest?.couter?.numberOfTest ?? 0),
-      join_num: ex?.statisticExamTest?.couter?.numberOfTest,
-      percent_pass: !ex?.statisticExamTest?.couter?.numberOfTest
-        ? 0
-        : ((ex?.statisticExamTest?.couter?.totalScoreAsInt ?? 0) /
-            (ex?.statisticExamTest?.couter?.numberOfTest ?? 0)) *
-          100,
-      avg_test_time: !ex?.statisticExamTest?.couter?.numberOfTest
-        ? "00:00:00"
-        : dayjs
-            .duration(
-              (ex?.statisticExamTest?.couter?.totalTimeSeconds ?? 0) /
-                (ex?.statisticExamTest?.couter?.numberOfTest ?? 0),
-            )
-            .format("HH:mm:ss"),
+    var examTestData: ExamTestReportData[] = res?.data ?? [];
+    setDataList(res?.data);
+    setTotal(res?.data?.records);
+    var listExamTestData: ListExamTestReportData[] = res?.data?.data;
+    var examTestTableData = listExamTestData?.map<TableValue>((ex) => ({
+      id: ex?._id,
+      created_date: dayjs(ex?.validAccessSetting?.validFrom).format(
+        "DD:MM:YYYY HH:mm:ss",
+      ),
+      question_num: ex?.numberOfQuestions,
+      group: ex?.groupName,
+      name: ex?.name,
+      tags: ex?.tags?.map((k: any) => (typeof k == "string" ? k : k?.name)),
+      dtv: ex?.testResultReport?.medianScore,
+      dtb: ex?.testResultReport?.avgScore,
+      join_num: ex?.testResultReport?.totalExamTestResult,
+      percent_pass: ex?.testResultReport?.totalPassPercent,
+      avg_test_time:
+        //ex?.testResultReport?.avgTimeDoTestSeconds,
+        dayjs
+          .duration((ex?.testResultReport?.avgTimeDoTestSeconds ?? 0) * 1000)
+          .format("HH:mm:ss"),
       max_test_time: dayjs
-        .duration(ex?.statisticExamTest?.couter?.maximumTimeSeconds ?? 0)
+        .duration((ex?.testResultReport?.maxTimeDoTestSeconds ?? 0) * 1000)
         .format("HH:mm:ss"),
       min_test_time: dayjs
-        .duration(ex?.statisticExamTest?.couter?.minimumTimeSeconds ?? 0)
+        .duration((ex?.testResultReport?.minTimeDoTestSeconds ?? 0) * 1000)
         .format("HH:mm:ss"),
-      today_join_num: ``,
+      today_join_num: ex?.testResultReport?.totalExamTestResultToday,
       from_date: ex?.validAccessSetting?.validFrom
         ? dayjs(ex?.validAccessSetting?.validFrom)?.format(
             "DD/MM/YYYY HH:mm:ss",
@@ -413,58 +442,70 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         ? dayjs(ex?.validAccessSetting?.validTo)?.format("DD/MM/YYYY HH:mm:ss")
         : undefined,
       gold_price: ex?.goldSetting?.goldPrice,
-      pure_income: ex?.statisticExamTest?.couter?.goldCouter?.netRevenue,
-      status: `${
-        ex?.stateInfo?.approvedState ? t(ex?.stateInfo?.approvedState) : ""
-      }`,
+      pure_income: ex?.totalGold,
+      status: `${ex?.visibleState == "Active" ? t("valid") : t("invalid")}`,
 
       // avg_test_time: t?.couter?.
     }));
-    setDataTable(examTableData);
+    console.log("examTestTableData", examTestTableData, listExamTestData);
+    console.log("dayjs duration", dayjs.duration(57 * 1000).format("HH:mm:ss"));
 
-    setTotal(res?.data?.totalOfRecords ?? 0);
+    setDataTable(examTestTableData);
   };
 
   const downloadExell = async () => {
-    var filters: FilterData[] = [];
+    var filters: DGroupFilter[] = [];
+    if (status) {
+      filters.push({
+        id: "VisibleState",
+        value: status == "valid" ? "Active" : "Inactive",
+        operation: "==",
+      });
+    }
+
     if (search) {
       filters.push({
-        fieldName: "info.examTest.unsignedName",
-        value: `/${search?.trim()}/i`,
-        condition: Condition.regex,
-        convertTextToUnsigned: true,
+        op: "OR",
+        children: [
+          { id: "Name", value: search, operation: "~" },
+          {
+            id: "Tags",
+            value: search,
+            operation: "~",
+          },
+        ],
       });
     }
     if (startDate) {
       filters.push({
-        fieldName: "info.examTest.createdTime",
-        value: `${startDate}`,
-        condition: Condition.gte,
+        id: "ValidAccessSetting.ValidFrom",
+        value: startDate,
+        operation: ">=",
       });
     }
     if (endDate) {
       filters.push({
-        fieldName: "info.examTest.createdTime",
-        value: `${endDate}`,
-        condition: Condition.lte,
+        id: "ValidAccessSetting.ValidFrom",
+        value: endDate,
+        operation: "<=",
       });
     }
     if (groupId) {
       filters.push({
-        fieldName: "info.groupExam.id",
+        id: "GroupId",
         value: groupId,
-        condition: Condition.eq,
+        operation: "==",
       });
     }
 
     var res = await //overviewExamTestCounterExcel
-    overviewExamTestStatiticExcel({
-      paging: {
-        startIndex: indexPage,
-        recordPerPage: recordNum,
+    overviewListExamTestReportExel({
+      skip: (indexPage - 1) * recordNum,
+      limit: recordNum,
+      group: {
+        children: [...filters],
       },
-      filters,
-      studioSorters: [sorter],
+      sorted: [sorter],
     });
 
     if (res?.code != 0) {
@@ -474,10 +515,36 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
 
     saveAs(res?.data);
   };
+  const [status, setStatus] = useState<string | undefined>("");
+  const examTrans = useTranslation("exam");
+  const statusOption = [
+    {
+      label: examTrans.t("all"),
+      value: "",
+    },
+    {
+      label: t("valid"),
+      value: "valid",
+    },
+    {
+      label: t("invalid"),
+      value: "invalid",
+    },
+  ];
 
   useEffect(() => {
     getListData();
-  }, [user, startDate, endDate, search, groupId, sorter, indexPage, recordNum]);
+  }, [
+    user,
+    startDate,
+    endDate,
+    search,
+    groupId,
+    sorter,
+    indexPage,
+    recordNum,
+    status,
+  ]);
 
   return (
     <>
@@ -486,25 +553,41 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       </div>
       <div className="flex justify-between w-full items-center">
         <div className="flex  lg:items-center max-lg:flex-col">
-          <div className="lg:w-52 lg:mr-4">
+          <div className="lg:w-40 lg:mr-4">
             <MTreeSelect
               value={groupId}
               setValue={(name: any, e: any) => {
                 setGroupId(e);
+                setIndexPage(1);
               }}
               allowClear={false}
               defaultValue=""
               id="question_group"
               name="question_group"
-              className="lg:w-52"
+              className="lg:w40"
               isTextRequire={false}
               h="h-11"
               options={optionSelect}
             />
           </div>
+          <div className="lg:w-40 lg:mr-4">
+            <MDropdown
+              allowClear={false}
+              value={status}
+              options={statusOption}
+              setValue={(name: string, val: string) => {
+                setStatus(val);
+                setIndexPage(1);
+              }}
+              id="valid"
+              name="valid"
+              //className="w-24"
+              isTextRequire={false}
+            />
+          </div>
 
           <form
-            className="w-full max-w-[309px]"
+            className="w-full max-w-[250px]"
             onSubmit={(e) => {
               e.preventDefault();
               setSearch(searchValue);
@@ -513,7 +596,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
           >
             <MInput
               isTextRequire={false}
-              value={search}
+              value={searchValue}
               onChange={(e: React.ChangeEvent<any>) => {
                 setSearchValue(e.target.value);
               }}
@@ -542,7 +625,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
                   setStartDate(undefined);
                 }
               }}
-              isoValue={endDate}
+              isoValue={startDate}
               formatter={"DD/MM/YYYY"}
               showTime={false}
               isTextRequire={false}
@@ -576,13 +659,14 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         <MButton
           onClick={downloadExell}
           text={t("download_file0")}
-          className="flex items-center"
+          className="flex items-center lg:ml-4"
           icon={<DownloadIcon />}
           h="h-11"
         />
       </div>
       <div className="h-5" />
       <MTable
+        loading={loading}
         dataSource={dataTable}
         indexPage={indexPage}
         setIndexPage={setIndexPage}
@@ -592,7 +676,10 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         dataRows={dataRows}
         sumData={{
           name: `${t("sum")}:`,
-          join_num: dataList?.additionData?.numberOfTest,
+          join_num: dataList?.summary?.totalExamTestResult,
+          join_num_today: dataList?.summary?.totalExamTestResultToday,
+          question_num: dataList?.summary?.numberOfQuestions,
+          pure_income: dataList?.summary?.totalGold,
         }}
       />
     </>

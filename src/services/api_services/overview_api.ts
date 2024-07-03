@@ -2,6 +2,8 @@ import {
   ActivitiesParams,
   ExamCounterParams,
   ExamGetPagingParams,
+  ListExamReportParams,
+  ListExamTestReportParams,
   OverviewListRevenueParams,
 } from "@/data/overview";
 import { callApi, callStudioAPI } from "./base_api";
@@ -134,6 +136,46 @@ export const overviewExamTestStatiticExcel = async (
 ) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/ExportStatisticExcel`,
+    data,
+    { responseType: "blob" },
+  );
+  return results;
+};
+
+export const overviewListExamTestReport = async (
+  data: ListExamTestReportParams,
+) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/DntExamTestReport/ListExamTestReport`,
+    data,
+  );
+  return results;
+};
+
+export const overviewListExamReport = async (data: ListExamReportParams) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/DntExamReport/ListExamReport`,
+    data,
+  );
+  return results;
+};
+
+export const overviewListExamReportExel = async (
+  data: ListExamReportParams,
+) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/DntExamReport/ExportStatisticExcel`,
+    data,
+    { responseType: "blob" },
+  );
+  return results;
+};
+
+export const overviewListExamTestReportExel = async (
+  data: ListExamTestReportParams,
+) => {
+  const results = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/DntExamTestReport/ExportStatisticExcel`,
     data,
     { responseType: "blob" },
   );

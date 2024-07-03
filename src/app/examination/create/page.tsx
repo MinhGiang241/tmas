@@ -408,8 +408,6 @@ function CreateExaminationPage({ examination }: any) {
               },
       };
 
-      console.log("submitData", submitData);
-
       // setLoading(false);
       // return;
 

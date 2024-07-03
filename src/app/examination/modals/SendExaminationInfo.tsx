@@ -263,7 +263,6 @@ function SendExaminationInfo(props: Props) {
 
   const getEmailList = async () => {
     const res = await loadRemindMailList(props.examination?.id, "Reminder");
-    console.log("res list", res);
     if (res?.code != 0) {
       return;
     }

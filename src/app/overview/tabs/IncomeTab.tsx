@@ -235,7 +235,7 @@ function IncomeTab() {
           <SortterIcon sorter={sorter} name="from_date" />
         </button>
       ),
-      classNameTitle: "min-w-20",
+      classNameTitle: "min-w-32 ",
     },
     {
       dataIndex: "status",
@@ -248,7 +248,7 @@ function IncomeTab() {
         </button>
       ),
       render: (text: any, data: any) => (
-        <p key={text} className={"w-full  min-w-11  caption_regular_14"}>
+        <p key={text} className={"w-full  min-w-11 caption_regular_14"}>
           {examTrans.t(text)}
         </p>
       ),
@@ -389,7 +389,7 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.revenueData?.revenueToday != 0 && (
+            {!!revenueData?.revenueData?.revenueToday && (
               <UpDownTrend
                 upText={t("revenue_today", {
                   num: revenueData?.revenueData?.revenueToday ?? 0,
@@ -411,7 +411,7 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.discountData?.revenueToday != 0 && (
+            {!!revenueData?.discountData?.revenueToday && (
               <UpDownTrend
                 upText={t("net_revenue_today", {
                   num: revenueData?.discountData?.revenueToday ?? 0,
@@ -433,7 +433,7 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {revenueData?.netData?.revenueToday != 0 && (
+            {!!revenueData?.netData?.revenueToday && (
               <UpDownTrend
                 upText={t("net_revenue_today", {
                   num: revenueData?.netData?.revenueToday ?? 0,
@@ -455,7 +455,7 @@ function IncomeTab() {
                 maximumFractionDigits={2}
               />
             </div>
-            {studioRevenueData?.subStudio?.totalToday && (
+            {!!studioRevenueData?.subStudio?.totalToday && (
               <UpDownTrend
                 upText={t("register_increase_in_day", {
                   num: Math.abs(studioRevenueData?.subStudio?.totalToday ?? 0),
@@ -514,6 +514,7 @@ function IncomeTab() {
             />
             <div className="w-3" />
             <MDropdown
+              allowClear={false}
               value={status}
               options={statusOption}
               setValue={(name: string, val: string) => {

@@ -154,6 +154,7 @@ export interface ExaminationData {
   idSession?: string;
   updateTime?: string;
   createdTime?: string;
+  overallConclusion?: string;
   examVersion?: {
     exam?: ExamVersion;
     groupExams?: ExamGroupData[];
@@ -498,7 +499,7 @@ export interface PagingAdminExamTestResultParams {
     {
       name?: string;
       isAsc?: boolean;
-    }
+    },
   ];
   filters?: {
     fieldName?: string;
@@ -601,6 +602,7 @@ export interface ExamTestResulstData {
   ownerId?: string;
   result?: {
     completionState?: ExamCompletionState;
+    rankLabel?: string;
     couter?: {
       numberOfQuestionCorrect?: number;
       numberOfQuestionNotComplete?: number;
@@ -694,4 +696,38 @@ export interface StatisticExamTest {
     totalTimeDoTestSeconds?: number;
     totalTimeSeconds?: number;
   };
+}
+
+export interface QuestionPartDetailsData {
+  numberPointQuestionPart?: number;
+  numberOfQuestionsAnsweredQuestionPart?: number;
+  nameQuestionPart?: string;
+  idExamQuestionPart?: string;
+  averageScorePerTotalTestQuestionPart?: number;
+  averageScorePerAnsweredQuestionPart?: number;
+  questions?: QuestionPartTableValue[];
+}
+
+export interface QuestionPartTableValue {
+  averageScorePerAnswered?: number;
+  averageScorePerTotalTest?: number;
+  numberOfQuestionsAnswered?: number;
+  numberPoint?: number;
+  questionName?: string;
+}
+
+export interface TableStatisticalReportData {
+  diemtrungbinh?: number;
+  diemyeucau?: number;
+  name?: string;
+  sobaidat?: number;
+  titrongdat?: number;
+  trongso?: number;
+}
+
+export interface ExpectedReportData {
+  expectPassedNumb?: number;
+  realityPassedNumb?: number;
+  realityPassedPercent?: number;
+  status?: "pass" | "notPass";
 }

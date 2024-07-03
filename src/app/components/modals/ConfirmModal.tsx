@@ -32,7 +32,13 @@ function ConfirmModal({
       open={open}
       width={400}
     >
-      <div className="px-6 py-5 w-full relative rounded-lg ">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onOk();
+        }}
+        className="px-6 py-5 w-full relative rounded-lg "
+      >
         <div className="flex justify-center mt-6 mb-4">
           <ExclamationCircleFilled className="text-[5rem] text-m_warning_500" />
         </div>
@@ -53,15 +59,16 @@ function ConfirmModal({
           />
           <div className="w-5" />
           <MButton
+            htmlType="submit"
             loading={loading}
             text={action ?? t("delete")}
             className="h-12 w-36 bg-m_primary_500 text-white"
-            onClick={async () => {
-              onOk();
-            }}
+            // onClick={async () => {
+            //   onOk();
+            // }}
           />
         </div>
-      </div>
+      </form>
     </Modal>
   );
 }
