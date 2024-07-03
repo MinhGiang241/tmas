@@ -189,7 +189,12 @@ function CreateQuestionPage({ params, question }: any) {
               params?.id == "u" && a == "random"
                 ? "bg-neutral-300"
                 : a == "many_results" &&
-                  !questionList.some((a: any) => a == questionType)
+                  !questionList.some((a: any) => a == questionType) &&
+                  exam?.examType == ExamType.Test
+                ? "bg-m_primary_100"
+                : a == "evaluation" &&
+                  !questionList.some((a: any) => a == questionType) &&
+                  exam?.examType == ExamType.Survey
                 ? "bg-m_primary_100"
                 : a == questionType
                 ? "bg-m_primary_100"
@@ -203,7 +208,8 @@ function CreateQuestionPage({ params, question }: any) {
       </div>
       <div className="h-4" />
       {(questionType == "many_results" ||
-        !questionList.some((a: any) => a == questionType)) && (
+        (!questionList.some((a: any) => a == questionType) &&
+          exam?.examType == ExamType.Test)) && (
         <ManyResultsQuestion
           question={question}
           questionGroups={questionGroups}
@@ -267,7 +273,9 @@ function CreateQuestionPage({ params, question }: any) {
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
-      {questionType == "evaluation" && params?.id != "u" && (
+      {(questionType == "evaluation" ||
+        (!questionList.some((a: any) => a == questionType) &&
+          exam?.examType == ExamType.Survey)) && (
         <EvaluationQuestion
           question={question}
           questionGroups={questionGroups}

@@ -293,6 +293,20 @@ function ExamDetails({ params }: any) {
 
   const [activeDelete, setActiveDelete] = useState<any>();
   // console.log(activeDelete, "activeDelete");
+
+  const totalPart = () => {
+    const part = data?.records.find(
+      (part: any) => part.id === activeDelete?.id
+    );
+    if (!part) return 0;
+
+    return (
+      part.examQuestions?.reduce((total: any, question: any) => {
+        return total + (question?.numberPoint ?? 0);
+      }, 0) ?? 0
+    );
+  };
+
   const expectedPointTotal = () => {
     const part = data?.records.find(
       (part: any) => part.id === activeDelete?.id
@@ -354,7 +368,7 @@ function ExamDetails({ params }: any) {
         />
         <div>
           <div className="text-sm font-semibold">{t("expected_point")}</div>
-          <div className="text-xs py-2">{t("servey_1")}</div>
+          <i className="text-xs py-2">{t("servey_1")}</i>
           <Input
             className="h-12 rounded-md mb-4"
             id="expectedPoint"
@@ -371,7 +385,7 @@ function ExamDetails({ params }: any) {
               <div className="md:text-base text-xs">Tổng điểm câu hỏi</div>
               <div className="w-3" />
               <div className="md:text-xl text-base text-red-500 font-semibold">
-                {exam?.totalPoints ?? 0}
+                {expectedPointTotal() ?? 0}
               </div>
             </div>
             <div className="w-2" />
@@ -404,6 +418,7 @@ function ExamDetails({ params }: any) {
               setName("");
               setNote("");
               setCustomExpectedPoint(Number || undefined);
+              setExpectedPoint(0);
             }}
           />
           <div className="w-5" />
@@ -431,6 +446,7 @@ function ExamDetails({ params }: any) {
               setName("");
               setNote("");
               setCustomExpectedPoint(Number || undefined);
+              setExpectedPoint(0);
               // setActiveDelete(undefined)
               // successToast(t("success_edit_question"));
             }}
@@ -613,6 +629,7 @@ function ExamDetails({ params }: any) {
               setName("");
               setNote("");
               setNameError("");
+              setExpectedPoint(0);
             }}
             title={t("add_new")}
             open={open}
@@ -670,6 +687,7 @@ function ExamDetails({ params }: any) {
                   setName("");
                   setNote("");
                   setNameError("");
+                  setExpectedPoint(0);
                 }}
                 className="w-36"
                 type="secondary"

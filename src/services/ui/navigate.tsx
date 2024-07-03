@@ -21,6 +21,8 @@ export const renderQuestTypeRoute = (type?: QuestionType) => {
       return "sql";
     case "FillBlank":
       return "fill_blank";
+    case "Evaluation":
+      return "evaluation";
     case "Random":
       return "random";
     default:

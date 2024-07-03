@@ -467,5 +467,6 @@
   "servey_9": "Việc phân hạng kết quả giúp việc đánh giá năng lực, trình độ thì sinh được chi tiết hơn. Bạn có thể thiết lập phần này sau khi đã thiết lập bộ câu hỏi để đảm bảo tính chính xác",
   "total_point":"Tổng điểm",
   "specific_7" : "(**) Tạo lựa chọn và nhập số điểm tương ứng với từng lựa chọn",
-  "specific_8":"Số bài đạt kỳ vọng"
+  "specific_8":"Số bài đạt kỳ vọng",
+  "add_ranks":"Thêm hạng"
 }

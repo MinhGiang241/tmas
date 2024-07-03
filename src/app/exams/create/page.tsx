@@ -87,6 +87,28 @@ function CreatePage({ exam, isEdit }: any) {
     ]);
   };
 
+  // const handleAddFields = () => {
+  //   const allFieldsFilled = inputFields.every(
+  //     (field: any) => field.fromScore !== "" && field.toScore !== ""
+  //   );
+
+  //   if (allFieldsFilled) {
+  //     const lastField =
+  //       inputFields.length > 0
+  //         ? inputFields[inputFields.length - 1]
+  //         : { toScore: 0 };
+  //     const newFromValue = lastField.toScore;
+
+  //     setInputFields([
+  //       ...inputFields,
+  //       { label: "", fromScore: newFromValue, toScore: undefined },
+  //     ]);
+  //   } else {
+  //     // console.log('Please fill in all fields before adding another rank.');
+  //     alert("ádasdasdas");
+  //   }
+  // };
+
   const handleRemoveFields = (index: any) => {
     const values = [...inputFields];
     values.splice(index, 1);
@@ -102,11 +124,19 @@ function CreatePage({ exam, isEdit }: any) {
     } else if (event.target.name === "to") {
       // values[index].to = event.target.value;
       const newToValue = event.target.value;
-      const fromValue = values[index].fromScore;
+      // const fromValue = values[index].fromScore;
       values[index].toScore = newToValue;
     }
     setInputFields(values);
   };
+  const [totalToScore, setTotalToScore] = useState(0);
+  useEffect(() => {
+    const total = inputFields.reduce(
+      (total: any, field) => total + field.toScore,
+      0
+    );
+    setTotalToScore(total);
+  }, [inputFields]);
 
   const createSessionId = async () => {
     if (isEdit && exam) {
@@ -516,11 +546,7 @@ function CreatePage({ exam, isEdit }: any) {
               </div>
               <div className="caption_regular_14">{t("servey_9")}</div>
               <div className="caption_regular_14 font-semibold py-2">
-                {t("total_point")}:{" "}
-                {inputFields?.reduce(
-                  (total: any, field: any) => total + field.toScore,
-                  0
-                )}
+                {t("total_point")}:{totalToScore}
               </div>
               {inputFields?.map((inputField, index) => (
                 <div className="flex items-center pb-2" key={index}>
@@ -566,9 +592,9 @@ function CreatePage({ exam, isEdit }: any) {
                 <div className="w-full flex justify-end pt-2">
                   <button
                     onClick={handleAddFields}
-                    className="underline body_regular_14 underline-offset-4"
+                    className="underline body_regular_14 underline-offset-4 text-[#4D7EFF]"
                   >
-                    <PlusOutlined /> {t("add_result")}
+                    <PlusOutlined /> {t("add_ranks")}
                   </button>
                 </div>
               </div>
@@ -605,7 +631,7 @@ function CreatePage({ exam, isEdit }: any) {
                 // className={`w-1/2 flex justify-center items-center py-2 border relative`}
                 className={`w-1/2 flex justify-center items-center py-2 border relative ${
                   selectedButton === ExamType.Test
-                    ? "bg-m_primary_200 text-white"
+                    ? "bg-m_primary_200 text-black"
                     : "bg-white text-black"
                 }`}
                 onClick={() => handleButtonClick(ExamType.Test)}
@@ -644,7 +670,7 @@ function CreatePage({ exam, isEdit }: any) {
                 // className={`w-1/2 flex justify-center items-center py-2 relative border`}
                 className={`w-1/2 flex justify-center items-center py-2 border relative ${
                   selectedButton === ExamType.Survey
-                    ? "bg-m_primary_200 text-white"
+                    ? "bg-m_primary_200 text-black"
                     : "bg-white text-black"
                 }`}
                 onClick={() => handleButtonClick(ExamType.Survey)}

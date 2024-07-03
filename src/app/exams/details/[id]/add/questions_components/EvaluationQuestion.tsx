@@ -71,9 +71,7 @@ function EvaluationQuestion({
     value: v.id,
   }));
 
-  const [fields, setFields] = useState([
-    { id: 1, name: "", points: 0, idIcon: "" },
-  ]);
+  const [fields, setFields] = useState(question?.content?.answers ?? []);
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -84,7 +82,7 @@ function EvaluationQuestion({
   };
 
   const removeField = (id: number) => {
-    setFields(fields.filter((field) => field.id !== id));
+    setFields(fields.filter((field: any) => field.id !== id));
   };
 
   interface QuestionEvaluation {
@@ -106,16 +104,19 @@ function EvaluationQuestion({
     initialValues,
     onSubmit: async (values) => {
       dispatch(setQuestionLoading(true));
-      const answers = fields.map((field) => ({
-        text: field.name,
-        point: field.points,
+      const answers = fields.map((field: any) => ({
+        text: field.text,
+        point: field.point,
         idIcon: field.idIcon,
       }));
       const submitData: QuestionEvaluation = {
         id: question?.id,
         question: values.question,
         idExam: question?.idExam ?? idExam,
-        numberPoint: fields.reduce((sum, field) => sum + field.points, 0),
+        numberPoint: fields.reduce(
+          (sum: any, field: any) => sum + field.points,
+          0
+        ),
         idGroupQuestion: values.question_group,
         questionType: "Evaluation",
         idExamQuestionPart: question?.idExamQuestionPart ?? idExamQuestionPart,
@@ -164,7 +165,7 @@ function EvaluationQuestion({
           id="point"
           title={t("point")}
           value={fields.reduce((sum: any, field: any) => sum + field.points, 0)}
-          // formik={formik}
+          formik={formik}
           disable
         />
         <MDropdown
@@ -191,23 +192,23 @@ function EvaluationQuestion({
         />
         <div className="border rounded-lg p-4">
           <div className="text-sm font-semibold">{t("specific_7")}</div>
-          <Radio.Group className="w-full">
-            {fields.map((field, index) => (
+          <Radio.Group className="w-full" value={[]}>
+            {fields.map((field: any, index: any) => (
               <div
                 key={index}
                 className="flex items-center justify-between pt-2"
               >
-                <Radio className="font-semibold" value={field.id}>
+                <Radio className="font-semibold" value={[]}>
                   {index + 1}.
                 </Radio>
                 <Input
                   className="rounded-md h-9 w-[50%]"
                   placeholder={t("Tên nhãn lựa chọn")}
-                  value={field.name}
+                  value={field.text}
                   onChange={(e) =>
                     setFields(
-                      fields.map((f) =>
-                        f.id === field.id ? { ...f, name: e.target.value } : f
+                      fields.map((f: any) =>
+                        f.id === field.id ? { ...f, text: e.target.value } : f
                       )
                     )
                   }
@@ -216,12 +217,12 @@ function EvaluationQuestion({
                   className="rounded-md h-9 w-[15%]"
                   type="number"
                   placeholder={t("Điểm lựa chọn")}
-                  value={field.points}
+                  value={field.point}
                   onChange={(e) =>
                     setFields(
-                      fields.map((f) =>
+                      fields.map((f: any) =>
                         f.id === field.id
-                          ? { ...f, points: parseFloat(e.target.value) || 0 }
+                          ? { ...f, point: parseFloat(e.target.value) || 0 }
                           : f
                       )
                     )
