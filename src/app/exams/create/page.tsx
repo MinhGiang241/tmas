@@ -72,44 +72,49 @@ function CreatePage({ exam, isEdit }: any) {
   };
 
   const [inputFields, setInputFields] = useState<ScoreRank[]>(
-    exam?.id ? exam?.scoreRanks : [{ label: "", fromScore: 0, toScore: 0 }]
+    exam?.id
+      ? exam?.scoreRanks
+      : [{ label: "", fromScore: 0, toScore: undefined }]
   );
 
-  const handleAddFields = () => {
-    const lastField =
-      inputFields.length == 0
-        ? { toScore: 0 }
-        : inputFields[inputFields.length - 1];
-    const newFromValue = lastField.toScore;
-    setInputFields([
-      ...inputFields,
-      { label: "", fromScore: newFromValue, toScore: undefined },
-    ]);
-  };
-
   // const handleAddFields = () => {
-  //   const allFieldsFilled = inputFields.every(
-  //     (field: any) => field.fromScore !== "" && field.toScore !== ""
-  //   );
-
-  //   if (allFieldsFilled) {
-  //     const lastField =
-  //       inputFields.length > 0
-  //         ? inputFields[inputFields.length - 1]
-  //         : { toScore: 0 };
-  //     const newFromValue = lastField.toScore;
-
-  //     setInputFields([
-  //       ...inputFields,
-  //       { label: "", fromScore: newFromValue, toScore: undefined },
-  //     ]);
-  //   } else {
-  //     // console.log('Please fill in all fields before adding another rank.');
-  //     alert("ádasdasdas");
-  //   }
+  //   const lastField =
+  //     inputFields.length == 0
+  //       ? { toScore: 0 }
+  //       : inputFields[inputFields.length - 1];
+  //   const newFromValue = lastField.toScore;
+  //   setInputFields([
+  //     ...inputFields,
+  //     { label: "", fromScore: newFromValue, toScore: undefined },
+  //   ]);
   // };
 
+  const handleAddFields = () => {
+    const lastField = inputFields[inputFields.length - 1];
+
+    if (lastField?.toScore !== undefined) {
+      setInputFields([
+        ...inputFields,
+        { label: "", fromScore: lastField.toScore, toScore: 0 || undefined },
+      ]);
+    } else {
+      errorToast("Vui lòng nhập giá trị Đến điểm cho phân hạng kết quả");
+    }
+  };
+
+  // const handleRemoveFields = (index: any) => {
+  //   const values = [...inputFields];
+  //   values.splice(index, 1);
+  //   setInputFields(values);
+  // };
   const handleRemoveFields = (index: any) => {
+    if (inputFields.length === 1) {
+      errorToast(
+        "Tên hạng là trường bắt buộc, tiếp tục thiết lập để phân hạng cho kết quả"
+      );
+      return;
+    }
+
     const values = [...inputFields];
     values.splice(index, 1);
     setInputFields(values);
@@ -130,9 +135,10 @@ function CreatePage({ exam, isEdit }: any) {
     setInputFields(values);
   };
   const [totalToScore, setTotalToScore] = useState(0);
+
   useEffect(() => {
     const total = inputFields.reduce(
-      (total: any, field) => total + field.toScore,
+      (accumulator, field) => accumulator + (Number(field.toScore) || 0),
       0
     );
     setTotalToScore(total);
@@ -211,6 +217,15 @@ function CreatePage({ exam, isEdit }: any) {
     initialValues,
     validate,
     onSubmit: async (values: FormValue) => {
+      const hasEmptyLabel =
+        selectedButton === ExamType.Survey &&
+        inputFields.some((x: any) => x?.label.trim() === "");
+      if (hasEmptyLabel) {
+        errorToast(
+          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả."
+        );
+        return;
+      }
       setLoading(true);
 
       var submitDocs = [
@@ -556,8 +571,11 @@ function CreatePage({ exam, isEdit }: any) {
                     id={`point_evaluation_${index}`}
                     name="point_evaluation"
                     value={inputField.label}
-                    onChange={(event) => handleInputChange(index, event)}
-                    required
+                    onChange={(event) => {
+                      handleInputChange(index, event);
+                      // errorToast(inputFields.length === null ? "sadasdas" : "");
+                    }}
+                    // required
                     isTextRequire={false}
                   />
                   <div className="w-8" />
@@ -581,7 +599,9 @@ function CreatePage({ exam, isEdit }: any) {
                     onChange={(event) => handleInputChange(index, event)}
                   />
                   <button
-                    onClick={() => handleRemoveFields(index)}
+                    onClick={() => {
+                      handleRemoveFields(index);
+                    }}
                     className="text-neutral-500 text-2xl mt-[6px] ml-2"
                   >
                     <CloseCircleOutlined />

@@ -71,13 +71,15 @@ function EvaluationQuestion({
     value: v.id,
   }));
 
-  const [fields, setFields] = useState(question?.content?.answers ?? []);
+  const [fields, setFields] = useState(
+    question?.content?.answers ?? [{ id: 1, name: "", point: 0, idIcon: "" }]
+  );
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setFields([
       ...fields,
-      { id: fields.length + 1, name: "", points: 0, idIcon: "" },
+      { id: fields.length + 1, name: "", point: 0, idIcon: "" },
     ]);
   };
 
@@ -114,7 +116,7 @@ function EvaluationQuestion({
         question: values.question,
         idExam: question?.idExam ?? idExam,
         numberPoint: fields.reduce(
-          (sum: any, field: any) => sum + field.points,
+          (sum: any, field: any) => sum + field.point,
           0
         ),
         idGroupQuestion: values.question_group,
@@ -164,8 +166,8 @@ function EvaluationQuestion({
           name="point"
           id="point"
           title={t("point")}
-          value={fields.reduce((sum: any, field: any) => sum + field.points, 0)}
-          formik={formik}
+          value={fields.reduce((sum: any, field: any) => sum + field.point, 0)}
+          // formik={formik}
           disable
         />
         <MDropdown
@@ -192,15 +194,14 @@ function EvaluationQuestion({
         />
         <div className="border rounded-lg p-4">
           <div className="text-sm font-semibold">{t("specific_7")}</div>
-          <Radio.Group className="w-full" value={[]}>
+          <div className="w-full">
             {fields.map((field: any, index: any) => (
               <div
                 key={index}
                 className="flex items-center justify-between pt-2"
               >
-                <Radio className="font-semibold" value={[]}>
-                  {index + 1}.
-                </Radio>
+                {/* <Radio className="font-semibold">{index + 1}.</Radio> */}
+                <div className="font-semibold">{index + 1}.</div>
                 <Input
                   className="rounded-md h-9 w-[50%]"
                   placeholder={t("Tên nhãn lựa chọn")}
@@ -243,7 +244,7 @@ function EvaluationQuestion({
                 </button>
               </div>
             ))}
-          </Radio.Group>
+          </div>
           <div className="w-full flex justify-end pt-2">
             <button
               onClick={addField}

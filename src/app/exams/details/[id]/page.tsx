@@ -563,17 +563,17 @@ function ExamDetails({ params }: any) {
         <div className="h-[1px] bg-m_neutral_200 mt-10" />
         <div className="flex justify-between items-center mt-6 mb-6 ">
           <div className="flex flex-wrap">
-            <div className="text-sm text-m_neutral_900 flex mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-4">
               <Menu className="mr-1  min-w-5" />
               {data?.totalOfRecords} {t("part")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-4">
               <Play className="mr-1" min-w-5 />
               {exam?.examNextQuestion === "FreeByUser"
                 ? t("free_change_part")
                 : t("part_in_row")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-4">
               <MessageQuestion className="mr-1 scale-75  min-w-5" />
               {/* {data?.records?.[0]?.examQuestions?.length ?? 0} câu hỏi */}
               {data?.records?.reduce(function (total: any, question: any) {
@@ -581,7 +581,7 @@ function ExamDetails({ params }: any) {
               }, 0)}{" "}
               {t("question")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-4">
               <Cup className="mr-1 scale-75 min-w-5" />
               {data?.records?.reduce(function (total: any, question: any) {
                 var point = question?.examQuestions?.reduce(
@@ -594,19 +594,19 @@ function ExamDetails({ params }: any) {
               }, 0)}
               {t("point")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-4">
               <Time className="mr-1 min-w-5" />
               {exam?.timeLimitMinutes
                 ? `${exam?.timeLimitMinutes} ${t("minute")}`
                 : t("unlimited")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-4">
               <Document className="mr-1 min-w-5" />
               {exam?.examViewQuestionType === "MultiplePages"
                 ? t("all_quest_page")
                 : t("quest_per_page")}
             </div>
-            <div className="text-sm text-m_neutral_900 flex mr-2">
+            <div className="text-sm text-m_neutral_900 flex mr-4">
               <Group className="mr-1 min-w-5" />
               {exam?.changePositionQuestion === false
                 ? t("keep_quest_order")

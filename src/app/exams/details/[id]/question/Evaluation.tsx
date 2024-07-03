@@ -281,7 +281,9 @@ export default function Evaluation({
                 <div className="text-sm pr-2 font-semibold">
                   {t("quest_type")}:
                 </div>
-                <span>{t(question?.questionType)}</span>
+                <span>
+                  {t(question?.questionType === "Evaluation" ? "Đánh giá" : "")}
+                </span>
               </div>
               <div className="flex">
                 <div className="text-sm pr-2 font-semibold">{t("point")}: </div>
