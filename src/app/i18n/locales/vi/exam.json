@@ -494,5 +494,6 @@
   "actualAverageScore": "Thực tế",
   "expectedPoint": "Yêu cầu",
   "sobaidat": "Số bài đạt",
-  "titrongdat": "Tỷ trọng đạt"
+  "titrongdat": "Tỷ trọng đạt",
+  "add_ranks":"Thêm hạng"
 }
