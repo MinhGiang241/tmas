@@ -350,7 +350,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         id: "VisibleState",
         value: status == "valid" ? "Active" : "Inactive",
-        operation: "=",
+        operation: "==",
       });
     }
     if (search) {
@@ -384,7 +384,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         id: "GroupId",
         value: groupId,
-        operation: "=",
+        operation: "==",
       });
     }
     setLoading(true);
@@ -459,7 +459,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         id: "VisibleState",
         value: status == "valid" ? "Active" : "Inactive",
-        operation: "=",
+        operation: "==",
       });
     }
 
@@ -494,7 +494,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         id: "GroupId",
         value: groupId,
-        operation: "=",
+        operation: "==",
       });
     }
 

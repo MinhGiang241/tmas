@@ -324,7 +324,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         id: "GroupId",
         value: groupId,
-        operation: "=",
+        operation: "==",
       });
     }
     setLoading(true);
@@ -406,7 +406,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         id: "GroupId",
         value: groupId,
-        operation: "=",
+        operation: "==",
       });
     }
     var res = await //overviewExamCounterExcel
