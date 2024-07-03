@@ -29,6 +29,7 @@
     "antd": "^5.13.3",
     "axios": "^1.6.7",
     "cheerio": "^1.0.0-rc.12",
+    "cookies-next": "^4.2.1",
     "copy-text-to-clipboard": "^3.2.0",
     "dayjs": "^1.11.10",
     "edge-js": "^21.7.1",

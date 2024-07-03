@@ -13,6 +13,7 @@ import {
 } from "@/services/api_services/account_services";
 import { getUserMe } from "@/services/api_services/auth_service";
 import { emailRegex, phoneRegex } from "@/services/validation/regex";
+import { deleteToken } from "@/utils/cookies";
 import { Divider } from "antd";
 import { FormikErrors, useFormik } from "formik";
 import i18next from "i18next";
@@ -122,7 +123,7 @@ function UserProfile() {
           setOpenDelete(false);
           successToast(t("success_delete_acc"));
           router.push("/signin");
-          localStorage.removeItem("access_token");
+          deleteToken();
         }}
       />
       <div className="w-full mt-2 title_semibold_20">

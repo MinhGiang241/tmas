@@ -4,16 +4,15 @@ import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import i18next from "i18next";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { navigate } from "../ui/useRedirect";
+import { getToken } from "@/utils/cookies";
 
 export class callApi {
   static post = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined,
+    config?: AxiosRequestConfig<any> | undefined
   ): Promise<any> {
-    const token =
-      sessionStorage.getItem("access_token") ??
-      localStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers = {
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
@@ -52,11 +51,9 @@ export class callApi {
   };
   static get = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined,
+    config?: AxiosRequestConfig<any> | undefined
   ): Promise<any> {
-    const token =
-      sessionStorage.getItem("access_token") ??
-      localStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers = {
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
@@ -95,11 +92,9 @@ export class callApi {
   static upload = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined,
+    config?: AxiosRequestConfig<any> | undefined
   ) {
-    const token =
-      sessionStorage.getItem("access_token") ??
-      localStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers = {
       Lang: i18next.language == "en" ? "en_US" : "vi_VN",
       Authorization: token ? `Bearer ${token}` : null,
@@ -125,11 +120,9 @@ export class callStudioAPI {
   static post = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined,
+    config?: AxiosRequestConfig<any> | undefined
   ) {
-    const token =
-      sessionStorage.getItem("access_token") ??
-      localStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers: any = {
       Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
@@ -172,11 +165,9 @@ export class callStudioAPI {
 
   static get = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined,
+    config?: AxiosRequestConfig<any> | undefined
   ): Promise<any> {
-    const token =
-      sessionStorage.getItem("access_token") ??
-      localStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers = {
       Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
@@ -216,11 +207,9 @@ export class callStudioAPI {
   static put = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined,
+    config?: AxiosRequestConfig<any> | undefined
   ): Promise<any> {
-    const token =
-      sessionStorage.getItem("access_token") ??
-      localStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers: any = {
       Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
@@ -258,11 +247,9 @@ export class callStudioAPI {
 
   static delete = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined,
+    config?: AxiosRequestConfig<any> | undefined
   ): Promise<any> {
-    const token =
-      sessionStorage.getItem("access_token") ??
-      localStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers: any = {
       Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
@@ -301,11 +288,9 @@ export class callStudioAPI {
 
   static download = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined,
+    config?: AxiosRequestConfig<any> | undefined
   ): Promise<any> {
-    const token =
-      sessionStorage.getItem("access_token") ??
-      localStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers: any = {
       Lang: i18next.language,
       Authorization: token ? `Bearer ${token}` : null,
