@@ -29,6 +29,7 @@ import BaseModal from "../components/config/BaseModal";
 import MButton from "../components/config/MButton";
 import Introduce from "../introduce/Introduce";
 import { errorToast } from "../components/toast/customToast";
+import { deleteToken, getToken, setToken } from "@/utils/cookies";
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const [isLogin, setIsLogin] = useState<boolean>(false);
@@ -56,12 +57,12 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   const onChangeStudio = async (ownerId?: string) => {
     try {
       var data = await changeStudio(ownerId);
-      localStorage.removeItem("access_token");
+      deleteToken();
       if (sessionStorage.getItem("access_token")) {
         sessionStorage.removeItem("access_token");
         sessionStorage.setItem("access_token", data["token"]);
       } else {
-        localStorage.setItem("access_token", data["token"]);
+        setToken(data["token"]);
       }
       var userNew = data["user"] as UserData;
       dispatch(userClear({}));
@@ -102,9 +103,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   }, [user, pathname]);
 
   useOnMountUnsafe(() => {
-    const token =
-      sessionStorage.getItem("access_token") ??
-      localStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token") ?? getToken();
     if (!token) {
       setIsLogin(false);
       redirect("/signin");

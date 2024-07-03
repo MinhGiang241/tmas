@@ -1,10 +1,11 @@
 import { LoginFormData, RegisterFormData } from "@/data/form_interface";
 import { callApi } from "./base_api";
+import { setToken } from "@/utils/cookies";
 
 export const registerAccount = async (data: RegisterFormData) => {
   var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.register`,
-    data,
+    data
   );
   if (results?.code != 0) {
     throw results?.message ?? "";
@@ -15,10 +16,10 @@ export const registerAccount = async (data: RegisterFormData) => {
 export const login = async (data: LoginFormData) => {
   var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.login`,
-    data,
+    data
   );
 
-  localStorage.setItem("access_token", results?.data["access_token"]);
+  setToken(results?.data["access_token"]);
 
   // if (results?.code != 0) {
   //   throw results?.message ?? "";
@@ -29,7 +30,7 @@ export const login = async (data: LoginFormData) => {
 export const sendOtpResetPassword = async ({ email }: { email?: string }) => {
   var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.generate_otp`,
-    { mailTo: email },
+    { mailTo: email }
   );
 
   if (results?.code != 0) {
@@ -47,7 +48,7 @@ export const verifyOtp = async ({
 }) => {
   var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.verify_otp`,
-    { mailTo, otp },
+    { mailTo, otp }
   );
 
   if (results?.code != 0) {
@@ -65,7 +66,7 @@ export const createNewPass = async ({
 }) => {
   var results = await callApi.post(
     `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.create_new_pass`,
-    { email, new_pass },
+    { email, new_pass }
   );
 
   if (results?.code != 0) {
@@ -76,7 +77,7 @@ export const createNewPass = async ({
 
 export const getUserMe = async () => {
   var results = await callApi.get(
-    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.me`,
+    `${process.env.NEXT_PUBLIC_API_BC}/apimodel/user.me`
   );
   if (results?.code != 0) {
     throw results?.message ?? "";

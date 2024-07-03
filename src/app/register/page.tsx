@@ -31,6 +31,7 @@ import {
 import { Spin } from "antd";
 import LoadingPage from "../loading";
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
+import { deleteToken, setToken } from "@/utils/cookies";
 
 function RegisterPage() {
   const router = useRouter();
@@ -118,8 +119,8 @@ function RegisterPage() {
           }
           console.log("register", v);
 
-          localStorage.removeItem("access_token");
-          localStorage.setItem("access_token", v?.access_token);
+          deleteToken();
+          setToken(v?.access_token);
           router.push("/");
           console.log(v);
         })
@@ -151,8 +152,8 @@ function RegisterPage() {
     registerAccount(data)
       .then((v: any) => {
         console.log("sso", v);
-        localStorage.removeItem("access_token");
-        localStorage.setItem("access_token", v?.access_token);
+        deleteToken();
+        setToken(v?.access_token);
         setFLoading(false);
         setGLoading(false);
         if (v?.user?.verified) {

@@ -29,6 +29,7 @@ import { changeStudio } from "@/services/api_services/account_services";
 import { setUserData, userClear } from "@/redux/user/userSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { UserData } from "@/data/user";
+import { deleteToken, setToken } from "@/utils/cookies";
 
 let mapping: { [key: string]: string } = {};
 var childrenIds: string[] = [];
@@ -150,12 +151,12 @@ export default function Introduce() {
   const onChangeStudio = async (ownerId?: string) => {
     try {
       var data = await changeStudio(ownerId);
-      localStorage.removeItem("access_token");
+      deleteToken();
       if (sessionStorage.getItem("access_token")) {
         sessionStorage.removeItem("access_token");
         sessionStorage.setItem("access_token", data["token"]);
       } else {
-        localStorage.setItem("access_token", data["token"]);
+        setToken(data["token"]);
       }
       var userNew = data["user"] as UserData;
       dispatch(userClear({}));
@@ -254,7 +255,7 @@ export default function Introduce() {
           e.IsQuestionBank = false;
           return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
-      }),
+      })
     );
 
     var indexIdGroup = dataNewChildren?.findIndex(
@@ -297,7 +298,7 @@ export default function Introduce() {
           exam: examObj,
           jsonExamQuestions: (partObj ?? []).reduce(
             (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
-            [],
+            []
           ),
           parts: partObj,
         },
