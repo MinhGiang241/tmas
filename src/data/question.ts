@@ -27,6 +27,7 @@ export enum QuestionType {
   Coding = "Coding",
   Essay = "Essay",
   Random = "Random",
+  Evaluation = "Evaluation",
 }
 
 export interface BaseQuestionData {

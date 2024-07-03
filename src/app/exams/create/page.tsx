@@ -48,6 +48,7 @@ function CreatePage({ exam, isEdit }: any) {
   const { t } = useTranslation("exam");
   const common = useTranslation();
   const router = useRouter();
+  console.log(exam, "aaaaa");
 
   const [loading, setLoading] = useState<boolean>(false);
   const [uploaded, setUploaded] = useState<any>([]);
@@ -102,10 +103,6 @@ function CreatePage({ exam, isEdit }: any) {
       // values[index].to = event.target.value;
       const newToValue = event.target.value;
       const fromValue = values[index].fromScore;
-      // if (fromValue && newToValue <= fromValue) {
-      //   errorToast(`"Đến điểm" phải lớn hơn "Từ điểm" (${fromValue})`);
-      //   return;
-      // }
       values[index].toScore = newToValue;
     }
     setInputFields(values);
@@ -511,63 +508,74 @@ function CreatePage({ exam, isEdit }: any) {
             formik={formik}
           />
           <div className="h-4" />
-          <div>
-            <div className="text-sm font-semibold pb-1">{t("specific_6")}</div>
-            <div className="caption_regular_14">{t("servey_9")}</div>
-            <div className="caption_regular_14 font-semibold py-2">
-              {t("total_point")}: 100
-            </div>
-            {inputFields?.map((inputField, index) => (
-              <div className="flex items-center pb-2" key={index}>
-                <MInput
-                  placeholder="Tên hạng"
-                  h="h-9"
-                  id={`point_evaluation_${index}`}
-                  name="point_evaluation"
-                  value={inputField.label}
-                  onChange={(event) => handleInputChange(index, event)}
-                  required
-                  isTextRequire={false}
-                />
-                <div className="w-8" />
-                <Input
-                  disabled
-                  placeholder="Từ điểm"
-                  className="h-9 w-[10rem] border-[0.5px] rounded-md hover:border-cyan-600"
-                  id={`from_${index}`}
-                  name="from"
-                  type="number"
-                  value={inputField.fromScore}
-                  onChange={(event) => handleInputChange(index, event)}
-                />
-                <Input
-                  placeholder="Đến điểm"
-                  className="h-9 w-[10rem] border-[0.5px] rounded-md hover:border-cyan-600"
-                  id={`to_${index}`}
-                  name="to"
-                  type="number"
-                  value={inputField.toScore}
-                  onChange={(event) => handleInputChange(index, event)}
-                />
-                <button
-                  onClick={() => handleRemoveFields(index)}
-                  className="text-neutral-500 text-2xl mt-[6px] ml-2"
-                >
-                  <CloseCircleOutlined />
-                </button>
+
+          {selectedButton === ExamType.Survey ? (
+            <div>
+              <div className="text-sm font-semibold pb-1">
+                {t("specific_6")}
               </div>
-            ))}
-            <div className="w-full flex justify-end pt-2">
+              <div className="caption_regular_14">{t("servey_9")}</div>
+              <div className="caption_regular_14 font-semibold py-2">
+                {t("total_point")}:{" "}
+                {inputFields?.reduce(
+                  (total: any, field: any) => total + field.toScore,
+                  0
+                )}
+              </div>
+              {inputFields?.map((inputField, index) => (
+                <div className="flex items-center pb-2" key={index}>
+                  <MInput
+                    placeholder="Tên hạng"
+                    h="h-9"
+                    id={`point_evaluation_${index}`}
+                    name="point_evaluation"
+                    value={inputField.label}
+                    onChange={(event) => handleInputChange(index, event)}
+                    required
+                    isTextRequire={false}
+                  />
+                  <div className="w-8" />
+                  <Input
+                    disabled
+                    placeholder="Từ điểm"
+                    className="h-9 w-[10rem] border-[0.5px] rounded-md hover:border-cyan-600"
+                    id={`from_${index}`}
+                    name="from"
+                    type="number"
+                    value={inputField.fromScore}
+                    onChange={(event) => handleInputChange(index, event)}
+                  />
+                  <Input
+                    placeholder="Đến điểm"
+                    className="h-9 w-[10rem] border-[0.5px] rounded-md hover:border-cyan-600"
+                    id={`to_${index}`}
+                    name="to"
+                    type="number"
+                    value={inputField.toScore}
+                    onChange={(event) => handleInputChange(index, event)}
+                  />
+                  <button
+                    onClick={() => handleRemoveFields(index)}
+                    className="text-neutral-500 text-2xl mt-[6px] ml-2"
+                  >
+                    <CloseCircleOutlined />
+                  </button>
+                </div>
+              ))}
               <div className="w-full flex justify-end pt-2">
-                <button
-                  onClick={handleAddFields}
-                  className="underline body_regular_14 underline-offset-4"
-                >
-                  <PlusOutlined /> {t("add_result")}
-                </button>
+                <div className="w-full flex justify-end pt-2">
+                  <button
+                    onClick={handleAddFields}
+                    className="underline body_regular_14 underline-offset-4"
+                  >
+                    <PlusOutlined /> {t("add_result")}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            ""
+          )}
         </div>
         <div className="max-lg:mx-5 max-lg:grid-cols-1 max-lg:mb-5 lg:col-span-8 col-span-12 bg-white h-fit rounded-lg p-4">
           {/* <Cus etomEditor /> */}
