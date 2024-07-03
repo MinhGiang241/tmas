@@ -544,7 +544,7 @@ function ResultPage({ params }: any) {
   var from = search.get("from");
   const [testDate, setTestDate] = useState<string | undefined>();
   const [partDataChart, setPartDataChart] = useState([]);
-  const [rankData, setRankData] = useState();
+  const [rankData, setRankData] = useState([]);
   const [expectedData, setExpectedData] = useState<
     ExpectedReportData | undefined
   >();

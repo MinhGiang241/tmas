@@ -10,7 +10,7 @@ interface Props {
   className?: string;
   h?: number;
   w?: number;
-  colors: string[];
+  colors?: string[];
 }
 
 function Chart({ data, examination, className, h, w, colors }: Props) {
