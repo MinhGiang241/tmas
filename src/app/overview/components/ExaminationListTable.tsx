@@ -37,6 +37,7 @@ import { Tooltip } from "antd";
 import RenderSortterIcon from "./IconSorter";
 import duration from "dayjs/plugin/duration";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import MDropdown from "@/app/components/config/MDropdown";
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
 
@@ -333,9 +334,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "status",
       title: (
-        <button onClick={() => addSorter("StateInfo.ApprovedState")}>
+        <button onClick={() => addSorter("VisibleState")}>
           <Tooltip title={t("examination_status")}>{t("status")}</Tooltip>
-          <RenderSortterIcon sorter={sorter} name="StateInfo.ApprovedState" />
+          <RenderSortterIcon sorter={sorter} name="VisibleState" />
         </button>
       ),
 
@@ -345,6 +346,13 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
 
   const getListData = async () => {
     var filters: DGroupFilter[] = [];
+    if (status) {
+      filters.push({
+        id: "VisibleState",
+        value: status == "valid" ? "Active" : "Inactive",
+        operation: "=",
+      });
+    }
     if (search) {
       filters.push({
         op: "OR",
@@ -447,6 +455,14 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
 
   const downloadExell = async () => {
     var filters: DGroupFilter[] = [];
+    if (status) {
+      filters.push({
+        id: "VisibleState",
+        value: status == "valid" ? "Active" : "Inactive",
+        operation: "=",
+      });
+    }
+
     if (search) {
       filters.push({
         op: "OR",
@@ -499,10 +515,36 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
 
     saveAs(res?.data);
   };
+  const [status, setStatus] = useState<string | undefined>("");
+  const examTrans = useTranslation("exam");
+  const statusOption = [
+    {
+      label: examTrans.t("all"),
+      value: "",
+    },
+    {
+      label: t("valid"),
+      value: "valid",
+    },
+    {
+      label: t("invalid"),
+      value: "invalid",
+    },
+  ];
 
   useEffect(() => {
     getListData();
-  }, [user, startDate, endDate, search, groupId, sorter, indexPage, recordNum]);
+  }, [
+    user,
+    startDate,
+    endDate,
+    search,
+    groupId,
+    sorter,
+    indexPage,
+    recordNum,
+    status,
+  ]);
 
   return (
     <>
@@ -511,7 +553,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       </div>
       <div className="flex justify-between w-full items-center">
         <div className="flex  lg:items-center max-lg:flex-col">
-          <div className="lg:w-52 lg:mr-4">
+          <div className="lg:w-40 lg:mr-4">
             <MTreeSelect
               value={groupId}
               setValue={(name: any, e: any) => {
@@ -521,15 +563,29 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
               defaultValue=""
               id="question_group"
               name="question_group"
-              className="lg:w-52"
+              className="lg:w40"
               isTextRequire={false}
               h="h-11"
               options={optionSelect}
             />
           </div>
+          <div className="lg:w-40 lg:mr-4">
+            <MDropdown
+              allowClear={false}
+              value={status}
+              options={statusOption}
+              setValue={(name: string, val: string) => {
+                setStatus(val);
+              }}
+              id="valid"
+              name="valid"
+              //className="w-24"
+              isTextRequire={false}
+            />
+          </div>
 
           <form
-            className="w-full max-w-[309px]"
+            className="w-full max-w-[250px]"
             onSubmit={(e) => {
               e.preventDefault();
               setSearch(searchValue);
@@ -601,7 +657,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         <MButton
           onClick={downloadExell}
           text={t("download_file0")}
-          className="flex items-center"
+          className="flex items-center lg:ml-4"
           icon={<DownloadIcon />}
           h="h-11"
         />
@@ -621,6 +677,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
           join_num: dataList?.summary?.totalExamTestResult,
           join_num_today: dataList?.summary?.totalExamTestResultToday,
           question_num: dataList?.summary?.numberOfQuestions,
+          pure_income: dataList?.summary?.totalGold,
         }}
       />
     </>

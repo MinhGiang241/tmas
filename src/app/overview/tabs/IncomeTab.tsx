@@ -514,6 +514,7 @@ function IncomeTab() {
             />
             <div className="w-3" />
             <MDropdown
+              allowClear={false}
               value={status}
               options={statusOption}
               setValue={(name: string, val: string) => {
