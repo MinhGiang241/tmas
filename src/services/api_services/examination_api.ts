@@ -300,7 +300,7 @@ export const exportExelFile = async (examinationId?: string) => {
 };
 
 export const getQuestionPartDetails = async (examTestId?: string) => {
-  const results = await callApi.get(
+  const results = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/DeTailListQuestionByPart`,
     { params: { examTestId } },
   );
@@ -308,9 +308,48 @@ export const getQuestionPartDetails = async (examTestId?: string) => {
 };
 
 export const getAbilityReport = async (examTestId?: string) => {
-  const results = await callApi.get(
+  const results = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/TableStatisticalReportByExamQuestionPart`,
     { params: { examTestId } },
+  );
+  return results;
+};
+
+export const getAbilityDataChart = async (ExamTestId?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/RadarChartStatisticalReportByExamQuestionPart`,
+    { params: { ExamTestId } },
+  );
+  return results;
+};
+
+export const getCandidateRankReport = async (ExamTestId?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/CandidateRankReport`,
+    { params: { ExamTestId } },
+  );
+  return results;
+};
+
+export const getExpectationReport = async (ExamTestId?: string) => {
+  const results = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/ActivitiesReport/ExpectationReportByExamTest`,
+    { params: { ExamTestId } },
+  );
+  return results;
+};
+//api/studio/ExamTest/UpdateOverallConclusion
+
+export const updateOverallConclusion = async ({
+  id,
+  overallConclusion,
+}: {
+  id?: string;
+  overallConclusion?: string;
+}) => {
+  const results = await callStudioAPI.put(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamTest/UpdateOverallConclusion`,
+    { id, overallConclusion },
   );
   return results;
 };

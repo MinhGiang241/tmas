@@ -472,6 +472,7 @@
   "result_examnination_evaluation": "Kết quả đánh giá đợt thi: Đánh giá xếp hạng của bạn",
   "examination_expect": "Kì vọng đợt thi",
   "not_expected": "Chưa đạt kỳ vọng",
+  "expected": "Đạt kỳ vọng",
   "pass_expected": "Đạt kì vọng",
   "overview_judgement": "Đánh giá tổng quát",
   "exam_part_records": "Báo cáo phần thi",
@@ -489,5 +490,9 @@
   "average_answered": "Điểm TB/ Đã trả lời",
   "average_total_exaxm": "Điểm TB/ Tổng bài thi",
   "account_for": "Chiếm",
-  "actual": "Thực tế"
+  "actual": "Thực tế",
+  "actualAverageScore": "Thực tế",
+  "expectedPoint": "Yêu cầu",
+  "sobaidat": "Số bài đạt",
+  "titrongdat": "Tỷ trọng đạt"
 }

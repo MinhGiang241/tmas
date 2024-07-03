@@ -154,6 +154,7 @@ export interface ExaminationData {
   idSession?: string;
   updateTime?: string;
   createdTime?: string;
+  overallConclusion?: string;
   examVersion?: {
     exam?: ExamVersion;
     groupExams?: ExamGroupData[];
@@ -713,4 +714,20 @@ export interface QuestionPartTableValue {
   numberOfQuestionsAnswered?: number;
   numberPoint?: number;
   questionName?: string;
+}
+
+export interface TableStatisticalReportData {
+  diemtrungbinh?: number;
+  diemyeucau?: number;
+  name?: string;
+  sobaidat?: number;
+  titrongdat?: number;
+  trongso?: number;
+}
+
+export interface ExpectedReportData {
+  expectPassedNumb?: number;
+  realityPassedNumb?: number;
+  realityPassedPercent?: number;
+  status?: "pass" | "notPass";
 }

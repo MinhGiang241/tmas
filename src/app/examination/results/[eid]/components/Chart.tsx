@@ -1,4 +1,5 @@
 import { ExaminationData } from "@/data/exam";
+import { parseInt } from "lodash";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
@@ -9,12 +10,13 @@ interface Props {
   className?: string;
   h?: number;
   w?: number;
+  colors: string[];
 }
 
-function Chart({ data, examination, className, h, w }: Props) {
+function Chart({ data, examination, className, h, w, colors }: Props) {
   const { t } = useTranslation("exam");
 
-  const COLORS = ["#6DB3C2", "#FC8800", "#775DA6"];
+  var COLORS = colors ?? ["#6DB3C2", "#FC8800", "#775DA6"];
   const RADIAN = Math.PI / 180;
 
   const renderCustomizedLabel = ({
