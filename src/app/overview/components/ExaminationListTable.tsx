@@ -357,11 +357,11 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         op: "OR",
         children: [
-          { id: "Name", value: search, operation: "~" },
+          { id: "Name", value: search, operation: "~i" },
           {
             id: "Tags",
             value: search,
-            operation: "~",
+            operation: "~i",
           },
         ],
       });
@@ -467,11 +467,11 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         op: "OR",
         children: [
-          { id: "Name", value: search, operation: "~" },
+          { id: "Name", value: search, operation: "~i" },
           {
             id: "Tags",
             value: search,
-            operation: "~",
+            operation: "~i",
           },
         ],
       });
