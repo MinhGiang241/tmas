@@ -72,49 +72,23 @@ function CreatePage({ exam, isEdit }: any) {
   };
 
   const [inputFields, setInputFields] = useState<ScoreRank[]>(
-    exam?.id
-      ? exam?.scoreRanks ?? []
-      : [{ label: "", fromScore: 0, toScore: undefined }],
+    //[{ label: "", fromScore: 0, toScore: undefined }]
+    exam?.id ? exam?.scoreRanks : []
   );
-
-  // const handleAddFields = () => {
-  //   const lastField =
-  //     inputFields.length == 0
-  //       ? { toScore: 0 }
-  //       : inputFields[inputFields.length - 1];
-  //   const newFromValue = lastField.toScore;
-  //   setInputFields([
-  //     ...inputFields,
-  //     { label: "", fromScore: newFromValue, toScore: undefined },
-  //   ]);
-  // };
 
   const handleAddFields = () => {
     const lastField = inputFields[inputFields.length - 1];
-
-    if (lastField?.toScore !== undefined) {
-      setInputFields([
-        ...inputFields,
-        { label: "", fromScore: lastField.toScore, toScore: 0 || undefined },
-      ]);
-    } else {
-      errorToast("Vui lòng nhập giá trị Đến điểm cho phân hạng kết quả");
-    }
+    setInputFields([
+      ...inputFields,
+      {
+        label: "",
+        fromScore: lastField ? lastField.toScore : 0,
+        toScore: undefined,
+      },
+    ]);
   };
 
-  // const handleRemoveFields = (index: any) => {
-  //   const values = [...inputFields];
-  //   values.splice(index, 1);
-  //   setInputFields(values);
-  // };
   const handleRemoveFields = (index: any) => {
-    if (inputFields.length === 1) {
-      errorToast(
-        "Tên hạng là trường bắt buộc, tiếp tục thiết lập để phân hạng cho kết quả",
-      );
-      return;
-    }
-
     const values = [...inputFields];
     values.splice(index, 1);
     setInputFields(values);
@@ -122,27 +96,37 @@ function CreatePage({ exam, isEdit }: any) {
 
   const handleInputChange = (index: any, event: any) => {
     const values = [...inputFields];
-    if (event.target.name === "point_evaluation") {
-      values[index].label = event.target.value;
-    } else if (event.target.name === "from") {
-      values[index].fromScore = event.target.value;
-    } else if (event.target.name === "to") {
-      // values[index].to = event.target.value;
-      const newToValue = event.target.value;
-      // const fromValue = values[index].fromScore;
-      values[index].toScore = newToValue;
+    const { name, value } = event.target;
+
+    if (name === "point_evaluation") {
+      values[index].label = value;
+    } else if (name === "from") {
+      values[index].fromScore = parseInt(value);
+    } else if (name === "to") {
+      const newToValue = parseInt(value);
+      const fromScore = values[index].fromScore ?? 0;
+      const expectedToScore = fromScore + 1;
+
+      if (index > 0 && newToValue !== expectedToScore) {
+        errorToast("Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại.");
+        return;
+      } else {
+        values[index].toScore = newToValue;
+      }
     }
+
     setInputFields(values);
   };
-  const [totalToScore, setTotalToScore] = useState(0);
 
-  useEffect(() => {
-    const total = inputFields?.reduce(
-      (accumulator, field) => accumulator + (Number(field.toScore) || 0),
-      0,
-    );
-    setTotalToScore(total);
-  }, [inputFields]);
+  // const [totalToScore, setTotalToScore] = useState(0);
+
+  // useEffect(() => {
+  //   const total = inputFields?.reduce(
+  //     (accumulator, field) => accumulator + (Number(field.toScore) || 0),
+  //     0
+  //   );
+  //   setTotalToScore(total);
+  // }, [inputFields]);
 
   const createSessionId = async () => {
     if (isEdit && exam) {
@@ -217,10 +201,11 @@ function CreatePage({ exam, isEdit }: any) {
     initialValues,
     validate,
     onSubmit: async (values: FormValue) => {
-      const hasEmptyLabel =
+      const validateFields =
         selectedButton === ExamType.Survey &&
+        inputFields.length > 0 &&
         inputFields.some((x: any) => x?.label.trim() === "");
-      if (hasEmptyLabel) {
+      if (validateFields) {
         errorToast(
           "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả.",
         );
@@ -561,7 +546,8 @@ function CreatePage({ exam, isEdit }: any) {
               </div>
               <div className="caption_regular_14">{t("servey_9")}</div>
               <div className="caption_regular_14 font-semibold py-2">
-                {t("total_point")}:{totalToScore}
+                {t("total_point")}: {exam?.totalPoints}
+                {/* {totalToScore} */}
               </div>
               {inputFields?.map((inputField, index) => (
                 <div className="flex items-center pb-2" key={index}>
@@ -571,10 +557,7 @@ function CreatePage({ exam, isEdit }: any) {
                     id={`point_evaluation_${index}`}
                     name="point_evaluation"
                     value={inputField.label}
-                    onChange={(event) => {
-                      handleInputChange(index, event);
-                      // errorToast(inputFields.length === null ? "sadasdas" : "");
-                    }}
+                    onChange={(event) => handleInputChange(index, event)}
                     // required
                     isTextRequire={false}
                   />
@@ -651,7 +634,7 @@ function CreatePage({ exam, isEdit }: any) {
                 // className={`w-1/2 flex justify-center items-center py-2 border relative`}
                 className={`w-1/2 flex justify-center items-center py-2 border relative ${
                   selectedButton === ExamType.Test
-                    ? "bg-m_primary_200 text-black"
+                    ? "bg-sky-300 text-black"
                     : "bg-white text-black"
                 }`}
                 onClick={() => handleButtonClick(ExamType.Test)}
@@ -690,7 +673,7 @@ function CreatePage({ exam, isEdit }: any) {
                 // className={`w-1/2 flex justify-center items-center py-2 relative border`}
                 className={`w-1/2 flex justify-center items-center py-2 border relative ${
                   selectedButton === ExamType.Survey
-                    ? "bg-m_primary_200 text-black"
+                    ? "bg-sky-300 text-black"
                     : "bg-white text-black"
                 }`}
                 onClick={() => handleButtonClick(ExamType.Survey)}

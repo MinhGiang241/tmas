@@ -186,7 +186,11 @@ function CreateQuestionPage({ params, question }: any) {
               });
             }}
             className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${
-              params?.id == "u" && a == "random"
+              params?.id == "u" &&
+              !questionList.some((a: any) => a == questionType) &&
+              a == "evaluation"
+                ? "bg-m_primary_100"
+                : params?.id == "u" && a == "random"
                 ? "bg-neutral-300"
                 : a == "many_results" &&
                   !questionList.some((a: any) => a == questionType) &&
@@ -207,6 +211,7 @@ function CreateQuestionPage({ params, question }: any) {
         ))}
       </div>
       <div className="h-4" />
+
       {(questionType == "many_results" ||
         (!questionList.some((a: any) => a == questionType) &&
           exam?.examType == ExamType.Test)) && (
@@ -275,7 +280,9 @@ function CreateQuestionPage({ params, question }: any) {
       )}
       {(questionType == "evaluation" ||
         (!questionList.some((a: any) => a == questionType) &&
-          exam?.examType == ExamType.Survey)) && (
+          exam?.examType == ExamType.Survey) ||
+        (params?.id == "u" &&
+          !questionList.some((a: any) => a == questionType))) && (
         <EvaluationQuestion
           question={question}
           questionGroups={questionGroups}
