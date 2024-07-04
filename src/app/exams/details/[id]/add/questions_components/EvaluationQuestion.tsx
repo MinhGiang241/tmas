@@ -2,12 +2,11 @@ import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import { QuestionGroupData } from "@/data/exam";
 import { BaseQuestionFormData } from "@/data/form_interface";
-import { Input, Radio, Switch } from "antd";
+import { Input, Upload, Image, UploadProps } from "antd";
 import dynamic from "next/dynamic";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import EvaluationUploadQuestion from "./evaluationUpload/evaluationUploadQuestion";
 import { useFormik } from "formik";
 import {
   resetMultiAnswer,
@@ -20,6 +19,16 @@ import {
 } from "@/services/api_services/question_api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
+import { uploadImageStudio } from "@/services/api_services/account_services";
+import { log } from "console";
+
+const getBase64 = (file: any) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 export interface QuestionEvaluation {
   question?: string;
@@ -61,7 +70,6 @@ function EvaluationQuestion({
   idExam,
   question,
 }: Props) {
-  // const [isChangePosition, setIsChangePosition] = useState<boolean>(false);
   const { t } = useTranslation("exam");
   const dispatch = useAppDispatch();
   const search = useSearchParams();
@@ -73,17 +81,15 @@ function EvaluationQuestion({
 
   const [fields, setFields] = useState(
     question?.content?.answers ?? [
-      { label: "A", id: 1, name: "", point: 0, idIcon: "" },
+      {
+        label: "A",
+        id: 1,
+        name: "",
+        point: 0,
+        idIcon: "",
+      },
     ]
   );
-
-  // const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
-  //   e.preventDefault();
-  //   setFields([
-  //     ...fields,
-  //     { label: "", id: fields.length + 1, name: "", point: 0, idIcon: "" },
-  //   ]);
-  // };
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -116,6 +122,7 @@ function EvaluationQuestion({
     question: question?.question ?? "",
     explain: question?.content?.explainAnswer ?? "",
   };
+
   const router = useRouter();
   const formik = useFormik({
     initialValues,
@@ -138,11 +145,13 @@ function EvaluationQuestion({
         ),
         idGroupQuestion: values.question_group,
         questionType: "Evaluation",
-        idExamQuestionPart: question?.idExamQuestionPart ?? idExamQuestionPart,
+        idExamQuestionPart:
+          question?.idExamQuestionPart ??
+          (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
+          undefined,
         isQuestionBank: !idExam,
         content: {
           explainAnswer: values.explain,
-          // isChangePosition,
           answers,
         },
       };
@@ -164,6 +173,44 @@ function EvaluationQuestion({
     },
   });
 
+  const handlePreview = async (file: any) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    try {
+      const res = await uploadImageStudio(file);
+      console.log(res);
+
+      // const imageUrl = res?.imageUrl;
+      // const newWindow = window.open();
+      // newWindow?.document.write(
+      //   `<img src="${imageUrl || file.preview}" style="width: 100%;" />`
+      // );
+    } catch (error) {
+      console.error("Lỗi khi tải lên hình ảnh:", error);
+    }
+  };
+
+  const handleChange: UploadProps["onChange"] = async ({
+    fileList: newFileList,
+  }) => {
+    console.log(newFileList, "newFileList");
+    // const formData = new FormData();
+    // formData.append("files", newFileList[0]);
+    // const res = await uploadImageStudio(formData);
+    // console.log("res", res);
+    const updatedFields = fields.map((field: any) => {
+      // if (field.id === fieldId) {
+      // return {
+      //   ...field,
+      //   idIcon: newFileList.thumbUrl || "",
+      // };
+      // }
+      // return field;
+    });
+    setFields(updatedFields);
+  };
+
   return (
     <form
       className="grid grid-cols-12 gap-4 max-lg:px-5"
@@ -175,7 +222,7 @@ function EvaluationQuestion({
         });
       }}
     >
-      <button className="hidden" ref={submitRef} />
+      <button className="hidden" type="submit" ref={submitRef} />
       <div className="bg-white rounded-lg lg:col-span-4 col-span-12 p-5 h-fit">
         <MInput
           namespace="exam"
@@ -184,7 +231,6 @@ function EvaluationQuestion({
           id="point"
           title={t("point")}
           value={fields.reduce((sum: any, field: any) => sum + field.point, 0)}
-          // formik={formik}
           disable
         />
         <MDropdown
@@ -197,8 +243,6 @@ function EvaluationQuestion({
           id="question_group"
           name="question_group"
         />
-        {/* <div className="body_semibold_14 mb-2">{t("relocate_result")}</div> */}
-        {/* <Switch checked={isChangePosition} onChange={setIsChangePosition} /> */}
       </div>
       <div className="bg-white rounded-lg lg:col-span-8 col-span-12 p-5 h-fit">
         <EditorHook
@@ -217,23 +261,6 @@ function EvaluationQuestion({
                 key={index}
                 className="flex items-center justify-between pt-2"
               >
-                {/* <Radio className="font-semibold">{index + 1}.</Radio> */}
-                {/* <div
-                  className="font-semibold"
-                  contentEditable={true}
-                  suppressContentEditableWarning={true}
-                  onBlur={(e) =>
-                    setFields(
-                      fields.map((f: any) =>
-                        f.id === field.id
-                          ? { ...f, label: e.target.textContent }
-                          : f
-                      )
-                    )
-                  }
-                >
-                  {String.fromCharCode(65 + index)}.
-                </div> */}
                 <div
                   className="font-semibold"
                   contentEditable={true}
@@ -253,7 +280,7 @@ function EvaluationQuestion({
                 <Input
                   className="rounded-md h-9 w-[50%]"
                   placeholder={t("Tên nhãn lựa chọn")}
-                  value={field.text}
+                  value={field?.text}
                   onChange={(e) =>
                     setFields(
                       fields.map((f: any) =>
@@ -266,7 +293,7 @@ function EvaluationQuestion({
                   className="rounded-md h-9 w-[15%]"
                   type="number"
                   placeholder={t("Điểm lựa chọn")}
-                  value={field.point}
+                  value={field?.point}
                   onChange={(e) =>
                     setFields(
                       fields.map((f: any) =>
@@ -277,29 +304,49 @@ function EvaluationQuestion({
                     )
                   }
                 />
-                <input
-                  value={field.idIcon}
-                  type="file"
-                  accept=".svg,.jpg,.png,.jpeg,.gif,.bmp,.tif,.tiff|image/*"
-                  className="w-28 h-14"
-                  placeholder={t("Hình ảnh")}
-                />
-                <button
-                  onClick={() => removeField(field.id)}
-                  className="text-neutral-500 text-2xl mt-[6px] ml-2"
+                <Upload
+                  name="idIcon"
+                  listType="picture-card"
+                  className="avatar-uploader"
+                  showUploadList={false}
+                  beforeUpload={() => false}
+                  onChange={handleChange}
+                  onPreview={handlePreview}
                 >
-                  <CloseCircleOutlined />
-                </button>
+                  {field?.idIcon ? (
+                    <Image
+                      src={field.idIcon}
+                      alt="icon"
+                      style={{
+                        width: "100%",
+                      }}
+                    />
+                  ) : (
+                    <div>
+                      <PlusOutlined />
+                      <div style={{ marginTop: 8 }}>Upload</div>
+                    </div>
+                  )}
+                </Upload>
+                <div className="w-10">
+                  {index > 0 && (
+                    <CloseCircleOutlined
+                      className="ml-2 text-red-500 cursor-pointer"
+                      onClick={() => removeField(field.id)}
+                    />
+                  )}
+                </div>
               </div>
             ))}
-          </div>
-          <div className="w-full flex justify-end pt-2">
-            <button
-              onClick={addField}
-              className="underline body_regular_14 underline-offset-4"
-            >
-              <PlusOutlined /> {t("add_result")}
-            </button>
+            <div className="flex justify-end">
+              <button
+                className="mt-2 text-blue-500 flex justify-end"
+                onClick={addField}
+                type="button"
+              >
+                {t("Thêm lựa chọn")}
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -307,6 +307,9 @@ div.ql-container.ql-snow > .ql-editor {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
 }
 
+.ant-upload-wrapper {
+  width: auto !important;
+}
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */

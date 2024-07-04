@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 import { APIResults } from "@/data/api_results";
 import { getQuestionGroups } from "@/services/api_services/exam_api";
 import AddBankModal from "../components/AddBankModal";
+import Evaluation from "@/app/exams/details/[id]/question/Evaluation";
 
 function MyQuestionTab() {
   const { t } = useTranslation("exam");
@@ -105,7 +106,7 @@ function MyQuestionTab() {
     console.log("res", res);
   };
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.questions,
+    (state: RootState) => state?.examGroup?.questions
   );
   const loadQuestionGroupList = async (init?: boolean) => {
     if (init) {
@@ -113,7 +114,7 @@ function MyQuestionTab() {
     }
     var dataResults: APIResults = await getQuestionGroups(
       "",
-      user?.studio?._id,
+      user?.studio?._id
     );
     dispatch(setquestionGroupLoading(false));
     console.log("dataResults", dataResults);
@@ -138,7 +139,7 @@ function MyQuestionTab() {
 
   const renderQuestion: (
     e: BaseQuestionData,
-    index: number,
+    index: number
   ) => React.ReactNode = (e: BaseQuestionData, index: number) => {
     var group = questionGroups?.find((v: any) => v.id === e.idGroupQuestion);
 
@@ -218,6 +219,18 @@ function MyQuestionTab() {
       case QuestionType.FillBlank:
         return (
           <FillBlank
+            isBank
+            key={e?.id}
+            question={e}
+            index={index + (indexPage - 1) * recordNum + 1}
+            questionGroup={group}
+            examId={e?.idExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
+      case QuestionType.Evaluation:
+        return (
+          <Evaluation
             isBank
             key={e?.id}
             question={e}
@@ -354,7 +367,7 @@ function MyQuestionTab() {
       ) : (
         <div className="flex flex-col p-5 rounded-lg bg-white max-lg:mx-5">
           {questionList.map((e: BaseQuestionData, i: number) =>
-            renderQuestion(e, i),
+            renderQuestion(e, i)
           )}
         </div>
       )}
@@ -362,7 +375,7 @@ function MyQuestionTab() {
       {questionList.length != 0 && (
         <div className="w-full flex items-center justify-center">
           <span className="body_regular_14 mr-2">{`${total} ${t(
-            "result",
+            "result"
           )}`}</span>
 
           <Pagination
@@ -389,7 +402,7 @@ function MyQuestionTab() {
                   value: i,
                   label: (
                     <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                      "page",
+                      "page"
                     )}`}</span>
                   ),
                 })),
