@@ -882,7 +882,6 @@ function ResultPage({ params }: any) {
               </button>
             </div>
           </div>
-          {overall}
           <Divider className="my-2" />
           {!isEditJudge && (
             <div className=" mx-5 h-44 overflow-y-scroll scroll-smooth break-all ">
