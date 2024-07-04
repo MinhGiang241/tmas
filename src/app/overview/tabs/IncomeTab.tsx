@@ -413,7 +413,7 @@ function IncomeTab() {
             </div>
             {!!revenueData?.discountData?.revenueToday && (
               <UpDownTrend
-                upText={t("net_revenue_today", {
+                upText={t("discount_today", {
                   num: revenueData?.discountData?.revenueToday ?? 0,
                 })}
                 up={(revenueData?.discountData?.revenueToday ?? 0) > 0}

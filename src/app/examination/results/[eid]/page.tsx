@@ -71,6 +71,7 @@ import {
 import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 import MTextArea from "@/app/components/config/MTextArea";
 import { FormattedDate, FormattedNumber } from "react-intl";
+import MInput from "@/app/components/config/MInput";
 
 dayjs.extend(duration);
 dayjs.extend(customParseFormat);
@@ -120,8 +121,10 @@ function ResultPage({ params }: any) {
     if (res.code != 0) {
       return;
     }
+
     setExamination(res?.data?.records[0]);
     getListResults(res?.data?.records[0]);
+
     setOverAll(res?.data?.records[0]?.overallConclusion);
   };
   const examGroups = useAppSelector(
@@ -856,8 +859,13 @@ function ResultPage({ params }: any) {
             <div className="flex">
               {isEditJudge && (
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     setIsEditJudge(!isEditJudge);
+                    await updateOverallConclusion({
+                      id: params.eid,
+                      overallConclusion: overall,
+                    });
+                    // getExaminationDetail(false);
                   }}
                   className="text-m_primary_500 mr-3"
                 >
@@ -866,27 +874,25 @@ function ResultPage({ params }: any) {
               )}
               <button
                 onClick={async () => {
-                  await updateOverallConclusion({
-                    id: params.eid,
-                    overallConclusion: overall,
-                  });
-                  getExaminationDetail();
                   setIsEditJudge(!isEditJudge);
+                  // getExaminationDetail();
                 }}
               >
                 <EditIcon />
               </button>
             </div>
           </div>
-
+          {overall}
           <Divider className="my-2" />
-          {!isEditJudge ? (
+          {!isEditJudge && (
             <div className=" mx-5 h-44 overflow-y-scroll scroll-smooth break-all ">
               {overall}
             </div>
-          ) : (
-            <div className="mx-5">
+          )}
+          {
+            <div className={`mx-5 ${!isEditJudge ? "hidden" : ""}`}>
               <MTextArea
+                // defaultValue={examination?.overallConclusion}
                 value={overall}
                 onChange={(e) => {
                   setOverAll(e.target.value);
@@ -896,7 +902,7 @@ function ResultPage({ params }: any) {
                 line={7}
               />
             </div>
-          )}
+          }
         </div>
       </div>
 
