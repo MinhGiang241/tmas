@@ -417,6 +417,7 @@ export interface ExamTestReportData {
     totalExamTestResult?: number;
     totalExamTestResultToday?: number;
     totalGold?: number;
+    netRevenue?: number;
   };
 }
 
@@ -452,6 +453,7 @@ export interface ListExamTestReportData {
     totalPass?: number;
     totalPassPercent?: number;
   };
+  netRevenue?: number;
   totalGold?: number;
   totalPoints?: number;
   totalPointsAsInt?: number;

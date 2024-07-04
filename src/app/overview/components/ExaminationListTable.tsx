@@ -295,9 +295,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     {
       dataIndex: "pure_income",
       title: (
-        <button onClick={() => addSorter("TotalGold")}>
+        <button onClick={() => addSorter("NetRevenue")}>
           <Tooltip title={t("pure_income_tooltip")}>{t("pure_income")}</Tooltip>
-          <RenderSortterIcon sorter={sorter} name="TotalGold" />
+          <RenderSortterIcon sorter={sorter} name="NetRevenue" />
         </button>
       ),
       classNameTitle: "min-w-20",
@@ -442,7 +442,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
         ? dayjs(ex?.validAccessSetting?.validTo)?.format("DD/MM/YYYY HH:mm:ss")
         : undefined,
       gold_price: ex?.goldSetting?.goldPrice,
-      pure_income: ex?.totalGold,
+      pure_income: ex?.netRevenue,
       status: `${ex?.visibleState == "Active" ? t("valid") : t("invalid")}`,
 
       // avg_test_time: t?.couter?.
@@ -679,7 +679,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
           join_num: dataList?.summary?.totalExamTestResult,
           join_num_today: dataList?.summary?.totalExamTestResultToday,
           question_num: dataList?.summary?.numberOfQuestions,
-          pure_income: dataList?.summary?.totalGold,
+          pure_income: dataList?.summary?.netRevenue,
         }}
       />
     </>
