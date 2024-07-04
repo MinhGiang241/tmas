@@ -410,7 +410,7 @@ export interface ListExamReportData {
 }
 
 export interface ExamTestReportData {
-  data?: ListExamTestReportData;
+  data?: ListExamTestReportData[];
   records?: number;
   summary?: {
     numberOfQuestions?: number;
@@ -418,6 +418,7 @@ export interface ExamTestReportData {
     totalExamTestResultToday?: number;
     totalGold?: number;
     netRevenue?: number;
+    revenue?: number;
   };
 }
 
@@ -454,6 +455,7 @@ export interface ListExamTestReportData {
     totalPassPercent?: number;
   };
   netRevenue?: number;
+  revenue?: number;
   totalGold?: number;
   totalPoints?: number;
   totalPointsAsInt?: number;
