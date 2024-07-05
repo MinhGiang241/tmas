@@ -2,7 +2,7 @@ import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import { QuestionGroupData } from "@/data/exam";
 import { BaseQuestionFormData } from "@/data/form_interface";
-import { Input, Upload, Image, UploadProps } from "antd";
+import { Input, Upload, Image, UploadProps, UploadFile, GetProp } from "antd";
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -20,13 +20,22 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { uploadImageStudio } from "@/services/api_services/account_services";
-import { log } from "console";
 
-const getBase64 = (file: any) =>
+// const getBase64 = (file: any) =>
+//   new Promise((resolve, reject) => {
+//     const reader = new FileReader();
+//     reader.readAsDataURL(file);
+//     reader.onload = () => resolve(reader.result);
+//     reader.onerror = (error) => reject(error);
+//   });
+
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
+const getBase64 = (file: FileType): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
+    reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
 
@@ -173,43 +182,72 @@ function EvaluationQuestion({
     },
   });
 
-  const handlePreview = async (file: any) => {
+  // const handlePreview = async (file: any) => {
+  //   if (!file.url && !file.preview) {
+  //     file.preview = await getBase64(file.originFileObj);
+  //   }
+  //   try {
+  //     const res = await uploadImageStudio(file);
+  //     console.log(res);
+
+  //     // const imageUrl = res?.imageUrl;
+  //     // const newWindow = window.open();
+  //     // newWindow?.document.write(
+  //     //   `<img src="${imageUrl || file.preview}" style="width: 100%;" />`
+  //     // );
+  //   } catch (error) {
+  //     console.error("Lỗi khi tải lên hình ảnh:", error);
+  //   }
+  // };
+
+  // const handleChange: UploadProps["onChange"] = async ({
+  //   fileList: newFileList,
+  // }) => {
+  //   console.log(newFileList, "newFileList");
+  //   // const formData = new FormData();
+  //   // formData.append("files", newFileList[0]);
+  //   // const res = await uploadImageStudio(formData);
+  //   // console.log("res", res);
+  //   const updatedFields = fields.map((field: any) => {
+  //     // if (field.id === fieldId) {
+  //     // return {
+  //     //   ...field,
+  //     //   idIcon: newFileList.thumbUrl || "",
+  //     // };
+  //     // }
+  //     // return field;
+  //   });
+  //   setFields(updatedFields);
+  // };
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [fileList, setFileList] = useState<UploadFile[]>([
+    // {
+    //   uid: "-1",
+    //   name: "image.png",
+    //   status: "done",
+    //   url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
+    // },
+  ]);
+
+  const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
+      file.preview = await getBase64(file.originFileObj as FileType);
     }
-    try {
-      const res = await uploadImageStudio(file);
-      console.log(res);
 
-      // const imageUrl = res?.imageUrl;
-      // const newWindow = window.open();
-      // newWindow?.document.write(
-      //   `<img src="${imageUrl || file.preview}" style="width: 100%;" />`
-      // );
-    } catch (error) {
-      console.error("Lỗi khi tải lên hình ảnh:", error);
-    }
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
   };
 
-  const handleChange: UploadProps["onChange"] = async ({
-    fileList: newFileList,
-  }) => {
-    console.log(newFileList, "newFileList");
-    // const formData = new FormData();
-    // formData.append("files", newFileList[0]);
-    // const res = await uploadImageStudio(formData);
-    // console.log("res", res);
-    const updatedFields = fields.map((field: any) => {
-      // if (field.id === fieldId) {
-      // return {
-      //   ...field,
-      //   idIcon: newFileList.thumbUrl || "",
-      // };
-      // }
-      // return field;
-    });
-    setFields(updatedFields);
-  };
+  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
+    setFileList(newFileList);
+
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
+  );
 
   return (
     <form
@@ -305,6 +343,27 @@ function EvaluationQuestion({
                   }
                 />
                 <Upload
+                  action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                  listType="picture-card"
+                  fileList={fileList}
+                  onPreview={handlePreview}
+                  onChange={handleChange}
+                >
+                  {fileList.length >= 8 ? null : uploadButton}
+                </Upload>
+                {previewImage && (
+                  <Image
+                    wrapperStyle={{ display: "none" }}
+                    preview={{
+                      visible: previewOpen,
+                      onVisibleChange: (visible) => setPreviewOpen(visible),
+                      afterOpenChange: (visible) =>
+                        !visible && setPreviewImage(""),
+                    }}
+                    src={previewImage}
+                  />
+                )}
+                {/* <Upload
                   name="idIcon"
                   listType="picture-card"
                   className="avatar-uploader"
@@ -327,7 +386,7 @@ function EvaluationQuestion({
                       <div style={{ marginTop: 8 }}>Upload</div>
                     </div>
                   )}
-                </Upload>
+                </Upload> */}
                 <div className="w-10">
                   {index > 0 && (
                     <CloseCircleOutlined
