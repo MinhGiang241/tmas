@@ -10,6 +10,7 @@ import {
 import { BaseQuestionData, QuestionType } from "./question";
 import { TagData } from "./tag";
 import { CouterData } from "./overview";
+import { UploadFile } from "antd";
 
 export interface ExamGroupData {
   name?: string;
@@ -743,4 +744,15 @@ export interface ExpectedReportData {
   realityPassedNumb?: number;
   realityPassedPercent?: number;
   status?: "pass" | "notPass";
+}
+
+export interface FieldSurveyAnswer {
+  label?: string;
+  id?: any;
+  text?: string;
+  point?: number;
+  idIcon?: string;
+  previewOpen?: boolean;
+  file?: UploadFile;
+  previewImage?: any;
 }
