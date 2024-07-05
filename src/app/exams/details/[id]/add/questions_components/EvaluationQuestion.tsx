@@ -230,7 +230,7 @@ function EvaluationQuestion({
           name="point"
           id="point"
           title={t("point")}
-          value={fields.reduce((sum: any, field: any) => sum + field.point, 0)}
+          value={fields.reduce((sum: any, field: any) => sum + field?.point, 0)}
           disable
         />
         <MDropdown
@@ -275,7 +275,7 @@ function EvaluationQuestion({
                     )
                   }
                 >
-                  {field.label}.
+                  {field?.label}.
                 </div>
                 <Input
                   className="rounded-md h-9 w-[50%]"
