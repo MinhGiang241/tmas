@@ -1,6 +1,6 @@
 import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
-import { QuestionGroupData } from "@/data/exam";
+import { FieldSurveyAnswer, QuestionGroupData } from "@/data/exam";
 import { BaseQuestionFormData } from "@/data/form_interface";
 import { Input, Upload, Image, UploadProps, UploadFile, GetProp } from "antd";
 import dynamic from "next/dynamic";
@@ -19,7 +19,13 @@ import {
 } from "@/services/api_services/question_api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
-import { uploadImageStudio } from "@/services/api_services/account_services";
+import {
+  uploadFile,
+  uploadImageStudio,
+} from "@/services/api_services/account_services";
+import { getToken } from "@/utils/cookies";
+import _ from "lodash";
+import { APIResults } from "@/data/api_results";
 
 // const getBase64 = (file: any) =>
 //   new Promise((resolve, reject) => {
@@ -70,7 +76,7 @@ const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  }
+  },
 );
 
 function EvaluationQuestion({
@@ -87,23 +93,45 @@ function EvaluationQuestion({
     label: v.name,
     value: v.id,
   }));
-
-  const [fields, setFields] = useState(
-    question?.content?.answers ?? [
-      {
-        label: "A",
-        id: 1,
-        name: "",
-        point: 0,
-        idIcon: "",
-      },
-    ]
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [fileList, setFileList] = useState<UploadFile[]>([
+    // {
+    //   uid: "-1",
+    //   name: "image.png",
+    //   status: "done",
+    //   url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
+    // },
+  ]);
+  const [fields, setFields] = useState<FieldSurveyAnswer[]>(
+    question?.content?.answers
+      ? question?.content?.answers?.map((e: any, i: number) => ({
+          id: i,
+          label: e?.label,
+          text: e?.text,
+          point: e?.point,
+          idIcon: e?.idIcon,
+          file: !e?.idIcon
+            ? undefined
+            : {
+                url: `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/download/${e?.idIcon}`,
+              },
+        }))
+      : [
+          {
+            label: "A",
+            id: 1,
+            text: "",
+            point: 0,
+            idIcon: "",
+          },
+        ],
   );
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const newLabel = String.fromCharCode(65 + fields.length);
-    const newField = {
+    const newField: FieldSurveyAnswer = {
       id: fields.length + 1,
       label: newLabel,
       text: "",
@@ -150,7 +178,7 @@ function EvaluationQuestion({
         idExam: question?.idExam ?? idExam,
         numberPoint: fields.reduce(
           (sum: any, field: any) => sum + field.point,
-          0
+          0,
         ),
         idGroupQuestion: values.question_group,
         questionType: "Evaluation",
@@ -176,7 +204,7 @@ function EvaluationQuestion({
       }
       dispatch(resetMultiAnswer(1));
       successToast(
-        question ? t("Cập nhật thành công") : t("Thêm mới thành công")
+        question ? t("Cập nhật thành công") : t("Thêm mới thành công"),
       );
       router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },
@@ -219,28 +247,31 @@ function EvaluationQuestion({
   //   });
   //   setFields(updatedFields);
   // };
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState<UploadFile[]>([
-    // {
-    //   uid: "-1",
-    //   name: "image.png",
-    //   status: "done",
-    //   url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    // },
-  ]);
 
-  const handlePreview = async (file: UploadFile) => {
+  const handlePreview = async (file: UploadFile, index: number) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj as FileType);
     }
-
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
+    var cloneFields = _.cloneDeep(fields);
+    cloneFields[index].previewImage = file.preview;
+    cloneFields[index].previewOpen = true;
+    setFields(cloneFields);
+    //setPreviewImage(file.url || (file.preview as string));
+    // setPreviewOpen(true);
   };
 
-  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
-    setFileList(newFileList);
+  const handleChange = (newFileList: UploadFile[], index: number) => {
+    console.log("newFileList onChange", newFileList);
+    var cloneFields = _.cloneDeep(fields);
+    cloneFields[index].file = newFileList[0];
+    cloneFields[index].idIcon = newFileList[0].response?.idDocuments[0];
+    setFields(cloneFields);
+    // return setFileList(newFileList);
+  };
+
+  const upload = async (formData: any) => {
+    return await uploadImageStudio(formData);
+  };
 
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
@@ -294,7 +325,7 @@ function EvaluationQuestion({
         <div className="border rounded-lg p-4">
           <div className="text-sm font-semibold">{t("specific_7")}</div>
           <div className="w-full">
-            {fields.map((field: any, index: any) => (
+            {fields.map((field: FieldSurveyAnswer, index: number) => (
               <div
                 key={index}
                 className="flex items-center justify-between pt-2"
@@ -308,8 +339,8 @@ function EvaluationQuestion({
                       fields.map((f: any) =>
                         f.id === field.id
                           ? { ...f, label: e.target.textContent }
-                          : f
-                      )
+                          : f,
+                      ),
                     )
                   }
                 >
@@ -322,8 +353,8 @@ function EvaluationQuestion({
                   onChange={(e) =>
                     setFields(
                       fields.map((f: any) =>
-                        f.id === field.id ? { ...f, text: e.target.value } : f
-                      )
+                        f.id === field.id ? { ...f, text: e.target.value } : f,
+                      ),
                     )
                   }
                 />
@@ -337,30 +368,58 @@ function EvaluationQuestion({
                       fields.map((f: any) =>
                         f.id === field.id
                           ? { ...f, point: parseFloat(e.target.value) || 0 }
-                          : f
-                      )
+                          : f,
+                      ),
                     )
                   }
                 />
                 <Upload
-                  action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                  headers={{
+                    Authorization: `Bearer ${
+                      sessionStorage.getItem("access_token") ?? getToken()
+                    }`,
+                  }}
+                  accept="image/png, image/jpeg, image/jpg"
+                  action={`${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/uploadImage`}
                   listType="picture-card"
-                  fileList={fileList}
-                  onPreview={handlePreview}
-                  onChange={handleChange}
+                  fileList={field?.file ? [field?.file] : []}
+                  onPreview={(file) => handlePreview(file, index)}
+                  onChange={({ fileList: q, file }: any) =>
+                    handleChange(q, index)
+                  }
+                  customRequest={async ({ file, onSuccess, onError }: any) => {
+                    const formData = new FormData();
+                    formData.append("files", file);
+                    var res = await uploadImageStudio(formData);
+                    if (res?.code != 0) {
+                      onError(res?.message);
+                    } else {
+                      onSuccess(res?.data);
+                    }
+                    return res;
+                  }}
+                  // beforeUpload={}
                 >
-                  {fileList.length >= 8 ? null : uploadButton}
+                  {field?.file ? null : uploadButton}
                 </Upload>
-                {previewImage && (
+                {field?.previewImage && (
                   <Image
+                    alt="upload"
                     wrapperStyle={{ display: "none" }}
                     preview={{
-                      visible: previewOpen,
-                      onVisibleChange: (visible) => setPreviewOpen(visible),
-                      afterOpenChange: (visible) =>
-                        !visible && setPreviewImage(""),
+                      visible: field?.previewOpen,
+                      onVisibleChange: (visible, prev) => {
+                        let cloneFields = _.cloneDeep(fields);
+                        cloneFields[index].previewOpen = visible;
+                        setFields(cloneFields);
+                      },
+                      afterOpenChange: (visible) => {
+                        let cloneFields = _.cloneDeep(fields);
+                        cloneFields[index].previewImage = visible;
+                        return !visible && setFields(cloneFields); //setPreviewImage("");
+                      },
                     }}
-                    src={previewImage}
+                    src={field?.previewImage}
                   />
                 )}
                 {/* <Upload
