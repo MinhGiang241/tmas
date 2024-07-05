@@ -373,6 +373,9 @@ export const cloneQuestionFromTmas = async (question: BaseQuestionData) => {
     case QuestionType.Pairing:
       res = await createConnectQuestion(question);
       break;
+    case QuestionType.Evaluation:
+      res = await createEvaluationQuestion(question);
+      break;
     case QuestionType.Random:
       res = await createRandomQuestion(question);
       break;
@@ -433,7 +436,9 @@ export const submitCheckMultiAnswer = async (data: ParamsCheckMultiAnswer) => {
   return results;
 };
 
-export const createEvaluationQuestion = async (data: QuestionEvaluation) => {
+export const createEvaluationQuestion = async (
+  data: QuestionEvaluation | BaseQuestionData
+) => {
   const results = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionEvaluation`,
     data

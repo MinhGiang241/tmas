@@ -395,7 +395,7 @@ function ExamDetails({ params }: any) {
               <div className="md:text-xl text-base text-red-500 font-semibold">
                 <FormattedNumber
                   value={
-                    (expectedPointTotal() / (exam?.totalPoints || 0)) * 100 ?? 0
+                    (expectedPointTotal() / (exam?.totalPoints || 0)) * 100 || 0
                   }
                   style="decimal"
                   maximumFractionDigits={0}

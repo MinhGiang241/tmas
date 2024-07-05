@@ -47,6 +47,7 @@ import { APIResults } from "@/data/api_results";
 import { getQuestionGroups } from "@/services/api_services/exam_api";
 import TagSearchSelect from "@/app/components/config/TagsSearch";
 import { useFormik } from "formik";
+import Evaluation from "../../question/Evaluation";
 
 function TmasAddTab({
   hidden,
@@ -68,7 +69,7 @@ function TmasAddTab({
   const [tags, setTags] = useState<string[]>([]);
   const user = useAppSelector((state: RootState) => state.user.user);
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.questions,
+    (state: RootState) => state?.examGroup?.questions
   );
   const dispatch = useAppDispatch();
   const [questGroupId, setQuestGroupId] = useState<string | undefined>();
@@ -89,7 +90,7 @@ function TmasAddTab({
     if (user?.studio?._id) {
       var dataResults: APIResults = await getQuestionGroups(
         "",
-        user?.studio?._id,
+        user?.studio?._id
       );
       console.log("group_question", dataResults);
 
@@ -164,7 +165,7 @@ function TmasAddTab({
           studioQuest.idExam = exam?.id;
           studioQuest.idExamQuestionPart = partId;
           (studioQuest as any).content = JSON.stringify(
-            (studioQuest as any)?.content,
+            (studioQuest as any)?.content
           );
           return studioQuest;
         });
@@ -215,7 +216,7 @@ function TmasAddTab({
   const [isAdd, setIsAdd] = useState<any>({});
   const renderQuestion: (
     e: BaseTmasQuestionData,
-    index: number,
+    index: number
   ) => React.ReactNode = (e: BaseTmasQuestionData, index: number) => {
     var group = questionGroups?.find((v: any) => v.id === e.IdGroupQuestion);
     var questMap = mapTmasQuestionToStudioQuestion(e);
@@ -354,6 +355,25 @@ function TmasAddTab({
             getData={() => loadQuestionList(false)}
           />
         );
+      case QuestionType.Evaluation:
+        return (
+          <Evaluation
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
+            isExist={isExist}
+            canCheck
+            onChangeCheck={onChangeCheck}
+            tmasQuest
+            addExamBank={addExamBank}
+            deleteExamBank={deleteExamBank}
+            key={e?._id}
+            question={questMap}
+            index={index + (indexPage - 1) * recordNum + 1}
+            questionGroup={group}
+            examId={e?.IdExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
       case QuestionType.Random:
         return (
           <Random
@@ -383,7 +403,7 @@ function TmasAddTab({
 
   const onCheckAllChange = (e: any) => {
     setSelectedList(
-      (e.target.checked as boolean) ? questionList?.map((e) => e?._id) : [],
+      (e.target.checked as boolean) ? questionList?.map((e) => e?._id) : []
     );
     setCheckedAll(e.target.checked);
   };
@@ -400,7 +420,7 @@ function TmasAddTab({
             "Paging.StartIndex": 1,
             "Paging.RecordPerPage": 100,
           }
-        : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 },
+        : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 }
     );
     if (data?.code != 0) {
       return [];
@@ -502,6 +522,7 @@ function TmasAddTab({
               "Pairing",
               "Coding",
               "Essay",
+              "Evaluation",
               "",
             ].map((e: string) => ({
               value: e,
@@ -585,7 +606,7 @@ function TmasAddTab({
             className="flex flex-col"
           >
             {questionList.map((e: BaseTmasQuestionData, i: number) =>
-              renderQuestion(e, i),
+              renderQuestion(e, i)
             )}
           </CheckboxGroup>
         </div>
@@ -594,7 +615,7 @@ function TmasAddTab({
       {questionList.length != 0 && (
         <div className="w-full flex items-center justify-center">
           <span className="body_regular_14 mr-2">{`${total} ${t(
-            "result",
+            "result"
           )}`}</span>
 
           <Pagination
@@ -621,7 +642,7 @@ function TmasAddTab({
                   value: i,
                   label: (
                     <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                      "page",
+                      "page"
                     )}`}</span>
                   ),
                 })),

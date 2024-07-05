@@ -32,6 +32,7 @@ import ManyResult from "@/app/exams/details/[id]/question/ManyResult";
 import TrueFalse from "@/app/exams/details/[id]/question/TrueFalse";
 import Explain from "@/app/exams/details/[id]/question/Explain";
 import Coding from "@/app/exams/details/[id]/question/Coding";
+import Evaluation from "@/app/exams/details/[id]/question/Evaluation";
 import { APIResults } from "@/data/api_results";
 import { getQuestionGroups } from "@/services/api_services/exam_api";
 import Random from "@/app/exams/details/[id]/question/Random";
@@ -97,12 +98,12 @@ function QuestionTmasTab() {
     setQuestionList(res?.data ?? []);
   };
   const questionGroups: ExamGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.questions,
+    (state: RootState) => state?.examGroup?.questions
   );
   const loadQuestionGroupList = async (init?: boolean) => {
     var dataResults: APIResults = await getQuestionGroups(
       "",
-      user?.studio?._id,
+      user?.studio?._id
     );
     console.log("dataResults", dataResults);
 
@@ -137,7 +138,7 @@ function QuestionTmasTab() {
   const [isAdd, setIsAdd] = useState<any>({});
   const renderQuestion: (
     e: BaseTmasQuestionData,
-    index: number,
+    index: number
   ) => React.ReactNode = (e: BaseTmasQuestionData, index: number) => {
     var group = questionGroups?.find((v: any) => v.id === e.IdGroupQuestion);
     var questMap = mapTmasQuestionToStudioQuestion(e);
@@ -248,6 +249,21 @@ function QuestionTmasTab() {
             getData={() => loadQuestionList(false)}
           />
         );
+      case QuestionType.Evaluation:
+        return (
+          <Evaluation
+            isExist={isExist}
+            key={e?._id}
+            deleteExamBank={deleteExamBank}
+            tmasQuest
+            addExamBank={addExamBank}
+            question={questMap}
+            index={index + (indexPage - 1) * recordNum + 1}
+            questionGroup={group}
+            examId={e?.IdExam}
+            getData={() => loadQuestionList(false)}
+          />
+        );
       case QuestionType.Random:
         return (
           <Random
@@ -278,7 +294,7 @@ function QuestionTmasTab() {
             "Paging.StartIndex": 1,
             "Paging.RecordPerPage": 100,
           }
-        : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 },
+        : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 }
     );
     if (data?.code != 0) {
       return [];
@@ -297,10 +313,14 @@ function QuestionTmasTab() {
 
     if (active) {
       var cloneQuestion = _.cloneDeep(active);
+
+      console.log("cloneQuestion", cloneQuestion);
+
       cloneQuestion!.idGroupQuestion = idGroup;
       cloneQuestion!.isQuestionBank = true;
 
       const res = await cloneQuestionFromTmas(cloneQuestion!);
+
       if (res?.code != 0) {
         errorToast(res?.message ?? "");
         return;
@@ -392,6 +412,7 @@ function QuestionTmasTab() {
               "Pairing",
               "Coding",
               "Essay",
+              "Evaluation",
               "",
             ].map((e: string) => ({
               value: e,
@@ -430,7 +451,7 @@ function QuestionTmasTab() {
       ) : (
         <div className="flex flex-col p-5 rounded-lg bg-white max-lg:mx-5">
           {questionList.map((e: BaseTmasQuestionData, i: number) =>
-            renderQuestion(e, i),
+            renderQuestion(e, i)
           )}
         </div>
       )}
@@ -438,7 +459,7 @@ function QuestionTmasTab() {
       {questionList.length != 0 && (
         <div className="w-full flex items-center justify-center">
           <span className="body_regular_14 mr-2">{`${total} ${t(
-            "result",
+            "result"
           )}`}</span>
 
           <Pagination
@@ -465,7 +486,7 @@ function QuestionTmasTab() {
                   value: i,
                   label: (
                     <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                      "page",
+                      "page"
                     )}`}</span>
                   ),
                 })),

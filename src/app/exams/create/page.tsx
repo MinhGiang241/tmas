@@ -82,7 +82,7 @@ function CreatePage({ exam, isEdit }: any) {
       ...inputFields,
       {
         label: "",
-        fromScore: lastField ? lastField.toScore : 0,
+        fromScore: lastField ? (lastField.toScore ?? 0) + 1 : 0,
         toScore: undefined,
       },
     ]);
@@ -94,72 +94,30 @@ function CreatePage({ exam, isEdit }: any) {
     setInputFields(values);
   };
 
-  // const handleInputChange = (index: any, event: any) => {
-  //   const values = [...inputFields];
-  //   const { name, value } = event.target;
-
-  //   if (name === "point_evaluation") {
-  //     values[index].label = value;
-  //   } else if (name === "from") {
-  //     values[index].fromScore = parseInt(value);
-  //   } else if (name === "to") {
-  //     const newToValue = parseInt(value);
-  //     const fromScore = values[index].fromScore ?? 0;
-  //     const expectedToScore = fromScore + 1;
-  //     if (index > 0 && newToValue !== expectedToScore) {
-  //       errorToast("Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại.");
-  //       return;
-  //     } else {
-  //       values[index].toScore = newToValue;
-  //     }
-  //   }
-
-  //   setInputFields(values);
-  // };
-
   const handleInputChange = (index: any, event: any) => {
     const values = [...inputFields];
     const { name, value } = event.target;
-
     if (name === "point_evaluation") {
       values[index].label = value;
     } else if (name === "from") {
       values[index].fromScore = parseInt(value);
     } else if (name === "to") {
       const newToValue = parseInt(value);
-      const fromScore =
-        values[index].fromScore ??
-        (index === 0 ? 0 : values[index - 1].toScore ?? 0);
-      const expectedToScore = fromScore + 1;
 
-      if (index === 0) {
-        // Điều kiện cho hàng đầu tiên
-        values[index].toScore = newToValue;
+      if (false) {
+        errorToast("Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại.");
+        return;
       } else {
-        // Điều kiện cho các hàng tiếp theo
-        if (newToValue !== expectedToScore) {
-          errorToast(
-            "Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại.",
-          );
-          return;
-        } else {
-          values[index].toScore = newToValue;
+        values[index].toScore = newToValue;
+        const fromScore = newToValue ?? 0;
+        const expectedToScore = fromScore + 1;
+        if (index < length - 1) {
+          values[index + 1].fromScore = expectedToScore;
         }
       }
     }
-
     setInputFields(values);
   };
-
-  // const [totalToScore, setTotalToScore] = useState(0);
-
-  // useEffect(() => {
-  //   const total = inputFields?.reduce(
-  //     (accumulator, field) => accumulator + (Number(field.toScore) || 0),
-  //     0
-  //   );
-  //   setTotalToScore(total);
-  // }, [inputFields]);
 
   const createSessionId = async () => {
     if (isEdit && exam) {
@@ -572,72 +530,70 @@ function CreatePage({ exam, isEdit }: any) {
           />
           <div className="h-4" />
 
-          {selectedButton === ExamType.Survey ? (
-            <div>
-              <div className="text-sm font-semibold pb-1">
-                {t("specific_6")}
+          {/* {selectedButton === ExamType.Survey ? ( */}
+          <div>
+            <div className="text-sm font-semibold pb-1">{t("specific_6")}</div>
+            <div className="caption_regular_14">{t("servey_9")}</div>
+            <div className="caption_regular_14 font-semibold py-2">
+              {t("total_point")}: {exam?.totalPoints}
+              {/* {totalToScore} */}
+            </div>
+            {inputFields?.map((inputField, index) => (
+              <div className="flex items-center pb-2" key={index}>
+                <MInput
+                  placeholder="Tên hạng"
+                  h="h-9"
+                  id={`point_evaluation_${index}`}
+                  name="point_evaluation"
+                  value={inputField.label}
+                  onChange={(event) => handleInputChange(index, event)}
+                  // required
+                  isTextRequire={false}
+                />
+                <div className="w-8" />
+                <Input
+                  disabled
+                  placeholder="Từ điểm"
+                  className="h-9 w-[10rem] border-[0.5px] rounded-md hover:border-cyan-600"
+                  id={`from_${index}`}
+                  name="from"
+                  type="number"
+                  value={inputField.fromScore}
+                  onChange={(event) => handleInputChange(index, event)}
+                />
+                <Input
+                  placeholder="Đến điểm"
+                  className="h-9 w-[10rem] border-[0.5px] rounded-md hover:border-cyan-600"
+                  id={`to_${index}`}
+                  name="to"
+                  type="number"
+                  value={inputField.toScore}
+                  onChange={(event) => handleInputChange(index, event)}
+                />
+                <button
+                  onClick={() => {
+                    handleRemoveFields(index);
+                  }}
+                  className="text-neutral-500 text-2xl mt-[6px] ml-2"
+                >
+                  <CloseCircleOutlined />
+                </button>
               </div>
-              <div className="caption_regular_14">{t("servey_9")}</div>
-              <div className="caption_regular_14 font-semibold py-2">
-                {t("total_point")}: {exam?.totalPoints}
-                {/* {totalToScore} */}
-              </div>
-              {inputFields?.map((inputField, index) => (
-                <div className="flex items-center pb-2" key={index}>
-                  <MInput
-                    placeholder="Tên hạng"
-                    h="h-9"
-                    id={`point_evaluation_${index}`}
-                    name="point_evaluation"
-                    value={inputField.label}
-                    onChange={(event) => handleInputChange(index, event)}
-                    // required
-                    isTextRequire={false}
-                  />
-                  <div className="w-8" />
-                  <Input
-                    disabled
-                    placeholder="Từ điểm"
-                    className="h-9 w-[10rem] border-[0.5px] rounded-md hover:border-cyan-600"
-                    id={`from_${index}`}
-                    name="from"
-                    type="number"
-                    value={inputField.fromScore}
-                    onChange={(event) => handleInputChange(index, event)}
-                  />
-                  <Input
-                    placeholder="Đến điểm"
-                    className="h-9 w-[10rem] border-[0.5px] rounded-md hover:border-cyan-600"
-                    id={`to_${index}`}
-                    name="to"
-                    type="number"
-                    value={inputField.toScore}
-                    onChange={(event) => handleInputChange(index, event)}
-                  />
-                  <button
-                    onClick={() => {
-                      handleRemoveFields(index);
-                    }}
-                    className="text-neutral-500 text-2xl mt-[6px] ml-2"
-                  >
-                    <CloseCircleOutlined />
-                  </button>
-                </div>
-              ))}
+            ))}
+            <div className="w-full flex justify-end pt-2">
               <div className="w-full flex justify-end pt-2">
-                <div className="w-full flex justify-end pt-2">
-                  <button
-                    onClick={handleAddFields}
-                    className="underline body_regular_14 underline-offset-4 text-[#4D7EFF]"
-                  >
-                    <PlusOutlined /> {t("add_ranks")}
-                  </button>
-                </div>
+                <button
+                  onClick={handleAddFields}
+                  className="underline body_regular_14 underline-offset-4 text-[#4D7EFF]"
+                >
+                  <PlusOutlined /> {t("add_ranks")}
+                </button>
               </div>
             </div>
-          ) : (
+          </div>
+          {/* ) : (
             ""
-          )}
+          )} */}
         </div>
         <div className="max-lg:mx-5 max-lg:grid-cols-1 max-lg:mb-5 lg:col-span-8 col-span-12 bg-white h-fit rounded-lg p-4">
           {/* <Cus etomEditor /> */}

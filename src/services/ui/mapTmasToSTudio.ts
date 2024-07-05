@@ -8,6 +8,7 @@ import {
   MultiTmasQuestionData,
   RandomTmasQuestionData,
   SQLTmasQuestionData,
+  SurveyTmasQuestionData,
   TrueFalseTmasQuestionData,
 } from "@/data/exam";
 import {
@@ -20,12 +21,13 @@ import {
   QuestionType,
   RandomQuestionData,
   SqlQuestionData,
+  SurveyQuestionData,
 } from "@/data/question";
 import _ from "lodash";
 import { mapStudioToTmaslanguage } from "./coding_services";
 
 export const mapTmasQuestionToStudioQuestion: (
-  question: BaseTmasQuestionExamData,
+  question: BaseTmasQuestionExamData
 ) => BaseQuestionData = (question: BaseTmasQuestionExamData) => {
   switch (question?.QuestionType) {
     case QuestionType?.MutilAnswer:
@@ -137,7 +139,7 @@ export const mapTmasQuestionToStudioQuestion: (
             (e) => ({
               anwsers: e.Anwsers,
               label: e.Label,
-            }),
+            })
           ),
           explainAnswer: fillQuestClone?.Content?.ExplainAnswer,
           formatBlank: fillQuestClone?.Content?.FormatBlank,
@@ -213,7 +215,7 @@ export const mapTmasQuestionToStudioQuestion: (
         updateTime: codeQuestClone?.updatedTime,
         content: {
           codeLanguages: (codeQuestClone?.Content?.CodeLanguages ?? []).map(
-            (e) => mapStudioToTmaslanguage(e),
+            (e) => mapStudioToTmaslanguage(e)
           ),
           testcases: (codeQuestClone?.Content?.Testcases ?? []).map((e) => ({
             inputData: e?.InputData,
@@ -238,7 +240,31 @@ export const mapTmasQuestionToStudioQuestion: (
         },
       };
       return studioCodeQuestion;
-
+    case QuestionType?.Evaluation:
+      var surQuestClone: SurveyTmasQuestionData = _.cloneDeep(question);
+      var studioSurQuestion: SurveyQuestionData = {
+        createdTime: surQuestClone?.createdTime,
+        id: surQuestClone?._id,
+        idExam: surQuestClone?.IdExam,
+        idExamQuestionPart: surQuestClone?.IdExamQuestionPart,
+        idGroupQuestion: surQuestClone?.IdGroupQuestion,
+        numberPoint: surQuestClone?.NumberPoint,
+        numberPointAsInt: surQuestClone?.NumberPointAsInt,
+        questionType: surQuestClone?.QuestionType,
+        question: surQuestClone?.Question,
+        updateTime: surQuestClone?.updatedTime,
+        content: {
+          answers: (surQuestClone?.Content?.Answers ?? []).map((e) => ({
+            text: e.Text,
+            point: e.Point,
+            idIcon: e.idIcon,
+            label: e.Label,
+          })),
+          explainAnswer: surQuestClone?.Content?.ExplainAnswer,
+          isChangePosition: surQuestClone?.Content?.IsChangePosition,
+        },
+      };
+      return studioSurQuestion;
     default:
       return {};
   }

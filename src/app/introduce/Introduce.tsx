@@ -289,6 +289,8 @@ export default function Introduce() {
       tags: active?.version?.examData?.Tags,
       playAudio: active?.version?.examData?.PlayAudio,
       version: active?.version?.examData?.Version,
+      examType: active?.version?.examData?.ExamType,
+      scoreRanks: active?.version?.examData?.ScoreRanks,
     };
 
     var res = await importTmasExamData({

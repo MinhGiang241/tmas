@@ -76,7 +76,7 @@ const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  },
+  }
 );
 
 function EvaluationQuestion({
@@ -125,7 +125,7 @@ function EvaluationQuestion({
             point: 0,
             idIcon: "",
           },
-        ],
+        ]
   );
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -178,7 +178,7 @@ function EvaluationQuestion({
         idExam: question?.idExam ?? idExam,
         numberPoint: fields.reduce(
           (sum: any, field: any) => sum + field.point,
-          0,
+          0
         ),
         idGroupQuestion: values.question_group,
         questionType: "Evaluation",
@@ -264,9 +264,14 @@ function EvaluationQuestion({
 
   const handleChange = (newFileList: UploadFile[], index: number) => {
     console.log("newFileList onChange", newFileList);
+
     var cloneFields = _.cloneDeep(fields);
-    cloneFields[index].file = newFileList[0];
-    cloneFields[index].idIcon = newFileList[0].response?.idDocuments[0];
+    cloneFields[index].file =
+      newFileList?.length != 0 ? newFileList[0] : undefined;
+    cloneFields[index].idIcon =
+      newFileList?.length != 0
+        ? newFileList[0].response?.idDocuments[0]
+        : undefined;
     setFields(cloneFields);
     // return setFileList(newFileList);
   };
@@ -341,8 +346,8 @@ function EvaluationQuestion({
                       fields.map((f: any) =>
                         f.id === field.id
                           ? { ...f, label: e.target.textContent }
-                          : f,
-                      ),
+                          : f
+                      )
                     )
                   }
                 >
@@ -355,8 +360,8 @@ function EvaluationQuestion({
                   onChange={(e) =>
                     setFields(
                       fields.map((f: any) =>
-                        f.id === field.id ? { ...f, text: e.target.value } : f,
-                      ),
+                        f.id === field.id ? { ...f, text: e.target.value } : f
+                      )
                     )
                   }
                 />
@@ -370,8 +375,8 @@ function EvaluationQuestion({
                       fields.map((f: any) =>
                         f.id === field.id
                           ? { ...f, point: parseFloat(e.target.value) || 0 }
-                          : f,
-                      ),
+                          : f
+                      )
                     )
                   }
                 />

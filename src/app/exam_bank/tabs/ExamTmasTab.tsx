@@ -119,7 +119,7 @@ function ExamTmasTab() {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id,
+          (ch: ExamGroupData) => ch.idParent === e.id
         );
         return { ...e, childs };
       });
@@ -138,7 +138,7 @@ function ExamTmasTab() {
             "Paging.StartIndex": 1,
             "Paging.RecordPerPage": 100,
           }
-        : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 },
+        : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 }
     );
     if (data?.code != 0) {
       return [];
@@ -184,7 +184,7 @@ function ExamTmasTab() {
           e.IsQuestionBank = false;
           return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
-      }),
+      })
     );
 
     var examObj: ExamData = {
@@ -205,6 +205,8 @@ function ExamTmasTab() {
       tags: active?.version?.examData?.Tags,
       playAudio: active?.version?.examData?.PlayAudio,
       version: active?.version?.examData?.Version,
+      examType: active?.version?.examData?.ExamType,
+      scoreRanks: active?.version?.examData?.ScoreRanks,
     };
     console.log("active part", active?.version?.examData?.Parts);
 
@@ -212,8 +214,8 @@ function ExamTmasTab() {
       "quest",
       (partObj ?? []).reduce(
         (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
-        [],
-      ),
+        []
+      )
     );
 
     // return;
@@ -224,7 +226,7 @@ function ExamTmasTab() {
           exam: examObj,
           jsonExamQuestions: (partObj ?? []).reduce(
             (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
-            [],
+            []
           ),
           parts: partObj,
         },
@@ -455,7 +457,7 @@ function ExamTmasTab() {
                 {(
                   a?.version?.examData?.Parts?.reduce(
                     (acc, i) => [...acc, ...(i?.Questions ?? [])] as any,
-                    [],
+                    []
                   ) ?? []
                 ).map(function (q: any, i: number) {
                   if (i > 4) {
@@ -464,7 +466,7 @@ function ExamTmasTab() {
                   return (
                     <div className="mb-1 flex " key={i}>
                       <div className="body_semibold_14 min-w-20 mt-[1px]">{`${t(
-                        "question",
+                        "question"
                       )} ${i + 1}: `}</div>
                       <span
                         dangerouslySetInnerHTML={{
@@ -483,7 +485,7 @@ function ExamTmasTab() {
       {(list ?? []).length != 0 && (
         <div className="w-full flex items-center justify-center">
           <span className="body_regular_14 mr-2">{`${total} ${t(
-            "result",
+            "result"
           )}`}</span>
 
           <Pagination
@@ -510,7 +512,7 @@ function ExamTmasTab() {
                   value: i,
                   label: (
                     <span className="pl-3 body_regular_14">{`${i}/${common.t(
-                      "page",
+                      "page"
                     )}`}</span>
                   ),
                 })),
