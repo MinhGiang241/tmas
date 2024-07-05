@@ -19,6 +19,7 @@ import { auth, facebookProvider, googleProvider } from "@/firebase/config";
 import { useRouter } from "next/navigation";
 import { emailRegex } from "@/services/validation/regex";
 import i18next from "i18next";
+import { deleteToken } from "@/utils/cookies";
 
 function LoginPage() {
   const { t, i18n } = useTranslation();
@@ -71,7 +72,7 @@ function LoginPage() {
       setLoading(false);
       if (dataResults?.code != 0) {
         errorToast(dataResults?.message);
-        localStorage.removeItem("access_token");
+        deleteToken();
         return;
       }
       // localStorage.setItem("access_token", dataResults?.data);

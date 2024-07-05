@@ -49,6 +49,7 @@ import { trained } from "@/services/api_services/onboarding";
 import { changeStudio } from "@/services/api_services/account_services";
 import { setUserData, userClear } from "@/redux/user/userSlice";
 import { UserData } from "@/data/user";
+import { deleteToken, setToken } from "@/utils/cookies";
 const EditorHook = dynamic(
   () => import("../../exams/components/react_quill/EditorWithUseQuill"),
   {
@@ -98,12 +99,12 @@ function CreateExaminationIntroduce({
   const onChangeStudio = async (ownerId?: string) => {
     try {
       var data = await changeStudio(ownerId);
-      localStorage.removeItem("access_token");
+      deleteToken();
       if (sessionStorage.getItem("access_token")) {
         sessionStorage.removeItem("access_token");
         sessionStorage.setItem("access_token", data["token"]);
       } else {
-        localStorage.setItem("access_token", data["token"]);
+        setToken(data["token"]);
       }
       var userNew = data["user"] as UserData;
       dispatch(userClear({}));
