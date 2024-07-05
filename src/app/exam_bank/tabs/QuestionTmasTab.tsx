@@ -313,10 +313,14 @@ function QuestionTmasTab() {
 
     if (active) {
       var cloneQuestion = _.cloneDeep(active);
+
+      console.log("cloneQuestion", cloneQuestion);
+
       cloneQuestion!.idGroupQuestion = idGroup;
       cloneQuestion!.isQuestionBank = true;
 
       const res = await cloneQuestionFromTmas(cloneQuestion!);
+
       if (res?.code != 0) {
         errorToast(res?.message ?? "");
         return;

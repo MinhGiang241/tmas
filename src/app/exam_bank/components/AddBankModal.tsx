@@ -17,14 +17,14 @@ interface Props extends BaseModalProps {
 function AddBankModal(props: Props) {
   const { t } = useTranslation("exam");
   var questionGroups = useAppSelector(
-    (state: RootState) => state.examGroup.list,
+    (state: RootState) => state.examGroup.list
   );
 
   const optionSelect = (props.questionGroups ?? []).map<any>(
     (v: QuestionGroupData, i: number) => ({
       label: v?.name,
       value: v?.id,
-    }),
+    })
   );
 
   interface FormValue {
