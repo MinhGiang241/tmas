@@ -655,6 +655,10 @@ function ResultPage({ params }: any) {
       dataIndex: "name",
     },
     {
+      title: t("expected_point"),
+      dataIndex: "diemyeucau",
+    },
+    {
       title: t("weight"),
       dataIndex: "trongso",
       render: (text: any, data: any) => (
@@ -669,32 +673,26 @@ function ResultPage({ params }: any) {
       ),
     },
     {
-      title: t("level"),
-      classNameTitle: "flex justify-center",
-      children: [
-        {
-          title: t("require"),
-          dataIndex: "diemyeucau",
-        },
-        {
-          title: t("sobaidat"),
-          dataIndex: "sobaidat",
-        },
-        {
-          title: t("titrongdat"),
-          dataIndex: "titrongdat",
-          render: (text: any, data: any) => (
-            <>
-              <FormattedNumber
-                value={text ?? 0}
-                style="decimal"
-                maximumFractionDigits={2}
-              />
-              {" %"}
-            </>
-          ),
-        },
-      ],
+      title: t("avg_score"),
+      dataIndex: "diemtrungbinh",
+    },
+    {
+      title: t("sobaidat"),
+      dataIndex: "sobaidat",
+    },
+    {
+      title: t("titrongdat"),
+      dataIndex: "titrongdat",
+      render: (text: any, data: any) => (
+        <>
+          <FormattedNumber
+            value={text ?? 0}
+            style="decimal"
+            maximumFractionDigits={2}
+          />
+          {" %"}
+        </>
+      ),
     },
   ];
 
@@ -914,6 +912,11 @@ function ResultPage({ params }: any) {
           <MTable
             sumData={{
               name: t("total_ability_score"),
+              diemtrungbinh: abilityData?.reduce(
+                (a: number, b: TableStatisticalReportData) =>
+                  a + (b.diemtrungbinh ?? 0),
+                0,
+              ),
               diemyeucau: abilityData?.reduce(
                 (a: number, b: TableStatisticalReportData) =>
                   a + (b.diemyeucau ?? 0),

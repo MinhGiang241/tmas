@@ -477,7 +477,7 @@
   "overview_judgement": "Đánh giá tổng quát",
   "exam_part_records": "Báo cáo phần thi",
   "ability": "Năng lực",
-  "weight": "Trọng số",
+  "weight": "Tỷ trọng",
   "level": "Cấp độ",
   "require": "Yêu cầu",
   "evaluate": "Đánh giá",
@@ -495,5 +495,7 @@
   "expectedPoint": "Yêu cầu",
   "sobaidat": "Số bài đạt",
   "titrongdat": "Tỷ trọng đạt",
-  "add_ranks":"Thêm hạng"
+  "add_ranks": "Thêm hạng",
+  "avg_score": "Điểm trung bình",
+  "expected_point": "Điểm kỳ vọng"
 }
