@@ -100,6 +100,19 @@ export interface MultiAnswerQuestionData extends BaseQuestionData {
   };
 }
 
+export interface SurveyQuestionData extends BaseQuestionData {
+  content?: {
+    answers?: {
+      point?: string;
+      text?: string;
+      idIcon?: string;
+      label?: string;
+    }[];
+    explainAnswer?: string;
+    isChangePosition?: boolean;
+  };
+}
+
 export interface ConnectQuestionData extends BaseQuestionData {
   content?: {
     explainAnswer?: string;

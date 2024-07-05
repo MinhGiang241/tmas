@@ -311,6 +311,19 @@ export interface BaseTmasQuestionExamData {
   Base?: BaseTmasQuestionData;
 }
 
+export interface SurveyTmasQuestionData extends BaseTmasQuestionData {
+  Content?: {
+    Answers?: {
+      Point?: string;
+      Text?: string;
+      idIcon?: string;
+      Label?: string;
+    }[];
+    ExplainAnswer?: string;
+    IsChangePosition?: boolean;
+  };
+}
+
 export interface MultiTmasQuestionData extends BaseTmasQuestionData {
   Content?: {
     Answers?: {
@@ -499,7 +512,7 @@ export interface PagingAdminExamTestResultParams {
     {
       name?: string;
       isAsc?: boolean;
-    },
+    }
   ];
   filters?: {
     fieldName?: string;

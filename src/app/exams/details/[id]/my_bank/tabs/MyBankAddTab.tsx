@@ -37,6 +37,7 @@ import {
 import { getQuestionGroups } from "@/services/api_services/exam_api";
 import { APIResults } from "@/data/api_results";
 import { ExamType } from "@/data/form_interface";
+import Evaluation from "../../question/Evaluation";
 
 function MyBankAddTab({
   hidden,
@@ -334,6 +335,25 @@ function MyBankAddTab({
             getData={() => loadQuestionsList(false)}
           />
         );
+      case QuestionType.Evaluation:
+        return (
+          <Evaluation
+            addText={t("add_quest_to_exam")}
+            deleteText={t("delete_quest_to_exam")}
+            isExist={isExist}
+            deleteExamBank={deleteExamBank}
+            canCheck
+            onChangeCheck={onChangeCheck}
+            tmasQuest
+            addExamBank={addExamBank}
+            key={e?.id}
+            question={e}
+            index={index + (indexPage - 1) * recordNum + 1}
+            questionGroup={group}
+            examId={e?.idExam}
+            getData={() => loadQuestionsList(false)}
+          />
+        );
       case QuestionType.Random:
         return (
           <Random
@@ -487,6 +507,7 @@ function MyBankAddTab({
               "Pairing",
               "Coding",
               "Essay",
+              "Evaluation",
               "",
             ].map((e: string) => ({
               value: e,
