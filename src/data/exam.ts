@@ -435,6 +435,8 @@ export interface TmasStudioExamData {
   NumberOfQuestions?: number;
   NumberOfTests?: number;
   OwnerId?: string;
+  ExamType?: ExamType;
+  ScoreRanks?: ScoreRank[];
   Parts: {
     _id?: string;
     Description?: string;
