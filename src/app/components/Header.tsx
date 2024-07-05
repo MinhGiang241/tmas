@@ -140,7 +140,7 @@ function Header({ path }: { path?: string }) {
       // await loadMembersWhenChangeStudio();
       // await loadingQuestionsAndExams(true, userNew.studio?._id);
     } catch (e: any) {
-      errorToast(e);
+      errorToast(data, e);
       dispatch(setMemberData([]));
     }
   };
@@ -161,7 +161,7 @@ function Header({ path }: { path?: string }) {
       );
     } catch (e: any) {
       dispatch(setLoadingMember(false));
-      errorToast(e);
+      errorToast(mem, e);
     }
   };
 
@@ -263,7 +263,7 @@ function Header({ path }: { path?: string }) {
                       return d == v;
                     })
                   ) {
-                    errorToast(t("please_verify"));
+                    errorToast(undefined, t("please_verify"));
                   }
 
                   setOpenDrawer(false);
@@ -335,14 +335,13 @@ function Header({ path }: { path?: string }) {
                       return d == e;
                     })
                   ) {
-                    errorToast(t("please_verify"));
+                    errorToast(undefined, t("please_verify"));
                   }
                 }}
-                className={`flex items-center text-center body_semibold_14 text-white px-5 h-full ${
-                  pathname.includes(e) || (pathname == "/" && e == "overview")
-                    ? "bg-m_primary_400 after:content-[''] border-b-white border-b-4"
-                    : ""
-                }`}
+                className={`flex items-center text-center body_semibold_14 text-white px-5 h-full ${pathname.includes(e) || (pathname == "/" && e == "overview")
+                  ? "bg-m_primary_400 after:content-[''] border-b-white border-b-4"
+                  : ""
+                  }`}
               >
                 <p>{t(e)}</p>
               </Link>

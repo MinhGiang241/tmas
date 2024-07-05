@@ -149,7 +149,7 @@ function ExamDetails({ params }: any) {
     }
 
     if (res.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
 
@@ -239,7 +239,7 @@ function ExamDetails({ params }: any) {
     // console.log(res);
     setAddLoading(false);
     if (res && res.code !== 0) {
-      errorToast(res.message || "");
+      errorToast(res, res.message || "");
       return;
     }
 
@@ -254,7 +254,7 @@ function ExamDetails({ params }: any) {
   const handleDelete = async () => {
     const res = await deleteQuestionPartById(idDelete);
     if (res && res.code !== 0) {
-      errorToast(res.message || "");
+      errorToast(res, res.message || "");
       return;
     }
     setOpenDelete(false);
@@ -378,7 +378,7 @@ function ExamDetails({ params }: any) {
             onChange={(event: any) =>
               setCustomExpectedPoint(event.target.value)
             }
-            // onChange={handleExpectedPointChange}
+          // onChange={handleExpectedPointChange}
           />
           <div className="flex">
             <div className="flex w-[50%] justify-center items-center h-12 bg-slate-300 rounded-md">
@@ -460,7 +460,7 @@ function ExamDetails({ params }: any) {
           var res = await CopyQuestion(params.id);
           console.log(res?.data, "copy");
           if (res?.code != 0) {
-            errorToast(res.message || "");
+            errorToast(res, res.message || "");
             return;
           }
           setOpenCopyQuestion(false);
@@ -828,8 +828,8 @@ function ExamDetails({ params }: any) {
                       a.createdTime < b.createdTime
                         ? -1
                         : a.createdTime > b.createdTime
-                        ? 1
-                        : 0
+                          ? 1
+                          : 0
                     )
                     .map((e: any, key: any) => {
                       var questionGroup = questionGroups?.find(

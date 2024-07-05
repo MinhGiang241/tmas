@@ -94,7 +94,7 @@ function ExamDetails({ params }: any) {
         }
 
         if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
         }
         console.log(res, "exam");

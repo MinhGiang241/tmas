@@ -58,7 +58,7 @@ function OtpModal({
       })
       .catch((e) => {
         setResendLoading(false);
-        errorToast(e);
+        errorToast(e, e?.message);
       });
   };
 
@@ -71,7 +71,7 @@ function OtpModal({
         onCancel();
       })
       .catch((e) => {
-        errorToast(e);
+        errorToast(e, e?.message);
         setSendLoading(false);
       });
   };
@@ -102,7 +102,7 @@ function OtpModal({
               setOtp(v);
             }
           }}
-          onComplete={() => {}}
+          onComplete={() => { }}
           length={6}
           autoFocus
           validateChar={(character: string, index: number) => {

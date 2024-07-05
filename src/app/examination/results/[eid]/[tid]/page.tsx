@@ -71,7 +71,7 @@ export default function Result({ params }: any) {
       examResult?.result?.couter?.numberQuestionNeedCheck != 0 &&
       examResult?.result?.completionState == ExamCompletionState.Checking
     ) {
-      errorToast(
+      errorToast(undefined,
         t("has_needcheck", {
           num: examResult?.result?.couter?.numberQuestionNeedCheck,
         }),
@@ -94,7 +94,7 @@ export default function Result({ params }: any) {
     //setValueFilter("all");
 
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     getExamResultDetails();
@@ -110,7 +110,7 @@ export default function Result({ params }: any) {
     // });
     // if (res?.code != 0) {
     //   setLoadingRematch(false);
-    //   errorToast(res?.message ?? "");
+    //   errorToast(res,res?.message ?? "");
     //   return;
     // }
     // getExamResultDetails();
@@ -127,7 +127,7 @@ export default function Result({ params }: any) {
   const getExamResultDetails = async () => {
     const res = await getAdminExamTestResultById(params?.tid);
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     setExamResult(res?.data.records[0]);
@@ -332,15 +332,15 @@ export default function Result({ params }: any) {
           />
           {!isAllEssayEmpty &&
             examResult?.result?.completionState !=
-              ExamCompletionState.Doing && <div className="w-3" />}
+            ExamCompletionState.Doing && <div className="w-3" />}
           {!isAllEssayEmpty &&
             examResult?.result?.completionState !=
-              ExamCompletionState.Doing && (
+            ExamCompletionState.Doing && (
               <MButton
                 loading={loadingRematch}
                 text={
                   examResult?.result?.completionState ==
-                  ExamCompletionState.Done
+                    ExamCompletionState.Done
                     ? t("rematch")
                     : t("match_done")
                 }
@@ -363,9 +363,8 @@ export default function Result({ params }: any) {
             {examResult?.result?.couter?.numberQuestionNeedCheck != 0 && (
               <div className="px-4 bg-m_warning_50 text-m_warnig_title py-2 font-semibold text-sm">
                 {t("has_essay", {
-                  num: `${
-                    examResult?.result?.couter?.numberQuestionNeedCheck ?? 0
-                  }`,
+                  num: `${examResult?.result?.couter?.numberQuestionNeedCheck ?? 0
+                    }`,
                 })}
               </div>
             )}
@@ -424,8 +423,8 @@ export default function Result({ params }: any) {
                           answerIndex! < 0
                             ? undefined
                             : examResult?.candidateAnswers![
-                                answerIndex as number
-                              ];
+                            answerIndex as number
+                            ];
 
                         return genQuestion(q, index, ans);
                       })}
@@ -441,19 +440,18 @@ export default function Result({ params }: any) {
         <div className="col-span-1 h-fit ml-2 max-lg:col-span-3 max-lg:row-end-1">
           <div className="bg-white rounded-lg">
             <div
-              className={`w-full h-10 ${
-                examResult?.result?.completionState == ExamCompletionState.Doing
-                  ? `bg-m_primary_100 text-m_primary_500`
-                  : examResult?.result?.completionState ==
-                      ExamCompletionState.Done
-                    ? `bg-m_success_50 text-m_success_500`
-                    : `bg-m_warning_50 text-m_warning_500`
-              } flex justify-center items-center py-auto rounded-t-lg body_bold_14`}
+              className={`w-full h-10 ${examResult?.result?.completionState == ExamCompletionState.Doing
+                ? `bg-m_primary_100 text-m_primary_500`
+                : examResult?.result?.completionState ==
+                  ExamCompletionState.Done
+                  ? `bg-m_success_50 text-m_success_500`
+                  : `bg-m_warning_50 text-m_warning_500`
+                } flex justify-center items-center py-auto rounded-t-lg body_bold_14`}
             >
               {examResult?.result?.completionState == ExamCompletionState.Doing
                 ? t("in_testing")?.toUpperCase()
                 : examResult?.result?.completionState ==
-                    ExamCompletionState.Done
+                  ExamCompletionState.Done
                   ? common.t("complete")?.toUpperCase()
                   : t("checking").toUpperCase()}
             </div>
@@ -462,33 +460,30 @@ export default function Result({ params }: any) {
                 {examResult?.candidate?.fullName}
               </div>
               <div
-                className={`${
-                  examResult?.result?.passState == ExamPassState.Pass
-                    ? `bg-m_success_50`
-                    : examResult?.result?.passState == ExamPassState?.NotPass
-                      ? "bg-m_error_100"
-                      : "bg-m_warning_50"
-                } px-4 py-1 flex items-center`}
+                className={`${examResult?.result?.passState == ExamPassState.Pass
+                  ? `bg-m_success_50`
+                  : examResult?.result?.passState == ExamPassState?.NotPass
+                    ? "bg-m_error_100"
+                    : "bg-m_warning_50"
+                  } px-4 py-1 flex items-center`}
               >
                 <div
-                  className={`font-bold text-lg ${
-                    examResult?.result?.passState == ExamPassState.Pass
-                      ? `text-m_success_600`
-                      : examResult?.result?.passState == ExamPassState?.NotPass
-                        ? "text-m_error_500"
-                        : "text-m_warning_600"
-                  }`}
+                  className={`font-bold text-lg ${examResult?.result?.passState == ExamPassState.Pass
+                    ? `text-m_success_600`
+                    : examResult?.result?.passState == ExamPassState?.NotPass
+                      ? "text-m_error_500"
+                      : "text-m_warning_600"
+                    }`}
                 >
                   {examResult?.result?.score ?? 0}
                 </div>
                 <div
-                  className={`${
-                    examResult?.result?.passState == ExamPassState.Pass
-                      ? `text-m_success_600`
-                      : examResult?.result?.passState == ExamPassState?.NotPass
-                        ? "text-m_error_500"
-                        : "text-m_warning_600"
-                  } text-sm`}
+                  className={`${examResult?.result?.passState == ExamPassState.Pass
+                    ? `text-m_success_600`
+                    : examResult?.result?.passState == ExamPassState?.NotPass
+                      ? "text-m_error_500"
+                      : "text-m_warning_600"
+                    } text-sm`}
                 >
                   /
                   {examResult?.examTestDataCreatedWhenTest?.examVersion?.exam
@@ -549,7 +544,7 @@ export default function Result({ params }: any) {
                   {dayjs
                     .duration(
                       1000 *
-                        (examResult?.timeLine?.totalTimeDoTestSeconds ?? 0),
+                      (examResult?.timeLine?.totalTimeDoTestSeconds ?? 0),
                     )
                     .format("HH:mm:ss")}
                 </div>

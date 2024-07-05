@@ -69,7 +69,7 @@ export default function Explain({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -86,14 +86,13 @@ export default function Explain({
           });
           setDupLoading(false);
           if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
           successToast(res?.message ?? t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
-            `/${isBank ? "exam_bank" : "exams/details"}/${
-              examId ?? "u"
+            `/${isBank ? "exam_bank" : "exams/details"}/${examId ?? "u"
             }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
           );
           await getData();
@@ -113,7 +112,7 @@ export default function Explain({
           var res = await deleteQuestionById(question?.id);
           setDeleteLoading(false);
           if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
           successToast(res?.message ?? t("success_delete_question"));
@@ -141,9 +140,8 @@ export default function Explain({
               <div className="flex flex-col max-lg:mb-2">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${
-                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                  }`}
+                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                    }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -214,10 +212,8 @@ export default function Explain({
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(
-                        `/${isBank ? "exam_bank" : "exams/details"}/${
-                          examId ?? "u"
-                        }/edit?questId=${question.id}&isBank=${
-                          isBank ? "true" : "false"
+                        `/${isBank ? "exam_bank" : "exams/details"}/${examId ?? "u"
+                        }/edit?questId=${question.id}&isBank=${isBank ? "true" : "false"
                         }`,
                       );
                     }}

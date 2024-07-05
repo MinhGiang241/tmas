@@ -37,9 +37,10 @@ function EditAcountInfo({ open, onCancel, onOk, data }: Props) {
     initialValues,
     validate,
     onSubmit: async (values: UserData) => {
+      var res;
       try {
         setLoading(true);
-        let res = await updateRoleMember({
+        res = await updateRoleMember({
           userId: data?._id!,
           role: values.role!,
         });
@@ -48,7 +49,7 @@ function EditAcountInfo({ open, onCancel, onOk, data }: Props) {
         onOk!();
       } catch (e: any) {
         setLoading(false);
-        errorToast(e);
+        errorToast(res, e);
       }
     },
   });

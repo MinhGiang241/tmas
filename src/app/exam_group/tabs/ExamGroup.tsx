@@ -125,9 +125,10 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
   };
 
   const onOkDelete = async () => {
+    var res;
     try {
       setLoadingDelete(true);
-      var res = await deleteExamGroupTest(active, user.studio?._id);
+      res = await deleteExamGroupTest(active, user.studio?._id);
       if (res.code != 0) {
         throw res?.message;
       }
@@ -138,7 +139,7 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
       setLoadingDelete(false);
       onCancelDelete();
     } catch (e: any) {
-      errorToast(e);
+      errorToast(res, e);
       setActive(undefined);
       setOpenDelete(false);
       setLoadingDelete(false);

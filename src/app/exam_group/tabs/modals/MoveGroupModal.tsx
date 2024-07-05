@@ -64,7 +64,7 @@ function MoveGroupModal(props: MoveGroupProps) {
         props?.onOk!();
         props?.onCancel();
       } else {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
       }
     },
   });

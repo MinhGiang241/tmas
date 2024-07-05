@@ -181,7 +181,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
     var res: APIResults = await deleteExamination(active?.id);
 
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       setDeleteLoading(false);
       return;
     }
@@ -207,7 +207,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
     if (result.code === 0) {
       successToast(result?.message ?? common.t("success"));
     } else {
-      errorToast(result?.message ?? "");
+      errorToast(result, result?.message ?? "");
     }
   };
 

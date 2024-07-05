@@ -410,17 +410,17 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
       });
     }
     var res = await //overviewExamCounterExcel
-    overviewListExamReportExel({
-      skip: (indexPage - 1) * recordNum,
-      limit: recordNum,
-      group: {
-        children: [...filters],
-      },
-      sorted: [sorter],
-    });
+      overviewListExamReportExel({
+        skip: (indexPage - 1) * recordNum,
+        limit: recordNum,
+        group: {
+          children: [...filters],
+        },
+        sorted: [sorter],
+      });
 
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
 

@@ -112,7 +112,7 @@ function CreateExaminationIntroduce({
 
       // await loadMembersWhenChangeStudio();
       // await loadingQuestionsAndExams(true, userNew.studio?._id);
-    } catch (e: any) {}
+    } catch (e: any) { }
   };
 
   useEffect(() => {
@@ -208,7 +208,7 @@ function CreateExaminationIntroduce({
       examination?.idExam ? examination?.idExam : examId
     );
     if (res.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     setExam(res?.data?.records[0]);
@@ -260,7 +260,7 @@ function CreateExaminationIntroduce({
     description: examination?.description,
     turn_per_code:
       examination?.accessCodeSettings &&
-      examination?.accessCodeSettingType == "MultiCode"
+        examination?.accessCodeSettingType == "MultiCode"
         ? examination?.accessCodeSettings[0]?.limitOfAccess?.toString()
         : undefined,
   };
@@ -301,7 +301,7 @@ function CreateExaminationIntroduce({
     //   await formik.setFieldTouched(v, true);
     // });
     if (codeList.length == 0 && code == "MultiCode") {
-      errorToast(t("list_code_not_empty"));
+      errorToast(undefined, t("list_code_not_empty"));
       return;
     }
     formik.handleSubmit();
@@ -321,7 +321,7 @@ function CreateExaminationIntroduce({
         formData.append("files", selectedAvatar);
         var avatarIdData = await uploadStudioDocument(sessionId, formData);
         if (avatarIdData.code != 0) {
-          errorToast(avatarIdData?.message ?? "");
+          errorToast(avatarIdData, avatarIdData?.message ?? "");
           createSessionId();
           setLoading(false);
           return;
@@ -370,7 +370,7 @@ function CreateExaminationIntroduce({
           code == "None" || share === "Public"
             ? []
             : code == "One"
-            ? [
+              ? [
                 {
                   //TODO: sửa sau cái này để vì _id trong studio là ownerId
                   studioId: studio?._id,
@@ -379,7 +379,7 @@ function CreateExaminationIntroduce({
                   numberOfAccess: 0,
                 },
               ]
-            : [
+              : [
                 ...codeList.map((e: any) => ({
                   //TODO: sửa sau cái này để vì _id trong studio là ownerId
                   studioId: studio?._id,
@@ -405,14 +405,14 @@ function CreateExaminationIntroduce({
         requiredInfoSetting:
           share == "Public"
             ? {
-                phoneNumber: false,
-                fullName: false,
-                idGroup: false,
-                birthday: false,
-                email: false,
-                identifier: false,
-                jobPosition: false,
-              }
+              phoneNumber: false,
+              fullName: false,
+              idGroup: false,
+              birthday: false,
+              email: false,
+              identifier: false,
+              jobPosition: false,
+            }
             : requiredInfoSetting,
         sharingSetting: share,
         idAvatarThumbnail,
@@ -421,14 +421,14 @@ function CreateExaminationIntroduce({
           share === "Public"
             ? {}
             : {
-                ipWhiteLists: formik.values["ips"],
-                validFrom: values.start_time
-                  ? dayjs(values?.start_time, dateFormat).toISOString()
-                  : undefined,
-                validTo: values?.end_time
-                  ? dayjs(values?.end_time, dateFormat).toISOString()
-                  : undefined,
-              },
+              ipWhiteLists: formik.values["ips"],
+              validFrom: values.start_time
+                ? dayjs(values?.start_time, dateFormat).toISOString()
+                : undefined,
+              validTo: values?.end_time
+                ? dayjs(values?.end_time, dateFormat).toISOString()
+                : undefined,
+            },
         idExam: idExam,
         idSession: sessionId,
         isPushToBank: push,
@@ -436,11 +436,11 @@ function CreateExaminationIntroduce({
           share === "Private"
             ? {}
             : {
-                goldPrice: values?.gold_price
-                  ? parseInt(values?.gold_price)
-                  : undefined,
-                isEnable: true,
-              },
+              goldPrice: values?.gold_price
+                ? parseInt(values?.gold_price)
+                : undefined,
+              isEnable: true,
+            },
       };
 
       // console.log("submitData", submitData);
@@ -454,7 +454,7 @@ function CreateExaminationIntroduce({
       if (dataResults?.code != 0) {
         setLoading(false);
         createSessionId();
-        errorToast(dataResults?.message ?? "");
+        errorToast(dataResults, dataResults?.message ?? "");
         return;
       }
 

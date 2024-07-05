@@ -46,7 +46,7 @@ export default function Introduce() {
   const [dataExamTopicVersion, setDataExamTopicVersion] = useState([]);
   const [dataTopicNew, setDataTopicNew] = useState<DataGroupChild[]>([]);
   const [dataNewChildren, setDataNewChildren] = useState<
-    { id?: string; oldId?: string; [key: string]: any }[]
+    { id?: string; oldId?: string;[key: string]: any }[]
   >([]);
 
   const getDataTopic = async () => {
@@ -57,7 +57,7 @@ export default function Introduce() {
       setDataTopic(res?.data);
       return;
     }
-    errorToast(res?.message ?? "");
+    errorToast(res, res?.message ?? "");
   };
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function Introduce() {
   //     setDataTopicNew([...a]);
   //     return;
   //   }
-  //   errorToast(res?.message ?? "");
+  //   errorToast(res,res?.message ?? "");
   // };
 
   const getDataTopicChild = async () => {
@@ -117,11 +117,11 @@ export default function Introduce() {
         setDataNewChildren(arr);
         dataExamByTopic(res?.data);
       } else {
-        errorToast(res?.message ?? "An error occurred");
+        errorToast(res, res?.message ?? "An error occurred");
       }
     } catch (error) {
       console.error("Error in getDataTopicChild:", error);
-      errorToast("An unexpected error occurred");
+      errorToast(undefined, "An unexpected error occurred");
     }
   };
 
@@ -164,7 +164,7 @@ export default function Introduce() {
 
       // await loadMembersWhenChangeStudio();
       // await loadingQuestionsAndExams(true, userNew.studio?._id);
-    } catch (e: any) {}
+    } catch (e: any) { }
   };
 
   useEffect(() => {
@@ -278,8 +278,8 @@ export default function Introduce() {
         dataNewChildren?.length === 0
           ? undefined
           : indexIdGroup === -1
-          ? dataNewChildren[0]?.id
-          : groupId,
+            ? dataNewChildren[0]?.id
+            : groupId,
       idSession: active?.version?.examData?.IdSession,
       studioId: active?.version?.examData?.StudioId,
       name: active?.version?.name,
@@ -311,7 +311,7 @@ export default function Introduce() {
     console.log(res, "examDataa123");
 
     if (res.code != 0) {
-      errorToast(res.message ?? "");
+      errorToast(res, res.message ?? "");
       return;
     }
     if (value != undefined) {
@@ -402,21 +402,18 @@ export default function Introduce() {
             </div>
             <div className="flex justify-center items-center mr-[130px]">
               <div
-                className={`w-[8px] h-[8px] rounded-full ${
-                  currentStep >= 1 ? "bg-black" : "bg-slate-400"
-                }`}
+                className={`w-[8px] h-[8px] rounded-full ${currentStep >= 1 ? "bg-black" : "bg-slate-400"
+                  }`}
               />
               <div className="w-1" />
               <div
-                className={`w-[8px] h-[8px] rounded-full ${
-                  currentStep >= 2 ? "bg-black" : "bg-slate-400"
-                }`}
+                className={`w-[8px] h-[8px] rounded-full ${currentStep >= 2 ? "bg-black" : "bg-slate-400"
+                  }`}
               />
               <div className="w-1" />
               <div
-                className={`w-[8px] h-[8px] rounded-full ${
-                  currentStep >= 3 ? "bg-black" : "bg-slate-400"
-                }`}
+                className={`w-[8px] h-[8px] rounded-full ${currentStep >= 3 ? "bg-black" : "bg-slate-400"
+                  }`}
               />
               {/* <div className="w-1" />
               <div
@@ -447,11 +444,10 @@ export default function Introduce() {
                   <div
                     key={key}
                     onClick={() => toggleSelection(x)}
-                    className={`cursor-pointer rounded-md border w-auto mr-2 p-1 px-5 mb-2 ${
-                      selectedItems.some((a: any) => x._id! == a._id)
-                        ? "bg-[#E2F0F3] text-[#0B8199] border-[#0B8199] font-semibold text-base"
-                        : "font-semibold text-base bg-[#F4F5F5] text-[#B6BAC4]"
-                    }`}
+                    className={`cursor-pointer rounded-md border w-auto mr-2 p-1 px-5 mb-2 ${selectedItems.some((a: any) => x._id! == a._id)
+                      ? "bg-[#E2F0F3] text-[#0B8199] border-[#0B8199] font-semibold text-base"
+                      : "font-semibold text-base bg-[#F4F5F5] text-[#B6BAC4]"
+                      }`}
                   >
                     {x?.name}
                   </div>
@@ -473,20 +469,18 @@ export default function Introduce() {
                         setValue(key);
                         setActive(x);
                       }}
-                      className={`md:w-[653px] md:h-[64px] w-[300px] h-[50px] flex items-center justify-between bg-[#E2F0F3] px-3 rounded-md cursor-pointer mb-2 ${
-                        value === key
-                          ? "border-[#0B8199] border bg-[#0B8199]"
-                          : "bg-[#F4F5F5]"
-                      }`}
+                      className={`md:w-[653px] md:h-[64px] w-[300px] h-[50px] flex items-center justify-between bg-[#E2F0F3] px-3 rounded-md cursor-pointer mb-2 ${value === key
+                        ? "border-[#0B8199] border bg-[#0B8199]"
+                        : "bg-[#F4F5F5]"
+                        }`}
                     >
                       <div className="font-semibold text-base">
                         {x?.version?.name}
                       </div>
                       <div className="w-[24px] h-[24px] border-[1px] border-[#9EA3B0] p-2 rounded-full flex justify-center items-center">
                         <div
-                          className={`w-[15px] h-[15px] rounded-full ${
-                            value === key ? "bg-[#0B8199] p-2" : ""
-                          }`}
+                          className={`w-[15px] h-[15px] rounded-full ${value === key ? "bg-[#0B8199] p-2" : ""
+                            }`}
                         />
                       </div>
                     </button>

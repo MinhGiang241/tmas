@@ -91,49 +91,49 @@ function ExaminationPage() {
     const dataExamination: APIResults = await getExaminationTestList(
       search
         ? {
-            SharingSetting: status == "Private" ? "Private" : undefined,
-            LockState:
-              status === "Lock" || status === "Unlock" ? status : undefined,
-            ApprovedState:
-              status === "Approved" ||
+          SharingSetting: status == "Private" ? "Private" : undefined,
+          LockState:
+            status === "Lock" || status === "Unlock" ? status : undefined,
+          ApprovedState:
+            status === "Approved" ||
               status === "Pending" ||
               status === "Rejected"
-                ? status
-                : undefined,
-            isIncludeExamVersion: false,
-            "FilterByName.Name": "Name",
-            "FilterByName.InValues": search ?? undefined,
-            "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
-            "FilterByExamGroupId.Name": "ExamGroupId",
-            "Paging.RecordPerPage": recordNum,
-            "Paging.StartIndex": indexPage, //(indexPage - 1) * recordNum,
-            "SorterByName.isAsc": sort == "name" ? true : undefined,
-            "SorterByCreateTime.IsAsc": sort == "time" ? false : undefined,
-          }
+              ? status
+              : undefined,
+          isIncludeExamVersion: false,
+          "FilterByName.Name": "Name",
+          "FilterByName.InValues": search ?? undefined,
+          "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
+          "FilterByExamGroupId.Name": "ExamGroupId",
+          "Paging.RecordPerPage": recordNum,
+          "Paging.StartIndex": indexPage, //(indexPage - 1) * recordNum,
+          "SorterByName.isAsc": sort == "name" ? true : undefined,
+          "SorterByCreateTime.IsAsc": sort == "time" ? false : undefined,
+        }
         : {
-            SharingSetting: status == "Private" ? "Private" : undefined,
-            LockState:
-              status === "Lock" || status === "Unlock" ? status : undefined,
-            ApprovedState:
-              status === "Approved" ||
+          SharingSetting: status == "Private" ? "Private" : undefined,
+          LockState:
+            status === "Lock" || status === "Unlock" ? status : undefined,
+          ApprovedState:
+            status === "Approved" ||
               status === "Pending" ||
               status === "Rejected"
-                ? status
-                : undefined,
-            isIncludeExamVersion: false,
-            "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
-            "FilterByExamGroupId.Name": "Name",
-            "Paging.RecordPerPage": recordNum,
-            "Paging.StartIndex": indexPage, //(indexPage - 1) * recordNum,
-            "SorterByName.isAsc": sort == "name" ? true : undefined,
-            "SorterByCreateTime.IsAsc": sort == "time" ? false : undefined,
-          },
+              ? status
+              : undefined,
+          isIncludeExamVersion: false,
+          "FilterByExamGroupId.InValues": !groupId ? undefined : groupId,
+          "FilterByExamGroupId.Name": "Name",
+          "Paging.RecordPerPage": recordNum,
+          "Paging.StartIndex": indexPage, //(indexPage - 1) * recordNum,
+          "SorterByName.isAsc": sort == "name" ? true : undefined,
+          "SorterByCreateTime.IsAsc": sort == "time" ? false : undefined,
+        },
     );
     console.log("exminationlist", dataExamination);
     if (dataExamination?.code != 0) {
       setLoading(false);
       setList([]);
-      errorToast(dataExamination?.message ?? "");
+      errorToast(dataExamination, dataExamination?.message ?? "");
       return;
     }
     var data: any = dataExamination.data;
@@ -234,7 +234,7 @@ function ExaminationPage() {
     var res: APIResults = await deleteExaminationById(active?.id);
 
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       setDeleteLoading(false);
       return;
     }
@@ -253,7 +253,7 @@ function ExaminationPage() {
 
     var data = await duplicateExamination({ ids: [active?.id as string] });
     if (data?.code != 0) {
-      errorToast(data?.message ?? "");
+      errorToast(data, data?.message ?? "");
       setActive(undefined);
       setDupLoading(false);
       return;
@@ -460,30 +460,28 @@ function ExaminationPage() {
                   <div className="flex-1 items-start justify-start flex-grow flex flex-col">
                     <div className="flex items-center ">
                       <div
-                        className={`ml-1 mr-3 rounded-[50%] min-w-3 w-3 h-3 ${
-                          v?.isActive &&
+                        className={`ml-1 mr-3 rounded-[50%] min-w-3 w-3 h-3 ${v?.isActive &&
                           (!v?.validAccessSetting?.validTo ||
                             dayjs(v?.validAccessSetting?.validTo).isAfter(
                               Date(),
                             ))
-                            ? "bg-m_success_500"
-                            : "bg-m_neutral_300"
-                        }`}
+                          ? "bg-m_success_500"
+                          : "bg-m_neutral_300"
+                          }`}
                       />
                       <div className="w-full flex justify-start">
                         <div className={`body_semibold_16`}>{v.name}</div>
 
                         <div
-                          className={`ml-8 ${
-                            v?.sharingSetting == "Public"
-                              ? "text-[#366DFF]"
-                              : "text-[#FF9736]"
-                          }`}
+                          className={`ml-8 ${v?.sharingSetting == "Public"
+                            ? "text-[#366DFF]"
+                            : "text-[#FF9736]"
+                            }`}
                         >
                           {/* {v.tag} */}
                           {v?.sharingSetting === "Public" &&
-                          v?.goldSetting?.isEnable &&
-                          v?.goldSetting.goldPrice != 0
+                            v?.goldSetting?.isEnable &&
+                            v?.goldSetting.goldPrice != 0
                             ? `#Public_${v?.goldSetting?.goldPrice}`
                             : v?.sharingSetting === "Public"
                               ? `#Public_free`
@@ -506,13 +504,13 @@ function ExaminationPage() {
                       <div className="flex mx-4 items-center">
                         <span className="mx-4 body_regular_14 text-nowrap">
                           {!v?.validAccessSetting?.validFrom &&
-                          !v?.validAccessSetting?.validTo
+                            !v?.validAccessSetting?.validTo
                             ? t("no_limit_time")
                             : `${dayjs(v?.validAccessSetting?.validFrom).format(
-                                dateFormat,
-                              )} - ${dayjs(
-                                v?.validAccessSetting?.validTo,
-                              ).format(dateFormat)}`}
+                              dateFormat,
+                            )} - ${dayjs(
+                              v?.validAccessSetting?.validTo,
+                            ).format(dateFormat)}`}
                         </span>
                       </div>
                       <div className="flex items-center">
@@ -632,7 +630,7 @@ function ExaminationPage() {
                                 isActive: t,
                               });
                               if (data?.code != 0) {
-                                errorToast(data?.message ?? "");
+                                errorToast(data, data?.message ?? "");
                                 return;
                               }
 
@@ -671,17 +669,17 @@ function ExaminationPage() {
                                 if (
                                   v?.sharingSetting == "Public" &&
                                   v?.stateInfo?.approvedState ==
-                                    AppovedState.Pending
+                                  AppovedState.Pending
                                 ) {
-                                  errorToast(t("not_approve_send_info"));
+                                  errorToast(undefined, t("not_approve_send_info"));
                                   return;
                                 }
                                 if (
                                   v?.sharingSetting == "Public" &&
                                   v?.stateInfo?.approvedState ==
-                                    AppovedState.Rejected
+                                  AppovedState.Rejected
                                 ) {
-                                  errorToast(t("reject_send_info"));
+                                  errorToast(undefined, t("reject_send_info"));
                                   return;
                                 }
 
@@ -699,17 +697,17 @@ function ExaminationPage() {
                                 if (
                                   v?.sharingSetting == "Public" &&
                                   v?.stateInfo?.approvedState ==
-                                    AppovedState.Pending
+                                  AppovedState.Pending
                                 ) {
-                                  errorToast(t("not_approve_send_result"));
+                                  errorToast(undefined, t("not_approve_send_result"));
                                   return;
                                 }
                                 if (
                                   v?.sharingSetting == "Public" &&
                                   v?.stateInfo?.approvedState ==
-                                    AppovedState.Rejected
+                                  AppovedState.Rejected
                                 ) {
-                                  errorToast(t("reject_send_result"));
+                                  errorToast(undefined, t("reject_send_result"));
                                   return;
                                 }
 

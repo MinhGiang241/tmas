@@ -105,7 +105,7 @@ function CreatePage({ exam, isEdit }: any) {
       const newToValue = parseInt(value);
 
       if (false) {
-        errorToast("Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại.");
+        errorToast(undefined, "Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại.");
         return;
       } else {
         values[index].toScore = newToValue;
@@ -197,7 +197,7 @@ function CreatePage({ exam, isEdit }: any) {
         inputFields.length > 0 &&
         inputFields.some((x: any) => x?.label.trim() === "");
       if (validateFields) {
-        errorToast(
+        errorToast(undefined,
           "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả.",
         );
         return;
@@ -241,7 +241,7 @@ function CreatePage({ exam, isEdit }: any) {
         ? await updateExam(dataSubmit)
         : await createExaminationList(dataSubmit);
       if (results?.code != 0) {
-        errorToast(results?.message ?? "");
+        errorToast(results, results?.message ?? "");
         setLoading(false);
         return;
       }
@@ -324,11 +324,11 @@ function CreatePage({ exam, isEdit }: any) {
     const data = await getTags(
       searchKey
         ? {
-            "Names.Name": "Name",
-            "Names.InValues": searchKey,
-            "Paging.StartIndex": 0,
-            "Paging.RecordPerPage": 100,
-          }
+          "Names.Name": "Name",
+          "Names.InValues": searchKey,
+          "Paging.StartIndex": 0,
+          "Paging.RecordPerPage": 100,
+        }
         : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
     );
     if (data?.code != 0) {
@@ -365,9 +365,8 @@ function CreatePage({ exam, isEdit }: any) {
               </button>
             ) : (
               <Link
-                className={`${
-                  pathname.includes("/exams/create") ? "text-m_neutral_900" : ""
-                } body_regular_14`}
+                className={`${pathname.includes("/exams/create") ? "text-m_neutral_900" : ""
+                  } body_regular_14`}
                 href={"/exams/create"}
               >
                 {t("create_exam")}
@@ -621,11 +620,10 @@ function CreatePage({ exam, isEdit }: any) {
             <div className="body_semibold_14 flex ml-3 w-full mt-3">
               <button
                 // className={`w-1/2 flex justify-center items-center py-2 border relative`}
-                className={`w-1/2 flex justify-center items-center py-2 border relative ${
-                  selectedButton === ExamType.Test
-                    ? "bg-sky-300 text-black"
-                    : "bg-white text-black"
-                }`}
+                className={`w-1/2 flex justify-center items-center py-2 border relative ${selectedButton === ExamType.Test
+                  ? "bg-sky-300 text-black"
+                  : "bg-white text-black"
+                  }`}
                 onClick={() => handleButtonClick(ExamType.Test)}
               >
                 <span>{t("specific")}</span>
@@ -660,11 +658,10 @@ function CreatePage({ exam, isEdit }: any) {
               </button>
               <button
                 // className={`w-1/2 flex justify-center items-center py-2 relative border`}
-                className={`w-1/2 flex justify-center items-center py-2 border relative ${
-                  selectedButton === ExamType.Survey
-                    ? "bg-sky-300 text-black"
-                    : "bg-white text-black"
-                }`}
+                className={`w-1/2 flex justify-center items-center py-2 border relative ${selectedButton === ExamType.Survey
+                  ? "bg-sky-300 text-black"
+                  : "bg-white text-black"
+                  }`}
                 onClick={() => handleButtonClick(ExamType.Survey)}
               >
                 <span>{t("servey")}</span>

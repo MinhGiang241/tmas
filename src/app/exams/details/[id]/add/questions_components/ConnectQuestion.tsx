@@ -173,10 +173,10 @@ function ConnectQuestion({
     validate,
     onSubmit: async (values: ConnectQuestionValue) => {
       if (questionList.length === 0) {
-        errorToast(t("at_least_1_question"));
+        errorToast(res, t("at_least_1_question"));
       }
       if (answerList.length === 0) {
-        errorToast(t("at_least_1_answer"));
+        errorToast(res, t("at_least_1_answer"));
       }
 
       var s = true;
@@ -187,7 +187,7 @@ function ConnectQuestion({
       }
 
       if (!s) {
-        errorToast(t("each_quest_has_answer"));
+        errorToast(res, t("each_quest_has_answer"));
         return;
       }
 
@@ -227,7 +227,7 @@ function ConnectQuestion({
         : await createConnectQuestion(dataSubmit);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
-        errorToast(res.message ?? "");
+        errorToast(res, res.message ?? "");
         return;
       }
       dispatch(resetConnectAnswer(1));

@@ -154,7 +154,7 @@ function AccountInfo() {
               <button
                 onClick={async () => {
                   if (!user?.verified) {
-                    errorToast(t("please_verify"));
+                    errorToast(undefined, t("please_verify"));
                     return;
                   }
                   setUpdateKey(Date.now());
@@ -170,7 +170,7 @@ function AccountInfo() {
                 <button
                   onClick={() => {
                     if (!user?.verified) {
-                      errorToast(t("please_verify"));
+                      errorToast(undefined, t("please_verify"));
                       return;
                     }
                     resendEmail(data);
@@ -184,7 +184,7 @@ function AccountInfo() {
               className="ml-2"
               onClick={() => {
                 if (!user?.verified) {
-                  errorToast(t("please_verify"));
+                  errorToast(undefined, t("please_verify"));
                   return;
                 }
                 setActiveMem(data);
@@ -207,9 +207,10 @@ function AccountInfo() {
   }, [user]);
 
   const resendEmail = async (mem: UserData) => {
+    var res;
     try {
       dispatch(setLoadingMember(true));
-      var res = await sendInviteEmailToMember({
+      res = await sendInviteEmailToMember({
         email: mem.email!,
         role: mem.role!,
       });
@@ -217,14 +218,15 @@ function AccountInfo() {
       dispatch(setLoadingMember(false));
     } catch (e: any) {
       dispatch(setLoadingMember(false));
-      errorToast(e);
+      errorToast(e, e.message);
     }
   };
 
   const deleteMember = async (mem?: UserData) => {
+    var res;
     try {
       setLoadingDelete(true);
-      let res;
+
       if (!mem?.isInvite) {
         res = await deleteMemberFromWorkSpace({ userId: mem?._id });
       } else {
@@ -235,7 +237,7 @@ function AccountInfo() {
       loadMembers();
     } catch (e: any) {
       setLoadingDelete(false);
-      errorToast(e);
+      errorToast(res, e);
     }
   };
 
@@ -260,7 +262,7 @@ function AccountInfo() {
       dispatch(setLoadingMember(false));
     } catch (e: any) {
       dispatch(setLoadingMember(false));
-      // errorToast(e);
+      // errorToast(res,e);
     }
   };
 
@@ -323,7 +325,7 @@ function AccountInfo() {
             <Button
               onClick={() => {
                 if (!user?.verified) {
-                  errorToast(t("please_verify"));
+                  errorToast(undefined, t("please_verify"));
                   return;
                 }
                 setAddKey(Date.now());

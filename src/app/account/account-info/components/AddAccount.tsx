@@ -74,7 +74,7 @@ function AddAccount({ open, onCancel, onOk }: Props) {
         .catch((e) => {
           console.log(e);
           setLoading(false);
-          errorToast(e);
+          errorToast(e, e?.message);
         });
     },
   });

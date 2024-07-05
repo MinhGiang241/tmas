@@ -66,12 +66,12 @@ function TrueFalseQuestion({
       setIsChangePosition(existedQuest?.content?.isChangePosition ?? false);
       var a =
         existedQuest?.content?.answers &&
-        existedQuest?.content?.answers.length != 0
+          existedQuest?.content?.answers.length != 0
           ? existedQuest?.content?.answers[0]
           : {};
       var b =
         existedQuest?.content?.answers &&
-        existedQuest?.content?.answers.length >= 2
+          existedQuest?.content?.answers.length >= 2
           ? existedQuest?.content?.answers[1]
           : {};
 
@@ -118,12 +118,12 @@ function TrueFalseQuestion({
     explain: existedQuest?.content?.explainAnswer ?? undefined,
     a:
       existedQuest?.content?.answers &&
-      existedQuest?.content?.answers?.length != 0
+        existedQuest?.content?.answers?.length != 0
         ? existedQuest?.content?.answers[0]?.text
         : undefined,
     b:
       existedQuest?.content?.answers &&
-      existedQuest?.content?.answers?.length >= 2
+        existedQuest?.content?.answers?.length >= 2
         ? existedQuest?.content?.answers[1]?.text
         : undefined,
   };
@@ -173,7 +173,7 @@ function TrueFalseQuestion({
       // console.log(bResult);
       // return;
       if (!correctAnswer) {
-        errorToast(t("at_least_1_true_answer"));
+        errorToast(res, t("at_least_1_true_answer"));
         return;
       }
 
@@ -214,7 +214,7 @@ function TrueFalseQuestion({
         : await createTrueFalseQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
-        errorToast(res.message ?? "");
+        errorToast(res, res.message ?? "");
         return;
       }
       successToast(

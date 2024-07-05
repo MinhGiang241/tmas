@@ -125,7 +125,7 @@ function RegisterPage() {
           console.log(v);
         })
         .catch((e) => {
-          errorToast(e);
+          errorToast(e, e?.message);
           setLoading(false);
           console.log(e);
         });
@@ -165,7 +165,7 @@ function RegisterPage() {
         router.push("/");
       })
       .catch((e) => {
-        errorToast(e);
+        errorToast(e, e?.message);
         setFLoading(false);
         setGLoading(false);
       });
@@ -180,7 +180,7 @@ function RegisterPage() {
         console.log("googleauth", data);
       })
       .catch((e: any) => {
-        errorToast(e?.message);
+        errorToast(undefined, e?.message);
         setGLoading(false);
       });
   };
@@ -193,7 +193,7 @@ function RegisterPage() {
         console.log("facebook auth", data);
       })
       .catch((e: any) => {
-        errorToast(e?.message);
+        errorToast(undefined, e?.message);
         setFLoading(false);
       });
   };
@@ -226,7 +226,7 @@ function RegisterPage() {
               touch={formik.touched.full_name}
               onBlur={formik.handleBlur}
               value={formik.values.full_name}
-              // formik={formik}
+            // formik={formik}
             />
             <MInput
               prefix={<BuildingIcon />}

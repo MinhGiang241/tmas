@@ -77,7 +77,7 @@ function ResetPasswordPage() {
         })
         .catch((e) => {
           setSendLoading(false);
-          errorToast(e);
+          errorToast(e, e?.message);
         });
 
       //setFormState(StateForm.ENTER_PASSWORD);
@@ -122,7 +122,7 @@ function ResetPasswordPage() {
         })
         .catch((e) => {
           setConfirmLoading(false);
-          errorToast(e);
+          errorToast(e, e?.message);
         });
     },
   });
@@ -254,7 +254,7 @@ function ResetPasswordPage() {
         onChangeState={() => setFormState(StateForm.ENTER_PASSWORD)}
         key={modalKey}
         email={email}
-        onOk={() => {}}
+        onOk={() => { }}
         open={open}
         onCancel={() => {
           setOtp("");

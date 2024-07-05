@@ -70,24 +70,24 @@ function MyQuestionTab() {
       studioSorters: [
         sort != "A-Z"
           ? {
-              name: "CreatedTime",
-              isAsc: false,
-            }
+            name: "CreatedTime",
+            isAsc: false,
+          }
           : {
-              name: "UnsignedName",
-              isAsc: true,
-            },
+            name: "UnsignedName",
+            isAsc: true,
+          },
       ],
       sorters: [
         sort != "A-Z"
           ? {
-              name: "CreatedTime",
-              isAsc: false,
-            }
+            name: "CreatedTime",
+            isAsc: false,
+          }
           : {
-              name: "UnsignedName",
-              isAsc: true,
-            },
+            name: "UnsignedName",
+            isAsc: true,
+          },
       ],
       // andIdExamQuestionParts: "",
       andQuestionTypes: questionType ? [questionType] : undefined,
@@ -95,7 +95,7 @@ function MyQuestionTab() {
     });
     setLoadingPage(false);
     if (res.code != 0) {
-      errorToast(res.message ?? "");
+      errorToast(res, res.message ?? "");
       setQuestionList([]);
       return;
     }

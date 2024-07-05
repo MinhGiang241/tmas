@@ -107,7 +107,7 @@ function RandomQuestion({
         : await createRandomQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
         return;
       }
       successToast(

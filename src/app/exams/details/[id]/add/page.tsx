@@ -66,7 +66,7 @@ function CreateQuestionPage({ params, question }: any) {
   const loadExamById = async () => {
     var res = await getExamById(params?.id);
     if (res.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     setExam(res?.data?.records[0]);
@@ -122,22 +122,22 @@ function CreateQuestionPage({ params, question }: any) {
           items={
             exam?.id
               ? [
-                  { text: t("exam_list"), href: "/exams" },
-                  { text: exam?.name, href: `/exams/details/${exam?.id}` },
-                  {
-                    text: question ? common.t("edit") : t("manual_add"),
-                    href: question ? `` : `/exams/details/${exam?.id}/add`,
-                    active: true,
-                  },
-                ]
+                { text: t("exam_list"), href: "/exams" },
+                { text: exam?.name, href: `/exams/details/${exam?.id}` },
+                {
+                  text: question ? common.t("edit") : t("manual_add"),
+                  href: question ? `` : `/exams/details/${exam?.id}/add`,
+                  active: true,
+                },
+              ]
               : [
-                  { text: t("exam_bank"), href: "/exam_bank" },
-                  {
-                    text: question ? common.t("edit") : t("manual_add"),
-                    href: question ? `` : `/exams/details/u/add`,
-                    active: true,
-                  },
-                ]
+                { text: t("exam_bank"), href: "/exam_bank" },
+                {
+                  text: question ? common.t("edit") : t("manual_add"),
+                  href: question ? `` : `/exams/details/u/add`,
+                  active: true,
+                },
+              ]
           }
         />
         <div className="flex items-center max-lg:ml-5 max-lg:hidden">
@@ -185,25 +185,24 @@ function CreateQuestionPage({ params, question }: any) {
                 scroll: false,
               });
             }}
-            className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${
-              params?.id == "u" &&
-              !questionList.some((a: any) => a == questionType) &&
-              a == "evaluation"
+            className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${params?.id == "u" &&
+                !questionList.some((a: any) => a == questionType) &&
+                a == "evaluation"
                 ? "bg-m_primary_100"
                 : params?.id == "u" && a == "random"
-                ? "bg-neutral-300"
-                : a == "many_results" &&
-                  !questionList.some((a: any) => a == questionType) &&
-                  exam?.examType == ExamType.Test
-                ? "bg-m_primary_100"
-                : a == "evaluation" &&
-                  !questionList.some((a: any) => a == questionType) &&
-                  exam?.examType == ExamType.Survey
-                ? "bg-m_primary_100"
-                : a == questionType
-                ? "bg-m_primary_100"
-                : "bg-white "
-            }`}
+                  ? "bg-neutral-300"
+                  : a == "many_results" &&
+                    !questionList.some((a: any) => a == questionType) &&
+                    exam?.examType == ExamType.Test
+                    ? "bg-m_primary_100"
+                    : a == "evaluation" &&
+                      !questionList.some((a: any) => a == questionType) &&
+                      exam?.examType == ExamType.Survey
+                      ? "bg-m_primary_100"
+                      : a == questionType
+                        ? "bg-m_primary_100"
+                        : "bg-white "
+              }`}
             key={i}
           >
             {t(a)}
@@ -215,13 +214,13 @@ function CreateQuestionPage({ params, question }: any) {
       {(questionType == "many_results" ||
         (!questionList.some((a: any) => a == questionType) &&
           exam?.examType == ExamType.Test)) && (
-        <ManyResultsQuestion
-          question={question}
-          questionGroups={questionGroups}
-          submitRef={submitRef}
-          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
-        />
-      )}
+          <ManyResultsQuestion
+            question={question}
+            questionGroups={questionGroups}
+            submitRef={submitRef}
+            idExam={params?.id && params?.id != "u" ? params?.id : undefined}
+          />
+        )}
       {questionType == "true_false" && (
         <TrueFalseQuestion
           question={question}
@@ -283,13 +282,13 @@ function CreateQuestionPage({ params, question }: any) {
           exam?.examType == ExamType.Survey) ||
         (params?.id == "u" &&
           !questionList.some((a: any) => a == questionType))) && (
-        <EvaluationQuestion
-          question={question}
-          questionGroups={questionGroups}
-          submitRef={submitRef}
-          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
-        />
-      )}
+          <EvaluationQuestion
+            question={question}
+            questionGroups={questionGroups}
+            submitRef={submitRef}
+            idExam={params?.id && params?.id != "u" ? params?.id : undefined}
+          />
+        )}
 
       <div className="lg:hidden flex items-center max-lg:ml-5 w-full justify-center bg-white pb-9">
         <MButton

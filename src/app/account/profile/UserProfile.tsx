@@ -69,6 +69,7 @@ function UserProfile() {
     onSubmit: async (values: UserData) => {
       try {
         setLoading(true);
+        var newUser
         var ob = {
           ...values,
           account: values?.account?.trim(),
@@ -76,13 +77,13 @@ function UserProfile() {
           phone: values.phone_number,
         };
         console.log("newUser", ob);
-        var newUser = await updatePersonalInfo(ob);
+        newUser = await updatePersonalInfo(ob);
         successToast(newUser?.message ?? t("success_update_member"));
         var data = await getUserMe();
         dispatch(setUserData(data["user"]));
         setLoading(false);
       } catch (e: any) {
-        errorToast(e);
+        errorToast(newUser, e);
         setLoading(false);
       }
     },
@@ -117,7 +118,7 @@ function UserProfile() {
           var res = await userDeleteAccount();
           setDeleteLoading(false);
           if (res?.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
           setOpenDelete(false);
@@ -184,7 +185,7 @@ function UserProfile() {
             value={i18next.language == "en" ? "en_US" : "vi_VN"}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            // formik={formik}
+          // formik={formik}
           />
           <div className="w-20" />
           <div className="w-full" />

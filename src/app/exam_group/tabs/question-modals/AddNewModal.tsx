@@ -56,7 +56,7 @@ function AddNewModal(props: AddQuestModal) {
         });
         setLoading(false);
         if (res?.code != 0) {
-          errorToast(res?.message ?? "");
+          errorToast(res, res?.message ?? "");
           return;
         }
         successToast(res?.message ?? common.t("success_create_new"));
@@ -71,7 +71,7 @@ function AddNewModal(props: AddQuestModal) {
         });
         setLoading(false);
         if (res?.code != 0) {
-          errorToast(res?.message ?? "");
+          errorToast(res, res?.message ?? "");
           return;
         }
         if (props.isEdit) {

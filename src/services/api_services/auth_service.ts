@@ -8,7 +8,7 @@ export const registerAccount = async (data: RegisterFormData) => {
     data
   );
   if (results?.code != 0) {
-    throw results?.message ?? "";
+    throw results;
   }
   return results.data;
 };
@@ -34,7 +34,7 @@ export const sendOtpResetPassword = async ({ email }: { email?: string }) => {
   );
 
   if (results?.code != 0) {
-    throw results?.message ?? "";
+    throw results;
   }
   return results.data;
 };
@@ -52,7 +52,7 @@ export const verifyOtp = async ({
   );
 
   if (results?.code != 0) {
-    throw results?.message ?? "";
+    throw results;
   }
   return results.data;
 };
@@ -70,7 +70,7 @@ export const createNewPass = async ({
   );
 
   if (results?.code != 0) {
-    throw results?.message ?? "";
+    throw results;
   }
   return results.data;
 };

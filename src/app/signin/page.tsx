@@ -71,7 +71,7 @@ function LoginPage() {
       var dataResults = await login(data);
       setLoading(false);
       if (dataResults?.code != 0) {
-        errorToast(dataResults?.message);
+        errorToast(dataResults, dataResults?.message);
         deleteToken();
         return;
       }
@@ -103,7 +103,7 @@ function LoginPage() {
       }
     } catch (e: any) {
       console.log("googe error", e);
-      errorToast(e?.message);
+      errorToast(undefined, e?.message);
       setGLoading(false);
     }
     // signInWithPopup(auth, googleProvider)
@@ -115,12 +115,13 @@ function LoginPage() {
     // setSubmit(true);
     // signInWithRedirect(auth, facebookProvider)
     setFLoading(true);
+    var res;
     try {
       var data = await signInWithPopup(auth, facebookProvider);
-      loginSSO((data?.user as any)["accessToken"]);
+      res = await loginSSO((data?.user as any)["accessToken"]);
     } catch (e: any) {
       console.log(e);
-      errorToast(e?.message);
+      errorToast(res, e?.message);
       setFLoading(false);
     }
   };
@@ -136,14 +137,16 @@ function LoginPage() {
     if (resultData?.code != 0) {
       setGLoading(false);
       setFLoading(false);
-      errorToast(resultData?.message);
-      return;
+      errorToast(resultData, resultData?.message);
+      return resultData;
     }
     console.log("sso", resultData);
     setGLoading(false);
     setFLoading(false);
     successToast(resultData?.message ?? t("success_login"));
     router.push("/");
+    return resultData;
+
   };
   return (
     <AuthLayout>

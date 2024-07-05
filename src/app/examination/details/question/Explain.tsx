@@ -58,7 +58,7 @@ export default function Explain({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -75,7 +75,7 @@ export default function Explain({
           });
           setDupLoading(false);
           if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
           successToast(res?.message ?? t("sucess_duplicate_question"));
@@ -100,7 +100,7 @@ export default function Explain({
           var res = await deleteQuestionById(question?.id);
           setDeleteLoading(false);
           if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
           successToast(t("success_delete_question"));
@@ -128,9 +128,8 @@ export default function Explain({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${
-                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                  }`}
+                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                    }`}
                 >
                   {canCheck && (
                     <Checkbox

@@ -64,7 +64,7 @@ function OverviewTab() {
   const getNum = async () => {
     const res = await overviewGetNum(user?.studio?._id);
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     setOverviewData(res?.data);
@@ -73,7 +73,7 @@ function OverviewTab() {
   const getTotalExamByExamGroup = async () => {
     var res = await overviewGetTotalExamByExamGroup(user?.studio?._id);
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
 
@@ -112,8 +112,8 @@ function OverviewTab() {
   var bars =
     barData?.length != 0
       ? Object.keys(barData?.reduce((a, b) => ({ ...a, ...b }), {}))
-          .filter((l) => l != "name")
-          ?.sort((a, b) => a.localeCompare(b))
+        .filter((l) => l != "name")
+        ?.sort((a, b) => a.localeCompare(b))
       : [];
 
   return (

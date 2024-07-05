@@ -147,7 +147,7 @@ function StudioInfo() {
       successToast(results?.message ?? t("success_update_member"));
       console.log(results);
     } catch (e: any) {
-      errorToast(e);
+      errorToast(results, e);
       setLoadingUpdate(false);
     }
   };

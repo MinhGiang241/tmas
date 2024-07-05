@@ -57,7 +57,7 @@ function CreateChildGroupModal(props: CreateChildProps) {
         props?.onOk!();
         successToast(res?.message ?? common.t("success_create_new"));
       } else {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
       }
     },
   });

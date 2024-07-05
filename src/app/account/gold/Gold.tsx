@@ -75,7 +75,7 @@ function Gold() {
     });
     setGoldHisLoading(false);
     if (res.code != 0) {
-      errorToast(res.message ?? "");
+      errorToast(res, res.message ?? "");
       setGoldHis([]);
       return;
     }
@@ -173,9 +173,8 @@ function Gold() {
                 setSelected(i);
               }}
               key={i}
-              className={`flex flex-col items-center border rounded-lg px-2 ${
-                selected == i ? "bg-m_primary_100 border-m_primary_300" : ""
-              }`}
+              className={`flex flex-col items-center border rounded-lg px-2 ${selected == i ? "bg-m_primary_100 border-m_primary_300" : ""
+                }`}
             >
               <div className="bg-[#F4D58D] px-3 py-1 mt-3 rounded-lg body_semibold_14">
                 {e.name}
@@ -215,10 +214,8 @@ function Gold() {
               );
 
               router.push(
-                `/payment?type=Gold&goldId=${
-                  goldList[selected as number]._id ?? ""
-                }&price=${goldList[selected as number].cost ?? 0}&name=${
-                  goldList[selected as number].name ?? ""
+                `/payment?type=Gold&goldId=${goldList[selected as number]._id ?? ""
+                }&price=${goldList[selected as number].cost ?? 0}&name=${goldList[selected as number].name ?? ""
                 }`,
               );
             }}
@@ -319,11 +316,10 @@ function Gold() {
             setIndex("0");
             setStatus("Completed");
           }}
-          className={`${
-            index === "0"
+          className={`${index === "0"
               ? "text-m_primary_500 border-b-m_primary_500 border-b-[3px]"
               : "text-m_neutral_500"
-          } h-11 text-center lg:min-w-40 px-2 body_semibold_14 lg:px-4 max-lg:w-1/2`}
+            } h-11 text-center lg:min-w-40 px-2 body_semibold_14 lg:px-4 max-lg:w-1/2`}
         >
           {t("success")}
         </button>
@@ -332,11 +328,10 @@ function Gold() {
             setIndex("1");
             setStatus("Pending");
           }}
-          className={`${
-            index === "1"
+          className={`${index === "1"
               ? "text-m_primary_500 border-b-m_primary_500 border-b-[3px]"
               : "text-m_neutral_500"
-          } h-11 text-center lg:min-w-40 body_semibold_14 lg:px-4 max-lg:w-1/2 `}
+            } h-11 text-center lg:min-w-40 body_semibold_14 lg:px-4 max-lg:w-1/2 `}
         >
           {t("processing")}
         </button>
@@ -345,11 +340,10 @@ function Gold() {
             setIndex("2");
             setStatus("Terminated");
           }}
-          className={`${
-            index === "2"
+          className={`${index === "2"
               ? "text-m_primary_500 border-b-m_primary_500 border-b-[3px]"
               : "text-m_neutral_500"
-          } h-11 text-center lg:min-w-40 body_semibold_14 lg:px-4 max-lg:w-1/2 `}
+            } h-11 text-center lg:min-w-40 body_semibold_14 lg:px-4 max-lg:w-1/2 `}
         >
           {t("fail")}
         </button>

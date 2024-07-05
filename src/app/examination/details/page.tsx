@@ -97,7 +97,7 @@ function DetailsPage({ params }: any) {
     }
 
     if (res.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     // console.log(res, "exam");
@@ -204,7 +204,7 @@ function DetailsPage({ params }: any) {
             <div className="text-sm text-m_neutral_900 flex">
               <Play className="mr-1" />
               {data?.examVersion?.exam?.examNextQuestion ??
-              examData?.exam?.examNextQuestion === "FreeByUser"
+                examData?.exam?.examNextQuestion === "FreeByUser"
                 ? t("free_change_part")
                 : t("part_in_row")}
             </div>
@@ -224,24 +224,23 @@ function DetailsPage({ params }: any) {
               <Time className="mr-1" />
               {/* {data?.Base?.TimeLimitMinutes ? `${data?.Base?.TimeLimitMinutes} ${t("minute")}` : t("unlimited")} */}
               {data?.examVersion?.exam?.timeLimitMinutes ??
-              examData?.exam?.timeLimitMinutes
-                ? `${
-                    data?.examVersion?.exam?.timeLimitMinutes ??
-                    examData?.exam?.timeLimitMinutes
-                  } ${t("minute")}`
+                examData?.exam?.timeLimitMinutes
+                ? `${data?.examVersion?.exam?.timeLimitMinutes ??
+                examData?.exam?.timeLimitMinutes
+                } ${t("minute")}`
                 : t("unlimited")}
             </div>
             <div className="text-sm text-m_neutral_900 flex">
               <Document className="mr-1" />
               {data?.examVersion?.exam?.examViewQuestionType ??
-              examData?.exam?.examViewQuestionType === "MultiplePages"
+                examData?.exam?.examViewQuestionType === "MultiplePages"
                 ? t("all_quest_page")
                 : t("quest_per_page")}
             </div>
             <div className="text-sm text-m_neutral_900 flex">
               <Group className="mr-1" />
               {data?.examVersion?.exam?.changePositionQuestion ??
-              examData?.exam?.changePositionQuestion === false
+                examData?.exam?.changePositionQuestion === false
                 ? t("keep_quest_order")
                 : t("change_quest_order")}
             </div>
@@ -292,8 +291,8 @@ function DetailsPage({ params }: any) {
                         a.createdTime < b.createdTime
                           ? -1
                           : a.createdTime > b.createdTime
-                          ? 1
-                          : 0
+                            ? 1
+                            : 0
                       )
                       .map((e: any, key: any) => {
                         var questionGroup = questionGroups?.find(

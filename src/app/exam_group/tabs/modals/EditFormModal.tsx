@@ -58,7 +58,7 @@ function EditFormModal(props: EditModalProps) {
         formik.resetForm();
         props?.onCancel();
       } else {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
       }
     },
   });
