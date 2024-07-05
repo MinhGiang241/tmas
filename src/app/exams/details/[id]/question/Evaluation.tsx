@@ -69,7 +69,7 @@ export default function Evaluation({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -91,12 +91,12 @@ export default function Evaluation({
             errorToast(res?.message ?? "");
             return;
           }
-          successToast(t("sucess_duplicate_question"));
+          successToast(res?.message ?? t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
             `/${isBank ? "exam_bank" : "exams/details"}/${
               examId ?? "u"
-            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
           );
           await getData();
         }}
@@ -118,7 +118,7 @@ export default function Evaluation({
             errorToast(res?.message ?? "");
             return;
           }
-          successToast(t("success_delete_question"));
+          successToast(res?.message ?? t("success_delete_question"));
 
           setOpenDeleteQuestion(false);
           await getData();
@@ -221,7 +221,7 @@ export default function Evaluation({
                           examId ?? question?.examId ?? "u"
                         }/edit?questId=${question?.id}&isBank=${
                           isBank ? "true" : "false"
-                        }`
+                        }`,
                       );
                     }}
                   >

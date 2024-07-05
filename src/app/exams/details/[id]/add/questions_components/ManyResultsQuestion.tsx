@@ -199,8 +199,8 @@ function ManyResultsQuestion({
       }
       dispatch(resetMultiAnswer(1));
       question
-        ? successToast(t("success_update_question"))
-        : successToast(t("success_add_question"));
+        ? successToast(res?.message ?? t("success_update_question"))
+        : successToast(res?.message ?? t("success_add_question"));
       router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },
   });

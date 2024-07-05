@@ -226,7 +226,7 @@ function SendExaminationInfo(props: Props) {
                     return;
                   }
                   setEmails([]);
-                  successToast(t("success_delete_email"));
+                  successToast(res?.message ?? t("success_delete_email"));
                   getEmailList();
                 }
                 setActive(data);
@@ -323,7 +323,7 @@ function SendExaminationInfo(props: Props) {
       return;
     }
     setEmails([]);
-    successToast(t("success_send_remind"));
+    successToast(res?.message ?? t("success_send_remind"));
     getEmailList();
   };
   return (

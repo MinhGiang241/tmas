@@ -189,7 +189,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
     setActive(undefined);
     setOpenDelete(false);
     loadExamList(false);
-    successToast(common.t("delete_success"));
+    successToast(res?.message ?? common.t("delete_success"));
   };
 
   const handlePublishExam = async (v: any) => {
@@ -205,7 +205,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
       group_name: group?.name || "",
     });
     if (result.code === 0) {
-      successToast(common.t("success"));
+      successToast(result?.message ?? common.t("success"));
     } else {
       errorToast(result?.message ?? "");
     }

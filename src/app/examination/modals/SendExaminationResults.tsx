@@ -421,7 +421,7 @@ function SendExaminationResults(props: Props) {
       errorToast(res?.message ?? "");
       return;
     }
-    successToast(t("success_send_remind"));
+    successToast(res?.message ?? t("success_send_remind"));
     getEmailList(newData);
   };
 

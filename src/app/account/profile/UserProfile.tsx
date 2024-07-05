@@ -77,7 +77,7 @@ function UserProfile() {
         };
         console.log("newUser", ob);
         var newUser = await updatePersonalInfo(ob);
-        successToast(t("success_update_member"));
+        successToast(newUser?.message ?? t("success_update_member"));
         var data = await getUserMe();
         dispatch(setUserData(data["user"]));
         setLoading(false);
@@ -121,7 +121,7 @@ function UserProfile() {
             return;
           }
           setOpenDelete(false);
-          successToast(t("success_delete_acc"));
+          successToast(res?.message ?? t("success_delete_acc"));
           router.push("/signin");
           deleteToken();
         }}

@@ -47,10 +47,10 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
   const common = useTranslation();
 
   const examGroupList = useSelector(
-    (state: RootState) => state.examGroup?.list
+    (state: RootState) => state.examGroup?.list,
   );
   const examGroupLoading = useSelector(
-    (state: RootState) => state.examGroup?.loading
+    (state: RootState) => state.examGroup?.loading,
   );
 
   const dispatch = useDispatch();
@@ -73,7 +73,7 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id
+          (ch: ExamGroupData) => ch.idParent === e.id,
         );
         return { ...e, childs };
       });
@@ -134,7 +134,7 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
 
       await loadExamTestList(false);
 
-      successToast(t("success_delete_group"));
+      successToast(res?.message ?? t("success_delete_group"));
       setLoadingDelete(false);
       onCancelDelete();
     } catch (e: any) {
@@ -333,7 +333,7 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
                         </div>
                       )}
                     </div>
-                  )
+                  ),
                 )}
               </div>
               {user?.studio?.role != "Member" ? (

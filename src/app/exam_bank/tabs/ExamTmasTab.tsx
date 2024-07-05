@@ -238,7 +238,7 @@ function ExamTmasTab() {
     }
     await countExamQuestion(active?.version?._id);
     loadTmasExamList(false);
-    successToast(t("success_add_my_exam"));
+    successToast(res?.message ?? t("success_add_my_exam"));
     var isAddClone = _.cloneDeep(isAdd);
     isAddClone[active?.code!] = res?.data[0]?.idExam;
     console.log("isAddClone", isAddClone);
@@ -258,7 +258,7 @@ function ExamTmasTab() {
       return;
     }
 
-    successToast(t("success_delete_my_exam"));
+    successToast(res?.message ?? t("success_delete_my_exam"));
     var isAddClone = _.cloneDeep(isAdd);
     isAddClone[id] = undefined;
     setActive(undefined);

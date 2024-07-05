@@ -204,7 +204,9 @@ function EvaluationQuestion({
       }
       dispatch(resetMultiAnswer(1));
       successToast(
-        question ? t("Cập nhật thành công") : t("Thêm mới thành công"),
+        res?.message ?? question
+          ? t("Cập nhật thành công")
+          : t("Thêm mới thành công"),
       );
       router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },

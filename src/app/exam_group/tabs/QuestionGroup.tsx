@@ -69,7 +69,7 @@ function QuestionGroup({ hidden }: { hidden: boolean }) {
       errorToast(res?.message ?? "");
       return;
     }
-    successToast(t("success_delete_group"));
+    successToast(res?.message ?? t("success_delete_group"));
     setActive(undefined);
     setOpenDelete(false);
     loadingQuestions(false);

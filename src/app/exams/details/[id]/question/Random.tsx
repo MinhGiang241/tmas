@@ -83,7 +83,7 @@ function Random({
             errorToast(res?.message ?? "");
             return;
           }
-          successToast(t("sucess_duplicate_question"));
+          successToast(res?.message ?? t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
             `/${isBank ? "exam_bank" : "exams/details"}/${
@@ -110,7 +110,7 @@ function Random({
             errorToast(res?.message ?? "");
             return;
           }
-          successToast(t("success_delete_question"));
+          successToast(res?.message ?? t("success_delete_question"));
 
           setOpenDeleteQuestion(false);
           await getData();

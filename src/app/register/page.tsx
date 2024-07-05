@@ -113,9 +113,9 @@ function RegisterPage() {
           setLoading(false);
 
           if (invitationId && emailParams) {
-            successToast(t("success_create_account_via_mail"));
+            successToast(v?.message ?? t("success_create_account_via_mail"));
           } else {
-            successToast(t("success_create_account"));
+            successToast(v?.message ?? t("success_create_account"));
           }
           console.log("register", v);
 
@@ -157,9 +157,9 @@ function RegisterPage() {
         setFLoading(false);
         setGLoading(false);
         if (v?.user?.verified) {
-          successToast(t("success_login"));
+          successToast(v?.message ?? t("success_login"));
         } else {
-          successToast(t("success_create_account"));
+          successToast(v?.message ?? t("success_create_account"));
         }
         //successToast(t("success_create_account"));
         router.push("/");

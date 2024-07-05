@@ -422,7 +422,7 @@ function CreateExaminationPage({ examination }: any) {
       }
 
       successToast(
-        examination
+        dataResults?.message ?? examination
           ? common.t("success_update")
           : common.t("success_create_new"),
       );

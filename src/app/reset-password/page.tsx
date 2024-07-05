@@ -117,7 +117,7 @@ function ResetPasswordPage() {
       createNewPass({ email, new_pass: values.new_password?.trim() })
         .then((v) => {
           setConfirmLoading(false);
-          successToast(t("success_create_pass"));
+          successToast(v?.message ?? t("success_create_pass"));
           router.push("/signin");
         })
         .catch((e) => {

@@ -54,11 +54,10 @@ export default function Sql({
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
-
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -79,7 +78,7 @@ export default function Sql({
             errorToast(res?.message ?? "");
             return;
           }
-          successToast(t("sucess_duplicate_question"));
+          successToast(res?.message ?? t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
             `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
@@ -104,7 +103,7 @@ export default function Sql({
             errorToast(res?.message ?? "");
             return;
           }
-          successToast(t("success_delete_question"));
+          successToast(res?.message ?? t("success_delete_question"));
 
           setOpenDeleteQuestion(false);
           await getData();
@@ -128,8 +127,9 @@ export default function Sql({
               <div className="flex flex-col">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -144,7 +144,9 @@ export default function Sql({
                   <div
                     ref={contentRef}
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
+                    dangerouslySetInnerHTML={{
+                      __html: question?.Base?.Question,
+                    }}
                   />
                 </span>
                 {isOverflowing ? (

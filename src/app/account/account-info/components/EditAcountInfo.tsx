@@ -39,8 +39,11 @@ function EditAcountInfo({ open, onCancel, onOk, data }: Props) {
     onSubmit: async (values: UserData) => {
       try {
         setLoading(true);
-        await updateRoleMember({ userId: data?._id!, role: values.role! });
-        successToast(t("success_update_member"));
+        let res = await updateRoleMember({
+          userId: data?._id!,
+          role: values.role!,
+        });
+        successToast(res?.message ?? t("success_update_member"));
         setLoading(false);
         onOk!();
       } catch (e: any) {

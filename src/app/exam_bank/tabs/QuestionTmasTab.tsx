@@ -128,7 +128,7 @@ function QuestionTmasTab() {
       return;
     }
     console.log("res", res);
-    successToast(t("success_delete_from_exam"));
+    successToast(res?.message ?? t("success_delete_from_exam"));
     const isAddClone = _.cloneDeep(isAdd);
     isAddClone[question?.id as string] = undefined;
     setIsAdd(isAddClone);
@@ -307,7 +307,7 @@ function QuestionTmasTab() {
       }
       console.log("res", res);
 
-      successToast(t("success_add_into_exam"));
+      successToast(res?.message ?? t("success_add_into_exam"));
       const isAddClone = _.cloneDeep(isAdd);
       isAddClone[active?.id as string] = res.data;
       setIsAdd(isAddClone);

@@ -76,7 +76,7 @@ function LoginPage() {
         return;
       }
       // localStorage.setItem("access_token", dataResults?.data);
-      successToast(t("success_login"));
+      successToast(dataResults?.message ?? t("success_login"));
       router.push("/");
     },
   });
@@ -142,7 +142,7 @@ function LoginPage() {
     console.log("sso", resultData);
     setGLoading(false);
     setFLoading(false);
-    successToast(t("success_login"));
+    successToast(resultData?.message ?? t("success_login"));
     router.push("/");
   };
   return (

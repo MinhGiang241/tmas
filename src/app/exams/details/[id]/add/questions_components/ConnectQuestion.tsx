@@ -232,7 +232,9 @@ function ConnectQuestion({
       }
       dispatch(resetConnectAnswer(1));
       successToast(
-        question ? t("success_update_question") : t("success_add_question"),
+        res?.message ?? question
+          ? t("success_update_question")
+          : t("success_add_question"),
       );
       router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },

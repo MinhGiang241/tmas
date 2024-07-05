@@ -87,11 +87,11 @@ function AddExamTest(props: AddExamProps) {
           setLoading(false);
           return;
         }
+        successToast(submit?.message ?? common.t("success_create_new"));
       }
 
       setLoading(false);
       setChilds([""]);
-      successToast(common.t("success_create_new"));
       props?.onOk!();
       formik.resetForm();
       props?.onCancel();

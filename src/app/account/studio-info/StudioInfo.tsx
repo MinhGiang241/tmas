@@ -144,7 +144,7 @@ function StudioInfo() {
       dispatch(setUserData(newUser["user"]));
 
       setLoadingUpdate(false);
-      successToast(t("success_update_member"));
+      successToast(results?.message ?? t("success_update_member"));
       console.log(results);
     } catch (e: any) {
       errorToast(e);

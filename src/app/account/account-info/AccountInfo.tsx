@@ -209,8 +209,11 @@ function AccountInfo() {
   const resendEmail = async (mem: UserData) => {
     try {
       dispatch(setLoadingMember(true));
-      await sendInviteEmailToMember({ email: mem.email!, role: mem.role! });
-      successToast(t("success_send_invite"));
+      var res = await sendInviteEmailToMember({
+        email: mem.email!,
+        role: mem.role!,
+      });
+      successToast(res?.message ?? t("success_send_invite"));
       dispatch(setLoadingMember(false));
     } catch (e: any) {
       dispatch(setLoadingMember(false));
@@ -221,12 +224,13 @@ function AccountInfo() {
   const deleteMember = async (mem?: UserData) => {
     try {
       setLoadingDelete(true);
+      let res;
       if (!mem?.isInvite) {
-        await deleteMemberFromWorkSpace({ userId: mem?._id });
+        res = await deleteMemberFromWorkSpace({ userId: mem?._id });
       } else {
-        await deleteInvitedMemberFromWorkSpace({ email: mem?.email });
+        res = await deleteInvitedMemberFromWorkSpace({ email: mem?.email });
       }
-      successToast(t("delete_success"));
+      successToast(res?.message ?? t("delete_success"));
       setLoadingDelete(false);
       loadMembers();
     } catch (e: any) {
