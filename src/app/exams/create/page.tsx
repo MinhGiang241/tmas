@@ -41,7 +41,7 @@ const EditorHook = dynamic(
   () => import("../components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  },
+  }
 );
 
 function CreatePage({ exam, isEdit }: any) {
@@ -56,15 +56,15 @@ function CreatePage({ exam, isEdit }: any) {
   const [lang, setLang] = useState<any>(exam?.language ?? "Vietnamese");
   const [transfer, setTransfer] = useState<any>("FreeByUser");
   const [page, setPage] = useState<any>(
-    exam?.examViewQuestionType ?? "SinglePage",
+    exam?.examViewQuestionType ?? "SinglePage"
   );
   const [sw, setSw] = useState<boolean>(
-    !exam ? false : exam?.changePositionQuestion ?? false,
+    !exam ? false : exam?.changePositionQuestion ?? false
   );
   const [files, setFiles] = useState([]);
   const [idSession, setIdSession] = useState<string | undefined>();
   const [selectedButton, setSelectedButton] = useState<ExamType>(
-    exam?.id ? exam?.examType : ExamType.Test,
+    exam?.id ? exam?.examType : ExamType.Test
   );
 
   const handleButtonClick = (buttonType: any) => {
@@ -94,6 +94,29 @@ function CreatePage({ exam, isEdit }: any) {
     setInputFields(values);
   };
 
+  // const handleInputChange = (index: any, event: any) => {
+  //   const values = [...inputFields];
+  //   const { name, value } = event.target;
+
+  //   if (name === "point_evaluation") {
+  //     values[index].label = value;
+  //   } else if (name === "from") {
+  //     values[index].fromScore = parseInt(value);
+  //   } else if (name === "to") {
+  //     const newToValue = parseInt(value);
+  //     const fromScore = values[index].fromScore ?? 0;
+  //     const expectedToScore = fromScore + 1;
+  //     if (index > 0 && newToValue !== expectedToScore) {
+  //       errorToast("Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại.");
+  //       return;
+  //     } else {
+  //       values[index].toScore = newToValue;
+  //     }
+  //   }
+
+  //   setInputFields(values);
+  // };
+
   const handleInputChange = (index: any, event: any) => {
     const values = [...inputFields];
     const { name, value } = event.target;
@@ -104,14 +127,24 @@ function CreatePage({ exam, isEdit }: any) {
       values[index].fromScore = parseInt(value);
     } else if (name === "to") {
       const newToValue = parseInt(value);
-      const fromScore = values[index].fromScore ?? 0;
+      const fromScore =
+        values[index].fromScore ??
+        (index === 0 ? 0 : values[index - 1].toScore ?? 0);
       const expectedToScore = fromScore + 1;
 
-      if (index > 0 && newToValue !== expectedToScore) {
-        errorToast("Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại.");
-        return;
-      } else {
+      if (index === 0) {
+        // Điều kiện cho hàng đầu tiên
         values[index].toScore = newToValue;
+      } else {
+        // Điều kiện cho các hàng tiếp theo
+        if (newToValue !== expectedToScore) {
+          errorToast(
+            "Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại."
+          );
+          return;
+        } else {
+          values[index].toScore = newToValue;
+        }
       }
     }
 
@@ -207,7 +240,7 @@ function CreatePage({ exam, isEdit }: any) {
         inputFields.some((x: any) => x?.label.trim() === "");
       if (validateFields) {
         errorToast(
-          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả.",
+          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả."
         );
         return;
       }
@@ -303,7 +336,7 @@ function CreatePage({ exam, isEdit }: any) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id,
+          (ch: ExamGroupData) => ch.idParent === e.id
         );
         return { ...e, childs };
       });
@@ -338,7 +371,7 @@ function CreatePage({ exam, isEdit }: any) {
             "Paging.StartIndex": 0,
             "Paging.RecordPerPage": 100,
           }
-        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
+        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 }
     );
     if (data?.code != 0) {
       return [];
