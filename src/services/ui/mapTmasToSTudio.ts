@@ -33,6 +33,7 @@ export const mapTmasQuestionToStudioQuestion: (
     case QuestionType?.MutilAnswer:
       var questClone: MultiTmasQuestionData = _.cloneDeep(question);
       var studioQuestion: MultiAnswerQuestionData = {
+        groupQuestionName: questClone?.GroupQuestionName,
         createdTime: questClone?.createdTime,
         id: questClone?._id,
         idExam: questClone?.IdExam,
@@ -58,6 +59,7 @@ export const mapTmasQuestionToStudioQuestion: (
     case QuestionType.YesNoQuestion:
       var questClone: TrueFalseTmasQuestionData = _.cloneDeep(question);
       var studioQuestion: MultiAnswerQuestionData = {
+        groupQuestionName: questClone?.GroupQuestionName,
         createdTime: questClone?.createdTime,
         id: questClone?._id,
         idExam: questClone?.IdExam,
@@ -83,6 +85,7 @@ export const mapTmasQuestionToStudioQuestion: (
     case QuestionType.SQL:
       var sqlQuestClone: SQLTmasQuestionData = _.cloneDeep(question);
       var studioSqlQuestion: SqlQuestionData = {
+        groupQuestionName: sqlQuestClone?.GroupQuestionName,
         createdTime: sqlQuestClone?.createdTime,
         id: sqlQuestClone?._id,
         idExam: sqlQuestClone?.IdExam,
@@ -104,6 +107,7 @@ export const mapTmasQuestionToStudioQuestion: (
     case QuestionType.Essay:
       var essayQuestClone: EssayTmasQuestionData = _.cloneDeep(question);
       var studioEssayQuestion: EssayQuestionData = {
+        groupQuestionName: essayQuestClone?.GroupQuestionName,
         createdTime: essayQuestClone?.createdTime,
         id: essayQuestClone?._id,
         idExam: essayQuestClone?.IdExam,
@@ -124,6 +128,7 @@ export const mapTmasQuestionToStudioQuestion: (
     case QuestionType.FillBlank:
       var fillQuestClone: FillBlankTmasQuestionData = _.cloneDeep(question);
       var studiofillQuestion: FillBlankQuestionData = {
+        groupQuestionName: fillQuestClone?.GroupQuestionName,
         createdTime: fillQuestClone?.createdTime,
         id: fillQuestClone?._id,
         idExam: fillQuestClone?.IdExam,
@@ -152,6 +157,7 @@ export const mapTmasQuestionToStudioQuestion: (
     case QuestionType.Pairing:
       var connQuestClone: ConnectTmasQuestionData = _.cloneDeep(question);
       var studioConnQuestion: ConnectQuestionData = {
+        groupQuestionName: connQuestClone?.GroupQuestionName,
         createdTime: connQuestClone?.createdTime,
         id: connQuestClone?._id,
         idExam: connQuestClone?.IdExam,
@@ -187,6 +193,7 @@ export const mapTmasQuestionToStudioQuestion: (
     case QuestionType.Random:
       var ranQuestClone: RandomTmasQuestionData = _.cloneDeep(question);
       var studioRanQuestion: RandomQuestionData = {
+        groupQuestionName: ranQuestClone?.GroupQuestionName,
         createdTime: ranQuestClone?.createdTime,
         id: ranQuestClone?._id,
         idExam: ranQuestClone?.IdExam,
@@ -203,6 +210,7 @@ export const mapTmasQuestionToStudioQuestion: (
     case QuestionType.Coding:
       var codeQuestClone: CodeTmasQuestionData = _.cloneDeep(question);
       var studioCodeQuestion: CodingQuestionData = {
+        groupQuestionName: codeQuestClone?.GroupQuestionName,
         createdTime: codeQuestClone?.createdTime,
         id: codeQuestClone?._id,
         idExam: codeQuestClone?.IdExam,
@@ -243,6 +251,7 @@ export const mapTmasQuestionToStudioQuestion: (
     case QuestionType?.Evaluation:
       var surQuestClone: SurveyTmasQuestionData = _.cloneDeep(question);
       var studioSurQuestion: SurveyQuestionData = {
+        groupQuestionName: surQuestClone?.GroupQuestionName,
         createdTime: surQuestClone?.createdTime,
         id: surQuestClone?._id,
         idExam: surQuestClone?.IdExam,

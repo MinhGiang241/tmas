@@ -310,6 +310,16 @@ div.ql-container.ql-snow > .ql-editor {
 .ant-upload-wrapper {
   width: auto !important;
 }
+
+.ant-upload-list-item-container {
+  width: 70px !important;
+  height: 50px !important;
+}
+
+.ant-upload {
+  width: 70px !important;
+  height: 50px !important;
+}
 /* @font-face { */
 /*   font-family: SF UI Display Regular; */
 /*   src: url("/fonts/Montserrat-Regular.ttf"); */

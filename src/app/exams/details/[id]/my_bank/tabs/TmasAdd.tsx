@@ -48,6 +48,7 @@ import { getQuestionGroups } from "@/services/api_services/exam_api";
 import TagSearchSelect from "@/app/components/config/TagsSearch";
 import { useFormik } from "formik";
 import Evaluation from "../../question/Evaluation";
+import { ExamType } from "@/data/form_interface";
 
 function TmasAddTab({
   hidden,
@@ -112,6 +113,21 @@ function TmasAddTab({
       limit: recordNum,
       skip: (indexPage - 1) * recordNum,
       type: questionType,
+      // types: !questionType
+      //   ? !exam
+      //     ? undefined
+      //     : exam?.examType == ExamType.Survey
+      //     ? [QuestionType.Evaluation, QuestionType.Essay]
+      //     : [
+      //         QuestionType.Coding,
+      //         QuestionType.FillBlank,
+      //         QuestionType.MutilAnswer,
+      //         QuestionType.Pairing,
+      //         QuestionType.Random,
+      //         QuestionType.SQL,
+      //         QuestionType.YesNoQuestion,
+      //       ]
+      //   : undefined,
       tags,
     });
     setLoadingPage(false);
@@ -126,6 +142,7 @@ function TmasAddTab({
     setTotal(res?.records);
     setQuestionList(res?.data ?? []);
   };
+
   const onChangeCheck = (checkedList: any) => {};
 
   const addExamBank = async (__: any, question: BaseQuestionData) => {

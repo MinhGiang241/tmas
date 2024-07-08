@@ -467,6 +467,7 @@
   "servey_9": "Việc phân hạng kết quả giúp việc đánh giá năng lực, trình độ thì sinh được chi tiết hơn. Bạn có thể thiết lập phần này sau khi đã thiết lập bộ câu hỏi để đảm bảo tính chính xác",
   "total_point": "Tổng điểm",
   "specific_7": "(**) Tạo lựa chọn và nhập số điểm tương ứng với từng lựa chọn",
+  "specific_8":"Phân hạng kết quả",
   "not_approve_send_result": "Đợt thi chưa được phê duyêt. Không thể gửi kết quả đến thí sinh",
   "reject_send_result": "Đợt thi bị từ chối phê duyệt. Không thể gửi kết quả đến thí sinh",
   "result_examnination_evaluation": "Kết quả đánh giá đợt thi: Đánh giá xếp hạng của bạn",

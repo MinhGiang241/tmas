@@ -134,10 +134,6 @@ function MyBankAddTab({
           : questionType
           ? [questionType]
           : undefined,
-      // andIdExamQuestionParts: "",
-      // andQuestionTypes: "",
-      // idExams: "",
-      // andIdGroupQuestions: "",
     });
     setLoadingPage(false);
     if (res.code != 0) {

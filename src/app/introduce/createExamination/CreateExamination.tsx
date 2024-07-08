@@ -1,6 +1,6 @@
 "use client";
 import HomeLayout from "@/app/layouts/HomeLayout";
-import { Breadcrumb, Switch } from "antd";
+import { Breadcrumb, Input, Switch } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
@@ -198,6 +198,16 @@ function CreateExaminationIntroduce({
 
   const dateFormat = "DD/MM/YYYY HH:mm";
   const search = useSearchParams();
+  const [expectPassedNumb, setExpectPassedNumb] = useState<number>(
+    examination?.expectPassedNumb ?? 1
+  );
+
+  const handleExpectPassedNumbChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setExpectPassedNumb(parseInt(event.target.value));
+    // console.log(event.target.value, "event.target.value");
+  };
 
   const loadExam = async () => {
     const examId = search.get("examId");
@@ -563,6 +573,34 @@ function CreateExaminationIntroduce({
               setValues={setPreventChecked}
             />
             <div className="lg:h-4" />
+            {exam?.scoreRanks?.length === 0 || !exam?.scoreRanks ? (
+              ""
+            ) : (
+              <div className=" p-4 bg-white">
+                <div className="rounded-lg  overflow-hidden body_semibold_16 text-m_neutral_900 pb-2">
+                  {t("specific_8")}
+                </div>
+                <Input
+                  className="rounded-md"
+                  type="number"
+                  onChange={handleExpectPassedNumbChange}
+                  value={expectPassedNumb}
+                />
+                <div className="text-xs text-m_neutral_900 body_semibold_16 pt-2">
+                  Phân hạng kết quả
+                </div>
+                <div className="bg-slate-300 rounded-md p-2 mt-2">
+                  {exam?.scoreRanks?.map((x: any, key: any) => (
+                    <div
+                      key={key}
+                      className="text-sm text-m_neutral_900 body_semibold_16"
+                    >
+                      {x?.label}: Từ {x?.fromScore} - {x?.toScore} Điểm
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           <div className="max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-6 col-span-12 bg-white h-fit rounded-lg">
             <MTextArea

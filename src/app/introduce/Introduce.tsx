@@ -250,9 +250,10 @@ export default function Introduce() {
         id: e?._id,
         description: e?.Description,
         name: e?.Name,
-        jsonExamQuestions: e?.Questions?.map((e) => {
-          var q = _.cloneDeep(e?.Base) as BaseTmasQuestionExamData;
-          e.IsQuestionBank = false;
+        jsonExamQuestions: e?.Questions?.map((d) => {
+          var q = _.cloneDeep(d?.Base) as BaseTmasQuestionExamData;
+          q.IsQuestionBank = false;
+          q.GroupQuestionName = d.GroupQuestionName;
           return JSON.stringify(mapTmasQuestionToStudioQuestion(q));
         }),
       })

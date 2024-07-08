@@ -328,12 +328,14 @@ export const getTmasQuestList = async ({
   limit,
   type,
   tags,
+  types,
 }: {
   text?: string;
   skip?: number;
   limit?: number;
   fields?: any;
   type?: string;
+  types?: string[];
   tags?: string[];
 }) => {
   const results = await callApi.post(
@@ -344,6 +346,7 @@ export const getTmasQuestList = async ({
       limit,
       type,
       tags,
+      types,
     }
   );
   return results;
