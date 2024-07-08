@@ -26,11 +26,11 @@ export interface UploadedFile {
 }
 
 interface Props {
-  uploaded: string[];
-  setUploaded: any;
-  files: UploadedFile[];
+  uploaded?: string[];
+  setUploaded?: any;
+  files?: UploadedFile[];
   idSession?: string;
-  setFiles: any;
+  setFiles?: any;
 }
 
 function DragDropUpload({
@@ -69,7 +69,7 @@ function DragDropUpload({
         console.log(files);
       }
 
-      setFiles([...files, ...uploaded]);
+      setFiles([...(files ?? []), ...uploaded]);
     }
   };
 
@@ -103,7 +103,7 @@ function DragDropUpload({
         }}
       />
       <div className="mt-4 body_semibold_14">{t("pick_file")}</div>
-      {files.length == 0 && uploaded.length == 0 && (
+      {files?.length == 0 && uploaded?.length == 0 && (
         <button
           onDragOverCapture={(e) => {
             setIsDrag(true);
@@ -167,7 +167,7 @@ function DragDropUpload({
           }}
         />
       ))}
-      {(files.length != 0 || uploaded.length) != 0 && (
+      {(files?.length != 0 || uploaded?.length) != 0 && (
         <button
           onClick={handleFileClick}
           className="text-[#4D7EFF] body_regular_12 underline underline-offset-4"

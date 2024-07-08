@@ -45,6 +45,7 @@ import copy from "copy-text-to-clipboard";
 import toast from "react-hot-toast";
 import { createExaminationVersion } from "@/services/api_services/examination_bc_api";
 import { UploadOutlined, ProfileOutlined } from "@ant-design/icons";
+import EyeIcon from "../../components/icons/eye.svg";
 
 function ExamTestTab({ hidden }: { hidden: boolean }) {
   const { t } = useTranslation("exam");
@@ -407,7 +408,8 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                             }}
                           >
                             <Tooltip placement="top" title={t("detail")}>
-                              <ProfileOutlined className="text-2xl" />
+                              {/* <ProfileOutlined className="text-2xl" /> */}
+                              <EyeIcon />
                             </Tooltip>
                           </button>
                           <div className="w-3" />
