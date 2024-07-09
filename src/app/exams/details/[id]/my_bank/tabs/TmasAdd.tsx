@@ -113,21 +113,21 @@ function TmasAddTab({
       limit: recordNum,
       skip: (indexPage - 1) * recordNum,
       type: questionType,
-      // types: !questionType
-      //   ? !exam
-      //     ? undefined
-      //     : exam?.examType == ExamType.Survey
-      //     ? [QuestionType.Evaluation, QuestionType.Essay]
-      //     : [
-      //         QuestionType.Coding,
-      //         QuestionType.FillBlank,
-      //         QuestionType.MutilAnswer,
-      //         QuestionType.Pairing,
-      //         QuestionType.Random,
-      //         QuestionType.SQL,
-      //         QuestionType.YesNoQuestion,
-      //       ]
-      //   : undefined,
+      types: !questionType
+        ? !exam
+          ? undefined
+          : exam?.examType == ExamType.Survey
+          ? [QuestionType.Evaluation, QuestionType.Essay]
+          : [
+              QuestionType.Coding,
+              QuestionType.FillBlank,
+              QuestionType.MutilAnswer,
+              QuestionType.Pairing,
+              QuestionType.Random,
+              QuestionType.SQL,
+              QuestionType.YesNoQuestion,
+            ]
+        : undefined,
       tags,
     });
     setLoadingPage(false);

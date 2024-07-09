@@ -299,7 +299,15 @@ function EvaluationQuestion({
         />
         <div className="border rounded-lg p-4">
           <div className="text-sm font-semibold">{t("specific_7")}</div>
-          <div></div>
+          <div className="flex justify-between items-center pt-4">
+            <div className="w-4" />
+            <div className="text-xs font-semibold w-[340px]">
+              Tên nhãn lựa chọn
+            </div>
+            <div className="text-xs font-semibold w-[105px]">Điểm lựa chọn</div>
+            <div className="text-xs font-semibold w-[68px]">Hình ảnh</div>
+            <div className="w-10" />
+          </div>
           <div className="w-full">
             {fields.map((field: FieldSurveyAnswer, index: number) => (
               <div
@@ -308,8 +316,6 @@ function EvaluationQuestion({
               >
                 <div
                   className="font-semibold"
-                  contentEditable={true}
-                  suppressContentEditableWarning={true}
                   onBlur={(e) =>
                     setFields(
                       fields.map((f: any) =>

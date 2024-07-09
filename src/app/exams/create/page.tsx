@@ -88,13 +88,27 @@ function CreatePage({ exam, isEdit }: any) {
     ]);
   };
 
-  const handleRemoveFields = (index: any) => {
+  const handleRemoveFields = (index: number) => {
     const values = [...inputFields];
     values.splice(index, 1);
+
+    for (let i = 0; i < values.length; i++) {
+      if (i === 0) {
+        values[i].fromScore = 0;
+      } else {
+        values[i].fromScore = values[i - 1].toScore
+          ? (values[i - 1].toScore || 0) + 1
+          : 0;
+      }
+    }
+
     setInputFields(values);
   };
 
-  const handleInputChange = (index: any, event: any) => {
+  const handleInputChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const values = [...inputFields];
     const { name, value } = event.target;
     if (name === "point_evaluation") {
@@ -103,15 +117,14 @@ function CreatePage({ exam, isEdit }: any) {
       values[index].fromScore = parseInt(value);
     } else if (name === "to") {
       const newToValue = parseInt(value);
-
       if (false) {
-        errorToast("Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại.");
+        errorToast("Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại.");
         return;
       } else {
         values[index].toScore = newToValue;
         const fromScore = newToValue ?? 0;
         const expectedToScore = fromScore + 1;
-        if (index < length - 1) {
+        if (index < values.length - 1) {
           values[index + 1].fromScore = expectedToScore;
         }
       }
