@@ -46,7 +46,6 @@ function Random({
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
-
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
@@ -70,10 +69,10 @@ function Random({
           });
           setDupLoading(false);
           if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
-          successToast(t("sucess_duplicate_question"));
+          successToast(res?.message ?? t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
             `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
@@ -95,10 +94,10 @@ function Random({
           var res = await deleteQuestionById(question?.id);
           setDeleteLoading(false);
           if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
-          successToast(t("success_delete_question"));
+          successToast(res?.message ?? t("success_delete_question"));
 
           setOpenDeleteQuestion(false);
           await getData();
@@ -134,7 +133,9 @@ function Random({
                   {`${t("quest")} ${index}`}:
                   <span
                     className="body_regular_14 pl-2"
-                    dangerouslySetInnerHTML={{ __html: question?.Base?.Question }}
+                    dangerouslySetInnerHTML={{
+                      __html: question?.Base?.Question,
+                    }}
                   />
                 </span>
               </div>

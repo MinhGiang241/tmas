@@ -59,12 +59,12 @@ function MoveGroupModal(props: MoveGroupProps) {
 
       setLoading(false);
       if (res.code === 0) {
-        successToast(t("success_move"));
+        successToast(res?.message ?? t("success_move"));
         formik.resetForm();
         props?.onOk!();
         props?.onCancel();
       } else {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
       }
     },
   });

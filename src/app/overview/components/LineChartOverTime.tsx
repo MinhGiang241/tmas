@@ -23,7 +23,7 @@ interface LineTableValue {
   value?: number;
 }
 
-interface Props {}
+interface Props { }
 
 function LineChartOverTime(props: Props) {
   const { t } = useTranslation("overview");
@@ -48,7 +48,7 @@ function LineChartOverTime(props: Props) {
     });
 
     if (res?.code != 0) {
-      errorToast(res?.message);
+      errorToast(res, res?.message);
       return;
     }
 
@@ -82,11 +82,10 @@ function LineChartOverTime(props: Props) {
             onClick={() => {
               setLineField(TimeChart.Day);
             }}
-            className={`flex justify-center items-center px-4 ml-3 rounded-lg h-9 ${
-              lineField == TimeChart.Day
+            className={`flex justify-center items-center px-4 ml-3 rounded-lg h-9 ${lineField == TimeChart.Day
                 ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
                 : "border border-m_neutral_200 body_regular_14"
-            }`}
+              }`}
           >
             Day
           </button>
@@ -94,11 +93,10 @@ function LineChartOverTime(props: Props) {
             onClick={() => {
               setLineField(TimeChart.Week);
             }}
-            className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${
-              lineField == TimeChart.Week
+            className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${lineField == TimeChart.Week
                 ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
                 : "border border-m_neutral_200 body_regular_14"
-            }`}
+              }`}
           >
             Week
           </button>
@@ -106,11 +104,10 @@ function LineChartOverTime(props: Props) {
             onClick={() => {
               setLineField(TimeChart.Month);
             }}
-            className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${
-              lineField == TimeChart.Month
+            className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${lineField == TimeChart.Month
                 ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
                 : "border border-m_neutral_200 body_regular_14"
-            }`}
+              }`}
           >
             Month
           </button>
@@ -118,11 +115,10 @@ function LineChartOverTime(props: Props) {
             onClick={() => {
               setLineField(TimeChart.Year);
             }}
-            className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${
-              lineField == TimeChart.Year
+            className={`flex justify-center items-center px-4 ml-3 rounded-lg body_semibold_14 h-9 ${lineField == TimeChart.Year
                 ? "border border-m_primary_500 bg-m_primary_100  text-m_primary_500 body_semibold_14"
                 : "border border-m_neutral_200 body_regular_14"
-            }`}
+              }`}
           >
             Year
           </button>

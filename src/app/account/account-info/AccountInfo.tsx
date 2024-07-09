@@ -154,7 +154,7 @@ function AccountInfo() {
               <button
                 onClick={async () => {
                   if (!user?.verified) {
-                    errorToast(t("please_verify"));
+                    errorToast(undefined, t("please_verify"));
                     return;
                   }
                   setUpdateKey(Date.now());
@@ -170,7 +170,7 @@ function AccountInfo() {
                 <button
                   onClick={() => {
                     if (!user?.verified) {
-                      errorToast(t("please_verify"));
+                      errorToast(undefined, t("please_verify"));
                       return;
                     }
                     resendEmail(data);
@@ -184,7 +184,7 @@ function AccountInfo() {
               className="ml-2"
               onClick={() => {
                 if (!user?.verified) {
-                  errorToast(t("please_verify"));
+                  errorToast(undefined, t("please_verify"));
                   return;
                 }
                 setActiveMem(data);
@@ -207,31 +207,37 @@ function AccountInfo() {
   }, [user]);
 
   const resendEmail = async (mem: UserData) => {
+    var res;
     try {
       dispatch(setLoadingMember(true));
-      await sendInviteEmailToMember({ email: mem.email!, role: mem.role! });
-      successToast(t("success_send_invite"));
+      res = await sendInviteEmailToMember({
+        email: mem.email!,
+        role: mem.role!,
+      });
+      successToast(res?.message ?? t("success_send_invite"));
       dispatch(setLoadingMember(false));
     } catch (e: any) {
       dispatch(setLoadingMember(false));
-      errorToast(e);
+      errorToast(e, e.message);
     }
   };
 
   const deleteMember = async (mem?: UserData) => {
+    var res;
     try {
       setLoadingDelete(true);
+
       if (!mem?.isInvite) {
-        await deleteMemberFromWorkSpace({ userId: mem?._id });
+        res = await deleteMemberFromWorkSpace({ userId: mem?._id });
       } else {
-        await deleteInvitedMemberFromWorkSpace({ email: mem?.email });
+        res = await deleteInvitedMemberFromWorkSpace({ email: mem?.email });
       }
-      successToast(t("delete_success"));
+      successToast(res?.message ?? t("delete_success"));
       setLoadingDelete(false);
       loadMembers();
     } catch (e: any) {
       setLoadingDelete(false);
-      errorToast(e);
+      errorToast(res, e);
     }
   };
 
@@ -256,7 +262,7 @@ function AccountInfo() {
       dispatch(setLoadingMember(false));
     } catch (e: any) {
       dispatch(setLoadingMember(false));
-      // errorToast(e);
+      // errorToast(res,e);
     }
   };
 
@@ -319,7 +325,7 @@ function AccountInfo() {
             <Button
               onClick={() => {
                 if (!user?.verified) {
-                  errorToast(t("please_verify"));
+                  errorToast(undefined, t("please_verify"));
                   return;
                 }
                 setAddKey(Date.now());

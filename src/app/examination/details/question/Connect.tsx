@@ -79,10 +79,10 @@ export default function Connect({
           });
           setDupLoading(false);
           if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
-          successToast(t("sucess_duplicate_question"));
+          successToast(res?.message ?? t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
             `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
@@ -105,10 +105,10 @@ export default function Connect({
           var res = await deleteQuestionById(question?.id);
           setDeleteLoading(false);
           if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
-          successToast(t("success_delete_question"));
+          successToast(res?.message ?? t("success_delete_question"));
 
           setOpenDeleteQuestion(false);
           await getData();

@@ -55,7 +55,6 @@ export default function Explain({
   const containerRef = useRef(null);
   const contentRef = useRef(null);
 
-
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
@@ -76,10 +75,10 @@ export default function Explain({
           });
           setDupLoading(false);
           if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
-          successToast(t("sucess_duplicate_question"));
+          successToast(res?.message ?? t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
             `/exams/details/${examId ?? "u"}/edit?questId=${res?.data}`,
@@ -101,7 +100,7 @@ export default function Explain({
           var res = await deleteQuestionById(question?.id);
           setDeleteLoading(false);
           if (res.code != 0) {
-            errorToast(res?.message ?? "");
+            errorToast(res, res?.message ?? "");
             return;
           }
           successToast(t("success_delete_question"));

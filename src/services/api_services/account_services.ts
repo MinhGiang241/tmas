@@ -36,7 +36,7 @@ export const sendInviteEmailToMember = async ({
     { email, role },
   );
   if (results?.code != 0) {
-    throw results?.message ?? "";
+    throw results;
   }
   return results.data;
 };

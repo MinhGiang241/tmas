@@ -37,7 +37,7 @@ function QuestionGroup({ hidden }: { hidden: boolean }) {
     var res = await getQuestionGroups(search, user?.studio?._id);
     if (res.code != 0) {
       dispatch(setquestionGroupList([]));
-      errorToast(res.message ?? "");
+      errorToast(res, res.message ?? "");
       return;
     }
 
@@ -66,10 +66,10 @@ function QuestionGroup({ hidden }: { hidden: boolean }) {
     const res = await deleteQuestionGroup(active, user?.studio?._id);
     setDeleteLoading(false);
     if (res.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
-    successToast(t("success_delete_group"));
+    successToast(res?.message ?? t("success_delete_group"));
     setActive(undefined);
     setOpenDelete(false);
     loadingQuestions(false);

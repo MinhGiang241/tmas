@@ -114,26 +114,26 @@ function EvaluationQuestion({
   const [fields, setFields] = useState<FieldSurveyAnswer[]>(
     question?.content?.answers
       ? question?.content?.answers?.map((e: any, i: number) => ({
-          id: i,
-          label: e?.label,
-          text: e?.text,
-          point: e?.point,
-          idIcon: e?.idIcon,
-          file: !e?.idIcon
-            ? undefined
-            : {
-                url: `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/download/${e?.idIcon}`,
-              },
-        }))
-      : [
-          {
-            label: "A",
-            id: 1,
-            text: "",
-            point: 0,
-            idIcon: "",
+        id: i,
+        label: e?.label,
+        text: e?.text,
+        point: e?.point,
+        idIcon: e?.idIcon,
+        file: !e?.idIcon
+          ? undefined
+          : {
+            url: `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/download/${e?.idIcon}`,
           },
-        ]
+      }))
+      : [
+        {
+          label: "A",
+          id: 1,
+          text: "",
+          point: 0,
+          idIcon: "",
+        },
+      ]
   );
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -207,12 +207,14 @@ function EvaluationQuestion({
       dispatch(setQuestionLoading(false));
 
       if (res.code !== 0) {
-        errorToast(res.message ?? "");
+        errorToast(res, res.message ?? "");
         return;
       }
       dispatch(resetMultiAnswer(1));
       successToast(
-        question ? t("Cập nhật thành công") : t("Thêm mới thành công")
+        res?.message ?? question
+          ? t("Cập nhật thành công")
+          : t("Thêm mới thành công"),
       );
       router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },
@@ -357,9 +359,8 @@ function EvaluationQuestion({
                 />
                 <Upload
                   headers={{
-                    Authorization: `Bearer ${
-                      sessionStorage.getItem("access_token") ?? getToken()
-                    }`,
+                    Authorization: `Bearer ${sessionStorage.getItem("access_token") ?? getToken()
+                      }`,
                   }}
                   accept="image/png, image/jpeg, image/jpg"
                   action={`${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/uploadImage`}
@@ -380,7 +381,7 @@ function EvaluationQuestion({
                     }
                     return res;
                   }}
-                  // beforeUpload={}
+                // beforeUpload={}
                 >
                   {field?.file ? null : uploadButton}
                 </Upload>

@@ -67,7 +67,7 @@ export default function Explain({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -92,9 +92,8 @@ export default function Explain({
                 <div className="flex flex-col">
                   <span
                     ref={containerRef}
-                    className={`body_semibold_14 ${
-                      expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                    className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                      }`}
                   >
                     {`${t("question")} ${index + 1}`}:
                     <div
@@ -142,10 +141,10 @@ export default function Explain({
               (candidateAnswer?.idFiles &&
                 candidateAnswer?.idFiles?.length != 0)
             ) && (
-              <div className="text-m_warning_600 body_semibold_16">
-                {t("empty_answer")}
-              </div>
-            )}
+                <div className="text-m_warning_600 body_semibold_16">
+                  {t("empty_answer")}
+                </div>
+              )}
             <div
               dangerouslySetInnerHTML={{
                 __html: candidateAnswer?.anwserHtml ?? "",
@@ -193,7 +192,7 @@ export default function Explain({
                       disabled={isComplete}
                       onClick={async () => {
                         if (!point?.trim()) {
-                          errorToast(t("point_not_empty"));
+                          errorToast(undefined, t("point_not_empty"));
                           return;
                         }
                         var val = point?.trim()
@@ -208,7 +207,7 @@ export default function Explain({
                         });
                         setLoading(false);
                         if (res?.code != 0) {
-                          errorToast(res?.message ?? "");
+                          errorToast(res, res?.message ?? "");
                           return;
                         }
                         setPoint(val ? val?.toString() : "");

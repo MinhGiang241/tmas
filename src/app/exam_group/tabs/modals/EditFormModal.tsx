@@ -54,11 +54,11 @@ function EditFormModal(props: EditModalProps) {
       setLoading(false);
       if (res?.code === 0) {
         props?.onOk!();
-        successToast(common.t("success_update"));
+        successToast(res?.message ?? common.t("success_update"));
         formik.resetForm();
         props?.onCancel();
       } else {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
       }
     },
   });

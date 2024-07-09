@@ -258,7 +258,7 @@ function IncomeTab() {
   const getRevenue = async () => {
     const res = await overviewRevenue(user?.studio?._id);
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     setRevenueData(res?.data);
@@ -279,7 +279,7 @@ function IncomeTab() {
     });
     setLoading(false);
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
 
@@ -368,7 +368,7 @@ function IncomeTab() {
   const downloadExell = async () => {
     var res = await overviewListRevenueExel(user?.studio?._id);
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     router.push(res.data ?? "");

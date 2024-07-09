@@ -134,7 +134,7 @@ function TmasAddTab({
     console.log("res", res);
 
     if (res.code != 0) {
-      errorToast(res.message ?? "");
+      errorToast(res, res.message ?? "");
       setQuestionList([]);
       return;
     }
@@ -142,8 +142,7 @@ function TmasAddTab({
     setTotal(res?.records);
     setQuestionList(res?.data ?? []);
   };
-
-  const onChangeCheck = (checkedList: any) => {};
+  const onChangeCheck = (checkedList: any) => { };
 
   const addExamBank = async (__: any, question: BaseQuestionData) => {
     setOpenAdd(true);
@@ -157,7 +156,7 @@ function TmasAddTab({
       cloneQuestion!.idExam = exam?.id;
       const res = await cloneQuestionFromTmas(cloneQuestion!);
       if (res?.code != 0) {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
         return;
       }
       console.log("res", res);
@@ -191,7 +190,7 @@ function TmasAddTab({
       const res = await createBatchQuestion(selectedQuestion);
       setLoadingAdd(false);
       if (res.code != 0) {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
         return;
       }
       successToast(t("success_add_into_exam"));
@@ -219,7 +218,7 @@ function TmasAddTab({
     const res = await deleteQuestionById(isAdd[question?.id as string]);
     setLoadingAdd(false);
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     console.log("res", res);
@@ -432,11 +431,11 @@ function TmasAddTab({
     const data = await getTags(
       searchKey
         ? {
-            "Names.Name": "Name",
-            "Names.InValues": searchKey,
-            "Paging.StartIndex": 1,
-            "Paging.RecordPerPage": 100,
-          }
+          "Names.Name": "Name",
+          "Names.InValues": searchKey,
+          "Paging.StartIndex": 1,
+          "Paging.RecordPerPage": 100,
+        }
         : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 }
     );
     if (data?.code != 0) {
@@ -468,7 +467,7 @@ function TmasAddTab({
     const res = await deleteManyQuestion({ ids: deleteIds });
     setLoadingAdd(false);
     if (res?.code) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     successToast(t("success_delete_from_exam"));

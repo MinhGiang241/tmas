@@ -4,6 +4,7 @@ export interface APIResults {
   message?: string;
   data: any;
   records?: number;
+  messageType?: ApiMessageType;
 }
 
 export interface APIResultsBC {
@@ -12,4 +13,11 @@ export interface APIResultsBC {
   message?: string;
   data: any;
   records?: number;
+}
+
+export enum ApiMessageType {
+  None = "none",
+  Success = "success",
+  Warning = "warning",
+  Danger = "danger",
 }

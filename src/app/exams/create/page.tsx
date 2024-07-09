@@ -118,7 +118,10 @@ function CreatePage({ exam, isEdit }: any) {
     } else if (name === "to") {
       const newToValue = parseInt(value);
       if (false) {
-        errorToast("Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại.");
+        errorToast(
+          undefined,
+          "Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại."
+        );
         return;
       } else {
         values[index].toScore = newToValue;
@@ -211,6 +214,7 @@ function CreatePage({ exam, isEdit }: any) {
         inputFields.some((x: any) => x?.label.trim() === "");
       if (validateFields) {
         errorToast(
+          undefined,
           "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả."
         );
         return;
@@ -254,14 +258,14 @@ function CreatePage({ exam, isEdit }: any) {
         ? await updateExam(dataSubmit)
         : await createExaminationList(dataSubmit);
       if (results?.code != 0) {
-        errorToast(results?.message ?? "");
+        errorToast(results, results?.message ?? "");
         setLoading(false);
         return;
       }
       if (exam?.id) {
-        successToast(common.t("success_update"));
+        successToast(results?.message ?? common.t("success_update"));
       } else {
-        successToast(common.t("success_create_new"));
+        successToast(results?.message ?? common.t("success_create_new"));
       }
       setLoading(false);
       router.push(`/exams/details/${results?.data}`);

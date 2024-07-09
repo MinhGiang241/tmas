@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons";
 import MButton from "../config/MButton";
 import { useTranslation } from "react-i18next";
+import { APIResults, ApiMessageType } from "@/data/api_results";
 
 enum ToastType {
   SUCCESS,
@@ -40,17 +41,15 @@ const CustomToast = ({
         onClick={() => {
           toast.dismiss(c.id);
         }}
-        className={`${
-          c.visible ? "animate-enter_overlay" : "animate-leave_overlay"
-        } relative w-full h-screen  flex justify-center bg-black/40`}
+        className={`${c.visible ? "animate-enter_overlay" : "animate-leave_overlay"
+          } relative w-full h-screen  flex justify-center bg-black/40`}
       >
         <div
           onClick={(e) => {
             e.stopPropagation();
           }}
-          className={`${
-            c.visible ? "animate-enter" : "animate-leave"
-          } h-fit mt-40 relative max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 justify-center`}
+          className={`${c.visible ? "animate-enter" : "animate-leave"
+            } h-fit mt-40 relative max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 justify-center`}
         >
           <div className="px-10 w-full relative z-50">
             <div className="flex justify-center mt-6 mb-4">
@@ -69,8 +68,8 @@ const CustomToast = ({
                 {type == ToastType.SUCCESS
                   ? t("success")
                   : type === ToastType.ERROR
-                  ? t("fail")
-                  : t("notify")}
+                    ? t("fail")
+                    : t("notify")}
               </h4>
               <p>{content}</p>
             </div>
@@ -105,11 +104,28 @@ export const successToast = (content: string) => {
   ));
 };
 
-export const errorToast = (content: string) => {
+export const errorToast = (res: APIResults | undefined, content: string) => {
+  switch (res?.messageType) {
+    case ApiMessageType.Warning:
+      notifyToast(content);
+      break;
+    case ApiMessageType.Danger:
+      dangerToast(content);
+      break;
+    case ApiMessageType.None:
+      break;
+    default:
+      dangerToast(content);
+      break;
+  }
+
+};
+
+export const dangerToast = (content: string) => {
   toast.custom((e) => (
     <CustomToast type={ToastType.ERROR} content={content} c={e} />
   ));
-};
+}
 
 export const notifyToast = (content: string) => {
   toast.custom((e) => (
@@ -120,7 +136,7 @@ export const notifyToast = (content: string) => {
 export const successToastIntroduce = (
   content: string,
   fn: () => void,
-  text?: string
+  text?: string,
 ) => {
   toast.custom((e) => (
     <CustomToast

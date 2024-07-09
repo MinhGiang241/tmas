@@ -55,9 +55,9 @@ function CreateChildGroupModal(props: CreateChildProps) {
         formik.resetForm();
         props?.onCancel();
         props?.onOk!();
-        successToast(common.t("success_create_new"));
+        successToast(res?.message ?? common.t("success_create_new"));
       } else {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
       }
     },
   });

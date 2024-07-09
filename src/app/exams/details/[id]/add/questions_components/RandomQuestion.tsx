@@ -107,11 +107,13 @@ function RandomQuestion({
         : await createRandomQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
         return;
       }
       successToast(
-        question ? t("success_update_question") : t("success_add_question"),
+        res?.message ?? question
+          ? t("success_update_question")
+          : t("success_add_question"),
       );
       router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },

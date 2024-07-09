@@ -173,7 +173,7 @@ function ResultPage({ params }: any) {
   const downloadExcell = async () => {
     var res = await exportExelFile(params.eid);
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     saveAs(res?.data, "data.xlsx");
@@ -428,11 +428,11 @@ function ResultPage({ params }: any) {
             onClick={() => {
               from == "ExamList"
                 ? router.push(
-                    `/exams/examtest_results/${params?.eid}/${data?.id}?from=${from}`,
-                  )
+                  `/exams/examtest_results/${params?.eid}/${data?.id}?from=${from}`,
+                )
                 : router.push(
-                    `/examination/results/${params?.eid}/${data?.id}?from=${from}`,
-                  );
+                  `/examination/results/${params?.eid}/${data?.id}?from=${from}`,
+                );
             }}
           >
             <EyeIcon />
@@ -513,9 +513,9 @@ function ResultPage({ params }: any) {
                 value:
                   values[i] && values[i]!.length >= 1
                     ? `${dayjs(
-                        (values[i] as any)[0],
-                        "DD/MM/YYYY",
-                      ).toISOString()}`
+                      (values[i] as any)[0],
+                      "DD/MM/YYYY",
+                    ).toISOString()}`
                     : undefined,
                 condition: Condition.gte,
               };
@@ -525,8 +525,8 @@ function ResultPage({ params }: any) {
                 value:
                   values[i] && values[i]!.length >= 2
                     ? `${dayjs((values[i] as any)[1], "DD/MM/YYYY")
-                        ?.add(1, "day")
-                        ?.toISOString()}`
+                      ?.add(1, "day")
+                      ?.toISOString()}`
                     : undefined,
                 condition: Condition.lt,
               };
@@ -1118,11 +1118,10 @@ function ResultPage({ params }: any) {
                 <span className="body_semibold_14 mr-1">{`${t(e)}: `}</span>
                 <span className="body_regular_14">
                   {" "}
-                  {`${
-                    e == "test_date"
+                  {`${e == "test_date"
                       ? (filterValues as any)[e].join(" - ")
                       : (filterValues as any)[e]
-                  }`}
+                    }`}
                 </span>
                 <button
                   className="ml-2"
@@ -1221,7 +1220,7 @@ function ResultPage({ params }: any) {
           ]}
           expandable={{ expandedRowRender }}
           isHidePagination
-          //pagination={false}
+        //pagination={false}
         />
       </div>
       <div className="h-44" />

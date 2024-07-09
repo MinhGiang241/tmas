@@ -108,36 +108,40 @@ function MyBankAddTab({
       studioSorters: [
         sort != "A-Z"
           ? {
-              name: "CreatedTime",
-              isAsc: false,
-            }
+            name: "CreatedTime",
+            isAsc: false,
+          }
           : {
-              name: "UnsignedName",
-              isAsc: true,
-            },
+            name: "UnsignedName",
+            isAsc: true,
+          },
       ],
       sorters: [
         sort != "A-Z"
           ? {
-              name: "CreatedTime",
-              isAsc: false,
-            }
+            name: "CreatedTime",
+            isAsc: false,
+          }
           : {
-              name: "UnsignedName",
-              isAsc: true,
-            },
+            name: "UnsignedName",
+            isAsc: true,
+          },
       ],
 
       andQuestionTypes:
         exam?.examType == ExamType.Survey
           ? [QuestionType.Essay, QuestionType.Evaluation]
           : questionType
-          ? [questionType]
-          : undefined,
+            ? [questionType]
+            : undefined,
+      // andIdExamQuestionParts: "",
+      // andQuestionTypes: "",
+      // idExams: "",
+      // andIdGroupQuestions: "",
     });
     setLoadingPage(false);
     if (res.code != 0) {
-      errorToast(res.message ?? "");
+      errorToast(res, res.message ?? "");
       setQuestionList([]);
       return;
     }
@@ -159,7 +163,7 @@ function MyBankAddTab({
       // newIdExamQuestionPart: partId,}
     );
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     console.log("res", res);
@@ -178,7 +182,7 @@ function MyBankAddTab({
 
     const res = await deleteQuestionById(isAdd[question?.id as string]);
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     console.log("res", res);
@@ -190,7 +194,7 @@ function MyBankAddTab({
   };
 
   const [isAdd, setIsAdd] = useState<any>({});
-  const onChangeCheck = (checkedList: any) => {};
+  const onChangeCheck = (checkedList: any) => { };
   const renderQuestion: (
     e: BaseQuestionData,
     index: number
@@ -408,7 +412,7 @@ function MyBankAddTab({
 
     setLoadingMany(false);
     if (res.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     setIsAdd({});
@@ -440,7 +444,7 @@ function MyBankAddTab({
     console.log("res", res);
 
     if (res.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     for (let i in res.data) {

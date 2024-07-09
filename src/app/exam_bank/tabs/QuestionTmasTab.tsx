@@ -89,7 +89,7 @@ function QuestionTmasTab() {
     console.log("res", res);
 
     if (res.code != 0) {
-      errorToast(res.message ?? "");
+      errorToast(res, res.message ?? "");
       setQuestionList([]);
       return;
     }
@@ -125,11 +125,11 @@ function QuestionTmasTab() {
     const res = await deleteQuestionById(isAdd[question?.id as string]);
     setLoadingAdd(false);
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     console.log("res", res);
-    successToast(t("success_delete_from_exam"));
+    successToast(res?.message ?? t("success_delete_from_exam"));
     const isAddClone = _.cloneDeep(isAdd);
     isAddClone[question?.id as string] = undefined;
     setIsAdd(isAddClone);
@@ -289,11 +289,11 @@ function QuestionTmasTab() {
     const data = await getTags(
       searchKey
         ? {
-            "Names.Name": "Name",
-            "Names.InValues": searchKey,
-            "Paging.StartIndex": 1,
-            "Paging.RecordPerPage": 100,
-          }
+          "Names.Name": "Name",
+          "Names.InValues": searchKey,
+          "Paging.StartIndex": 1,
+          "Paging.RecordPerPage": 100,
+        }
         : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 }
     );
     if (data?.code != 0) {
@@ -322,12 +322,12 @@ function QuestionTmasTab() {
       const res = await cloneQuestionFromTmas(cloneQuestion!);
 
       if (res?.code != 0) {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
         return;
       }
       console.log("res", res);
 
-      successToast(t("success_add_into_exam"));
+      successToast(res?.message ?? t("success_add_into_exam"));
       const isAddClone = _.cloneDeep(isAdd);
       isAddClone[active?.id as string] = res.data;
       setIsAdd(isAddClone);

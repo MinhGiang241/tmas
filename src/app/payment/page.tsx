@@ -49,7 +49,7 @@ function Payment() {
     });
 
     if (res?.code != 0) {
-      errorToast(res.message ?? "");
+      errorToast(res, res.message ?? "");
       return;
     }
     router.push(res.data);
@@ -87,7 +87,7 @@ function Payment() {
     if (res?.code != 0) {
       setIsApply(false);
       setDiscountPrice(0);
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     setIsApply(true);
@@ -119,9 +119,8 @@ function Payment() {
                 onClick={() => {
                   setMethod("atm");
                 }}
-                className={`mb-5 justify-between w-full flex items-center border px-6 py-3 rounded-lg body_regular_16 ${
-                  method == "atm" ? "bg-m_primary_100 " : ""
-                }`}
+                className={`mb-5 justify-between w-full flex items-center border px-6 py-3 rounded-lg body_regular_16 ${method == "atm" ? "bg-m_primary_100 " : ""
+                  }`}
               >
                 <Radio value={"atm"}>
                   <div className="body_regular_16 w-full flex justify-start text-start">
@@ -141,9 +140,8 @@ function Payment() {
                 onClick={() => {
                   setMethod("momo");
                 }}
-                className={`mb-5 justify-between w-full flex items-center border px-6 py-3 rounded-lg body_regular_16 ${
-                  method == "momo" ? "bg-m_primary_100 " : ""
-                }`}
+                className={`mb-5 justify-between w-full flex items-center border px-6 py-3 rounded-lg body_regular_16 ${method == "momo" ? "bg-m_primary_100 " : ""
+                  }`}
               >
                 <Radio value={"momo"}>
                   <div className="body_regular_16 w-full flex justify-start text-start">
@@ -163,9 +161,8 @@ function Payment() {
                 onClick={() => {
                   setMethod("visa");
                 }}
-                className={`mb-5 justify-between w-full flex items-center border px-6 py-3 rounded-lg body_regular_16 ${
-                  method == "visa" ? "bg-m_primary_100 " : ""
-                }`}
+                className={`mb-5 justify-between w-full flex items-center border px-6 py-3 rounded-lg body_regular_16 ${method == "visa" ? "bg-m_primary_100 " : ""
+                  }`}
               >
                 <Radio value={"visa"}>
                   <div className="body_regular_16 w-full flex justify-start text-start">
@@ -185,9 +182,8 @@ function Payment() {
                 onClick={() => {
                   setMethod("vnpay");
                 }}
-                className={`mb-5 justify-between w-full flex items-center border px-6 py-3 rounded-lg body_regular_16 ${
-                  method == "vnpay" ? "bg-m_primary_100 " : ""
-                }`}
+                className={`mb-5 justify-between w-full flex items-center border px-6 py-3 rounded-lg body_regular_16 ${method == "vnpay" ? "bg-m_primary_100 " : ""
+                  }`}
               >
                 <Radio value={"vnpay"}>
                   <div className="body_regular_16 w-full flex justify-start text-start">
@@ -282,7 +278,7 @@ function Payment() {
                       //                         :
 
                       "bg-m_primary_500"
-                    } w-20 lg:h-11 h-11 rounded-r-lg text-white`}
+                      } w-20 lg:h-11 h-11 rounded-r-lg text-white`}
                   >
                     {t("apply")}
                   </button>

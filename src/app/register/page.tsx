@@ -113,9 +113,9 @@ function RegisterPage() {
           setLoading(false);
 
           if (invitationId && emailParams) {
-            successToast(t("success_create_account_via_mail"));
+            successToast(v?.message ?? t("success_create_account_via_mail"));
           } else {
-            successToast(t("success_create_account"));
+            successToast(v?.message ?? t("success_create_account"));
           }
           console.log("register", v);
 
@@ -125,7 +125,7 @@ function RegisterPage() {
           console.log(v);
         })
         .catch((e) => {
-          errorToast(e);
+          errorToast(e, e?.message);
           setLoading(false);
           console.log(e);
         });
@@ -157,15 +157,15 @@ function RegisterPage() {
         setFLoading(false);
         setGLoading(false);
         if (v?.user?.verified) {
-          successToast(t("success_login"));
+          successToast(v?.message ?? t("success_login"));
         } else {
-          successToast(t("success_create_account"));
+          successToast(v?.message ?? t("success_create_account"));
         }
         //successToast(t("success_create_account"));
         router.push("/");
       })
       .catch((e) => {
-        errorToast(e);
+        errorToast(e, e?.message);
         setFLoading(false);
         setGLoading(false);
       });
@@ -180,7 +180,7 @@ function RegisterPage() {
         console.log("googleauth", data);
       })
       .catch((e: any) => {
-        errorToast(e?.message);
+        errorToast(undefined, e?.message);
         setGLoading(false);
       });
   };
@@ -193,7 +193,7 @@ function RegisterPage() {
         console.log("facebook auth", data);
       })
       .catch((e: any) => {
-        errorToast(e?.message);
+        errorToast(undefined, e?.message);
         setFLoading(false);
       });
   };
@@ -226,7 +226,7 @@ function RegisterPage() {
               touch={formik.touched.full_name}
               onBlur={formik.handleBlur}
               value={formik.values.full_name}
-              // formik={formik}
+            // formik={formik}
             />
             <MInput
               prefix={<BuildingIcon />}

@@ -77,7 +77,7 @@ function ResetPasswordPage() {
         })
         .catch((e) => {
           setSendLoading(false);
-          errorToast(e);
+          errorToast(e, e?.message);
         });
 
       //setFormState(StateForm.ENTER_PASSWORD);
@@ -117,12 +117,12 @@ function ResetPasswordPage() {
       createNewPass({ email, new_pass: values.new_password?.trim() })
         .then((v) => {
           setConfirmLoading(false);
-          successToast(t("success_create_pass"));
+          successToast(v?.message ?? t("success_create_pass"));
           router.push("/signin");
         })
         .catch((e) => {
           setConfirmLoading(false);
-          errorToast(e);
+          errorToast(e, e?.message);
         });
     },
   });
@@ -254,7 +254,7 @@ function ResetPasswordPage() {
         onChangeState={() => setFormState(StateForm.ENTER_PASSWORD)}
         key={modalKey}
         email={email}
-        onOk={() => {}}
+        onOk={() => { }}
         open={open}
         onCancel={() => {
           setOtp("");

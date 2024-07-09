@@ -69,12 +69,12 @@ function AddAccount({ open, onCancel, onOk }: Props) {
           setLoading(false);
           onOk!();
           onCancel();
-          successToast(t("add_account_success"));
+          successToast(v?.message ?? t("add_account_success"));
         })
         .catch((e) => {
           console.log(e);
           setLoading(false);
-          errorToast(e);
+          errorToast(e, e?.message);
         });
     },
   });

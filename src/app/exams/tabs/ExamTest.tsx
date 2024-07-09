@@ -45,6 +45,7 @@ import copy from "copy-text-to-clipboard";
 import toast from "react-hot-toast";
 import { createExaminationVersion } from "@/services/api_services/examination_bc_api";
 import { UploadOutlined, ProfileOutlined } from "@ant-design/icons";
+import EyeIcon from "../../components/icons/eye.svg";
 
 function ExamTestTab({ hidden }: { hidden: boolean }) {
   const { t } = useTranslation("exam");
@@ -181,7 +182,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
     var res: APIResults = await deleteExamination(active?.id);
 
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       setDeleteLoading(false);
       return;
     }
@@ -189,7 +190,7 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
     setActive(undefined);
     setOpenDelete(false);
     loadExamList(false);
-    successToast(common.t("delete_success"));
+    successToast(res?.message ?? common.t("delete_success"));
   };
 
   const handlePublishExam = async (v: any) => {
@@ -205,9 +206,9 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
       group_name: group?.name || "",
     });
     if (result.code === 0) {
-      successToast(common.t("success"));
+      successToast(result?.message ?? common.t("success"));
     } else {
-      errorToast(result?.message ?? "");
+      errorToast(result, result?.message ?? "");
     }
   };
 
@@ -407,7 +408,8 @@ function ExamTestTab({ hidden }: { hidden: boolean }) {
                             }}
                           >
                             <Tooltip placement="top" title={t("detail")}>
-                              <ProfileOutlined className="text-2xl" />
+                              {/* <ProfileOutlined className="text-2xl" /> */}
+                              <EyeIcon />
                             </Tooltip>
                           </button>
                           <div className="w-3" />

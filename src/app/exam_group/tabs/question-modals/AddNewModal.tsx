@@ -56,10 +56,10 @@ function AddNewModal(props: AddQuestModal) {
         });
         setLoading(false);
         if (res?.code != 0) {
-          errorToast(res?.message ?? "");
+          errorToast(res, res?.message ?? "");
           return;
         }
-        successToast(common.t("success_create_new"));
+        successToast(res?.message ?? common.t("success_create_new"));
         formik.resetForm();
         props?.onCancel();
         props?.onOk!();
@@ -71,13 +71,13 @@ function AddNewModal(props: AddQuestModal) {
         });
         setLoading(false);
         if (res?.code != 0) {
-          errorToast(res?.message ?? "");
+          errorToast(res, res?.message ?? "");
           return;
         }
         if (props.isEdit) {
-          successToast(common.t("success_update"));
+          successToast(res?.message ?? common.t("success_update"));
         } else {
-          successToast(common.t("success_create_new"));
+          successToast(res?.message ?? common.t("success_create_new"));
         }
         formik.resetForm();
         props?.onCancel();

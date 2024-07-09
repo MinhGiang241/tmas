@@ -157,11 +157,11 @@ function ManyResultsQuestion({
     validate,
     onSubmit: async (values: MultiAnswerQuestionValue) => {
       if (answers.length === 0) {
-        errorToast(t("at_least_1_answer"));
+        errorToast(res, t("at_least_1_answer"));
         return;
       }
       if (answers.every((r) => !r.isCorrectAnswer)) {
-        errorToast(t("at_least_1_true_answer"));
+        errorToast(res, t("at_least_1_true_answer"));
         return;
       }
       dispatch(setQuestionLoading(true));
@@ -194,13 +194,13 @@ function ManyResultsQuestion({
         : await createMultiAnswerQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
-        errorToast(res.message ?? "");
+        errorToast(res, res.message ?? "");
         return;
       }
       dispatch(resetMultiAnswer(1));
       question
-        ? successToast(t("success_update_question"))
-        : successToast(t("success_add_question"));
+        ? successToast(res?.message ?? t("success_update_question"))
+        : successToast(res?.message ?? t("success_add_question"));
       router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },
   });

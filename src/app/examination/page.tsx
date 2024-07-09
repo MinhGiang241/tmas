@@ -133,7 +133,7 @@ function ExaminationPage() {
     if (dataExamination?.code != 0) {
       setLoading(false);
       setList([]);
-      errorToast(dataExamination?.message ?? "");
+      errorToast(dataExamination, dataExamination?.message ?? "");
       return;
     }
     var data: any = dataExamination.data;
@@ -234,7 +234,7 @@ function ExaminationPage() {
     var res: APIResults = await deleteExaminationById(active?.id);
 
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       setDeleteLoading(false);
       return;
     }
@@ -253,7 +253,7 @@ function ExaminationPage() {
 
     var data = await duplicateExamination({ ids: [active?.id as string] });
     if (data?.code != 0) {
-      errorToast(data?.message ?? "");
+      errorToast(data, data?.message ?? "");
       setActive(undefined);
       setDupLoading(false);
       return;
@@ -632,7 +632,7 @@ function ExaminationPage() {
                                 isActive: t,
                               });
                               if (data?.code != 0) {
-                                errorToast(data?.message ?? "");
+                                errorToast(data, data?.message ?? "");
                                 return;
                               }
 
@@ -673,7 +673,10 @@ function ExaminationPage() {
                                   v?.stateInfo?.approvedState ==
                                     AppovedState.Pending
                                 ) {
-                                  errorToast(t("not_approve_send_info"));
+                                  errorToast(
+                                    undefined,
+                                    t("not_approve_send_info"),
+                                  );
                                   return;
                                 }
                                 if (
@@ -681,7 +684,7 @@ function ExaminationPage() {
                                   v?.stateInfo?.approvedState ==
                                     AppovedState.Rejected
                                 ) {
-                                  errorToast(t("reject_send_info"));
+                                  errorToast(undefined, t("reject_send_info"));
                                   return;
                                 }
 
@@ -701,7 +704,10 @@ function ExaminationPage() {
                                   v?.stateInfo?.approvedState ==
                                     AppovedState.Pending
                                 ) {
-                                  errorToast(t("not_approve_send_result"));
+                                  errorToast(
+                                    undefined,
+                                    t("not_approve_send_result"),
+                                  );
                                   return;
                                 }
                                 if (
@@ -709,7 +715,10 @@ function ExaminationPage() {
                                   v?.stateInfo?.approvedState ==
                                     AppovedState.Rejected
                                 ) {
-                                  errorToast(t("reject_send_result"));
+                                  errorToast(
+                                    undefined,
+                                    t("reject_send_result"),
+                                  );
                                   return;
                                 }
 

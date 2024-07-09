@@ -1,5 +1,5 @@
 import React from "react";
-import { APIResults } from "@/data/api_results";
+import { APIResults, ApiMessageType } from "@/data/api_results";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import i18next from "i18next";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
@@ -10,7 +10,7 @@ export class callApi {
   static post = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers = {
@@ -31,6 +31,7 @@ export class callApi {
           message: response.data?.message,
           records: response?.data?.records,
           dataTotal: response?.data?.dataTotal,
+          messageType: response?.data?.messageType,
         };
       }
 
@@ -40,18 +41,20 @@ export class callApi {
         message: response?.data?.message,
         records: response?.data?.records,
         dataTotal: response?.data?.dataTotal,
+        messageType: response?.data?.messageType,
       };
     } catch (error: any) {
       return {
         code: 1,
         message: error.message,
         data: error.message,
+        messageType: ApiMessageType.Danger,
       };
     }
   };
   static get = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers = {
@@ -71,6 +74,7 @@ export class callApi {
           data: response.data?.data ?? response.data,
           message: response.data?.message,
           records: response?.data?.records,
+          messageType: response?.data?.messageType,
         };
       }
       return {
@@ -79,12 +83,14 @@ export class callApi {
         data: response?.data?.data ?? response.data,
         message: response?.data?.message,
         records: response?.data?.records,
+        messageType: response?.data?.messageType,
       };
     } catch (error: any) {
       return {
         code: 1,
         message: error.message,
         data: error.message,
+        messageType: ApiMessageType.Danger,
       };
     }
   };
@@ -92,7 +98,7 @@ export class callApi {
   static upload = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ) {
     const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers = {
@@ -105,12 +111,14 @@ export class callApi {
         code: 0,
         data: response?.data,
         message: response?.status,
+        messageType: response?.data?.messageType,
       };
     } catch (e: any) {
       return {
         code: 1,
         data: e.message,
         message: e.message,
+        messageType: ApiMessageType.Danger,
       };
     }
   };
@@ -120,7 +128,7 @@ export class callStudioAPI {
   static post = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ) {
     const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers: any = {
@@ -137,6 +145,7 @@ export class callStudioAPI {
           data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
           records: response.data?.records,
+          messageType: response?.data?.messageType,
         };
       } else if (response.status === 200) {
         return {
@@ -144,6 +153,7 @@ export class callStudioAPI {
           data: response?.data?.data ?? response.data,
           response: response.data,
           records: response.data?.records,
+          messageType: response?.data?.messageType,
         };
       }
 
@@ -153,19 +163,21 @@ export class callStudioAPI {
         message: response.statusText,
         response: response.data,
         records: response.data?.records,
+        messageType: response?.data?.messageType,
       };
     } catch (error: any) {
       return {
         code: 1,
         message: error.message,
         data: error.message,
+        messageType: ApiMessageType.Danger,
       };
     }
   };
 
   static get = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers = {
@@ -180,12 +192,14 @@ export class callStudioAPI {
           data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
           response: response.data,
+          messageType: response?.data?.messageType,
         };
       } else if (response.status === 200) {
         return {
           code: 0,
           data: response?.data?.data ?? response.data,
           response: response.data,
+          messageType: response?.data?.messageType,
         };
       }
 
@@ -194,12 +208,14 @@ export class callStudioAPI {
         data: response.statusText,
         message: response.statusText,
         response: response.data,
+        messageType: response?.data?.messageType,
       };
     } catch (error: any) {
       return {
         code: 1,
         message: error.message,
         data: error.message,
+        messageType: ApiMessageType.Danger,
       };
     }
   };
@@ -207,7 +223,7 @@ export class callStudioAPI {
   static put = async function (
     url: string,
     data: any,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers: any = {
@@ -222,11 +238,13 @@ export class callStudioAPI {
           data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
           response: response.data,
+          messageType: response?.data?.messageType,
         };
       } else if (response.status === 200) {
         return {
           code: 0,
           data: response?.data?.data ?? response.data,
+          messageType: response?.data?.messageType,
         };
       }
 
@@ -235,19 +253,21 @@ export class callStudioAPI {
         data: response.statusText,
         message: response.statusText,
         response: response.data,
+        messageType: response?.data?.messageType,
       };
     } catch (error: any) {
       return {
         code: 1,
         message: error.message,
         data: error.message,
+        messageType: ApiMessageType.Danger,
       };
     }
   };
 
   static delete = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers: any = {
@@ -263,11 +283,13 @@ export class callStudioAPI {
           data: response.data?.data ?? response.data,
           message: response.data.errors?.map((c: any) => c.message)?.join(". "),
           response: response.data,
+          messageType: response?.data?.messageType,
         };
       } else if (response.status === 200) {
         return {
           code: 0,
           data: response?.data?.data ?? response.data,
+          messageType: response?.data?.messageType,
         };
       }
 
@@ -276,19 +298,21 @@ export class callStudioAPI {
         data: response.statusText,
         message: response.statusText,
         response: response.data,
+        messageType: response?.data?.messageType,
       };
     } catch (error: any) {
       return {
         code: 1,
         message: error.message,
         data: error.message,
+        messageType: ApiMessageType.Danger,
       };
     }
   };
 
   static download = async function (
     url: string,
-    config?: AxiosRequestConfig<any> | undefined
+    config?: AxiosRequestConfig<any> | undefined,
   ): Promise<any> {
     const token = sessionStorage.getItem("access_token") ?? getToken();
     var headers: any = {
@@ -303,6 +327,7 @@ export class callStudioAPI {
         return {
           code: 0,
           data: response?.data,
+          messageType: response?.data?.messageType,
         };
       }
     } catch (error: any) {
@@ -310,6 +335,7 @@ export class callStudioAPI {
         code: 1,
         message: error.message,
         data: error.message,
+        messageType: error?.messageType ?? ApiMessageType.Danger,
       };
     }
   };

@@ -102,16 +102,16 @@ function ExamDetails({ params }: any) {
   };
 
   const handleExpectedPointChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setExpectedPoint(Number(event.target.value));
   };
   const user: UserData | undefined = useAppSelector(
-    (state: RootState) => state?.user?.user
+    (state: RootState) => state?.user?.user,
   );
   const dispatchGroup = useAppDispatch();
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.questions
+    (state: RootState) => state?.examGroup?.questions,
   );
   const loadQuestionGroupList = async (init?: boolean) => {
     if (init) {
@@ -120,7 +120,7 @@ function ExamDetails({ params }: any) {
 
     var dataResults: APIResults = await getQuestionGroups(
       "",
-      user?.studio?._id
+      user?.studio?._id,
     );
 
     if (dataResults.code != 0) {
@@ -134,7 +134,7 @@ function ExamDetails({ params }: any) {
   useEffect(() => {
     if (user?.studio?._id) {
       dispatchGroup(
-        fetchDataQuestionGroup(async () => loadQuestionGroupList(true))
+        fetchDataQuestionGroup(async () => loadQuestionGroupList(true)),
       );
     }
 
@@ -149,7 +149,7 @@ function ExamDetails({ params }: any) {
     }
 
     if (res.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
 
@@ -216,7 +216,7 @@ function ExamDetails({ params }: any) {
   );
 
   const handleNameChangeValid = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { value } = event.target;
     setName(value);
@@ -239,7 +239,7 @@ function ExamDetails({ params }: any) {
     // console.log(res);
     setAddLoading(false);
     if (res && res.code !== 0) {
-      errorToast(res.message || "");
+      errorToast(res, res.message || "");
       return;
     }
 
@@ -254,7 +254,7 @@ function ExamDetails({ params }: any) {
   const handleDelete = async () => {
     const res = await deleteQuestionPartById(idDelete);
     if (res && res.code !== 0) {
-      errorToast(res.message || "");
+      errorToast(res, res.message || "");
       return;
     }
     setOpenDelete(false);
@@ -296,7 +296,7 @@ function ExamDetails({ params }: any) {
 
   const totalPart = () => {
     const part = data?.records.find(
-      (part: any) => part.id === activeDelete?.id
+      (part: any) => part.id === activeDelete?.id,
     );
     if (!part) return 0;
 
@@ -309,7 +309,7 @@ function ExamDetails({ params }: any) {
 
   const expectedPointTotal = () => {
     const part = data?.records.find(
-      (part: any) => part.id === activeDelete?.id
+      (part: any) => part.id === activeDelete?.id,
     );
     if (!part) return 0;
 
@@ -460,7 +460,7 @@ function ExamDetails({ params }: any) {
           var res = await CopyQuestion(params.id);
           console.log(res?.data, "copy");
           if (res?.code != 0) {
-            errorToast(res.message || "");
+            errorToast(res, res.message || "");
             return;
           }
           setOpenCopyQuestion(false);
@@ -588,7 +588,7 @@ function ExamDetails({ params }: any) {
                   (to: any, quest: any) => {
                     return to + (quest?.numberPoint ?? 0);
                   },
-                  0
+                  0,
                 );
                 return total + point;
               }, 0)}
@@ -736,7 +736,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/add?partId=${x?.id}`
+                                    `/exams/details/${params.id}/add?partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1"
@@ -747,7 +747,19 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/my_bank?tab=0&partId=${x?.id}`
+                                    `/exams/details/${params.id}/import?partId=${x?.id}`,
+                                  );
+                                }}
+                                className="text-left mb-2 pb-1"
+                              >
+                                {t("add_from_excel")}
+                              </button>
+
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  router.push(
+                                    `/exams/details/${params.id}/my_bank?tab=0&partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1 "
@@ -758,7 +770,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/my_bank?tab=1&partId=${x?.id}`
+                                    `/exams/details/${params.id}/my_bank?tab=1&partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1 "
@@ -828,12 +840,12 @@ function ExamDetails({ params }: any) {
                       a.createdTime < b.createdTime
                         ? -1
                         : a.createdTime > b.createdTime
-                        ? 1
-                        : 0
+                          ? 1
+                          : 0,
                     )
                     .map((e: any, key: any) => {
                       var questionGroup = questionGroups?.find(
-                        (v: any) => v.id === e.idGroupQuestion
+                        (v: any) => v.id === e.idGroupQuestion,
                       );
                       if (e.questionType == "Coding") {
                         return (

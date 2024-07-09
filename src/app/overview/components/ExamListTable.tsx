@@ -308,14 +308,14 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     }
     if (startDate) {
       filters.push({
-        id: "ValidAccessSetting.ValidFrom",
+        id: "CreatedTime",
         value: startDate,
         operation: ">=",
       });
     }
     if (endDate) {
       filters.push({
-        id: "ValidAccessSetting.ValidFrom",
+        id: "CreatedTime",
         value: endDate,
         operation: "<=",
       });
@@ -420,7 +420,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
     });
 
     if (res?.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
 

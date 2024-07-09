@@ -115,14 +115,13 @@ function SendExaminationInfo(props: Props) {
         : "20%",
       title: (
         <div
-          className={`w-full break-all  ${
-            !(
-              props.examination?.accessCodeSettingType === "MultiCode" &&
-              props.examination?.sharingSetting == "Private"
-            )
-              ? "hidden"
-              : "flex"
-          } justify-start`}
+          className={`w-full break-all  ${!(
+            props.examination?.accessCodeSettingType === "MultiCode" &&
+            props.examination?.sharingSetting == "Private"
+          )
+            ? "hidden"
+            : "flex"
+            } justify-start`}
         >
           {t("access_code")}
         </div>
@@ -132,14 +131,13 @@ function SendExaminationInfo(props: Props) {
       render: (text) => (
         <p
           key={text}
-          className={` ${
-            !(
-              props.examination?.accessCodeSettingType === "MultiCode" &&
-              props.examination?.sharingSetting == "Private"
-            )
-              ? "hidden"
-              : "flex"
-          } w-full break-all min-w-11 justify-start caption_regular_14`}
+          className={` ${!(
+            props.examination?.accessCodeSettingType === "MultiCode" &&
+            props.examination?.sharingSetting == "Private"
+          )
+            ? "hidden"
+            : "flex"
+            } w-full break-all min-w-11 justify-start caption_regular_14`}
         >
           {text}
         </p>
@@ -226,7 +224,7 @@ function SendExaminationInfo(props: Props) {
                     return;
                   }
                   setEmails([]);
-                  successToast(t("success_delete_email"));
+                  successToast(res?.message ?? t("success_delete_email"));
                   getEmailList();
                 }
                 setActive(data);
@@ -285,14 +283,14 @@ function SendExaminationInfo(props: Props) {
       props.examination?.sharingSetting == "Public" &&
       props.examination?.stateInfo?.approvedState == AppovedState.Pending
     ) {
-      errorToast(t("not_approve_send_info"));
+      errorToast(undefined, t("not_approve_send_info"));
       return;
     }
     if (
       props.examination?.sharingSetting == "Public" &&
       props.examination?.stateInfo?.approvedState == AppovedState.Rejected
     ) {
-      errorToast(t("reject_send_info"));
+      errorToast(undefined, t("reject_send_info"));
       return;
     }
     setSendEmailLoading(true);
@@ -302,10 +300,10 @@ function SendExaminationInfo(props: Props) {
           email: t.email,
           passcode:
             props.examination?.sharingSetting === "Private" &&
-            props.examination?.accessCodeSettingType == "One"
+              props.examination?.accessCodeSettingType == "One"
               ? props.examination?.accessCodeSettings![0].code
               : props.examination?.sharingSetting === "Private" &&
-                  props.examination?.accessCodeSettingType == "MultiCode"
+                props.examination?.accessCodeSettingType == "MultiCode"
                 ? t.passcode
                 : undefined,
         })),
@@ -319,11 +317,11 @@ function SendExaminationInfo(props: Props) {
     });
     setSendEmailLoading(false);
     if (res.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     setEmails([]);
-    successToast(t("success_send_remind"));
+    successToast(res?.message ?? t("success_send_remind"));
     getEmailList();
   };
   return (
@@ -521,17 +519,16 @@ function SendExaminationInfo(props: Props) {
         </div>
         <div className="h-4" />
         <div className="w-full flex h-12 items-center  justify-center">
-          <span className="body_regular_14 mr-2">{`${
-            _.filter([...emails, ...mailList], (n: RemindEmailData) => {
-              if (search) {
-                return (
-                  n.email?.toLowerCase().includes(search?.toLowerCase()) ||
-                  n.passcode?.toLowerCase().includes(search?.toLowerCase())
-                );
-              }
-              return true;
-            })?.length ?? 0
-          } ${t("result")}`}</span>
+          <span className="body_regular_14 mr-2">{`${_.filter([...emails, ...mailList], (n: RemindEmailData) => {
+            if (search) {
+              return (
+                n.email?.toLowerCase().includes(search?.toLowerCase()) ||
+                n.passcode?.toLowerCase().includes(search?.toLowerCase())
+              );
+            }
+            return true;
+          })?.length ?? 0
+            } ${t("result")}`}</span>
           <Pagination
             i18nIsDynamicList
             pageSize={recordNum}

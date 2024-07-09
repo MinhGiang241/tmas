@@ -35,7 +35,7 @@ function AddFromMyBank({ params }: any) {
   const loadExamById = async () => {
     var res = await getExamById(params?.id);
     if (res.code != 0) {
-      errorToast(res?.message ?? "");
+      errorToast(res, res?.message ?? "");
       return;
     }
     setExam(res?.data?.records[0]);
@@ -125,32 +125,28 @@ function AddFromMyBank({ params }: any) {
         <button
           onClick={() => {
             router.replace(
-              `/exams/details/${params?.id}/my_bank?tab=0&partId=${
-                partId ?? ""
+              `/exams/details/${params?.id}/my_bank?tab=0&partId=${partId ?? ""
               }`,
             );
           }}
-          className={`${
-            index === "0"
+          className={`${index === "0"
               ? "text-m_primary_500 border-b-m_primary_500 border-b-[3px]"
               : "text-m_neutral_500"
-          } h-12 text-center lg:min-w-40 px-2 body_semibold_16 lg:px-4 max-lg:w-1/2`}
+            } h-12 text-center lg:min-w-40 px-2 body_semibold_16 lg:px-4 max-lg:w-1/2`}
         >
           {t("my_bank")}
         </button>
         <button
           onClick={() => {
             router.replace(
-              `/exams/details/${params?.id}/my_bank?tab=1&partId=${
-                partId ?? ""
+              `/exams/details/${params?.id}/my_bank?tab=1&partId=${partId ?? ""
               }`,
             );
           }}
-          className={`${
-            index === "1"
+          className={`${index === "1"
               ? "text-m_primary_500 border-b-m_primary_500 border-b-[3px]"
               : "text-m_neutral_500"
-          } h-12 text-center lg:min-w-40 body_semibold_16 lg:px-4 max-lg:w-1/2 `}
+            } h-12 text-center lg:min-w-40 body_semibold_16 lg:px-4 max-lg:w-1/2 `}
         >
           {t("tmas_bank")}
         </button>

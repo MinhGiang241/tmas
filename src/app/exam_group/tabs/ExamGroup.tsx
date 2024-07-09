@@ -47,10 +47,10 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
   const common = useTranslation();
 
   const examGroupList = useSelector(
-    (state: RootState) => state.examGroup?.list
+    (state: RootState) => state.examGroup?.list,
   );
   const examGroupLoading = useSelector(
-    (state: RootState) => state.examGroup?.loading
+    (state: RootState) => state.examGroup?.loading,
   );
 
   const dispatch = useDispatch();
@@ -73,7 +73,7 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id
+          (ch: ExamGroupData) => ch.idParent === e.id,
         );
         return { ...e, childs };
       });
@@ -125,20 +125,21 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
   };
 
   const onOkDelete = async () => {
+    var res;
     try {
       setLoadingDelete(true);
-      var res = await deleteExamGroupTest(active, user.studio?._id);
+      res = await deleteExamGroupTest(active, user.studio?._id);
       if (res.code != 0) {
         throw res?.message;
       }
 
       await loadExamTestList(false);
 
-      successToast(t("success_delete_group"));
+      successToast(res?.message ?? t("success_delete_group"));
       setLoadingDelete(false);
       onCancelDelete();
     } catch (e: any) {
-      errorToast(e);
+      errorToast(res, e);
       setActive(undefined);
       setOpenDelete(false);
       setLoadingDelete(false);
@@ -333,7 +334,7 @@ function ExamGroupTab({ hidden }: { hidden: boolean }) {
                         </div>
                       )}
                     </div>
-                  )
+                  ),
                 )}
               </div>
               {user?.studio?.role != "Member" ? (

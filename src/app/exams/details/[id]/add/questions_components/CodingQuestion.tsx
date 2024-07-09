@@ -339,7 +339,7 @@ function CodingQuestion({
     validate,
     onSubmit: async (values: CodingQuestionValue) => {
       if (checkedLang.length === 0) {
-        errorToast(t("at_least_1_language"));
+        errorToast(res, t("at_least_1_language"));
         return;
       }
       dispatch(setQuestionLoading(true));
@@ -382,11 +382,13 @@ function CodingQuestion({
         : await createCodingQuestion(submitData);
       dispatch(setQuestionLoading(false));
       if (res.code != 0) {
-        errorToast(res?.message ?? "");
+        errorToast(res, res?.message ?? "");
         return;
       }
       successToast(
-        question ? t("success_update_question") : t("success_add_question"),
+        res?.message ?? question
+          ? t("success_update_question")
+          : t("success_add_question"),
       );
       router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },
@@ -417,7 +419,7 @@ function CodingQuestion({
             Object.keys(formik.errors).map(async (v) => {
               await formik.setFieldTouched(v, true);
             });
-            errorToast(t("at_least_1_language"));
+            errorToast(undefined, t("at_least_1_language"));
 
             return;
           }
@@ -426,7 +428,7 @@ function CodingQuestion({
             Object.keys(formik.errors).map(async (v) => {
               await formik.setFieldTouched(v, true);
             });
-            errorToast(t("no_testcase"));
+            errorToast(undefined, t("no_testcase"));
 
             return;
           }
