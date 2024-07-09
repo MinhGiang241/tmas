@@ -117,10 +117,11 @@ function CreatePage({ exam, isEdit }: any) {
       values[index].fromScore = parseInt(value);
     } else if (name === "to") {
       const newToValue = parseInt(value);
+      const fromScore = values[index].fromScore ?? 0;
       if (false) {
         errorToast(
           undefined,
-          "Đơn vị điểm đến phải bằng từ điểm + 1, vui lòng nhập lại."
+          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại."
         );
         return;
       } else {
@@ -219,8 +220,19 @@ function CreatePage({ exam, isEdit }: any) {
         );
         return;
       }
+      console.log(inputFields, "inputFields");
+      const invalidScoreRange = inputFields.some(
+        (field: any) => field.toScore <= field.fromScore
+      );
+      if (invalidScoreRange) {
+        errorToast(
+          undefined,
+          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại."
+        );
+        return;
+      }
       setLoading(true);
-
+      // return;
       var submitDocs = [
         ...uploaded,
         ...files.filter((v: UploadedFile) => !v.error).map((i: any) => i.id),
