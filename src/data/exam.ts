@@ -291,6 +291,7 @@ export interface BaseTmasQuestionData {
   createdTime?: string;
   creator?: string;
   version_number?: number;
+  GroupQuestionName?: string;
 }
 
 export interface BaseTmasQuestionExamData {
@@ -310,6 +311,7 @@ export interface BaseTmasQuestionExamData {
   CreatedTime?: string;
   creator?: string;
   Base?: BaseTmasQuestionData;
+  GroupQuestionName?: string;
 }
 
 export interface SurveyTmasQuestionData extends BaseTmasQuestionData {

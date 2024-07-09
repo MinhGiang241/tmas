@@ -46,7 +46,7 @@ const EditorHook = dynamic(
   () => import("../../exams/components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  },
+  }
 );
 
 function CreateExaminationPage({ examination }: any) {
@@ -85,12 +85,12 @@ function CreateExaminationPage({ examination }: any) {
       setStartTime(
         examination?.validAccessSetting?.validFrom
           ? dayjs(examination?.validAccessSetting?.validFrom).format(dateFormat)
-          : undefined,
+          : undefined
       );
       setEndTime(
         examination?.validAccessSetting?.validTo
           ? dayjs(examination?.validAccessSetting?.validTo).format(dateFormat)
-          : undefined,
+          : undefined
       );
       // console.log("examination", examination);
 
@@ -104,21 +104,21 @@ function CreateExaminationPage({ examination }: any) {
               createdDate: Date.now(),
               code: i.code,
             };
-          }) ?? [],
+          }) ?? []
         );
       }
       var results = Object.keys(examination?.testResultSetting as any)?.filter(
-        (s: any) => (examination?.testResultSetting as any)[s],
+        (s: any) => (examination?.testResultSetting as any)[s]
       );
       setResultChecked(results);
 
       var required = Object.keys(
-        examination?.requiredInfoSetting as any,
+        examination?.requiredInfoSetting as any
       )?.filter((s: any) => (examination?.requiredInfoSetting as any)[s]);
       setInfoChecked(required);
 
       var tricks = Object.keys(examination?.cheatingSetting ?? {})?.filter(
-        (s: any) => (examination?.cheatingSetting as any)[s],
+        (s: any) => (examination?.cheatingSetting as any)[s]
       );
       setPreventChecked(tricks);
     }
@@ -135,7 +135,7 @@ function CreateExaminationPage({ examination }: any) {
   const [active, setActive] = useState<boolean>(false);
   const [share, setShare] = useState<"Private" | "Public">("Public");
   const [code, setCode] = useState<"None" | "One" | "MultiCode" | undefined>(
-    "None",
+    "None"
   );
   const [startTime, setStartTime] = useState<string | undefined>();
   const [endTime, setEndTime] = useState<string | undefined>();
@@ -149,11 +149,11 @@ function CreateExaminationPage({ examination }: any) {
   const [codeList, setCodeList] = useState<ExaminationCode[]>([]);
   const [exam, setExam] = useState<ExamData | undefined>(undefined);
   const [expectPassedNumb, setExpectPassedNumb] = useState<number>(
-    examination?.expectPassedNumb ?? 1,
+    examination?.expectPassedNumb ?? 1
   );
   // console.log(exam, "exam");
   const handleExpectPassedNumbChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setExpectPassedNumb(parseInt(event.target.value));
     // console.log(event.target.value, "event.target.value");
@@ -169,7 +169,7 @@ function CreateExaminationPage({ examination }: any) {
       return;
     }
     const res = await getExamById(
-      examination?.idExam ? examination?.idExam : examId,
+      examination?.idExam ? examination?.idExam : examId
     );
     if (res.code != 0) {
       errorToast(res, res?.message ?? "");
@@ -334,7 +334,7 @@ function CreateExaminationPage({ examination }: any) {
           code == "None" || share === "Public"
             ? []
             : code == "One"
-              ? [
+            ? [
                 {
                   //TODO: sửa sau cái này để vì _id trong studio là ownerId
                   studioId: studio?._id,
@@ -343,7 +343,7 @@ function CreateExaminationPage({ examination }: any) {
                   numberOfAccess: 0,
                 },
               ]
-              : [
+            : [
                 ...codeList.map((e: any) => ({
                   //TODO: sửa sau cái này để vì _id trong studio là ownerId
                   studioId: studio?._id,
@@ -424,7 +424,7 @@ function CreateExaminationPage({ examination }: any) {
       successToast(
         dataResults?.message ?? examination
           ? common.t("success_update")
-          : common.t("success_create_new"),
+          : common.t("success_create_new")
       );
       setLoading(false);
       if (exam) {
@@ -526,7 +526,7 @@ function CreateExaminationPage({ examination }: any) {
                 <MButton
                   onClick={() => {
                     router.push(
-                      `/examination/results/${examination?.id}?from=EditExam`,
+                      `/examination/results/${examination?.id}?from=EditExam`
                     );
                   }}
                   h="h-11"
@@ -596,8 +596,35 @@ function CreateExaminationPage({ examination }: any) {
               setValues={setPreventChecked}
             />
             <div className="lg:h-4" />
-            {/* {exam?.examType === ExamType.Survey ? ( */}
-            <div className=" p-4 bg-white">
+            {exam?.scoreRanks?.length === 0 || !exam?.scoreRanks ? (
+              ""
+            ) : (
+              <div className=" p-4 bg-white">
+                <div className="rounded-lg  overflow-hidden body_semibold_16 text-m_neutral_900 pb-2">
+                  {t("specific_8")}
+                </div>
+                <Input
+                  className="rounded-md"
+                  type="number"
+                  onChange={handleExpectPassedNumbChange}
+                  value={expectPassedNumb}
+                />
+                <div className="text-xs text-m_neutral_900 body_semibold_16 pt-2">
+                  Phân hạng kết quả
+                </div>
+                <div className="bg-slate-300 rounded-md p-2 mt-2">
+                  {exam?.scoreRanks?.map((x: any, key: any) => (
+                    <div
+                      key={key}
+                      className="text-sm text-m_neutral_900 body_semibold_16"
+                    >
+                      {x?.label}: Từ {x?.fromScore} - {x?.toScore} Điểm
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* <div className=" p-4 bg-white">
               <div className="rounded-lg  overflow-hidden body_semibold_16 text-m_neutral_900 pb-2">
                 {t("specific_8")}
               </div>
@@ -620,7 +647,7 @@ function CreateExaminationPage({ examination }: any) {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-6 col-span-12 bg-white h-fit rounded-lg">
             <MTextArea

@@ -2,7 +2,15 @@ import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import { FieldSurveyAnswer, QuestionGroupData } from "@/data/exam";
 import { BaseQuestionFormData } from "@/data/form_interface";
-import { Input, Upload, Image, UploadProps, UploadFile, GetProp } from "antd";
+import {
+  Input,
+  Upload,
+  Image,
+  UploadProps,
+  UploadFile,
+  GetProp,
+  Table,
+} from "antd";
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -212,44 +220,6 @@ function EvaluationQuestion({
     },
   });
 
-  // const handlePreview = async (file: any) => {
-  //   if (!file.url && !file.preview) {
-  //     file.preview = await getBase64(file.originFileObj);
-  //   }
-  //   try {
-  //     const res = await uploadImageStudio(file);
-  //     console.log(res);
-
-  //     // const imageUrl = res?.imageUrl;
-  //     // const newWindow = window.open();
-  //     // newWindow?.document.write(
-  //     //   `<img src="${imageUrl || file.preview}" style="width: 100%;" />`
-  //     // );
-  //   } catch (error) {
-  //     console.error("Lỗi khi tải lên hình ảnh:", error);
-  //   }
-  // };
-
-  // const handleChange: UploadProps["onChange"] = async ({
-  //   fileList: newFileList,
-  // }) => {
-  //   console.log(newFileList, "newFileList");
-  //   // const formData = new FormData();
-  //   // formData.append("files", newFileList[0]);
-  //   // const res = await uploadImageStudio(formData);
-  //   // console.log("res", res);
-  //   const updatedFields = fields.map((field: any) => {
-  //     // if (field.id === fieldId) {
-  //     // return {
-  //     //   ...field,
-  //     //   idIcon: newFileList.thumbUrl || "",
-  //     // };
-  //     // }
-  //     // return field;
-  //   });
-  //   setFields(updatedFields);
-  // };
-
   const handlePreview = async (file: UploadFile, index: number) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj as FileType);
@@ -283,7 +253,7 @@ function EvaluationQuestion({
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
       <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
+      {/* <div style={{ marginTop: 8 }}>Tải ảnh lên</div> */}
     </button>
   );
 
@@ -331,6 +301,7 @@ function EvaluationQuestion({
         />
         <div className="border rounded-lg p-4">
           <div className="text-sm font-semibold">{t("specific_7")}</div>
+          <div></div>
           <div className="w-full">
             {fields.map((field: FieldSurveyAnswer, index: number) => (
               <div
@@ -428,30 +399,6 @@ function EvaluationQuestion({
                     src={field?.previewImage}
                   />
                 )}
-                {/* <Upload
-                  name="idIcon"
-                  listType="picture-card"
-                  className="avatar-uploader"
-                  showUploadList={false}
-                  beforeUpload={() => false}
-                  onChange={handleChange}
-                  onPreview={handlePreview}
-                >
-                  {field?.idIcon ? (
-                    <Image
-                      src={field.idIcon}
-                      alt="icon"
-                      style={{
-                        width: "100%",
-                      }}
-                    />
-                  ) : (
-                    <div>
-                      <PlusOutlined />
-                      <div style={{ marginTop: 8 }}>Upload</div>
-                    </div>
-                  )}
-                </Upload> */}
                 <div className="w-10">
                   {index > 0 && (
                     <CloseCircleOutlined

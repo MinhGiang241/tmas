@@ -46,6 +46,7 @@ export interface BaseQuestionData {
   updateTime?: string;
   createdTime?: string;
   studioId?: string;
+  groupQuestionName?: string;
   // find
   hidden?: boolean;
 }
