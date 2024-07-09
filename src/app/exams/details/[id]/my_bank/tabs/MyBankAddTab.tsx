@@ -108,32 +108,32 @@ function MyBankAddTab({
       studioSorters: [
         sort != "A-Z"
           ? {
-            name: "CreatedTime",
-            isAsc: false,
-          }
+              name: "CreatedTime",
+              isAsc: false,
+            }
           : {
-            name: "UnsignedName",
-            isAsc: true,
-          },
+              name: "UnsignedName",
+              isAsc: true,
+            },
       ],
       sorters: [
         sort != "A-Z"
           ? {
-            name: "CreatedTime",
-            isAsc: false,
-          }
+              name: "CreatedTime",
+              isAsc: false,
+            }
           : {
-            name: "UnsignedName",
-            isAsc: true,
-          },
+              name: "UnsignedName",
+              isAsc: true,
+            },
       ],
 
       andQuestionTypes:
         exam?.examType == ExamType.Survey
           ? [QuestionType.Essay, QuestionType.Evaluation]
           : questionType
-            ? [questionType]
-            : undefined,
+          ? [questionType]
+          : undefined,
       // andIdExamQuestionParts: "",
       // andQuestionTypes: "",
       // idExams: "",
@@ -194,7 +194,7 @@ function MyBankAddTab({
   };
 
   const [isAdd, setIsAdd] = useState<any>({});
-  const onChangeCheck = (checkedList: any) => { };
+  const onChangeCheck = (checkedList: any) => {};
   const renderQuestion: (
     e: BaseQuestionData,
     index: number
@@ -499,17 +499,19 @@ function MyBankAddTab({
             h="h-11"
             id="question_type"
             name="question_type"
-            options={[
-              "MutilAnswer",
-              "YesNoQuestion",
-              "SQL",
-              "FillBlank",
-              "Pairing",
-              "Coding",
-              "Essay",
-              "Evaluation",
-              "",
-            ].map((e: string) => ({
+            options={(exam?.examType == ExamType.Test
+              ? [
+                  "MutilAnswer",
+                  "YesNoQuestion",
+                  "SQL",
+                  "FillBlank",
+                  "Pairing",
+                  "Coding",
+                  "Essay",
+                  "",
+                ]
+              : ["Essay", "Evaluation", ""]
+            ).map((e: string) => ({
               value: e,
               label: !e ? t("all_question_type") : t(e?.toLowerCase()),
             }))}

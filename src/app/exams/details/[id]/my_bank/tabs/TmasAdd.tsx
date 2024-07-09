@@ -76,6 +76,25 @@ function TmasAddTab({
   const [questGroupId, setQuestGroupId] = useState<string | undefined>();
   const [questionType, setQuestionType] = useState<string | undefined>("");
   const [active, setActive] = useState<BaseQuestionData>();
+  const [options, setOptions] = useState(
+    (exam?.examType == ExamType.Test
+      ? [
+          "MutilAnswer",
+          "YesNoQuestion",
+          "SQL",
+          "FillBlank",
+          "Pairing",
+          "Coding",
+          "Essay",
+          "",
+        ]
+      : ["Essay", "Evaluation", ""]
+    ).map((e) => ({
+      value: e,
+      label: !e ? t("all_question_type") : t(e?.toLowerCase()),
+    }))
+  );
+
   useEffect(() => {
     loadQuestionList(true);
     console.log("laod");
@@ -112,7 +131,7 @@ function TmasAddTab({
       text: search,
       limit: recordNum,
       skip: (indexPage - 1) * recordNum,
-      type: questionType,
+      // type: questionType,
       types: !questionType
         ? !exam
           ? undefined
@@ -142,7 +161,7 @@ function TmasAddTab({
     setTotal(res?.records);
     setQuestionList(res?.data ?? []);
   };
-  const onChangeCheck = (checkedList: any) => { };
+  const onChangeCheck = (checkedList: any) => {};
 
   const addExamBank = async (__: any, question: BaseQuestionData) => {
     setOpenAdd(true);
@@ -431,11 +450,11 @@ function TmasAddTab({
     const data = await getTags(
       searchKey
         ? {
-          "Names.Name": "Name",
-          "Names.InValues": searchKey,
-          "Paging.StartIndex": 1,
-          "Paging.RecordPerPage": 100,
-        }
+            "Names.Name": "Name",
+            "Names.InValues": searchKey,
+            "Paging.StartIndex": 1,
+            "Paging.RecordPerPage": 100,
+          }
         : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 }
     );
     if (data?.code != 0) {
@@ -530,20 +549,7 @@ function TmasAddTab({
             h="h-11"
             id="question_type"
             name="question_type"
-            options={[
-              "MutilAnswer",
-              "YesNoQuestion",
-              "SQL",
-              "FillBlank",
-              "Pairing",
-              "Coding",
-              "Essay",
-              "Evaluation",
-              "",
-            ].map((e: string) => ({
-              value: e,
-              label: !e ? t("all_question_type") : t(e?.toLowerCase()),
-            }))}
+            options={options}
           />
           <div className="w-11" />
           <div className="w-full" />
