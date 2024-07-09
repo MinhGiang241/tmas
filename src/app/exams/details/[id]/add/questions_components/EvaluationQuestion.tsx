@@ -15,7 +15,7 @@ import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { useFormik } from "formik";
+import { FormikErrors, useFormik } from "formik";
 import {
   resetMultiAnswer,
   setQuestionLoading,
@@ -34,6 +34,7 @@ import {
 import { getToken } from "@/utils/cookies";
 import _ from "lodash";
 import { APIResults } from "@/data/api_results";
+import cheerio from "cheerio";
 
 // const getBase64 = (file: any) =>
 //   new Promise((resolve, reject) => {
@@ -114,26 +115,26 @@ function EvaluationQuestion({
   const [fields, setFields] = useState<FieldSurveyAnswer[]>(
     question?.content?.answers
       ? question?.content?.answers?.map((e: any, i: number) => ({
-        id: i,
-        label: e?.label,
-        text: e?.text,
-        point: e?.point,
-        idIcon: e?.idIcon,
-        file: !e?.idIcon
-          ? undefined
-          : {
-            url: `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/download/${e?.idIcon}`,
-          },
-      }))
+          id: i,
+          label: e?.label,
+          text: e?.text,
+          point: e?.point,
+          idIcon: e?.idIcon,
+          file: !e?.idIcon
+            ? undefined
+            : {
+                url: `${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/download/${e?.idIcon}`,
+              },
+        }))
       : [
-        {
-          label: "A",
-          id: 1,
-          text: "",
-          point: 0,
-          idIcon: "",
-        },
-      ]
+          {
+            label: "A",
+            id: 1,
+            text: "",
+            point: 0,
+            idIcon: "",
+          },
+        ]
   );
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -168,9 +169,30 @@ function EvaluationQuestion({
     explain: question?.content?.explainAnswer ?? "",
   };
 
+  const validate = async (values: QuestionEvaluation) => {
+    const errors: FormikErrors<QuestionEvaluation> = {};
+    const $ = cheerio.load(values.question ?? "");
+
+    if (!values.question || !$.text()) {
+      errors.question = "common_not_empty";
+    }
+    if (!values.question_group) {
+      errors.question_group = "common_not_empty";
+    }
+    if (!values.point) {
+      errors.point = "common_not_empty";
+    } else if (values.point?.match(/\.\d{3,}/g)) {
+      errors.point = "2_digit_behind_dot";
+    } else if (values.point?.match(/(.*\.){2,}/g)) {
+      errors.point = "invalid_number";
+    }
+    return errors;
+  };
+
   const router = useRouter();
   const formik = useFormik({
     initialValues,
+    validate,
     onSubmit: async (values) => {
       dispatch(setQuestionLoading(true));
       const answers = fields.map((field: any) => ({
@@ -214,7 +236,7 @@ function EvaluationQuestion({
       successToast(
         res?.message ?? question
           ? t("Cập nhật thành công")
-          : t("Thêm mới thành công"),
+          : t("Thêm mới thành công")
       );
       router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },
@@ -359,8 +381,9 @@ function EvaluationQuestion({
                 />
                 <Upload
                   headers={{
-                    Authorization: `Bearer ${sessionStorage.getItem("access_token") ?? getToken()
-                      }`,
+                    Authorization: `Bearer ${
+                      sessionStorage.getItem("access_token") ?? getToken()
+                    }`,
                   }}
                   accept="image/png, image/jpeg, image/jpg"
                   action={`${process.env.NEXT_PUBLIC_API_STU}/api/studio/Document/uploadImage`}
@@ -381,7 +404,7 @@ function EvaluationQuestion({
                     }
                     return res;
                   }}
-                // beforeUpload={}
+                  // beforeUpload={}
                 >
                   {field?.file ? null : uploadButton}
                 </Upload>

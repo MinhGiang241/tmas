@@ -69,7 +69,7 @@ export default function Evaluation({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -94,8 +94,9 @@ export default function Evaluation({
           successToast(res?.message ?? t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
-            `/${isBank ? "exam_bank" : "exams/details"}/${examId ?? "u"
-            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
+            `/${isBank ? "exam_bank" : "exams/details"}/${
+              examId ?? "u"
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`
           );
           await getData();
         }}
@@ -138,11 +139,12 @@ export default function Evaluation({
         <Collapse.Panel
           header={
             <div className="my-3 flex justify-between lg:items-center max-lg:flex-col items-start">
-              <div className="flex flex-col  max-lg:mb-2">
+              <div className="flex flex-col max-lg:mb-2">
                 <div
                   ref={containerRef}
-                  className={`body_semibold_14  ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14  ${
+                    expanded ? "" : `max-h-20 overflow-hidden text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -177,7 +179,7 @@ export default function Evaluation({
 
               {tmasQuest ? (
                 isExist ? (
-                  <div className="flex justify-between w-full">
+                  <div className="flex justify-between">
                     <div className="w-1" />
                     <MButton
                       type="error"
@@ -192,7 +194,7 @@ export default function Evaluation({
                     />
                   </div>
                 ) : (
-                  <div className="flex justify-between w-full">
+                  <div className="flex justify-between">
                     <div className="w-1" />
 
                     <MButton
@@ -215,9 +217,11 @@ export default function Evaluation({
                       e.stopPropagation();
 
                       router.push(
-                        `/${isBank ? "exam_bank" : "exams/details"}/${examId ?? question?.examId ?? "u"
-                        }/edit?questId=${question?.id}&isBank=${isBank ? "true" : "false"
-                        }`,
+                        `/${isBank ? "exam_bank" : "exams/details"}/${
+                          examId ?? question?.examId ?? "u"
+                        }/edit?questId=${question?.id}&isBank=${
+                          isBank ? "true" : "false"
+                        }`
                       );
                     }}
                   >

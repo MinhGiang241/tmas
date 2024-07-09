@@ -79,7 +79,7 @@ export default function Coding({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
-      ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -104,8 +104,9 @@ export default function Coding({
           successToast(res?.message ?? t("sucess_duplicate_question"));
           setOpenCopyQuestion(false);
           router.push(
-            `/${isBank ? "exam_bank" : "exams/details"}/${examId ?? "u"
-            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
+            `/${isBank ? "exam_bank" : "exams/details"}/${
+              examId ?? "u"
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`
           );
           await getData();
         }}
@@ -150,8 +151,9 @@ export default function Coding({
               <div className="flex flex-col max-lg:mb-2">
                 <span
                   ref={containerRef}
-                  className={`body_semibold_14 ${expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
-                    }`}
+                  className={`body_semibold_14 ${
+                    expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
+                  }`}
                 >
                   {canCheck && (
                     <Checkbox
@@ -184,7 +186,7 @@ export default function Coding({
               </div>
               {tmasQuest ? (
                 isExist ? (
-                  <div className="flex justify-between w-full">
+                  <div className="flex justify-between ">
                     <div className="w-1" />
                     <MButton
                       type="error"
@@ -199,7 +201,7 @@ export default function Coding({
                     />
                   </div>
                 ) : (
-                  <div className="flex justify-between w-full">
+                  <div className="flex justify-between ">
                     <div className="w-1" />
                     <MButton
                       className="flex items-center"
@@ -222,9 +224,11 @@ export default function Coding({
                       console.log("ques", question);
                       //return;
                       router.push(
-                        `/${isBank ? "exam_bank" : "exams/details"}/${examId ?? "u"
-                        }/edit?questId=${question.id}&isBank=${isBank ? "true" : "false"
-                        }`,
+                        `/${isBank ? "exam_bank" : "exams/details"}/${
+                          examId ?? "u"
+                        }/edit?questId=${question.id}&isBank=${
+                          isBank ? "true" : "false"
+                        }`
                       );
                     }}
                   >
