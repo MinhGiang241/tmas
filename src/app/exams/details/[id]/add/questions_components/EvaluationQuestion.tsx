@@ -179,13 +179,14 @@ function EvaluationQuestion({
     if (!values.question_group) {
       errors.question_group = "common_not_empty";
     }
-    if (!values.point) {
-      errors.point = "common_not_empty";
-    } else if (values.point?.match(/\.\d{3,}/g)) {
-      errors.point = "2_digit_behind_dot";
-    } else if (values.point?.match(/(.*\.){2,}/g)) {
-      errors.point = "invalid_number";
-    }
+    // if (!values.point) {
+    //   errors.point = "common_not_empty";
+    // } else if (values.point?.match(/\.\d{3,}/g)) {
+    //   errors.point = "2_digit_behind_dot";
+    // } else if (values.point?.match(/(.*\.){2,}/g)) {
+    //   errors.point = "invalid_number";
+    // }
+
     return errors;
   };
 
@@ -194,6 +195,18 @@ function EvaluationQuestion({
     initialValues,
     validate,
     onSubmit: async (values) => {
+      fields.forEach((field: any) => {
+        if (!field.text) {
+          errorToast(undefined, "Tên nhãn không được để trống");
+        }
+        if (
+          field.point === null ||
+          field.point === undefined ||
+          isNaN(field.point)
+        ) {
+          errorToast(undefined, "Điểm lựa chọn không được để trống");
+        }
+      });
       dispatch(setQuestionLoading(true));
       const answers = fields.map((field: any) => ({
         label: field.label,
@@ -201,7 +214,7 @@ function EvaluationQuestion({
         point: field.point,
         idIcon: field.idIcon,
       }));
-      console.log("Answers:", answers);
+      // console.log("Answers:", answers);
       const submitData: QuestionEvaluation = {
         id: question?.id,
         question: values.question,
