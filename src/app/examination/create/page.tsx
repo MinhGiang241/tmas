@@ -156,9 +156,7 @@ function CreateExaminationPage({ examination }: any) {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setExpectPassedNumb(parseInt(event.target.value));
-    // console.log(event.target.value, "event.target.value");
   };
-  // console.log(expectPassedNumb);
 
   const dateFormat = "DD/MM/YYYY HH:mm";
   const search = useSearchParams();
@@ -225,7 +223,7 @@ function CreateExaminationPage({ examination }: any) {
     description: examination?.description,
     turn_per_code:
       examination?.accessCodeSettings &&
-        examination?.accessCodeSettingType == "MultiCode"
+      examination?.accessCodeSettingType == "MultiCode"
         ? examination?.accessCodeSettings[0]?.limitOfAccess?.toString()
         : undefined,
   };
@@ -329,7 +327,7 @@ function CreateExaminationPage({ examination }: any) {
         id: examination?.id,
         accessCodeSettingType: code,
         isActive: active,
-        expectPassedNumb: expectPassedNumb,
+        expectPassedNumb: expectPassedNumb || 1,
         accessCodeSettings:
           code == "None" || share === "Public"
             ? []
@@ -369,14 +367,14 @@ function CreateExaminationPage({ examination }: any) {
         requiredInfoSetting:
           share == "Public"
             ? {
-              phoneNumber: false,
-              fullName: false,
-              idGroup: false,
-              birthday: false,
-              email: false,
-              identifier: false,
-              jobPosition: false,
-            }
+                phoneNumber: false,
+                fullName: false,
+                idGroup: false,
+                birthday: false,
+                email: false,
+                identifier: false,
+                jobPosition: false,
+              }
             : requiredInfoSetting,
         sharingSetting: share,
         idAvatarThumbnail,
@@ -385,14 +383,14 @@ function CreateExaminationPage({ examination }: any) {
           share === "Public"
             ? {}
             : {
-              ipWhiteLists: formik.values["ips"],
-              validFrom: values.start_time
-                ? dayjs(values?.start_time, dateFormat).toISOString()
-                : undefined,
-              validTo: values?.end_time
-                ? dayjs(values?.end_time, dateFormat).toISOString()
-                : undefined,
-            },
+                ipWhiteLists: formik.values["ips"],
+                validFrom: values.start_time
+                  ? dayjs(values?.start_time, dateFormat).toISOString()
+                  : undefined,
+                validTo: values?.end_time
+                  ? dayjs(values?.end_time, dateFormat).toISOString()
+                  : undefined,
+              },
         idExam:
           exam?.id ?? examination?.id ?? search.get("examId") ?? undefined,
         idSession: sessionId,
@@ -401,11 +399,11 @@ function CreateExaminationPage({ examination }: any) {
           share === "Private"
             ? {}
             : {
-              goldPrice: values?.gold_price
-                ? parseInt(values?.gold_price)
-                : undefined,
-              isEnable: true,
-            },
+                goldPrice: values?.gold_price
+                  ? parseInt(values?.gold_price)
+                  : undefined,
+                isEnable: true,
+              },
       };
 
       // setLoading(false);
@@ -487,10 +485,11 @@ function CreateExaminationPage({ examination }: any) {
                 </button>
               ) : (
                 <Link
-                  className={`${pathname.includes("/examination/create")
-                    ? "text-m_neutral_900"
-                    : ""
-                    } body_regular_14`}
+                  className={`${
+                    pathname.includes("/examination/create")
+                      ? "text-m_neutral_900"
+                      : ""
+                  } body_regular_14`}
                   href={"/examination/create"}
                 >
                   {t("create_examination")}
@@ -596,19 +595,21 @@ function CreateExaminationPage({ examination }: any) {
               setValues={setPreventChecked}
             />
             <div className="lg:h-4" />
+            <div className=" p-4 bg-white">
+              <div className="rounded-lg  overflow-hidden body_semibold_16 text-m_neutral_900 pb-2">
+                {t("Số bài kì vọng")}
+              </div>
+              <Input
+                className="rounded-md"
+                type="number"
+                onChange={handleExpectPassedNumbChange}
+                value={expectPassedNumb}
+              />
+            </div>
             {exam?.scoreRanks?.length === 0 || !exam?.scoreRanks ? (
               ""
             ) : (
-              <div className=" p-4 bg-white">
-                <div className="rounded-lg  overflow-hidden body_semibold_16 text-m_neutral_900 pb-2">
-                  {t("specific_8")}
-                </div>
-                <Input
-                  className="rounded-md"
-                  type="number"
-                  onChange={handleExpectPassedNumbChange}
-                  value={expectPassedNumb}
-                />
+              <div>
                 <div className="text-xs text-m_neutral_900 body_semibold_16 pt-2">
                   Phân hạng kết quả
                 </div>
@@ -624,6 +625,7 @@ function CreateExaminationPage({ examination }: any) {
                 </div>
               </div>
             )}
+
             {/* <div className=" p-4 bg-white">
               <div className="rounded-lg  overflow-hidden body_semibold_16 text-m_neutral_900 pb-2">
                 {t("specific_8")}
@@ -746,8 +748,9 @@ function CreateExaminationPage({ examination }: any) {
             <div className="body_semibold_14">{t("selected_exam")}</div>
             <Link
               // Link ở đây
-              href={`/examination/details?examId=${exam?.id}&examTestId=${examination?.id ?? ""
-                }`}
+              href={`/examination/details?examId=${exam?.id}&examTestId=${
+                examination?.id ?? ""
+              }`}
               // href={`/exams/details/${exam?.id}`}
               className="text-[#4D7EFF] body_regular_14 underline underline-offset-4"
               target="_blank"

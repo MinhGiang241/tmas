@@ -128,12 +128,21 @@ function MyBankAddTab({
             },
       ],
 
-      andQuestionTypes:
-        exam?.examType == ExamType.Survey
-          ? [QuestionType.Essay, QuestionType.Evaluation]
-          : questionType
-            ? [questionType]
-            : undefined,
+      andQuestionTypes: questionType
+        ? [questionType]
+        : exam?.examType == ExamType.Survey
+        ? [QuestionType.Essay, QuestionType.Evaluation]
+        : [
+            QuestionType.Essay,
+            QuestionType.Coding,
+            QuestionType.FillBlank,
+            QuestionType.MutilAnswer,
+            QuestionType.Pairing,
+            QuestionType.Random,
+            QuestionType.SQL,
+            QuestionType.YesNoQuestion,
+          ],
+
       // andIdExamQuestionParts: "",
       // andQuestionTypes: "",
       // idExams: "",

@@ -210,7 +210,7 @@ function CreatePage({ exam, isEdit }: any) {
     validate,
     onSubmit: async (values: FormValue) => {
       const validateFields =
-        selectedButton === ExamType.Survey &&
+        // selectedButton === ExamType.Survey &&
         inputFields.length > 0 &&
         inputFields.some((x: any) => x?.label.trim() === "");
       if (validateFields) {
@@ -220,10 +220,25 @@ function CreatePage({ exam, isEdit }: any) {
         );
         return;
       }
-      console.log(inputFields, "inputFields");
-      const invalidScoreRange = inputFields.some(
-        (field: any) => field.toScore <= field.fromScore
-      );
+      const emptyToScore =
+        inputFields.length > 0 &&
+        inputFields.some(
+          (field: any) =>
+            field.toScore === undefined ||
+            field.toScore === null ||
+            field.toScore === ""
+        );
+      if (emptyToScore) {
+        errorToast(
+          undefined,
+          "Đơn vị điểm đến không được để trống, vui lòng nhập lại."
+        );
+        return;
+      }
+      // console.log(inputFields, "inputFields");
+      const invalidScoreRange =
+        inputFields.length > 0 &&
+        inputFields.some((field: any) => field.toScore <= field.fromScore);
       if (invalidScoreRange) {
         errorToast(
           undefined,
@@ -231,6 +246,7 @@ function CreatePage({ exam, isEdit }: any) {
         );
         return;
       }
+
       setLoading(true);
       // return;
       var submitDocs = [

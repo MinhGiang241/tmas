@@ -69,7 +69,7 @@ export default function ManyResult({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -94,7 +94,7 @@ export default function ManyResult({
           router.push(
             `/${isBank ? "exam_bank" : "exams/details"}/${
               examId ?? "u"
-            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`
           );
           await getData();
         }}
@@ -178,7 +178,7 @@ export default function ManyResult({
 
               {tmasQuest ? (
                 isExist ? (
-                  <div className="flex justify-between ">
+                  <div className="flex justify-between">
                     <div className="w-1" />
                     <MButton
                       type="error"
@@ -220,7 +220,7 @@ export default function ManyResult({
                           examId ?? question?.examId ?? "u"
                         }/edit?questId=${question?.id}&isBank=${
                           isBank ? "true" : "false"
-                        }`,
+                        }`
                       );
                     }}
                   >
@@ -332,7 +332,7 @@ export default function ManyResult({
                         />
                         <Tick className="min-w-5" />
                       </div>
-                    ),
+                    )
                   )}
                 </div>
               </div>

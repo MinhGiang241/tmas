@@ -112,7 +112,7 @@ function CreateExaminationIntroduce({
 
       // await loadMembersWhenChangeStudio();
       // await loadingQuestionsAndExams(true, userNew.studio?._id);
-    } catch (e: any) { }
+    } catch (e: any) {}
   };
 
   useEffect(() => {
@@ -270,7 +270,7 @@ function CreateExaminationIntroduce({
     description: examination?.description,
     turn_per_code:
       examination?.accessCodeSettings &&
-        examination?.accessCodeSettingType == "MultiCode"
+      examination?.accessCodeSettingType == "MultiCode"
         ? examination?.accessCodeSettings[0]?.limitOfAccess?.toString()
         : undefined,
   };
@@ -376,11 +376,12 @@ function CreateExaminationIntroduce({
         id: examination?.id,
         accessCodeSettingType: code,
         isActive: active,
+        expectPassedNumb: expectPassedNumb || 1,
         accessCodeSettings:
           code == "None" || share === "Public"
             ? []
             : code == "One"
-              ? [
+            ? [
                 {
                   //TODO: sửa sau cái này để vì _id trong studio là ownerId
                   studioId: studio?._id,
@@ -389,7 +390,7 @@ function CreateExaminationIntroduce({
                   numberOfAccess: 0,
                 },
               ]
-              : [
+            : [
                 ...codeList.map((e: any) => ({
                   //TODO: sửa sau cái này để vì _id trong studio là ownerId
                   studioId: studio?._id,
@@ -415,14 +416,14 @@ function CreateExaminationIntroduce({
         requiredInfoSetting:
           share == "Public"
             ? {
-              phoneNumber: false,
-              fullName: false,
-              idGroup: false,
-              birthday: false,
-              email: false,
-              identifier: false,
-              jobPosition: false,
-            }
+                phoneNumber: false,
+                fullName: false,
+                idGroup: false,
+                birthday: false,
+                email: false,
+                identifier: false,
+                jobPosition: false,
+              }
             : requiredInfoSetting,
         sharingSetting: share,
         idAvatarThumbnail,
@@ -431,14 +432,14 @@ function CreateExaminationIntroduce({
           share === "Public"
             ? {}
             : {
-              ipWhiteLists: formik.values["ips"],
-              validFrom: values.start_time
-                ? dayjs(values?.start_time, dateFormat).toISOString()
-                : undefined,
-              validTo: values?.end_time
-                ? dayjs(values?.end_time, dateFormat).toISOString()
-                : undefined,
-            },
+                ipWhiteLists: formik.values["ips"],
+                validFrom: values.start_time
+                  ? dayjs(values?.start_time, dateFormat).toISOString()
+                  : undefined,
+                validTo: values?.end_time
+                  ? dayjs(values?.end_time, dateFormat).toISOString()
+                  : undefined,
+              },
         idExam: idExam,
         idSession: sessionId,
         isPushToBank: push,
@@ -446,11 +447,11 @@ function CreateExaminationIntroduce({
           share === "Private"
             ? {}
             : {
-              goldPrice: values?.gold_price
-                ? parseInt(values?.gold_price)
-                : undefined,
-              isEnable: true,
-            },
+                goldPrice: values?.gold_price
+                  ? parseInt(values?.gold_price)
+                  : undefined,
+                isEnable: true,
+              },
       };
 
       // console.log("submitData", submitData);
@@ -573,19 +574,21 @@ function CreateExaminationIntroduce({
               setValues={setPreventChecked}
             />
             <div className="lg:h-4" />
+            <div className=" p-4 bg-white">
+              <div className="rounded-lg  overflow-hidden body_semibold_16 text-m_neutral_900 pb-2">
+                {t("Số bài kì vọng")}
+              </div>
+              <Input
+                className="rounded-md"
+                type="number"
+                onChange={handleExpectPassedNumbChange}
+                value={expectPassedNumb}
+              />
+            </div>
             {exam?.scoreRanks?.length === 0 || !exam?.scoreRanks ? (
               ""
             ) : (
-              <div className=" p-4 bg-white">
-                <div className="rounded-lg  overflow-hidden body_semibold_16 text-m_neutral_900 pb-2">
-                  {t("specific_8")}
-                </div>
-                <Input
-                  className="rounded-md"
-                  type="number"
-                  onChange={handleExpectPassedNumbChange}
-                  value={expectPassedNumb}
-                />
+              <div>
                 <div className="text-xs text-m_neutral_900 body_semibold_16 pt-2">
                   Phân hạng kết quả
                 </div>
