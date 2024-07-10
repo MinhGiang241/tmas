@@ -83,7 +83,7 @@ export default function Evaluation({
                         onClick={(e) => {
                           e.stopPropagation();
                         }}
-                        // value={question?.id}
+                        value={question?.id}
                       />
                     )}{" "}
                     {`${t("quest")} ${index + 1}`}
@@ -91,7 +91,9 @@ export default function Evaluation({
                     <div
                       ref={contentRef}
                       className={`body_regular_14 pl-2 `}
-                      // dangerouslySetInnerHTML={{ __html: question?.question }}
+                      dangerouslySetInnerHTML={{
+                        __html: question?.question || "",
+                      }}
                     />
                   </span>
                   {isOverflowing ? (

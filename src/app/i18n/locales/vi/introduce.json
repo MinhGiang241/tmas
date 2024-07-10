@@ -1,0 +1,17 @@
+{
+    "hi":"Chào",
+    "hi2":"Xin chào",
+    "introduce":" Mình là TmasAI 😊, Mình sẽ hỗ trợ bạn trong quá trình sử dụng Tmas. Đầu tiên hãy chọn lĩnh vực mà bạn đang quan tâm...",
+    "introduce2":"Tuyệt vời🎉",
+    "introduce3":"Dựa theo các lĩnh vực mà bạn đã chọn, Tmas gợi ý các đề thi đã có sẵn trên ngân hàng đề thi. Hãy chọn đề thi đầu tiên cho đợt tuyển dụng của bạn...",
+    "introduce4":"Sắp xong rồi 💪🏻",
+    "introduce5":"Đề thi đã được tạo sẵn cho bạn, Bây giờ hãy tạo đợt thi đầu tiên và sẵn sàng gửi tới ứng viên ngay thôi...🥰",
+    "introduce6":"Hurray!",
+    "introduce7":"Bạn đã hoàn thành tạo đợt thi tuyển đầu tiên từ đề thi {{name}} trên Tmas. Hãy kiểm tra lại các thông tin và gửi tới ứng viên ngay thôi.",
+    "skip":"Bỏ qua",
+    "select_field":"Chọn lĩnh vực",
+    "field1":"(Bạn hãy chọn tối thiểu 3 lĩnh vực quan tâm)",
+    "exam_configuration":"Cấu hình đề thi",
+    "select_exam":"(Bạn hãy chọn tối đa 1 đề thi)",
+    "configure_session":"Cấu hình đợt thi với đề thi"
+}
