@@ -144,18 +144,19 @@ export default function ManyResult({
                     expanded ? "" : `max-h-10 overflow-hidden  text-ellipsis`
                   }`}
                 >
-                  {canCheck && (
-                    <Checkbox
-                      className="mr-3"
-                      onChange={onChangeCheck as any}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                      value={question?.id}
-                    />
-                  )}
-                  {`${t("question")} ${index}`}
-                  :
+                  <div className="flex flex-nowrap">
+                    {canCheck && (
+                      <Checkbox
+                        className="mr-3"
+                        onChange={onChangeCheck as any}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        value={question?.id}
+                      />
+                    )}
+                    <span>{`${t("question")} ${index}`}:</span>
+                  </div>
                   <div
                     ref={contentRef}
                     className={`body_regular_14 pl-2 `}
