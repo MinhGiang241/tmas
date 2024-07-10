@@ -13,7 +13,11 @@ import dynamic from "next/dynamic";
 import { FormikErrors, useFormik } from "formik";
 import Image from "next/image";
 import { CameraFilled } from "@ant-design/icons";
-import { ExaminationFormData } from "@/data/form_interface";
+import {
+  ExaminationFormData,
+  ScoreRank,
+  ScoreRankTMAS,
+} from "@/data/form_interface";
 import PreventTrick from "@/app/examination/components/PreventTrick";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
@@ -58,16 +62,20 @@ const EditorHook = dynamic(
 );
 
 function CreateExaminationIntroduce({
+  scoreRanks,
   examination,
   idExam,
   name,
   step,
 }: {
+  scoreRanks?: ScoreRankTMAS[];
   examination?: any;
   idExam?: string;
   name?: string;
   step?: any;
 }) {
+  console.log("scoreRanks", scoreRanks);
+
   const createSessionId = async () => {
     var dataSessionId = await createSession(examination?.idSession ?? "");
     console.log("dataSessionId", dataSessionId);
@@ -116,7 +124,6 @@ function CreateExaminationIntroduce({
   };
 
   useEffect(() => {
-    loadExam();
     if (examination) {
       console.log("examination", examination);
       setPush(examination?.isPushToBank ?? false);
@@ -194,7 +201,8 @@ function CreateExaminationIntroduce({
     "limitExitScreen",
   ]);
   const [codeList, setCodeList] = useState<ExaminationCode[]>([]);
-  const [exam, setExam] = useState<ExamData | undefined>(undefined);
+
+  console.log("idExam", idExam);
 
   const dateFormat = "DD/MM/YYYY HH:mm";
   const search = useSearchParams();
@@ -207,22 +215,6 @@ function CreateExaminationIntroduce({
   ) => {
     setExpectPassedNumb(parseInt(event.target.value));
     // console.log(event.target.value, "event.target.value");
-  };
-
-  const loadExam = async () => {
-    const examId = search.get("examId");
-    if (!examId && !examination?.idExam) {
-      return;
-    }
-    const res = await getExamById(
-      examination?.idExam ? examination?.idExam : examId
-    );
-    if (res.code != 0) {
-      errorToast(res, res?.message ?? "");
-      return;
-    }
-    setExam(res?.data?.records[0]);
-    // console.log("res?.data?.records[0]", res?.data?.records[0]);
   };
 
   interface FormValue {
@@ -477,11 +469,11 @@ function CreateExaminationIntroduce({
         "Xem ngay"
       );
       setLoading(false);
-      if (exam) {
-        createSessionId();
-        router?.refresh();
-        onChangeStudio();
-      }
+      // if (exam) {
+      //   createSessionId();
+      //   router?.refresh();
+      //   onChangeStudio();
+      // }
       // router.push(`/examination/${dataResults?.data}`);
     },
   });
@@ -585,25 +577,25 @@ function CreateExaminationIntroduce({
                 value={expectPassedNumb}
               />
             </div>
-            {exam?.scoreRanks?.length === 0 || !exam?.scoreRanks ? (
+            {/* {exam?.scoreRanks?.length === 0 || !exam?.scoreRanks ? (
               ""
-            ) : (
-              <div>
-                <div className="text-xs text-m_neutral_900 body_semibold_16 pt-2">
-                  Phân hạng kết quả
-                </div>
-                <div className="bg-slate-300 rounded-md p-2 mt-2">
-                  {exam?.scoreRanks?.map((x: any, key: any) => (
-                    <div
-                      key={key}
-                      className="text-sm text-m_neutral_900 body_semibold_16"
-                    >
-                      {x?.label}: Từ {x?.fromScore} - {x?.toScore} Điểm
-                    </div>
-                  ))}
-                </div>
+            ) : ( */}
+            <div>
+              <div className="text-xs text-m_neutral_900 body_semibold_16 pt-2">
+                Phân hạng kết quả
               </div>
-            )}
+              <div className="bg-slate-300 rounded-md p-2 mt-2">
+                {scoreRanks?.map((x: any, key: any) => (
+                  <div
+                    key={key}
+                    className="text-sm text-m_neutral_900 body_semibold_16"
+                  >
+                    {x?.Label}: Từ {x?.FromScore} - {x?.ToScore} Điểm
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* )} */}
           </div>
           <div className="max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-6 col-span-12 bg-white h-fit rounded-lg">
             <MTextArea

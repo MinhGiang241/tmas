@@ -20,7 +20,11 @@ import { createExamGroupTest } from "@/services/api_services/exam_api";
 import { errorToast, successToast } from "../components/toast/customToast";
 import { useRouter } from "next/navigation";
 import { BaseTmasQuestionExamData, ExamData, TmasData } from "@/data/exam";
-import { DocumentObject, PartObject } from "@/data/form_interface";
+import {
+  DocumentObject,
+  PartObject,
+  ScoreRankTMAS,
+} from "@/data/form_interface";
 import { mapTmasQuestionToStudioQuestion } from "@/services/ui/mapTmasToSTudio";
 import _ from "lodash";
 import { importTmasExamData } from "@/services/api_services/question_api";
@@ -295,7 +299,11 @@ export default function Introduce() {
       playAudio: active?.version?.examData?.PlayAudio,
       version: active?.version?.examData?.Version,
       examType: active?.version?.examData?.ExamType,
-      scoreRanks: active?.version?.examData?.ScoreRanks,
+      scoreRanks: active?.version?.examData?.ScoreRanks?.map((k) => ({
+        label: k?.Label,
+        fromScore: k?.FromScore,
+        toScore: k?.ToScore,
+      })),
     };
 
     var res = await importTmasExamData({
@@ -512,6 +520,9 @@ export default function Introduce() {
               </div>
               <CreateExaminationIntroduce
                 idExam={idExam}
+                scoreRanks={
+                  active?.version?.examData?.ScoreRanks as ScoreRankTMAS[]
+                }
                 name={active?.version?.name}
                 step={() => {
                   setCurrentStep(4);
