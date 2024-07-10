@@ -49,6 +49,7 @@ import MDropdown from "@/app/components/config/MDropdown";
 import MButton from "@/app/components/config/MButton";
 import { submitCheckMultiAnswer } from "@/services/api_services/question_api";
 import { FormattedNumber } from "react-intl";
+import Evaluation from "./questions/Evaluation";
 
 dayjs.extend(duration);
 
@@ -71,10 +72,11 @@ export default function Result({ params }: any) {
       examResult?.result?.couter?.numberQuestionNeedCheck != 0 &&
       examResult?.result?.completionState == ExamCompletionState.Checking
     ) {
-      errorToast(undefined,
+      errorToast(
+        undefined,
         t("has_needcheck", {
           num: examResult?.result?.couter?.numberQuestionNeedCheck,
-        }),
+        })
       );
       return;
     }
@@ -87,8 +89,8 @@ export default function Result({ params }: any) {
         examResult?.result?.completionState == ExamCompletionState.Checking
           ? ExamCompletionState?.Done
           : examResult?.result?.completionState == ExamCompletionState.Done
-            ? ExamCompletionState.Checking
-            : examResult?.result?.completionState,
+          ? ExamCompletionState.Checking
+          : examResult?.result?.completionState,
     });
     setLoadingRematch(false);
     //setValueFilter("all");
@@ -138,7 +140,7 @@ export default function Result({ params }: any) {
           var json: BaseQuestionData = JSON.parse(o);
           json.hidden = false;
           return json;
-        },
+        }
       );
     var p = r?.examTestDataCreatedWhenTest?.examVersion?.parts?.map((e) => {
       var d = _.cloneDeep(e);
@@ -165,7 +167,7 @@ export default function Result({ params }: any) {
   const genQuestion = (
     q: BaseQuestionData,
     index: number,
-    answer?: CandidateAnswers,
+    answer?: CandidateAnswers
   ) => {
     switch (q?.questionType) {
       case QuestionType?.MutilAnswer:
@@ -186,7 +188,15 @@ export default function Result({ params }: any) {
             hidden={valueFilter == "essay_question"}
           />
         );
-
+      case QuestionType?.Evaluation:
+        return (
+          <Evaluation
+            question={q}
+            index={index}
+            answers={answer}
+            hidden={valueFilter == "essay_question"}
+          />
+        );
       case QuestionType?.Pairing:
         return (
           <Connect
@@ -332,15 +342,15 @@ export default function Result({ params }: any) {
           />
           {!isAllEssayEmpty &&
             examResult?.result?.completionState !=
-            ExamCompletionState.Doing && <div className="w-3" />}
+              ExamCompletionState.Doing && <div className="w-3" />}
           {!isAllEssayEmpty &&
             examResult?.result?.completionState !=
-            ExamCompletionState.Doing && (
+              ExamCompletionState.Doing && (
               <MButton
                 loading={loadingRematch}
                 text={
                   examResult?.result?.completionState ==
-                    ExamCompletionState.Done
+                  ExamCompletionState.Done
                     ? t("rematch")
                     : t("match_done")
                 }
@@ -363,8 +373,9 @@ export default function Result({ params }: any) {
             {examResult?.result?.couter?.numberQuestionNeedCheck != 0 && (
               <div className="px-4 bg-m_warning_50 text-m_warnig_title py-2 font-semibold text-sm">
                 {t("has_essay", {
-                  num: `${examResult?.result?.couter?.numberQuestionNeedCheck ?? 0
-                    }`,
+                  num: `${
+                    examResult?.result?.couter?.numberQuestionNeedCheck ?? 0
+                  }`,
                 })}
               </div>
             )}
@@ -417,14 +428,14 @@ export default function Result({ params }: any) {
                       {r?.questions?.map((q, index) => {
                         var answerIndex =
                           examResult?.candidateAnswers?.findIndex(
-                            (l) => l.idExamQuestion == q.id,
+                            (l) => l.idExamQuestion == q.id
                           );
                         var ans =
                           answerIndex! < 0
                             ? undefined
                             : examResult?.candidateAnswers![
-                            answerIndex as number
-                            ];
+                                answerIndex as number
+                              ];
 
                         return genQuestion(q, index, ans);
                       })}
@@ -440,50 +451,54 @@ export default function Result({ params }: any) {
         <div className="col-span-1 h-fit ml-2 max-lg:col-span-3 max-lg:row-end-1">
           <div className="bg-white rounded-lg">
             <div
-              className={`w-full h-10 ${examResult?.result?.completionState == ExamCompletionState.Doing
-                ? `bg-m_primary_100 text-m_primary_500`
-                : examResult?.result?.completionState ==
-                  ExamCompletionState.Done
+              className={`w-full h-10 ${
+                examResult?.result?.completionState == ExamCompletionState.Doing
+                  ? `bg-m_primary_100 text-m_primary_500`
+                  : examResult?.result?.completionState ==
+                    ExamCompletionState.Done
                   ? `bg-m_success_50 text-m_success_500`
                   : `bg-m_warning_50 text-m_warning_500`
-                } flex justify-center items-center py-auto rounded-t-lg body_bold_14`}
+              } flex justify-center items-center py-auto rounded-t-lg body_bold_14`}
             >
               {examResult?.result?.completionState == ExamCompletionState.Doing
                 ? t("in_testing")?.toUpperCase()
                 : examResult?.result?.completionState ==
                   ExamCompletionState.Done
-                  ? common.t("complete")?.toUpperCase()
-                  : t("checking").toUpperCase()}
+                ? common.t("complete")?.toUpperCase()
+                : t("checking").toUpperCase()}
             </div>
             <div className="flex justify-between items-center p-4">
               <div className="font-bold text-base text-m_primary_500">
                 {examResult?.candidate?.fullName}
               </div>
               <div
-                className={`${examResult?.result?.passState == ExamPassState.Pass
-                  ? `bg-m_success_50`
-                  : examResult?.result?.passState == ExamPassState?.NotPass
+                className={`${
+                  examResult?.result?.passState == ExamPassState.Pass
+                    ? `bg-m_success_50`
+                    : examResult?.result?.passState == ExamPassState?.NotPass
                     ? "bg-m_error_100"
                     : "bg-m_warning_50"
-                  } px-4 py-1 flex items-center`}
+                } px-4 py-1 flex items-center`}
               >
                 <div
-                  className={`font-bold text-lg ${examResult?.result?.passState == ExamPassState.Pass
-                    ? `text-m_success_600`
-                    : examResult?.result?.passState == ExamPassState?.NotPass
+                  className={`font-bold text-lg ${
+                    examResult?.result?.passState == ExamPassState.Pass
+                      ? `text-m_success_600`
+                      : examResult?.result?.passState == ExamPassState?.NotPass
                       ? "text-m_error_500"
                       : "text-m_warning_600"
-                    }`}
+                  }`}
                 >
                   {examResult?.result?.score ?? 0}
                 </div>
                 <div
-                  className={`${examResult?.result?.passState == ExamPassState.Pass
-                    ? `text-m_success_600`
-                    : examResult?.result?.passState == ExamPassState?.NotPass
+                  className={`${
+                    examResult?.result?.passState == ExamPassState.Pass
+                      ? `text-m_success_600`
+                      : examResult?.result?.passState == ExamPassState?.NotPass
                       ? "text-m_error_500"
                       : "text-m_warning_600"
-                    } text-sm`}
+                  } text-sm`}
                 >
                   /
                   {examResult?.examTestDataCreatedWhenTest?.examVersion?.exam
@@ -533,7 +548,7 @@ export default function Result({ params }: any) {
                 <div className="text-sm font-semibold">
                   {examResult?.result?.couter?.numberQuestionEssay ??
                     questions?.filter(
-                      (quest) => quest?.questionType == QuestionType?.Essay,
+                      (quest) => quest?.questionType == QuestionType?.Essay
                     )?.length ??
                     0}
                 </div>
@@ -543,8 +558,7 @@ export default function Result({ params }: any) {
                 <div className="text-sm font-semibold">
                   {dayjs
                     .duration(
-                      1000 *
-                      (examResult?.timeLine?.totalTimeDoTestSeconds ?? 0),
+                      1000 * (examResult?.timeLine?.totalTimeDoTestSeconds ?? 0)
                     )
                     .format("HH:mm:ss")}
                 </div>
@@ -567,7 +581,7 @@ export default function Result({ params }: any) {
                     return diff;
                   } else {
                     return -(b.eventType?.localeCompare(
-                      a.eventType ?? "",
+                      a.eventType ?? ""
                     ) as number);
                   }
                 })

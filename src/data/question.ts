@@ -163,6 +163,16 @@ export interface EssayCandidateAnswer {
   idFiles?: any[];
 }
 
+export interface EvaluationCandidateAnswer {
+  answers?: {
+    label?: string;
+    isCorrect?: boolean;
+    idIcon?: string;
+    point?: number;
+    text?: string;
+  }[];
+}
+
 export interface ParamsCheckMultiAnswer {
   idExamTestResult?: string;
   answerItems?: {
@@ -254,5 +264,18 @@ export interface CodingAnswerMetadata {
     }[];
     updatedTime?: string;
     wrong?: number;
+  };
+}
+
+export interface EvaluationAnswer extends BaseQuestionData {
+  content?: {
+    explainAnswer?: string;
+    isChangePosition?: boolean;
+    answers?: {
+      idIcon?: string;
+      label?: string;
+      point?: number;
+      text?: string;
+    }[];
   };
 }

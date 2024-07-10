@@ -77,6 +77,12 @@ export interface ScoreRank {
   toScore?: number;
 }
 
+export interface ScoreRankTMAS {
+  Label?: string;
+  FromScore?: number;
+  ToScore?: number;
+}
+
 export enum ExamType {
   Test = "Test",
   Survey = "Survey",

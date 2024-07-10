@@ -133,11 +133,11 @@ function ExamTmasTab() {
     const data = await getTags(
       searchKey
         ? {
-          "Names.Name": "Name",
-          "Names.InValues": searchKey,
-          "Paging.StartIndex": 1,
-          "Paging.RecordPerPage": 100,
-        }
+            "Names.Name": "Name",
+            "Names.InValues": searchKey,
+            "Paging.StartIndex": 1,
+            "Paging.RecordPerPage": 100,
+          }
         : { "Paging.StartIndex": 1, "Paging.RecordPerPage": 100 }
     );
     if (data?.code != 0) {
@@ -210,7 +210,11 @@ function ExamTmasTab() {
       playAudio: active?.version?.examData?.PlayAudio,
       version: active?.version?.examData?.Version,
       examType: active?.version?.examData?.ExamType,
-      scoreRanks: active?.version?.examData?.ScoreRanks,
+      scoreRanks: active?.version?.examData?.ScoreRanks?.map((k) => ({
+        label: k?.Label,
+        fromScore: k?.FromScore,
+        toScore: k?.ToScore,
+      })),
     };
     console.log("active part", active?.version?.examData?.Parts);
 
@@ -389,16 +393,18 @@ function ExamTmasTab() {
                           <div className="flex items-center mx-8">
                             <MessIcon />
                             <span className="ml-2 body_regular_14">
-                              {`${a?.version?.examData?.NumberOfQuestions ?? ""
-                                } ${t("question")?.toLowerCase()}`}
+                              {`${
+                                a?.version?.examData?.NumberOfQuestions ?? ""
+                              } ${t("question")?.toLowerCase()}`}
                             </span>
                           </div>
                           <div className="flex items-center ml-2">
                             <CupIcon />
                             <span className="mr-4 ml-2 body_regular_14">
-                              {`${(a?.version?.examData?.TotalPointsAsInt ?? 0) /
+                              {`${
+                                (a?.version?.examData?.TotalPointsAsInt ?? 0) /
                                 100
-                                } ${t("point")}`}
+                              } ${t("point")}`}
                             </span>
                           </div>
 

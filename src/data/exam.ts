@@ -5,6 +5,7 @@ import {
   ExamType,
   PartObject,
   ScoreRank,
+  ScoreRankTMAS,
   TagObject,
 } from "./form_interface";
 import { BaseQuestionData, QuestionType } from "./question";
@@ -438,7 +439,7 @@ export interface TmasStudioExamData {
   NumberOfTests?: number;
   OwnerId?: string;
   ExamType?: ExamType;
-  ScoreRanks?: ScoreRank[];
+  ScoreRanks?: ScoreRankTMAS[];
   Parts: {
     _id?: string;
     Description?: string;
