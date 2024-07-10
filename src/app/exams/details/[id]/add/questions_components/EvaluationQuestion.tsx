@@ -2,15 +2,7 @@ import MDropdown from "@/app/components/config/MDropdown";
 import MInput from "@/app/components/config/MInput";
 import { FieldSurveyAnswer, QuestionGroupData } from "@/data/exam";
 import { BaseQuestionFormData } from "@/data/form_interface";
-import {
-  Input,
-  Upload,
-  Image,
-  UploadProps,
-  UploadFile,
-  GetProp,
-  Table,
-} from "antd";
+import { Input, Upload, Image, UploadProps, UploadFile, GetProp } from "antd";
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,13 +19,9 @@ import {
 } from "@/services/api_services/question_api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { errorToast, successToast } from "@/app/components/toast/customToast";
-import {
-  uploadFile,
-  uploadImageStudio,
-} from "@/services/api_services/account_services";
+import { uploadImageStudio } from "@/services/api_services/account_services";
 import { getToken } from "@/utils/cookies";
 import _ from "lodash";
-import { APIResults } from "@/data/api_results";
 import cheerio from "cheerio";
 
 // const getBase64 = (file: any) =>
@@ -197,14 +185,14 @@ function EvaluationQuestion({
     onSubmit: async (values) => {
       fields.forEach((field: any) => {
         if (!field.text) {
-          errorToast(undefined, "Tên nhãn không được để trống");
+          errorToast(undefined, t("label_noti"));
         }
         if (
           field.point === null ||
           field.point === undefined ||
           isNaN(field.point)
         ) {
-          errorToast(undefined, "Điểm lựa chọn không được để trống");
+          errorToast(undefined, t("point_noti"));
         }
       });
       dispatch(setQuestionLoading(true));
@@ -246,11 +234,7 @@ function EvaluationQuestion({
         return;
       }
       dispatch(resetMultiAnswer(1));
-      successToast(
-        res?.message ?? question
-          ? t("Cập nhật thành công")
-          : t("Thêm mới thành công")
-      );
+      successToast(res?.message ?? question ? t("update_noti") : t("add_noti"));
       router.push(!idExam ? `/exam_bank` : `/exams/details/${idExam}`);
     },
   });
@@ -288,7 +272,6 @@ function EvaluationQuestion({
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
       <PlusOutlined />
-      {/* <div style={{ marginTop: 8 }}>Tải ảnh lên</div> */}
     </button>
   );
 
@@ -339,10 +322,14 @@ function EvaluationQuestion({
           <div className="flex justify-between items-center pt-4">
             <div className="w-4" />
             <div className="text-xs font-semibold w-[340px]">
-              Tên nhãn lựa chọn
+              {t("label_option")}
             </div>
-            <div className="text-xs font-semibold w-[105px]">Điểm lựa chọn</div>
-            <div className="text-xs font-semibold w-[68px]">Hình ảnh</div>
+            <div className="text-xs font-semibold w-[105px]">
+              {t("point_option")}
+            </div>
+            <div className="text-xs font-semibold w-[68px]">
+              {t("image_option")}
+            </div>
             <div className="w-10" />
           </div>
           <div className="w-full">
@@ -367,7 +354,7 @@ function EvaluationQuestion({
                 </div>
                 <Input
                   className="rounded-md h-9 w-[50%]"
-                  placeholder={t("Tên nhãn lựa chọn")}
+                  placeholder={t("label_option")}
                   value={field?.text}
                   onChange={(e) =>
                     setFields(
@@ -380,7 +367,7 @@ function EvaluationQuestion({
                 <Input
                   className="rounded-md h-9 w-[15%]"
                   type="number"
-                  placeholder={t("Điểm lựa chọn")}
+                  placeholder={t("point_option")}
                   value={field?.point}
                   onChange={(e) =>
                     setFields(
@@ -453,11 +440,11 @@ function EvaluationQuestion({
             ))}
             <div className="flex justify-end">
               <button
-                className="mt-2 text-blue-500 flex justify-end"
+                className="mt-2 text-blue-500 flex justify-end border-b-[1px] border-b-blue-500"
                 onClick={addField}
                 type="button"
               >
-                {t("Thêm lựa chọn")}
+                {t("add_option")}
               </button>
             </div>
           </div>

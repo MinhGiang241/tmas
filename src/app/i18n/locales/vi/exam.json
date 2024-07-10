@@ -508,5 +508,13 @@
   "excel_intro_1": "*Vui lòng không chỉnh sửa cấu trúc file mẫu (tiêu đề, thứ tự cột). Điều này có thể làm hỏng dữ liệu của bạn khi tải lên hệ thống!",
   "complete_upload": "Danh sách câu hỏi đã được tải lên thành công!",
   "back_exam_page": "Quay lại trang đề thi",
-  "upload_other_file": "Tải lên file khác"
+  "upload_other_file": "Tải lên file khác",
+  "add_option":"Thêm lựa chọn",
+  "point_option" : "Điểm lựa chọn",
+  "label_option": "Tên nhãn lựa chọn",
+  "image_option":"Hình ảnh",
+  "add_noti":"Thêm mới thành công",
+  "update_noti":"Cập nhật thành công",
+  "point_noti":"Điểm lựa chọn không được để trống",
+  "label_noti":"Tên nhãn không được để trống"
 }

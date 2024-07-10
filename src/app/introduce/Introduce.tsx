@@ -34,6 +34,7 @@ import { setUserData, userClear } from "@/redux/user/userSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { UserData } from "@/data/user";
 import { deleteToken, setToken } from "@/utils/cookies";
+import { useTranslation } from "react-i18next";
 
 let mapping: { [key: string]: string } = {};
 var childrenIds: string[] = [];
@@ -52,6 +53,7 @@ export default function Introduce() {
   const [dataNewChildren, setDataNewChildren] = useState<
     { id?: string; oldId?: string; [key: string]: any }[]
   >([]);
+  const { t } = useTranslation("introduce");
 
   const getDataTopic = async () => {
     const res = await getTopic();
@@ -67,29 +69,6 @@ export default function Introduce() {
   useEffect(() => {
     getDataTopic();
   }, []);
-
-  // const getDataTopicChild = async () => {
-  //   const res = await getTopicChild(
-  //     selectedItems.map((x: onBoardingTopic) => x?._id)
-  //   );
-  //   console.log("getTopicChild aa", res);
-
-  //   if (res?.code === 0) {
-  //     setDataTopicChild(res?.data);
-  //     var a: DataGroupChild[] = selectedItems?.map<DataGroupChild>((e) => {
-  //       var children = res?.data
-  //         ?.filter((c: any) => c?.parentId == e?._id)
-  //         ?.map((r: any) => r?.name);
-  //       return {
-  //         id: e?._id,
-  //         name: e?.name
-  //       };
-  //     });
-  //     setDataTopicNew([...a]);
-  //     return;
-  //   }
-  //   errorToast(res,res?.message ?? "");
-  // };
 
   const getDataTopicChild = async () => {
     try {
@@ -194,35 +173,6 @@ export default function Introduce() {
   const handleContinue = async () => {
     if (selectedItems.length >= 3) {
       setCurrentStep(currentStep + 1);
-      // for (let i of selectedItems) {
-      //   let submitData = {
-      //     name: i?.name,
-      //     level: 0,
-      //     studioId: user?.studio?._id,
-      //     requiredCheckName: true,
-      //   };
-      //   var res = await createExamGroupTest(submitData);
-      //   if (res?.code != 0) {
-      //     continue;
-      //   }
-
-      //   var newChildren = dataTopicChild.filter((d) => d.parentId == i?._id);
-      //   for (let j of newChildren) {
-      //     let submitDataChild = {
-      //       name: j.name,
-      //       level: 1,
-      //       idParent: res.data,
-      //       studioId: user?.studio?._id,
-      //     };
-      //     var res = await createExamGroupTest(submitDataChild);
-      //     if (res?.code != 0) {
-      //       continue;
-      //     }
-      //     childrenIds.push(j._id!);
-      //     mapping[j._id!] = res.data;
-      //   }
-      // }
-
       getDataTopicChild();
     }
   };
@@ -342,30 +292,25 @@ export default function Introduce() {
           currentStep === 1 ? (
             <div>
               <div>
-                Chào <span className="font-medium">{user?.full_name}</span>🖐🏻
+                {t("hi")} <span className="font-medium">{user?.full_name}</span>
+                🖐🏻
               </div>
-              Mình là TmasAI 😊, Mình sẽ hỗ trợ bạn trong quá trình sử dụng
-              Tmas. Đầu tiên hãy chọn lĩnh vực mà bạn đang quan tâm...
+              {t("introduce")}
             </div>
           ) : currentStep === 2 ? (
             <div>
-              <div>Tuyệt vời🎉</div>
-              Dựa theo các lĩnh vực mà bạn đã chọn, Tmas gợi ý các đề thi đã có
-              sẵn trên ngân hàng đề thi. Hãy chọn đề thi đầu tiên cho đợt tuyển
-              dụng của bạn...
+              <div>{t("introduce2")}</div>
+              {t("introduce3")}
             </div>
           ) : currentStep === 3 ? (
             <div>
-              <div>Sắp xong rồi 💪🏻</div>
-              Đề thi đã được tạo sẵn cho bạn, Bây giờ hãy tạo đợt thi đầu tiên
-              và sẵn sàng gửi tới ứng viên ngay thôi...🥰
+              <div>{t("introduce4")}</div>
+              {t("introduce5")}
             </div>
           ) : (
             <div>
-              <div>Hurray!</div>
-              Bạn đã hoàn thành tạo đợt thi tuyển đầu tiên từ đề thi{" "}
-              {active?.version?.name} trên Tmas. Hãy kiểm tra lại các thông tin
-              và gửi tới ứng viên ngay thôi.
+              <div>{t("introduce6")}</div>
+              {t("introduce7", { name: user?.full_name })}
             </div>
           )
         }
@@ -395,7 +340,7 @@ export default function Introduce() {
               await setOpen(false);
             }}
           >
-            Bỏ qua
+            {t("skip")}
           </div>
         }
         // onCancel={() => {
@@ -408,7 +353,7 @@ export default function Introduce() {
         <div className="p-4">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
-              <span>Xin chào,</span>
+              <span>{t("hi2")},</span>
               <span className="font-semibold text-sm ml-2">
                 {user?.full_name}
               </span>
@@ -450,10 +395,10 @@ export default function Introduce() {
           {currentStep === 1 && (
             <div>
               <div className="font-bold text-2xl flex justify-center">
-                Chọn lĩnh vực
+                {t("select_field")}
               </div>
               <div className="font-normal text-base flex justify-center pb-3">
-                (Bạn hãy chọn tối thiểu 3 lĩnh vực quan tâm)
+                {t("field1")}
               </div>
               <div className="flex flex-wrap mb-3">
                 {dataTopic?.map((x: any, key: any) => (
@@ -475,10 +420,10 @@ export default function Introduce() {
           {currentStep === 2 && (
             <div className="flex flex-wrap mb-3 justify-center">
               <div className="flex justify-center flex-col items-center">
-                <div className="font-bold text-2xl">Cấu hình đề thi</div>
-                <div className="font-normal text-base">
-                  (Bạn hãy chọn tối đa 1 đề thi)
+                <div className="font-bold text-2xl">
+                  {t("exam_configuration")}
                 </div>
+                <div className="font-normal text-base">{t("select_exam")}</div>
                 {dataExamTopicVersion?.map((x: any, key: any) => (
                   <div className={`pt-3`} key={key}>
                     <button
@@ -512,7 +457,7 @@ export default function Introduce() {
             <div className="flex flex-wrap mb-3">
               <div className="flex flex-col m-auto items-center">
                 <div className="font-bold text-2xl">
-                  Cấu hình đợt thi với đề thi
+                  {t("configure_session")}
                 </div>
                 <div className="font-bold text-2xl">
                   “{active?.version?.name}”

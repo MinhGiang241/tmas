@@ -325,7 +325,9 @@ export default function Evaluation({
                         <div className="min-w-5" />
                       </div>
                       <div className="w-40">
-                        <div>{x?.point} điểm</div>
+                        <div>
+                          {x?.point} {t("point")}
+                        </div>
                       </div>
                     </div>
                   ))}

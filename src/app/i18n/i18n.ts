@@ -10,6 +10,8 @@ import QUESTION_EN from "./locales/en/question.json";
 import QUESTION_VI from "./locales/vi/question.json";
 import OVERVIEW_EN from "./locales/en/overview.json";
 import OVERVIEW_VI from "./locales/vi/overview.json";
+import INTRODUCE_EN from "./locales/en/introduce.json";
+import INTRODUCE_VI from "./locales/vi/introduce.json";
 
 import { LOCALES } from "./locales/locales";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -21,6 +23,7 @@ export const resources = {
     exam: EXAM_EN,
     question: QUESTION_EN,
     overview: OVERVIEW_EN,
+    introduce: INTRODUCE_EN,
   },
   vi: {
     common: LOGIN_VI,
@@ -28,6 +31,7 @@ export const resources = {
     exam: EXAM_VI,
     question: QUESTION_VI,
     overview: OVERVIEW_VI,
+    introduce: INTRODUCE_VI,
   },
 } as const;
 
@@ -39,7 +43,7 @@ i18n
   .init({
     resources,
     lng: LOCALES.VIETNAM,
-    ns: ["common", "account", "exam", "question", "overview"],
+    ns: ["common", "account", "exam", "question", "overview", "introduce"],
     fallbackLng: "vi",
     defaultNS,
     interpolation: {

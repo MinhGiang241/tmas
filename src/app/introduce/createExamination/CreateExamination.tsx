@@ -577,25 +577,25 @@ function CreateExaminationIntroduce({
                 value={expectPassedNumb}
               />
             </div>
-            {/* {exam?.scoreRanks?.length === 0 || !exam?.scoreRanks ? (
+            {scoreRanks?.length === 0 || !scoreRanks ? (
               ""
-            ) : ( */}
-            <div>
-              <div className="text-xs text-m_neutral_900 body_semibold_16 pt-2">
-                Phân hạng kết quả
+            ) : (
+              <div>
+                <div className="text-xs text-m_neutral_900 body_semibold_16 pt-2">
+                  Phân hạng kết quả
+                </div>
+                <div className="bg-slate-300 rounded-md p-2 mt-2">
+                  {scoreRanks?.map((x: any, key: any) => (
+                    <div
+                      key={key}
+                      className="text-sm text-m_neutral_900 body_semibold_16"
+                    >
+                      {x?.Label}: Từ {x?.FromScore} - {x?.ToScore} Điểm
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="bg-slate-300 rounded-md p-2 mt-2">
-                {scoreRanks?.map((x: any, key: any) => (
-                  <div
-                    key={key}
-                    className="text-sm text-m_neutral_900 body_semibold_16"
-                  >
-                    {x?.Label}: Từ {x?.FromScore} - {x?.ToScore} Điểm
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* )} */}
+            )}
           </div>
           <div className="max-lg:grid-cols-1 max-lg:mb-5 p-4 lg:col-span-6 col-span-12 bg-white h-fit rounded-lg">
             <MTextArea
