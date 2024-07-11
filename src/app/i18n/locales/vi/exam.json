@@ -518,5 +518,6 @@
   "point_noti": "Điểm lựa chọn không được để trống",
   "label_noti": "Tên nhãn không được để trống",
   "test_excel_file": "Kiểm tra lại file excel",
-  "row": "Hàng"
+  "row": "Hàng",
+  "Paid": "Đã thanh toán"
 }
