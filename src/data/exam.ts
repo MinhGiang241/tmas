@@ -27,6 +27,31 @@ export interface ExamGroupData {
   childs?: ExamGroupData[];
 }
 
+export interface QuestionExcelParams {
+  idExamQuestionPart?: string;
+  examQuestionSuccess?:
+    | BaseQuestionData[]
+    | {
+        id?: string;
+        createdTime?: string;
+        createdBy?: string;
+        updateTime?: string;
+        updateBy?: string;
+        ownerId?: string;
+        studioId?: string;
+        idQuestion?: string;
+        question?: string;
+        numberPoint?: number;
+        idGroupQuestion?: string;
+        groupQuestionName?: string;
+        idExamQuestionPart?: string;
+        idExamQuestionBank?: string;
+        isQuestionBank?: boolean;
+        questionType?: QuestionType;
+        content?: string;
+      }[];
+}
+
 export interface QuestionGroupData {
   id?: string;
   name?: string;
@@ -518,7 +543,7 @@ export interface PagingAdminExamTestResultParams {
     {
       name?: string;
       isAsc?: boolean;
-    }
+    },
   ];
   filters?: {
     fieldName?: string;
@@ -760,4 +785,25 @@ export interface FieldSurveyAnswer {
   previewOpen?: boolean;
   file?: UploadFile;
   previewImage?: any;
+}
+
+export interface DataQuestionsExelRead {
+  errorMessage?: string[];
+  indexOfRow?: number;
+  isSuccess?: boolean;
+  question?: any;
+}
+
+export interface DataQuestionsExelImport {
+  idQuestion?: string;
+  isSuccess?: boolean;
+  idQuestionCreated?: string;
+  message?: string;
+}
+
+export interface ReadQuestionExcelData {
+  dataQuestions?: DataQuestionsExelRead[];
+  errorMessage?: string;
+  fileName?: string;
+  isSuccessAll?: boolean;
 }

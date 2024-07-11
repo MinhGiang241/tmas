@@ -1,8 +1,13 @@
-import { ExamGroupData, QuestionGroupData } from "@/data/exam";
+import {
+  ExamGroupData,
+  QuestionExcelParams,
+  QuestionGroupData,
+} from "@/data/exam";
 import { callApi, callStudioAPI } from "./base_api";
 import { errorToast } from "@/app/components/toast/customToast";
 import { APIResults } from "@/data/api_results";
 import QuestionGroup from "@/app/exam_group/tabs/QuestionGroup";
+import { QuestionType } from "@/data/question";
 
 export const getExamGroupTest = async ({
   text,
@@ -113,4 +118,39 @@ export const getSuggestValueHastag = async (text?: string) => {
   }
 
   return 0;
+};
+
+export const readQuestionTemplateExcel = async (data: any) => {
+  var results: APIResults = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/ReadTemplateExcel`,
+    data,
+  );
+
+  return results;
+};
+
+export const importDataQuestionFromExcel = async (
+  data: QuestionExcelParams,
+) => {
+  var results: APIResults = await callStudioAPI.post(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/ImportDataFromExcel`,
+    data,
+  );
+
+  return results;
+};
+
+export const downloadQuestionTemplateExcel = async (type: QuestionType) => {
+  var qString =
+    type != QuestionType.SQL
+      ? type == QuestionType.MutilAnswer
+        ? "MultiAnswer"
+        : type
+      : "Sql";
+  var results: APIResults = await callStudioAPI.get(
+    `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestion${qString}/DownloadTemplateExcel`,
+    { responseType: "blob" },
+  );
+
+  return results;
 };
