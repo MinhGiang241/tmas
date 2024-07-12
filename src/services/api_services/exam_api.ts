@@ -143,9 +143,11 @@ export const importDataQuestionFromExcel = async (
 export const downloadQuestionTemplateExcel = async (type: QuestionType) => {
   var qString =
     type != QuestionType.SQL
-      ? type == QuestionType.MutilAnswer
-        ? "MultiAnswer"
-        : type
+      ? type == QuestionType.YesNoQuestion
+        ? "YesNo"
+        : type == QuestionType.MutilAnswer
+          ? "MultiAnswer"
+          : type
       : "Sql";
   var results: APIResults = await callStudioAPI.get(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestion${qString}/DownloadTemplateExcel`,

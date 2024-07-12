@@ -104,6 +104,7 @@ function ImportQuestion({ params }: any) {
         formData.append("name", f?.name);
         setErrorString([]);
         setImportErrorString([]);
+        setSuccessImportText("");
 
         // var idData = await uploadStudioDocument(idSession, formData);
         // console.log("id upload", idData);
@@ -140,6 +141,8 @@ function ImportQuestion({ params }: any) {
     setOpenPop(false);
   };
   const [tempFile, setTempFile] = useState();
+  const [successInfoText, setSuccessInfoText] = useState<string>("");
+  const [successImportText, setSuccessImportText] = useState<string>("");
   const handleFileDrop = (file: any) => {
     setOpenPop(true);
     setTempFile(file);
@@ -185,9 +188,10 @@ function ImportQuestion({ params }: any) {
     var listError: DataQuestionsExelImport[] = res?.data?.filter(
       (r: DataQuestionsExelImport) => !r.isSuccess,
     );
-
-    console.log("listError", listError);
-
+    setSuccessImportText(
+      `${res?.data?.filter((q: any) => q.isSuccess)?.length} / ${res?.data
+        ?.length}`,
+    );
     if (listError && listError?.length >= 0) {
       setImportErrorString(listError);
       return;
@@ -200,6 +204,11 @@ function ImportQuestion({ params }: any) {
     // var questionGroup = questionGroups?.find(
     //                         (v: any) => v.id === e.idGroupQuestion,
     //                       );
+    var content = (e as any)?.content
+      ? JSON.parse((e as any)?.content ?? "")
+      : undefined;
+
+    var quest = { ...e, content };
     if (e.questionType == "Coding") {
       return (
         <Coding
@@ -207,7 +216,7 @@ function ImportQuestion({ params }: any) {
           index={key + 1}
           key={e.id}
           examId={params.id}
-          question={e}
+          question={quest}
           onlyDelete
           onDelete={() => onDeleteQuestionRead(key)}
           //getData={getData}
@@ -222,7 +231,7 @@ function ImportQuestion({ params }: any) {
           index={key + 1}
           key={e.id}
           examId={params.id}
-          question={e}
+          question={quest}
           onlyDelete
           onDelete={() => onDeleteQuestionRead(key)}
 
@@ -238,7 +247,7 @@ function ImportQuestion({ params }: any) {
           index={key + 1}
           key={e.id}
           examId={params.id}
-          question={e}
+          question={quest}
           onlyDelete
           onDelete={() => onDeleteQuestionRead(key)}
 
@@ -254,7 +263,7 @@ function ImportQuestion({ params }: any) {
           index={key + 1}
           key={e.id}
           examId={params.id}
-          question={e}
+          question={quest}
           onlyDelete
           onDelete={() => onDeleteQuestionRead(key)}
 
@@ -270,7 +279,7 @@ function ImportQuestion({ params }: any) {
           index={key + 1}
           key={e.id}
           examId={params.id}
-          question={e}
+          question={quest}
           onlyDelete
           onDelete={() => onDeleteQuestionRead(key)}
 
@@ -286,7 +295,7 @@ function ImportQuestion({ params }: any) {
           index={key + 1}
           key={e.id}
           examId={params.id}
-          question={e}
+          question={quest}
           onlyDelete
           onDelete={() => onDeleteQuestionRead(key)}
 
@@ -302,7 +311,7 @@ function ImportQuestion({ params }: any) {
           index={key + 1}
           key={e.id}
           examId={params.id}
-          question={e}
+          question={quest}
           onlyDelete
           onDelete={() => onDeleteQuestionRead(key)}
 
@@ -318,7 +327,7 @@ function ImportQuestion({ params }: any) {
           index={key + 1}
           key={e.id}
           examId={params.id}
-          question={e}
+          question={quest}
           onlyDelete
           onDelete={() => onDeleteQuestionRead(key)}
 
@@ -333,7 +342,7 @@ function ImportQuestion({ params }: any) {
         index={key + 1}
         key={e.id}
         examId={params.id}
-        question={e}
+        question={quest}
         onlyDelete
         onDelete={() => onDeleteQuestionRead(key)}
 
@@ -515,6 +524,13 @@ function ImportQuestion({ params }: any) {
                     return;
                   }
                   var dataRead: ReadQuestionExcelData = res?.data[0];
+                  var successQ = dataRead?.dataQuestions?.filter(
+                    (u) => u.isSuccess,
+                  );
+                  setSuccessInfoText(
+                    `${successQ?.length} / ${dataRead?.dataQuestions?.length}`,
+                  );
+                  setQuestions(successQ?.map((e) => e.question) ?? []);
 
                   if (dataRead?.errorMessage) {
                     setErrorString([
@@ -528,15 +544,16 @@ function ImportQuestion({ params }: any) {
                     );
                     if (s && s?.length != 0) {
                       setErrorString(s ?? []);
+
                       return;
                     }
                   }
 
                   setCurrentStep(1);
                   console.log("res upload", res);
-                  setQuestions(
-                    dataRead?.dataQuestions?.map((e) => e.question) ?? [],
-                  );
+                  // setQuestions(
+                  //   dataRead?.dataQuestions?.map((e) => e.question) ?? [],
+                  // );
                 }}
               />
             </div>
@@ -545,11 +562,26 @@ function ImportQuestion({ params }: any) {
                 <div className="body_semibold_14 mb-3">
                   {t("test_excel_file")}
                 </div>
+                {successInfoText && (
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="body_semibold_14 text-m_primary_500">
+                      {t("has_exel_valid", { v: successInfoText })}
+                    </div>
+                    <MButton
+                      onClick={() => {
+                        setCurrentStep(1);
+                      }}
+                      type="secondary"
+                      text={common.t("continue")}
+                      h="h-9"
+                    />
+                  </div>
+                )}
                 <div className="w-full border-dashed p-5 border rounded-lg text-m_error_500">
                   {errorString?.map((u, i) => (
                     <div key={i} className="body_regular_14">
                       <div>
-                        {t("row")}: {(u?.indexOfRow ?? 0) + 1}
+                        {t("row")}: {u?.indexOfRow ?? 0}
                       </div>
                       {u?.errorMessage?.map((e, j) => (
                         <div key={j}>
@@ -577,12 +609,27 @@ function ImportQuestion({ params }: any) {
                 onClick={onImportExel}
               />
             </div>
-
             {importErrorString?.length != 0 && (
               <div className="mt-5 px-5">
                 <div className="body_semibold_14 mb-3">
                   {t("test_excel_file")}
                 </div>
+                {successImportText && (
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="body_semibold_14 text-m_primary_500">
+                      {t("import_exel_success", { v: successImportText })}
+                    </div>
+                    <MButton
+                      onClick={() => {
+                        setCurrentStep(2);
+                      }}
+                      type="secondary"
+                      text={common.t("continue")}
+                      h="h-9"
+                    />
+                  </div>
+                )}
+
                 <div className="w-full border-dashed p-5 border rounded-lg text-m_error_500">
                   {importErrorString?.map((u, i) => (
                     <div key={i} className="body_regular_14">

@@ -519,5 +519,7 @@
   "label_noti": "Tên nhãn không được để trống",
   "test_excel_file": "Kiểm tra lại file excel",
   "row": "Hàng",
-  "Paid": "Đã thanh toán"
+  "Paid": "Đã thanh toán",
+  "has_exel_valid": "Có {{v}} câu hợp lệ",
+  "import_exel_success": "Đã import thành công {{v}} câu hỏi"
 }
