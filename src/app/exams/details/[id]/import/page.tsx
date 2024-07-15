@@ -37,11 +37,14 @@ import Sql from "../question/Sql";
 import TrueFalse from "../question/TrueFalse";
 import Evaluation from "../question/Evaluation";
 import Random from "../question/Random";
+import { ExamType } from "@/data/form_interface";
 
 function ImportQuestion({ params }: any) {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [exam, setExam] = useState<ExamData | undefined>();
   const [openPop, setOpenPop] = useState<boolean>(false);
+  var [questionTypes, setQuestionTypes] = useState<QuestionType[]>([]);
+
   const router = useRouter();
 
   useOnMountUnsafe(() => {
@@ -51,15 +54,26 @@ function ImportQuestion({ params }: any) {
   const loadExamById = async () => {
     var res = await getExamById(params?.id);
     if (res?.code != 0) {
-      return;
-    }
-
-    if (res.code != 0) {
       errorToast(res, res?.message ?? "");
       return;
     }
+    var ex: ExamData = res?.data?.records[0];
+    if (ex.examType == ExamType.Test) {
+      setQuestionTypes([
+        QuestionType.MutilAnswer,
+        QuestionType.YesNoQuestion,
+        QuestionType.Coding,
+        QuestionType.SQL,
+        QuestionType.Essay,
+        QuestionType.Pairing,
+        QuestionType.FillBlank,
+        QuestionType.Random,
+      ]);
+    } else {
+      setQuestionTypes([QuestionType.Essay, QuestionType.Evaluation]);
+    }
 
-    setExam(res?.data?.records[0]);
+    setExam(ex);
   };
 
   const [file, setFile] = useState<any>();
@@ -67,6 +81,7 @@ function ImportQuestion({ params }: any) {
   const [importErrorString, setImportErrorString] = useState<
     DataQuestionsExelImport[]
   >([]);
+  const [selectedType, setSelectedType] = useState<QuestionType | undefined>();
 
   const [questions, setQuestions] = useState<BaseQuestionData[]>([]);
   const [loadingImport, setLoadingImport] = useState<boolean>(false);
@@ -125,10 +140,12 @@ function ImportQuestion({ params }: any) {
     }
   };
 
-  const handleFileClick = (e: any) => {
+  const handleFileClick = (e: any, o: QuestionType | undefined) => {
     setOpenPop(false);
     setIsDrag(false);
-    e.stopPropagation();
+    if (o != undefined) {
+      setSelectedType(o);
+    }
     if (tempFile) {
       setFile(tempFile);
       setTempFile(undefined);
@@ -156,18 +173,6 @@ function ImportQuestion({ params }: any) {
   };
   const [isDrag, setIsDrag] = useState<boolean>(false);
 
-  var questionTypes = [
-    QuestionType.MutilAnswer,
-    QuestionType.YesNoQuestion,
-    QuestionType.Coding,
-    QuestionType.SQL,
-    QuestionType.Essay,
-    QuestionType.Evaluation,
-    QuestionType.Pairing,
-    QuestionType.FillBlank,
-    QuestionType.Random,
-  ];
-
   const onDeleteQuestionRead = (index: number) => {
     var cloneQuests = [...questions];
     cloneQuests?.splice(index, 1);
@@ -175,6 +180,10 @@ function ImportQuestion({ params }: any) {
   };
 
   const onImportExel = async () => {
+    if (questions?.length === 0) {
+      setCurrentStep(0);
+      return;
+    }
     setLoadingImport(true);
     var res = await importDataQuestionFromExcel({
       idExamQuestionPart: partId ?? undefined,
@@ -192,7 +201,10 @@ function ImportQuestion({ params }: any) {
       `${res?.data?.filter((q: any) => q.isSuccess)?.length} / ${res?.data
         ?.length}`,
     );
-    if (listError && listError?.length >= 0) {
+    console.log("listError", listError);
+
+    //return;
+    if (listError && listError?.length > 0) {
       setImportErrorString(listError);
       return;
     }
@@ -395,7 +407,7 @@ function ImportQuestion({ params }: any) {
           />
         </div>
         <Divider className="my-4" />
-
+        {/* {selectedType} */}
         <div className="h-11" />
         {currentStep === 0 && (
           <div className="lg:px-56 px-5">
@@ -433,7 +445,13 @@ function ImportQuestion({ params }: any) {
                   content={
                     <div className="flex flex-col items-start">
                       {questionTypes?.map((o) => (
-                        <button onClick={handleFileClick} key={o}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFileClick(e, o);
+                          }}
+                          key={o}
+                        >
                           {questTrans.t(o)}
                         </button>
                       ))}
@@ -472,7 +490,7 @@ function ImportQuestion({ params }: any) {
                 </div>
                 <button
                   onClick={(e) => {
-                    setTimeout(() => handleFileClick(e), 10);
+                    setTimeout(() => handleFileClick(e, undefined), 10);
                   }}
                   className="flex mt-4 text-[#4D7EFF] underline underline-offset-4 items-center"
                 >
@@ -517,10 +535,14 @@ function ImportQuestion({ params }: any) {
                   formData.append("files", file);
                   formData.append("name", file?.name);
 
-                  var res = await readQuestionTemplateExcel(formData);
+                  var res = await readQuestionTemplateExcel(
+                    selectedType,
+                    formData,
+                  );
                   setImportErrorString([]);
                   if (res?.code != 0) {
                     errorToast(res, res?.message ?? "");
+                    setQuestions([]);
                     return;
                   }
                   var dataRead: ReadQuestionExcelData = res?.data[0];
@@ -538,6 +560,8 @@ function ImportQuestion({ params }: any) {
                         errorMessage: [dataRead?.errorMessage ?? ""],
                       },
                     ]);
+
+                    return;
                   } else {
                     var s = dataRead?.dataQuestions?.filter(
                       (d) => !d.isSuccess,
@@ -548,12 +572,8 @@ function ImportQuestion({ params }: any) {
                       return;
                     }
                   }
-
                   setCurrentStep(1);
                   console.log("res upload", res);
-                  // setQuestions(
-                  //   dataRead?.dataQuestions?.map((e) => e.question) ?? [],
-                  // );
                 }}
               />
             </div>
@@ -567,14 +587,18 @@ function ImportQuestion({ params }: any) {
                     <div className="body_semibold_14 text-m_primary_500">
                       {t("has_exel_valid", { v: successInfoText })}
                     </div>
-                    <MButton
-                      onClick={() => {
-                        setCurrentStep(1);
-                      }}
-                      type="secondary"
-                      text={common.t("continue")}
-                      h="h-9"
-                    />
+                    {questions?.length != 0 && (
+                      <MButton
+                        onClick={() => {
+                          if (questions?.length != 0) {
+                            setCurrentStep(1);
+                          }
+                        }}
+                        type="secondary"
+                        text={common.t("continue")}
+                        h="h-9"
+                      />
+                    )}
                   </div>
                 )}
                 <div className="w-full border-dashed p-5 border rounded-lg text-m_error_500">
@@ -605,7 +629,11 @@ function ImportQuestion({ params }: any) {
             <div className="w-full flex justify-center">
               <MButton
                 loading={loadingImport}
-                text={common.t("complete")}
+                text={
+                  questions?.length === 0
+                    ? common.t("back")
+                    : common.t("complete")
+                }
                 onClick={onImportExel}
               />
             </div>

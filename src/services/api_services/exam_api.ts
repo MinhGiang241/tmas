@@ -120,10 +120,18 @@ export const getSuggestValueHastag = async (text?: string) => {
   return 0;
 };
 
-export const readQuestionTemplateExcel = async (data: any) => {
+export const readQuestionTemplateExcel = async (
+  type?: QuestionType,
+  data?: any,
+) => {
   var results: APIResults = await callStudioAPI.post(
     `${process.env.NEXT_PUBLIC_API_STU}/api/studio/ExamQuestionMaster/ReadTemplateExcel`,
     data,
+    {
+      params: {
+        ExpectedQuestionType: type,
+      },
+    },
   );
 
   return results;
