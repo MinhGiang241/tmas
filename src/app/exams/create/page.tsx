@@ -154,7 +154,7 @@ function CreatePage({ exam, isEdit }: any) {
     }
   };
   // useOnMountUnsafe(createSessionId, [exam]);
-  console.log("exam", exam, selectedButton, inputFields);
+  // console.log("exam", exam, selectedButton, inputFields);
   useEffect(() => {
     createSessionId();
     if (exam) {

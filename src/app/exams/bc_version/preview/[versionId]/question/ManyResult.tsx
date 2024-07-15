@@ -1,24 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import MButton from "@/app/components/config/MButton";
 import { useTranslation } from "react-i18next";
-import { Checkbox, Collapse, Popover } from "antd";
-import DeleteRedIcon from "@/app/components/icons/trash-red.svg";
-import EditIcon from "@/app/components/icons/edit-black.svg";
-import CopyIcon from "@/app/components/icons/size.svg";
-import BaseModal from "@/app/components/config/BaseModal";
-import MInput from "@/app/components/config/MInput";
-import MTextArea from "@/app/components/config/MTextArea";
-import ConfirmModal from "@/app/components/modals/ConfirmModal";
-import NewIcon from "@/app/components/icons/export.svg";
+import { Checkbox, Collapse } from "antd";
 import Tick from "@/app/components/icons/tick-circle.svg";
 import { useRouter } from "next/navigation";
 import { FormattedDate, FormattedTime } from "react-intl";
-import {
-  deleteQuestionById,
-  duplicateQuestion,
-} from "@/services/api_services/question_api";
-import { errorToast, successToast } from "@/app/components/toast/customToast";
-import { APIResults } from "@/data/api_results";
 import AddIcon from "@/app/components/icons/add.svg";
 
 export default function ManyResult({
@@ -53,7 +39,7 @@ export default function ManyResult({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded
     );
   }, []);
   return (
@@ -191,7 +177,7 @@ export default function ManyResult({
                         />
                         <Tick className="min-w-5" />
                       </div>
-                    ),
+                    )
                   )}
                 </div>
               </div>

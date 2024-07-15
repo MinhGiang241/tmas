@@ -1,5 +1,4 @@
 "use client";
-
 import HomeLayout from "@/app/layouts/HomeLayout";
 import React, { useEffect, useState } from "react";
 import CreatePage from "../create/page";
