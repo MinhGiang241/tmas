@@ -129,71 +129,11 @@ export default function Evaluation({
           >
             <div className="h-[1px] bg-m_primary_200 mb-3" />
             <div className="flex">
-              {/* <div className="w-1/2">
-                <div className="text-m_primary_500 text-sm font-semibold mb-2">
-                  {t("quest_info")}
-                </div>
-                <div className="flex">
-                  <div className="text-sm pr-2 font-semibold">
-                    {t("quest_group")}:
-                  </div>
-                  <span>{questionGroup?.name}</span>
-                </div>
-                <div className="flex">
-                  <div className="text-sm pr-2 font-semibold">
-                    {t("quest_type")}:
-                  </div>
-                  <span>{t(question?.questionType)}</span>
-                </div>
-                <div className="flex">
-                  <div className="text-sm pr-2 font-semibold">
-                    {t("point")}:{" "}
-                  </div>
-                  <span>{question.numberPoint}</span>
-                </div>
-                <div className="flex">
-                  <div className="text-sm pr-2 font-semibold">
-                    {t("created_date")}:
-                  </div>
-
-                  <FormattedDate
-                    value={question?.createdTime}
-                    day="2-digit"
-                    month="2-digit"
-                    year="numeric"
-                  />
-                  <div className="w-2" />
-                  <FormattedTime
-                    value={question?.createdTime}
-                    hour="2-digit"
-                    minute="2-digit"
-                    second="2-digit"
-                  />
-                </div>
-              </div>
-              <div className="w-1/2"> */}
               <div className="text-m_primary_500 text-sm font-semibold mb-2">
                 {t("result")}
               </div>
               <div className="w-5" />
               <div>
-                {/* <div>
-                  {question?.content?.answers?.map((x: any, key: any) => (
-                    <div className="flex" key={key}>
-                      <div className="w-40 flex">
-                        <div className="body_semibold_14">{x.label}.</div>
-                        <div
-                          className="body_regular_14 pl-2"
-                          dangerouslySetInnerHTML={{ __html: x.text }}
-                        />
-                        <div className="min-w-5" />
-                      </div>
-                      <div className="w-40">
-                        <div>{x?.point} điểm</div>
-                      </div>
-                    </div>
-                  ))}
-                </div> */}
                 <div>
                   {question?.content?.answers?.map((x, key: any) => {
                     const ans = candidateAnswer?.answers?.find(
