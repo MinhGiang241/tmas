@@ -77,7 +77,7 @@ function CreatePage({ exam, isEdit }: any) {
   );
 
   const handleAddFields = () => {
-    const lastField = inputFields[inputFields.length - 1];
+    const lastField = inputFields[inputFields?.length - 1];
     setInputFields([
       ...inputFields,
       {
