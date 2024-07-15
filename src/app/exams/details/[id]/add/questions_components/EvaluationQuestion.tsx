@@ -65,6 +65,7 @@ export interface QuestionEvaluation {
 interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
+  clickQuestGroup?: any;
   idExam?: string;
   question?: BaseQuestionFormData;
 }
@@ -73,10 +74,11 @@ const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  }
+  },
 );
 
 function EvaluationQuestion({
+  clickQuestGroup,
   questionGroups: examGroups,
   submitRef,
   idExam,
@@ -122,7 +124,7 @@ function EvaluationQuestion({
             point: 0,
             idIcon: "",
           },
-        ]
+        ],
   );
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -209,7 +211,7 @@ function EvaluationQuestion({
         idExam: question?.idExam ?? idExam,
         numberPoint: fields.reduce(
           (sum: any, field: any) => sum + field.point,
-          0
+          0,
         ),
         idGroupQuestion: values.question_group,
         questionType: "Evaluation",
@@ -307,6 +309,14 @@ function EvaluationQuestion({
           id="question_group"
           name="question_group"
         />
+        <button
+          onClick={() => {
+            clickQuestGroup();
+          }}
+          className="mb-3 body_regular_14 underline underline-offset-4 text-m_primary_500"
+        >
+          {t("create_exam_group")}
+        </button>
       </div>
       <div className="bg-white rounded-lg lg:col-span-8 col-span-12 p-5 h-fit">
         <EditorHook
@@ -345,8 +355,8 @@ function EvaluationQuestion({
                       fields.map((f: any) =>
                         f.id === field.id
                           ? { ...f, label: e.target.textContent }
-                          : f
-                      )
+                          : f,
+                      ),
                     )
                   }
                 >
@@ -359,8 +369,8 @@ function EvaluationQuestion({
                   onChange={(e) =>
                     setFields(
                       fields.map((f: any) =>
-                        f.id === field.id ? { ...f, text: e.target.value } : f
-                      )
+                        f.id === field.id ? { ...f, text: e.target.value } : f,
+                      ),
                     )
                   }
                 />
@@ -374,8 +384,8 @@ function EvaluationQuestion({
                       fields.map((f: any) =>
                         f.id === field.id
                           ? { ...f, point: parseFloat(e.target.value) || 0 }
-                          : f
-                      )
+                          : f,
+                      ),
                     )
                   }
                 />

@@ -51,11 +51,13 @@ const CheckboxGroup = Checkbox.Group;
 interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
+  clickQuestGroup?: any;
   idExam?: string;
   question?: BaseQuestionFormData;
 }
 
 function ManyResultsQuestion({
+  clickQuestGroup,
   questionGroups: examGroups,
   submitRef,
   idExam,
@@ -250,6 +252,15 @@ function ManyResultsQuestion({
           id="question_group"
           name="question_group"
         />
+        <button
+          onClick={() => {
+            clickQuestGroup();
+          }}
+          className="mb-3 body_regular_14 underline underline-offset-4 text-m_primary_500"
+        >
+          {t("create_exam_group")}
+        </button>
+
         <div className="body_semibold_14 mb-2">{t("relocate_result")}</div>
         <Switch
           value={isChangePosition}

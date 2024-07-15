@@ -74,11 +74,13 @@ const Editor = dynamic(
 interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
+  clickQuestGroup: any;
   idExam?: string;
   question?: BaseQuestionFormData;
 }
 
 function CodingQuestion({
+  clickQuestGroup,
   questionGroups: examGroups,
   submitRef,
   idExam,
@@ -501,7 +503,14 @@ function CodingQuestion({
           id="question_group"
           name="question_group"
         />
-
+        <button
+          onClick={() => {
+            clickQuestGroup();
+          }}
+          className="mb-3 body_regular_14 underline underline-offset-4 text-m_primary_500"
+        >
+          {t("create_exam_group")}
+        </button>
         <div className="body_semibold_14 mb-3">{t("used_language")}</div>
         <CheckboxGroup
           value={checkedLang}
