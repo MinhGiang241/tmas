@@ -39,11 +39,13 @@ const EditorHook = dynamic(
 interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
+  clickQuestGroup?: any;
   idExam?: string;
   question?: BaseQuestionFormData;
 }
 
 function TrueFalseQuestion({
+  clickQuestGroup,
   questionGroups: examGroups,
   submitRef,
   idExam,
@@ -66,12 +68,12 @@ function TrueFalseQuestion({
       setIsChangePosition(existedQuest?.content?.isChangePosition ?? false);
       var a =
         existedQuest?.content?.answers &&
-          existedQuest?.content?.answers.length != 0
+        existedQuest?.content?.answers.length != 0
           ? existedQuest?.content?.answers[0]
           : {};
       var b =
         existedQuest?.content?.answers &&
-          existedQuest?.content?.answers.length >= 2
+        existedQuest?.content?.answers.length >= 2
           ? existedQuest?.content?.answers[1]
           : {};
 
@@ -118,12 +120,12 @@ function TrueFalseQuestion({
     explain: existedQuest?.content?.explainAnswer ?? undefined,
     a:
       existedQuest?.content?.answers &&
-        existedQuest?.content?.answers?.length != 0
+      existedQuest?.content?.answers?.length != 0
         ? existedQuest?.content?.answers[0]?.text
         : undefined,
     b:
       existedQuest?.content?.answers &&
-        existedQuest?.content?.answers?.length >= 2
+      existedQuest?.content?.answers?.length >= 2
         ? existedQuest?.content?.answers[1]?.text
         : undefined,
   };
@@ -264,6 +266,15 @@ function TrueFalseQuestion({
           id="question_group"
           name="question_group"
         />
+        <button
+          onClick={() => {
+            clickQuestGroup();
+          }}
+          className="mb-3 body_regular_14 underline underline-offset-4 text-m_primary_500"
+        >
+          {t("create_exam_group")}
+        </button>
+
         <div className="body_semibold_14 mb-2">{t("relocate_result")}</div>
         <Switch
           value={isChangePosition}

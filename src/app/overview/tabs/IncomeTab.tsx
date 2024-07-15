@@ -378,7 +378,7 @@ function IncomeTab() {
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-4">
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("income_total")}</div>
           <div className="h-2" />
           <div className="flex items-center">
@@ -400,7 +400,7 @@ function IncomeTab() {
             )}
           </div>
         </div>
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("discount_total")}</div>
           <div className="h-2" />
           <div className="flex items-center">
@@ -422,7 +422,7 @@ function IncomeTab() {
             )}
           </div>
         </div>
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("pure_income_total")}</div>
           <div className="h-2" />
           <div className="flex items-center">
@@ -444,7 +444,7 @@ function IncomeTab() {
             )}
           </div>
         </div>
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("register_num")}</div>
           <div className="h-2" />
           <div className="flex items-center">
@@ -469,14 +469,14 @@ function IncomeTab() {
             )}
           </div>
         </div>
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("public_examination")}</div>
           <div className="h-2" />
           <div className="heading_semibold_32">
             {studioRevenueData?.examTest?.examTestPublic ?? 0}
           </div>
         </div>
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("valid_public_examination")}</div>
           <div className="h-2" />
           <div className="heading_semibold_32">
@@ -496,7 +496,7 @@ function IncomeTab() {
           />
         </div>
         <Divider className="my-4" />
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between lg:items-center max-lg:flex-col items-start">
           <div className="flex items-center">
             <MTreeSelect
               value={groupId}
@@ -526,7 +526,7 @@ function IncomeTab() {
               isTextRequire={false}
             />
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center max-lg:my-2">
             <div className="max-w-36">
               <MDateTimeSelect
                 setValue={(name: string, val: any) => {

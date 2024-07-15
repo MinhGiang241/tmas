@@ -27,6 +27,7 @@ import {
 import { FormattedNumber } from "react-intl";
 import dayjs from "dayjs";
 import { sendNotification } from "@/notifiCations/pushService";
+import { useAppSelector } from "@/redux/hooks";
 function AccountPage() {
   const index = useSelector((state: RootState) => state.home.index);
   const dispatch = useDispatch();
@@ -67,8 +68,8 @@ function AccountPage() {
     }
     dispatch(
       setHomeIndex(
-        ["0", "1", "2", "3", "4"].includes(indexTab ?? "") ? indexTab : "0"
-      )
+        ["0", "1", "2", "3", "4"].includes(indexTab ?? "") ? indexTab : "0",
+      ),
     );
     sendNotification();
     console.log("Sendtest noti");
@@ -123,7 +124,7 @@ function AccountPage() {
               router.push(
                 `/payment?type=Gold&goldId=${transaction?.goldId ?? ""}&price=${
                   goldSetting?.cost ?? 0
-                }&name=${goldSetting?.name}`
+                }&name=${goldSetting?.name}`,
               );
             } else {
               router.push(
@@ -131,7 +132,7 @@ function AccountPage() {
                   transaction?.packageId ?? ""
                 }&price=${packageData?.price ?? 0}&name=${
                   packageData?.name ?? ""
-                }`
+                }`,
               );
             }
           }

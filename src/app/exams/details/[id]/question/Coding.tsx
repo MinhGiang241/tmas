@@ -40,6 +40,8 @@ export default function Coding({
   addText,
   deleteText,
   isBank = true,
+  onDelete,
+  onlyDelete,
 }: {
   addText?: string;
   deleteText?: string;
@@ -55,6 +57,8 @@ export default function Coding({
   addExamBank?: Function;
   canCheck?: boolean;
   onChangeCheck?: Function;
+  onDelete?: any;
+  onlyDelete?: boolean;
 }) {
   const [openEditQuestion, setOpenEditQuestion] = useState(false);
   const [openCopyQuestion, setOpenCopyQuestion] = useState<boolean>(false);
@@ -79,7 +83,7 @@ export default function Coding({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -106,7 +110,7 @@ export default function Coding({
           router.push(
             `/${isBank ? "exam_bank" : "exams/details"}/${
               examId ?? "u"
-            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
           );
           await getData();
         }}
@@ -119,19 +123,26 @@ export default function Coding({
       />
       <ConfirmModal
         loading={deleteLoading}
-        onOk={async () => {
-          setDeleteLoading(true);
-          var res = await deleteQuestionById(question?.id);
-          setDeleteLoading(false);
-          if (res.code != 0) {
-            errorToast(res, res?.message ?? "");
-            return;
-          }
-          successToast(res?.message ?? t("success_delete_question"));
+        onOk={
+          onDelete
+            ? () => {
+                onDelete();
+                setOpenDeleteQuestion(false);
+              }
+            : async () => {
+                setDeleteLoading(true);
+                var res = await deleteQuestionById(question?.id);
+                setDeleteLoading(false);
+                if (res.code != 0) {
+                  errorToast(res, res?.message ?? "");
+                  return;
+                }
+                successToast(res?.message ?? t("success_delete_question"));
 
-          setOpenDeleteQuestion(false);
-          await getData();
-        }}
+                setOpenDeleteQuestion(false);
+                await getData();
+              }
+        }
         onCancel={() => {
           setOpenDeleteQuestion(false);
         }}
@@ -218,41 +229,46 @@ export default function Coding({
                 )
               ) : (
                 <div className="min-w-28 pl-4">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      console.log("ques", question);
-                      //return;
-                      router.push(
-                        `/${isBank ? "exam_bank" : "exams/details"}/${
-                          examId ?? "u"
-                        }/edit?questId=${question.id}&isBank=${
-                          isBank ? "true" : "false"
-                        }`
-                      );
-                    }}
-                  >
-                    <Tooltip
-                      placement="bottom"
-                      title={examTrans.t("edit_question")}
-                    >
-                      <EditIcon />
-                    </Tooltip>
-                  </button>
-                  <button
-                    className="px-2"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setOpenCopyQuestion(true);
-                    }}
-                  >
-                    <Tooltip
-                      placement="bottom"
-                      title={examTrans.t("clone_question")}
-                    >
-                      <CopyIcon />
-                    </Tooltip>
-                  </button>
+                  {!onlyDelete && (
+                    <>
+                      {" "}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          console.log("ques", question);
+                          //return;
+                          router.push(
+                            `/${isBank ? "exam_bank" : "exams/details"}/${
+                              examId ?? "u"
+                            }/edit?questId=${question.id}&isBank=${
+                              isBank ? "true" : "false"
+                            }`,
+                          );
+                        }}
+                      >
+                        <Tooltip
+                          placement="bottom"
+                          title={examTrans.t("edit_question")}
+                        >
+                          <EditIcon />
+                        </Tooltip>
+                      </button>
+                      <button
+                        className="px-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenCopyQuestion(true);
+                        }}
+                      >
+                        <Tooltip
+                          placement="bottom"
+                          title={examTrans.t("clone_question")}
+                        >
+                          <CopyIcon />
+                        </Tooltip>
+                      </button>
+                    </>
+                  )}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -278,7 +294,7 @@ export default function Coding({
           </div>
           <div className="flex">
             <div className="body_semibold_14 pr-2">{t("quest_group")}: </div>
-            <span>{questionGroup?.name}</span>
+            <span>{question?.groupQuestionName ?? questionGroup?.name}</span>
           </div>
           <div className="flex">
             <div className="body_semibold_14 pr-2">{t("quest_type")}: </div>

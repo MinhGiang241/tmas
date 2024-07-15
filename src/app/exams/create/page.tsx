@@ -37,11 +37,13 @@ import { errorToast, successToast } from "@/app/components/toast/customToast";
 import { getTags } from "@/services/api_services/tag_api";
 import { TagData } from "@/data/tag";
 import { addMoreAnswer } from "@/redux/questions/questionSlice";
+import CreateChildGroupModal from "@/app/exam_group/tabs/modals/CreateChildGroupModal";
+import AddExamTest from "@/app/exam_group/tabs/modals/AddExamTest";
 const EditorHook = dynamic(
   () => import("../components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  }
+  },
 );
 
 function CreatePage({ exam, isEdit }: any) {
@@ -56,15 +58,15 @@ function CreatePage({ exam, isEdit }: any) {
   const [lang, setLang] = useState<any>(exam?.language ?? "Vietnamese");
   const [transfer, setTransfer] = useState<any>("FreeByUser");
   const [page, setPage] = useState<any>(
-    exam?.examViewQuestionType ?? "SinglePage"
+    exam?.examViewQuestionType ?? "SinglePage",
   );
   const [sw, setSw] = useState<boolean>(
-    !exam ? false : exam?.changePositionQuestion ?? false
+    !exam ? false : exam?.changePositionQuestion ?? false,
   );
   const [files, setFiles] = useState([]);
   const [idSession, setIdSession] = useState<string | undefined>();
   const [selectedButton, setSelectedButton] = useState<ExamType>(
-    exam?.id ? exam?.examType : ExamType.Test
+    exam?.id ? exam?.examType : ExamType.Test,
   );
 
   const handleButtonClick = (buttonType: any) => {
@@ -73,7 +75,7 @@ function CreatePage({ exam, isEdit }: any) {
 
   const [inputFields, setInputFields] = useState<ScoreRank[]>(
     //[{ label: "", fromScore: 0, toScore: undefined }]
-    exam?.id ? exam?.scoreRanks : []
+    exam?.id ? exam?.scoreRanks : [],
   );
 
   const handleAddFields = () => {
@@ -107,7 +109,7 @@ function CreatePage({ exam, isEdit }: any) {
 
   const handleInputChange = (
     index: number,
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const values = [...inputFields];
     const { name, value } = event.target;
@@ -121,7 +123,7 @@ function CreatePage({ exam, isEdit }: any) {
       if (false) {
         errorToast(
           undefined,
-          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại."
+          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại.",
         );
         return;
       } else {
@@ -201,6 +203,7 @@ function CreatePage({ exam, isEdit }: any) {
     if (values?.tag && values?.tag?.length > 10) {
       errors.tag = "tag_limit";
     }
+
     return errors;
   };
 
@@ -209,40 +212,43 @@ function CreatePage({ exam, isEdit }: any) {
     initialValues,
     validate,
     onSubmit: async (values: FormValue) => {
+      console.log("submit", inputFields);
+
       const validateFields =
         // selectedButton === ExamType.Survey &&
-        inputFields.length > 0 &&
-        inputFields.some((x: any) => x?.label.trim() === "");
+        (inputFields?.length ?? 0) > 0 &&
+        inputFields?.some((x: any) => x?.label.trim() === "");
       if (validateFields) {
         errorToast(
           undefined,
-          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả."
+          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả.",
         );
         return;
       }
       const emptyToScore =
-        inputFields.length > 0 &&
-        inputFields.some(
+        inputFields?.length > 0 &&
+        inputFields?.some(
           (field: any) =>
             field.toScore === undefined ||
             field.toScore === null ||
-            field.toScore === ""
+            field.toScore === "",
         );
       if (emptyToScore) {
         errorToast(
           undefined,
-          "Đơn vị điểm đến không được để trống, vui lòng nhập lại."
+          "Đơn vị điểm đến không được để trống, vui lòng nhập lại.",
         );
         return;
       }
+      console.log("return");
       // console.log(inputFields, "inputFields");
       const invalidScoreRange =
-        inputFields.length > 0 &&
-        inputFields.some((field: any) => field.toScore <= field.fromScore);
+        (inputFields?.length ?? 0) > 0 &&
+        inputFields?.some((field: any) => field.toScore <= field.fromScore);
       if (invalidScoreRange) {
         errorToast(
           undefined,
-          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại."
+          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại.",
         );
         return;
       }
@@ -339,7 +345,7 @@ function CreatePage({ exam, isEdit }: any) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id
+          (ch: ExamGroupData) => ch.idParent === e.id,
         );
         return { ...e, childs };
       });
@@ -374,7 +380,7 @@ function CreatePage({ exam, isEdit }: any) {
             "Paging.StartIndex": 0,
             "Paging.RecordPerPage": 100,
           }
-        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 }
+        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
     );
     if (data?.code != 0) {
       return [];
@@ -388,8 +394,20 @@ function CreatePage({ exam, isEdit }: any) {
     setOptionTag(op);
   };
 
+  const [openExamGroup, setOpenExamGroup] = useState<boolean>(false);
+
   return (
     <HomeLayout>
+      <AddExamTest
+        open={openExamGroup}
+        onCancel={() => {
+          setOpenExamGroup(false);
+        }}
+        onOk={() => {
+          dispatch(fetchDataExamGroup(async () => loadExamTestList(true)));
+          setOpenExamGroup(false);
+        }}
+      />
       <div className="h-5" />
 
       <Breadcrumb
@@ -469,6 +487,14 @@ function CreatePage({ exam, isEdit }: any) {
             placeholder={t("select_exam_group")}
             formik={formik}
           />
+          <button
+            onClick={() => {
+              setOpenExamGroup(true);
+            }}
+            className="mb-3 body_regular_14 underline underline-offset-4 text-m_primary_500"
+          >
+            {t("create_test_group")}
+          </button>
           <div className="body_semibold_14 mb-2">{t("display_setting")}</div>
 
           <Radio.Group

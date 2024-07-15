@@ -23,11 +23,13 @@ import { useOnMountUnsafe } from "@/services/ui/useOnMountUnsafe";
 interface Props {
   questionGroups?: QuestionGroupData[];
   submitRef?: any;
+  clickQuestGroup?: any;
   idExam?: string;
   question?: BaseQuestionFormData;
 }
 
 function RandomQuestion({
+  clickQuestGroup,
   questionGroups: examGroups,
   submitRef,
   idExam,
@@ -157,6 +159,14 @@ function RandomQuestion({
           id="question_group"
           name="question_group"
         />
+        <button
+          onClick={() => {
+            clickQuestGroup();
+          }}
+          className="mb-3 body_regular_14 underline underline-offset-4 text-m_primary_500"
+        >
+          {t("create_exam_group")}
+        </button>
       </div>
       <div className="bg-white rounded-lg lg:col-span-8 col-span-12 p-5 h-fit">
         <div className="body_semibold_14">

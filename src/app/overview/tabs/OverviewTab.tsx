@@ -112,14 +112,14 @@ function OverviewTab() {
   var bars =
     barData?.length != 0
       ? Object.keys(barData?.reduce((a, b) => ({ ...a, ...b }), {}))
-        .filter((l) => l != "name")
-        ?.sort((a, b) => a.localeCompare(b))
+          .filter((l) => l != "name")
+          ?.sort((a, b) => a.localeCompare(b))
       : [];
 
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-4">
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("sum_doing_test")}</div>
           <div className="h-2" />
           <div className="heading_semibold_32">
@@ -130,7 +130,7 @@ function OverviewTab() {
             />
           </div>
         </div>
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("sum_test")}</div>
           <div className="h-2" />
           <div className="flex items-center">
@@ -152,7 +152,7 @@ function OverviewTab() {
             )}
           </div>
         </div>
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("sum_candidate")}</div>
           <div className="h-2" />
           <div className="flex items-center">
@@ -174,7 +174,7 @@ function OverviewTab() {
             )}
           </div>
         </div>
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("remain_gold")}</div>
           <div className="h-2" />
           <div className="heading_semibold_32">
@@ -185,12 +185,12 @@ function OverviewTab() {
             />
           </div>
         </div>
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("service_package")}</div>
           <div className="h-2" />
           <div className="heading_semibold_32">{remain?.pkg_name}</div>
         </div>
-        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col px-8">
+        <div className="grid-cols-1 bg-white p-3 rounded-lg h-28 flex justify-center flex-col lg:px-8">
           <div className="body_regular_14">{t("remain_test")}</div>
           <div className="h-2" />
           <div className="heading_semibold_32">{remain?.number_of_test}</div>

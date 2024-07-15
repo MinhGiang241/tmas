@@ -19,6 +19,7 @@ import { RootState } from "@/redux/store";
 interface AddExamProps extends BaseModalProps {
   data?: ExamGroupData;
   loading?: boolean;
+  onOk?: Function;
 }
 
 function AddExamTest(props: AddExamProps) {
@@ -88,6 +89,9 @@ function AddExamTest(props: AddExamProps) {
           return;
         }
         successToast(submit?.message ?? common.t("success_create_new"));
+        if (props.onOk) {
+          props.onOk();
+        }
       }
 
       setLoading(false);

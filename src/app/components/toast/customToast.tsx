@@ -8,6 +8,7 @@ import {
 import MButton from "../config/MButton";
 import { useTranslation } from "react-i18next";
 import { APIResults, ApiMessageType } from "@/data/api_results";
+import { useEffect } from "react";
 
 enum ToastType {
   SUCCESS,
@@ -32,6 +33,14 @@ const CustomToast = ({
 }) => {
   const { t } = useTranslation();
 
+  const handleKeyDown = (e: any) => {
+    console.log("e", e);
+  };
+
+  useEffect(() => {
+    document.removeEventListener("keydown", handleKeyDown, true);
+  });
+
   return (
     <>
       <div
@@ -41,15 +50,17 @@ const CustomToast = ({
         onClick={() => {
           toast.dismiss(c.id);
         }}
-        className={`${c.visible ? "animate-enter_overlay" : "animate-leave_overlay"
-          } relative w-full h-screen  flex justify-center bg-black/40`}
+        className={`${
+          c.visible ? "animate-enter_overlay" : "animate-leave_overlay"
+        } relative w-full h-screen  flex justify-center bg-black/40`}
       >
         <div
           onClick={(e) => {
             e.stopPropagation();
           }}
-          className={`${c.visible ? "animate-enter" : "animate-leave"
-            } h-fit mt-40 relative max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 justify-center`}
+          className={`${
+            c.visible ? "animate-enter" : "animate-leave"
+          } h-fit mt-40 relative max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 justify-center`}
         >
           <div className="px-10 w-full relative z-50">
             <div className="flex justify-center mt-6 mb-4">
@@ -113,19 +124,19 @@ export const errorToast = (res: APIResults | undefined, content: string) => {
       dangerToast(content);
       break;
     case ApiMessageType.None:
+      dangerToast(content);
       break;
     default:
       dangerToast(content);
       break;
   }
-
 };
 
 export const dangerToast = (content: string) => {
   toast.custom((e) => (
     <CustomToast type={ToastType.ERROR} content={content} c={e} />
   ));
-}
+};
 
 export const notifyToast = (content: string) => {
   toast.custom((e) => (

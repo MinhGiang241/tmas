@@ -31,8 +31,10 @@ import dayjs from "dayjs";
 import { sendNotification } from "@/notifiCations/pushService";
 import BellIcon from "@/app/components/icons/blue-noti.svg";
 import SettingNotify from "../settings-notify/settings-notification";
+import { useAppSelector } from "@/redux/hooks";
 
 function AccountPage() {
+  const user = useAppSelector((state: RootState) => state.user.user);
   const index = useSelector((state: RootState) => state.home.index);
   const dispatch = useDispatch();
   const { t } = useTranslation("account");
@@ -72,8 +74,10 @@ function AccountPage() {
     }
     dispatch(
       setHomeIndex(
-        ["0", "1", "2", "3", "4", "5"].includes(indexTab ?? "") ? indexTab : "0"
-      )
+        ["0", "1", "2", "3", "4", "5"].includes(indexTab ?? "")
+          ? indexTab
+          : "0",
+      ),
     );
     sendNotification();
     console.log("Sendtest noti");
@@ -128,7 +132,7 @@ function AccountPage() {
               router.push(
                 `/payment?type=Gold&goldId=${transaction?.goldId ?? ""}&price=${
                   goldSetting?.cost ?? 0
-                }&name=${goldSetting?.name}`
+                }&name=${goldSetting?.name}`,
               );
             } else {
               router.push(
@@ -136,7 +140,7 @@ function AccountPage() {
                   transaction?.packageId ?? ""
                 }&price=${packageData?.price ?? 0}&name=${
                   packageData?.name ?? ""
-                }`
+                }`,
               );
             }
           }
@@ -223,19 +227,21 @@ function AccountPage() {
             <p className="mx-2">{t("account_management")}</p>
           </button>
 
-          <button
-            onClick={() => {
-              router.push("/account?tab=1");
-            }}
-            className={`h-[52px] ${
-              index === "1"
-                ? "bg-m_primary_100 body_semibold_14"
-                : "body_regular_14"
-            } flex items-center justify-start rounded-lg w-full pl-1`}
-          >
-            <Avatar className="min-w-5" />
-            <p className="mx-2">{t("gold_manage")}</p>
-          </button>
+          {user?.studio?.role === "Owner" && (
+            <button
+              onClick={() => {
+                router.push("/account?tab=1");
+              }}
+              className={`h-[52px] ${
+                index === "1"
+                  ? "bg-m_primary_100 body_semibold_14"
+                  : "body_regular_14"
+              } flex items-center justify-start rounded-lg w-full pl-1`}
+            >
+              <Avatar className="min-w-5" />
+              <p className="mx-2">{t("gold_manage")}</p>
+            </button>
+          )}
           <button
             onClick={() => {
               router.push("/account?tab=2");
@@ -264,19 +270,21 @@ function AccountPage() {
             <p className="mx-2">{t("business_information")}</p>
           </button>
 
-          <button
-            onClick={() => {
-              router.push("/account?tab=4");
-            }}
-            className={`h-[52px] ${
-              index === "4"
-                ? "bg-m_primary_100 body_semibold_14"
-                : "body_regular_14"
-            } flex items-center justify-start rounded-lg w-full pl-1`}
-          >
-            <ClockIcon className="min-w-5" />
-            <p className="mx-2">{t("history_upgrade")}</p>
-          </button>
+          {user?.studio?.role === "Owner" && (
+            <button
+              onClick={() => {
+                router.push("/account?tab=4");
+              }}
+              className={`h-[52px] ${
+                index === "4"
+                  ? "bg-m_primary_100 body_semibold_14"
+                  : "body_regular_14"
+              } flex items-center justify-start rounded-lg w-full pl-1`}
+            >
+              <ClockIcon className="min-w-5" />
+              <p className="mx-2">{t("history_upgrade")}</p>
+            </button>
+          )}
 
           <button
             onClick={() => {

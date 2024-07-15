@@ -35,6 +35,7 @@ import {
 } from "@/redux/questions/questionSlice";
 import EvaluationQuestion from "./questions_components/EvaluationQuestion";
 import { ExamType } from "@/data/form_interface";
+import AddNewModal from "@/app/exam_group/tabs/question-modals/AddNewModal";
 
 function CreateQuestionPage({ params, question }: any) {
   const { t } = useTranslation("exam");
@@ -43,7 +44,7 @@ function CreateQuestionPage({ params, question }: any) {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state: RootState) => state?.user?.user);
   const questionGroups = useAppSelector(
-    (state: RootState) => state?.examGroup?.questions
+    (state: RootState) => state?.examGroup?.questions,
   );
   var search = useSearchParams();
   var questionType = search.get("question");
@@ -89,7 +90,7 @@ function CreateQuestionPage({ params, question }: any) {
 
     var dataResults: APIResults = await getQuestionGroups(
       "",
-      user?.studio?._id
+      user?.studio?._id,
     );
 
     if (dataResults.code != 0) {
@@ -111,33 +112,48 @@ function CreateQuestionPage({ params, question }: any) {
   }, [user]);
 
   const questionLoading = useAppSelector(
-    (state: RootState) => state.question.loading
+    (state: RootState) => state.question.loading,
   );
 
   const submitRef = useRef(undefined);
+  const [openQuestGroup, setOpenQuestGroup] = useState<boolean>(false);
+  const clickQuestGroup = () => {
+    setOpenQuestGroup(true);
+  };
+
   return (
     <HomeLayout>
+      <AddNewModal
+        open={openQuestGroup}
+        onCancel={() => setOpenQuestGroup(false)}
+        onOk={() => {
+          dispatch(
+            fetchDataQuestionGroup(async () => loadQuestionGroupList(true)),
+          );
+        }}
+      />
+
       <div className="w-full flex mt-4 items-center lg:justify-between justify-start">
         <MBreadcrumb
           items={
             exam?.id
               ? [
-                { text: t("exam_list"), href: "/exams" },
-                { text: exam?.name, href: `/exams/details/${exam?.id}` },
-                {
-                  text: question ? common.t("edit") : t("manual_add"),
-                  href: question ? `` : `/exams/details/${exam?.id}/add`,
-                  active: true,
-                },
-              ]
+                  { text: t("exam_list"), href: "/exams" },
+                  { text: exam?.name, href: `/exams/details/${exam?.id}` },
+                  {
+                    text: question ? common.t("edit") : t("manual_add"),
+                    href: question ? `` : `/exams/details/${exam?.id}/add`,
+                    active: true,
+                  },
+                ]
               : [
-                { text: t("exam_bank"), href: "/exam_bank" },
-                {
-                  text: question ? common.t("edit") : t("manual_add"),
-                  href: question ? `` : `/exams/details/u/add`,
-                  active: true,
-                },
-              ]
+                  { text: t("exam_bank"), href: "/exam_bank" },
+                  {
+                    text: question ? common.t("edit") : t("manual_add"),
+                    href: question ? `` : `/exams/details/u/add`,
+                    active: true,
+                  },
+                ]
           }
         />
         <div className="flex items-center max-lg:ml-5 max-lg:hidden">
@@ -171,7 +187,7 @@ function CreateQuestionPage({ params, question }: any) {
             onClick={() => {
               if (question) {
                 router.replace(
-                  `?partId=${partId ?? ""}&questId=${questId}&question=${a}`
+                  `?partId=${partId ?? ""}&questId=${questId}&question=${a}`,
                 );
                 return;
               }
@@ -185,24 +201,25 @@ function CreateQuestionPage({ params, question }: any) {
                 scroll: false,
               });
             }}
-            className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${params?.id == "u" &&
-                !questionList.some((a: any) => a == questionType) &&
-                a == "evaluation"
+            className={`body_semibold_14 text-m_primary_500 px-6 py-2 mr-3 mb-2 rounded-lg ${
+              params?.id == "u" &&
+              !questionList.some((a: any) => a == questionType) &&
+              a == "evaluation"
                 ? "bg-m_primary_100"
                 : params?.id == "u" && a == "random"
                   ? "bg-neutral-300"
                   : a == "many_results" &&
-                    !questionList.some((a: any) => a == questionType) &&
-                    exam?.examType == ExamType.Test
+                      !questionList.some((a: any) => a == questionType) &&
+                      exam?.examType == ExamType.Test
                     ? "bg-m_primary_100"
                     : a == "evaluation" &&
-                      !questionList.some((a: any) => a == questionType) &&
-                      exam?.examType == ExamType.Survey
+                        !questionList.some((a: any) => a == questionType) &&
+                        exam?.examType == ExamType.Survey
                       ? "bg-m_primary_100"
                       : a == questionType
                         ? "bg-m_primary_100"
                         : "bg-white "
-              }`}
+            }`}
             key={i}
           >
             {t(a)}
@@ -214,18 +231,20 @@ function CreateQuestionPage({ params, question }: any) {
       {(questionType == "many_results" ||
         (!questionList.some((a: any) => a == questionType) &&
           exam?.examType == ExamType.Test)) && (
-          <ManyResultsQuestion
-            question={question}
-            questionGroups={questionGroups}
-            submitRef={submitRef}
-            idExam={params?.id && params?.id != "u" ? params?.id : undefined}
-          />
-        )}
+        <ManyResultsQuestion
+          question={question}
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          clickQuestGroup={clickQuestGroup}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
+        />
+      )}
       {questionType == "true_false" && (
         <TrueFalseQuestion
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
+          clickQuestGroup={clickQuestGroup}
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
@@ -234,6 +253,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
+          clickQuestGroup={clickQuestGroup}
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
@@ -242,6 +262,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
+          clickQuestGroup={clickQuestGroup}
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
@@ -250,6 +271,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
+          clickQuestGroup={clickQuestGroup}
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
@@ -258,6 +280,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
+          clickQuestGroup={clickQuestGroup}
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
@@ -266,6 +289,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
+          clickQuestGroup={clickQuestGroup}
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
@@ -274,6 +298,7 @@ function CreateQuestionPage({ params, question }: any) {
           question={question}
           questionGroups={questionGroups}
           submitRef={submitRef}
+          clickQuestGroup={clickQuestGroup}
           idExam={params?.id && params?.id != "u" ? params?.id : undefined}
         />
       )}
@@ -282,13 +307,14 @@ function CreateQuestionPage({ params, question }: any) {
           exam?.examType == ExamType.Survey) ||
         (params?.id == "u" &&
           !questionList.some((a: any) => a == questionType))) && (
-          <EvaluationQuestion
-            question={question}
-            questionGroups={questionGroups}
-            submitRef={submitRef}
-            idExam={params?.id && params?.id != "u" ? params?.id : undefined}
-          />
-        )}
+        <EvaluationQuestion
+          question={question}
+          questionGroups={questionGroups}
+          submitRef={submitRef}
+          clickQuestGroup={clickQuestGroup}
+          idExam={params?.id && params?.id != "u" ? params?.id : undefined}
+        />
+      )}
 
       <div className="lg:hidden flex items-center max-lg:ml-5 w-full justify-center bg-white pb-9">
         <MButton

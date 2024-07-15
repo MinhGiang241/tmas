@@ -65,7 +65,7 @@
   "true_answer": "Đáp án đúng",
   "expected_point": "Điểm kỳ vọng",
   "servey_1": "Điểm kỳ vọng giúp xác lập biểu đồ lưới nhện, phù hợp với mục đích đánh giá thí sinh theo các nhóm kỹ năng (phần thi)",
-  "add_from_excel": "Thêm từ exel",
+  "add_from_excel": "Thêm từ excel",
   "doc_file": "File tài liệu",
   "Evaluation_quest": "Câu hỏi khảo sát",
   "MutilAnswer_quest": "Câu hỏi nhiều đáp án",
@@ -75,5 +75,6 @@
   "SQL_quest": "Câu hỏi SQL",
   "FillBlank_quest": "Câu hỏi điền vào chỗ trống",
   "Pairing_quest": "Câu hỏi ghép nối",
-  "Random_quest": "Câu hỏi ngẫu nhiên"
+  "Random_quest": "Câu hỏi ngẫu nhiên",
+  "Evaluation": "Khảo sát"
 }

@@ -47,11 +47,13 @@ const Editor = dynamic(
 interface Props {
   questionGroups?: ExamGroupData[];
   submitRef?: any;
+  clickQuestGroup?: any;
   idExam?: string;
   question?: BaseQuestionFormData;
 }
 
 function FillBlankQuestion({
+  clickQuestGroup,
   questionGroups: examGroups,
   submitRef,
   idExam,
@@ -297,6 +299,14 @@ function FillBlankQuestion({
           id="question_group"
           name="question_group"
         />
+        <button
+          onClick={() => {
+            clickQuestGroup();
+          }}
+          className="mb-3 body_regular_14 underline underline-offset-4 text-m_primary_500"
+        >
+          {t("create_exam_group")}
+        </button>
       </div>
       <div className="bg-white rounded-lg lg:col-span-8 col-span-12 p-5 h-fit">
         {isSave && (

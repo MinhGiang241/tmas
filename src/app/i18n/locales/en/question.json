@@ -60,6 +60,18 @@
   "finished": "Close",
   "answer": "Reply",
   "blank": "Blank",
-  "true_answer": "Correct answer"
+  "true_answer": "Correct answer",
+  "expected_point": "Expected point",
+  "servey_1": "Expected scores help establish a spider grid chart, suitable for the purpose of evaluating candidates according to skill groups (test section)",
+  "add_from_excel": "Add from excel",
+  "doc_file": "Document file",
+  "Evaluation_quest": "Survey question",
+  "MutilAnswer_quest": "Multiple answer question",
+  "YesNoQuestion_quest": "True or false question",
+  "Essay_quest": "Essay question",
+  "Coding_quest": "Coding question",
+  "SQL_quest": "SQL question",
+  "FillBlank_quest": "Fill in the blank question",
+  "Pairing_quest": "Pairing question",
+  "Random_quest": "Random question"
 }
-
