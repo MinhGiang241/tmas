@@ -70,7 +70,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
 
       // await loadMembersWhenChangeStudio();
       // await loadingQuestionsAndExams(true, userNew.studio?._id);
-    } catch (e: any) { }
+    } catch (e: any) {}
   };
 
   const getSetting = async () => {
@@ -157,7 +157,8 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           {(user?.trained === undefined || user?.trained === false) &&
-            user?._id ? (
+          user?.verified === true &&
+          user?._id ? (
             <Introduce />
           ) : (
             ""
