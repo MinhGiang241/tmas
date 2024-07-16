@@ -157,7 +157,7 @@ function Header({ path }: { path?: string }) {
       }));
 
       dispatch(
-        setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)])
+        setMemberData([...sortedMemList(invitedMem), ...sortedMemList(mem)]),
       );
     } catch (e: any) {
       dispatch(setLoadingMember(false));
@@ -194,7 +194,7 @@ function Header({ path }: { path?: string }) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id
+          (ch: ExamGroupData) => ch.idParent === e.id,
         );
         return { ...e, childs };
       });
@@ -246,34 +246,42 @@ function Header({ path }: { path?: string }) {
               </button>
             </div>
             <div className="h-4" />
-            {mobileLinks.map((v, i) => (
-              <Link
-                href={!user?.verified ? "#" : v == "overview" ? "/" : `/${v}`}
-                onClick={() => {
-                  if (
-                    !user?.verified &&
-                    [
-                      "exam_group",
-                      "exams",
-                      "examination",
-                      "overview",
-                      "exam_bank",
-                      "statistics",
-                    ].some((d) => {
-                      return d == v;
-                    })
-                  ) {
-                    errorToast(undefined, t("please_verify"));
-                  }
+            {mobileLinks.map((v, i) => {
+              if (
+                (v == "account?tab=1" || v == "account?tab=4") &&
+                user?.studio?.role != "Owner"
+              ) {
+                return null;
+              }
+              return (
+                <Link
+                  href={!user?.verified ? "#" : v == "overview" ? "/" : `/${v}`}
+                  onClick={() => {
+                    if (
+                      !user?.verified &&
+                      [
+                        "exam_group",
+                        "exams",
+                        "examination",
+                        "overview",
+                        "exam_bank",
+                        "statistics",
+                      ].some((d) => {
+                        return d == v;
+                      })
+                    ) {
+                      errorToast(undefined, t("please_verify"));
+                    }
 
-                  setOpenDrawer(false);
-                }}
-                className="block mb-2 body_regular_14 text-m_neutral_900"
-                key={i}
-              >
-                {t(v)}
-              </Link>
-            ))}
+                    setOpenDrawer(false);
+                  }}
+                  className="block mb-2 body_regular_14 text-m_neutral_900"
+                  key={i}
+                >
+                  {t(v)}
+                </Link>
+              );
+            })}
             <Divider />
             <div className="h-full flex items-center">
               <button
@@ -338,10 +346,11 @@ function Header({ path }: { path?: string }) {
                     errorToast(undefined, t("please_verify"));
                   }
                 }}
-                className={`flex items-center text-center body_semibold_14 text-white px-5 h-full ${pathname.includes(e) || (pathname == "/" && e == "overview")
-                  ? "bg-m_primary_400 after:content-[''] border-b-white border-b-4"
-                  : ""
-                  }`}
+                className={`flex items-center text-center body_semibold_14 text-white px-5 h-full ${
+                  pathname.includes(e) || (pathname == "/" && e == "overview")
+                    ? "bg-m_primary_400 after:content-[''] border-b-white border-b-4"
+                    : ""
+                }`}
               >
                 <p>{t(e)}</p>
               </Link>
