@@ -43,7 +43,7 @@ const EditorHook = dynamic(
   () => import("../components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  },
+  }
 );
 
 function CreatePage({ exam, isEdit }: any) {
@@ -58,15 +58,15 @@ function CreatePage({ exam, isEdit }: any) {
   const [lang, setLang] = useState<any>(exam?.language ?? "Vietnamese");
   const [transfer, setTransfer] = useState<any>("FreeByUser");
   const [page, setPage] = useState<any>(
-    exam?.examViewQuestionType ?? "SinglePage",
+    exam?.examViewQuestionType ?? "SinglePage"
   );
   const [sw, setSw] = useState<boolean>(
-    !exam ? false : exam?.changePositionQuestion ?? false,
+    !exam ? false : exam?.changePositionQuestion ?? false
   );
   const [files, setFiles] = useState([]);
   const [idSession, setIdSession] = useState<string | undefined>();
   const [selectedButton, setSelectedButton] = useState<ExamType>(
-    exam?.id ? exam?.examType : ExamType.Test,
+    exam?.id ? exam?.examType : ExamType.Test
   );
 
   const handleButtonClick = (buttonType: any) => {
@@ -75,11 +75,13 @@ function CreatePage({ exam, isEdit }: any) {
 
   const [inputFields, setInputFields] = useState<ScoreRank[]>(
     //[{ label: "", fromScore: 0, toScore: undefined }]
-    exam?.id ? exam?.scoreRanks : [],
+    exam?.id ? exam?.scoreRanks ?? [] : []
   );
 
   const handleAddFields = () => {
     const lastField = inputFields[inputFields?.length - 1];
+    // const lastField = inputFields.length > 0 ? inputFields[inputFields.length - 1] : null;
+
     setInputFields([
       ...inputFields,
       {
@@ -109,7 +111,7 @@ function CreatePage({ exam, isEdit }: any) {
 
   const handleInputChange = (
     index: number,
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const values = [...inputFields];
     const { name, value } = event.target;
@@ -123,7 +125,7 @@ function CreatePage({ exam, isEdit }: any) {
       if (false) {
         errorToast(
           undefined,
-          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại.",
+          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại."
         );
         return;
       } else {
@@ -212,7 +214,7 @@ function CreatePage({ exam, isEdit }: any) {
     initialValues,
     validate,
     onSubmit: async (values: FormValue) => {
-      console.log("submit", inputFields);
+      // console.log("submit", inputFields);
 
       const validateFields =
         // selectedButton === ExamType.Survey &&
@@ -221,7 +223,7 @@ function CreatePage({ exam, isEdit }: any) {
       if (validateFields) {
         errorToast(
           undefined,
-          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả.",
+          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả."
         );
         return;
       }
@@ -231,16 +233,16 @@ function CreatePage({ exam, isEdit }: any) {
           (field: any) =>
             field.toScore === undefined ||
             field.toScore === null ||
-            field.toScore === "",
+            field.toScore === ""
         );
       if (emptyToScore) {
         errorToast(
           undefined,
-          "Đơn vị điểm đến không được để trống, vui lòng nhập lại.",
+          "Đơn vị điểm đến không được để trống, vui lòng nhập lại."
         );
         return;
       }
-      console.log("return");
+      // console.log("return");
       // console.log(inputFields, "inputFields");
       const invalidScoreRange =
         (inputFields?.length ?? 0) > 0 &&
@@ -248,7 +250,7 @@ function CreatePage({ exam, isEdit }: any) {
       if (invalidScoreRange) {
         errorToast(
           undefined,
-          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại.",
+          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại."
         );
         return;
       }
@@ -345,7 +347,7 @@ function CreatePage({ exam, isEdit }: any) {
 
       var list = levelOne.map((e: ExamGroupData) => {
         var childs = levelTwo.filter(
-          (ch: ExamGroupData) => ch.idParent === e.id,
+          (ch: ExamGroupData) => ch.idParent === e.id
         );
         return { ...e, childs };
       });
@@ -380,7 +382,7 @@ function CreatePage({ exam, isEdit }: any) {
             "Paging.StartIndex": 0,
             "Paging.RecordPerPage": 100,
           }
-        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 },
+        : { "Paging.StartIndex": 0, "Paging.RecordPerPage": 100 }
     );
     if (data?.code != 0) {
       return [];
