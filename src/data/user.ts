@@ -33,6 +33,7 @@ export interface UserData {
   stu_banner?: string;
   isInvite?: boolean;
   trained?: boolean;
+  isSystem?: boolean;
 }
 
 export interface Licence {

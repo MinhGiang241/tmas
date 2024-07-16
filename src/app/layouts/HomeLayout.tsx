@@ -157,6 +157,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           {(user?.trained === undefined || user?.trained === false) &&
+          user?.isSystem != true &&
           user?.verified === true &&
           user?._id ? (
             <Introduce />
