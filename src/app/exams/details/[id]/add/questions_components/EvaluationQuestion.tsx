@@ -74,7 +74,7 @@ const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  },
+  }
 );
 
 function EvaluationQuestion({
@@ -92,16 +92,6 @@ function EvaluationQuestion({
     label: v.name,
     value: v.id,
   }));
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState<UploadFile[]>([
-    // {
-    //   uid: "-1",
-    //   name: "image.png",
-    //   status: "done",
-    //   url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    // },
-  ]);
   const [fields, setFields] = useState<FieldSurveyAnswer[]>(
     question?.content?.answers
       ? question?.content?.answers?.map((e: any, i: number) => ({
@@ -124,7 +114,7 @@ function EvaluationQuestion({
             point: 0,
             idIcon: "",
           },
-        ],
+        ]
   );
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -211,7 +201,7 @@ function EvaluationQuestion({
         idExam: question?.idExam ?? idExam,
         numberPoint: fields.reduce(
           (sum: any, field: any) => sum + field.point,
-          0,
+          0
         ),
         idGroupQuestion: values.question_group,
         questionType: "Evaluation",
@@ -355,8 +345,8 @@ function EvaluationQuestion({
                       fields.map((f: any) =>
                         f.id === field.id
                           ? { ...f, label: e.target.textContent }
-                          : f,
-                      ),
+                          : f
+                      )
                     )
                   }
                 >
@@ -366,14 +356,24 @@ function EvaluationQuestion({
                   className="rounded-md h-9 w-[50%]"
                   placeholder={t("label_option")}
                   value={field?.text}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const newValue = e.target.value;
                     setFields(
                       fields.map((f: any) =>
-                        f.id === field.id ? { ...f, text: e.target.value } : f,
-                      ),
-                    )
-                  }
+                        f.id === field.id ? { ...f, text: newValue } : f
+                      )
+                    );
+                  }}
+                  onBlur={(e) => {
+                    const trimmedValue = e.target.value.trim();
+                    setFields(
+                      fields.map((f: any) =>
+                        f.id === field.id ? { ...f, text: trimmedValue } : f
+                      )
+                    );
+                  }}
                 />
+
                 <Input
                   className="rounded-md h-9 w-[15%]"
                   type="number"
@@ -384,8 +384,8 @@ function EvaluationQuestion({
                       fields.map((f: any) =>
                         f.id === field.id
                           ? { ...f, point: parseFloat(e.target.value) || 0 }
-                          : f,
-                      ),
+                          : f
+                      )
                     )
                   }
                 />
