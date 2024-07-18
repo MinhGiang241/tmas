@@ -376,7 +376,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     if (endDate) {
       filters.push({
         id: "ValidAccessSetting.ValidFrom",
-        value: endDate,
+        value: dayjs(endDate).add(1, "day")?.toISOString(),
         operation: "<",
       });
     }
@@ -486,7 +486,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     if (endDate) {
       filters.push({
         id: "ValidAccessSetting.ValidFrom",
-        value: endDate,
+        value: dayjs(endDate).add(1, "day")?.toISOString(),
         operation: "<",
       });
     }
@@ -640,9 +640,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
             <MDateTimeSelect
               setValue={(name: string, val: any) => {
                 if (val) {
-                  setEndDate(
-                    dayjs(val, "DD/MM/YYYY")?.add(1, "day").toISOString(),
-                  );
+                  setEndDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
                 } else {
                   setEndDate(undefined);
                 }
