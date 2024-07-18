@@ -73,11 +73,11 @@ export default function Evaluation({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  //   console.log(question, "Evaluation");
+  console.log(question, "Evaluation");
 
   return (
     <div>
@@ -100,7 +100,7 @@ export default function Evaluation({
           router.push(
             `/${isBank ? "exam_bank" : "exams/details"}/${
               examId ?? "u"
-            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`
           );
           await getData();
         }}
@@ -234,7 +234,7 @@ export default function Evaluation({
                               examId ?? question?.examId ?? "u"
                             }/edit?questId=${question?.id}&isBank=${
                               isBank ? "true" : "false"
-                            }`,
+                            }`
                           );
                         }}
                       >
@@ -331,23 +331,27 @@ export default function Evaluation({
               </div>
               <div>
                 <div>
-                  {question?.content?.answers?.map((x: any, key: any) => (
-                    <div className="flex" key={key}>
-                      <div className="w-40 flex">
-                        <div className="body_semibold_14">{x.label}: </div>
-                        <div
-                          className="body_regular_14 pl-2"
-                          dangerouslySetInnerHTML={{ __html: x.text }}
-                        />
-                        <div className="min-w-5" />
-                      </div>
-                      <div className="w-40">
-                        <div>
-                          {x?.point} {t("point")}
+                  {question?.content?.answers
+                    ?.sort((a: any, b: any) =>
+                      a?.label?.localeCompare(b?.label)
+                    )
+                    ?.map((x: any, key: any) => (
+                      <div className="flex" key={key}>
+                        <div className="w-40 flex">
+                          <div className="body_semibold_14">{x.label}: </div>
+                          <div
+                            className="body_regular_14 pl-2"
+                            dangerouslySetInnerHTML={{ __html: x.text }}
+                          />
+                          <div className="min-w-5" />
+                        </div>
+                        <div className="w-40">
+                          <div>
+                            {x?.point} {t("point")}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
             </div>
