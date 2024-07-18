@@ -377,7 +377,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         id: "ValidAccessSetting.ValidFrom",
         value: endDate,
-        operation: "<=",
+        operation: "<",
       });
     }
     if (groupId) {
@@ -435,8 +435,8 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       today_join_num: ex?.testResultReport?.totalExamTestResultToday,
       from_date: ex?.validAccessSetting?.validFrom
         ? dayjs(ex?.validAccessSetting?.validFrom)?.format(
-          "DD/MM/YYYY HH:mm:ss",
-        )
+            "DD/MM/YYYY HH:mm:ss",
+          )
         : undefined,
       to_date: ex?.validAccessSetting?.validTo
         ? dayjs(ex?.validAccessSetting?.validTo)?.format("DD/MM/YYYY HH:mm:ss")
@@ -487,7 +487,7 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         id: "ValidAccessSetting.ValidFrom",
         value: endDate,
-        operation: "<=",
+        operation: "<",
       });
     }
     if (groupId) {
@@ -499,14 +499,14 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
     }
 
     var res = await //overviewExamTestCounterExcel
-      overviewListExamTestReportExel({
-        skip: (indexPage - 1) * recordNum,
-        limit: recordNum,
-        group: {
-          children: [...filters],
-        },
-        sorted: [sorter],
-      });
+    overviewListExamTestReportExel({
+      skip: (indexPage - 1) * recordNum,
+      limit: recordNum,
+      group: {
+        children: [...filters],
+      },
+      sorted: [sorter],
+    });
 
     if (res?.code != 0) {
       errorToast(res, res?.message ?? "");
@@ -640,7 +640,9 @@ function ExaminationListTable({ optionSelect }: { optionSelect: any }) {
             <MDateTimeSelect
               setValue={(name: string, val: any) => {
                 if (val) {
-                  setEndDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                  setEndDate(
+                    dayjs(val, "DD/MM/YYYY")?.add(1, "day").toISOString(),
+                  );
                 } else {
                   setEndDate(undefined);
                 }

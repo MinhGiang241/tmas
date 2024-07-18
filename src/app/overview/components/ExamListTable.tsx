@@ -317,7 +317,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         id: "CreatedTime",
         value: endDate,
-        operation: "<=",
+        operation: "<",
       });
     }
     if (groupId) {
@@ -399,7 +399,7 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
       filters.push({
         id: "CreatedTime",
         value: endDate,
-        operation: "<=",
+        operation: "<",
       });
     }
     if (groupId) {
@@ -504,7 +504,9 @@ function ExamListTable({ optionSelect }: { optionSelect: any }) {
             <MDateTimeSelect
               setValue={(name: string, val: any) => {
                 if (val) {
-                  setEndDate(dayjs(val, "DD/MM/YYYY")?.toISOString());
+                  setEndDate(
+                    dayjs(val, "DD/MM/YYYY")?.add(1, "day")?.toISOString(),
+                  );
                 } else {
                   setEndDate(undefined);
                 }
