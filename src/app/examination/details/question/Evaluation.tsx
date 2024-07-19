@@ -194,7 +194,7 @@ export default function Evaluation({
                     //   </div>
                     // )
                     <div className="flex" key={key}>
-                      <div className="w-40">
+                      <div className="w-40 flex">
                         <div className="body_semibold_14">{x.label}</div>
                         <div
                           className="body_regular_14 pl-2"
@@ -209,7 +209,6 @@ export default function Evaluation({
                   ))}
                 </div>
               </div>
-              {/* <div>1232131231</div> */}
             </div>
           </div>
         </Collapse.Panel>
