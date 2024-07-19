@@ -373,8 +373,7 @@ function EvaluationQuestion({
                     );
                   }}
                 />
-
-                <Input
+                {/* <Input
                   className="rounded-md h-9 w-[15%]"
                   type="number"
                   placeholder={t("point_option")}
@@ -388,7 +387,27 @@ function EvaluationQuestion({
                       ),
                     )
                   }
+                /> */}
+                <Input
+                  className="rounded-md h-9 w-[15%]"
+                  type="number"
+                  placeholder={t("point_option")}
+                  value={field?.point}
+                  step="1"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.indexOf(".") === -1) {
+                      setFields(
+                        fields.map((f: any) =>
+                          f.id === field.id
+                            ? { ...f, point: parseInt(value, 10) || 0 }
+                            : f
+                        )
+                      );
+                    }
+                  }}
                 />
+
                 <Upload
                   headers={{
                     Authorization: `Bearer ${

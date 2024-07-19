@@ -73,7 +73,7 @@ export default function TrueFalse({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -99,7 +99,7 @@ export default function TrueFalse({
           router.push(
             `/${isBank ? "exam_bank" : "exams/details"}/${
               examId ?? "u"
-            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`
           );
           await getData();
         }}
@@ -232,7 +232,7 @@ export default function TrueFalse({
                               examId ?? "u"
                             }/edit?questId=${question.id}&isBank=${
                               isBank ? "true" : "false"
-                            }`,
+                            }`
                           );
                         }}
                       >
@@ -327,29 +327,33 @@ export default function TrueFalse({
               </div>
               <div>
                 <div>
-                  {question?.content?.answers?.map((x: any, key: any) =>
-                    x.isCorrectAnswer === false ? (
-                      <div className="flex" key={key}>
-                        <div className="body_semibold_14">{x.label}</div>
-                        <div
-                          className="body_regular_14 pl-2"
-                          dangerouslySetInnerHTML={{ __html: x.text }}
-                        />
-                        <div className="min-w-5" />
-                      </div>
-                    ) : (
-                      <div className="flex" key={key}>
-                        <div className="body_semibold_14 text-green-500">
-                          {x.label}
+                  {question?.content?.answers
+                    ?.sort((a: any, b: any) =>
+                      a?.label?.localeCompare(b?.label)
+                    )
+                    ?.map((x: any, key: any) =>
+                      x.isCorrectAnswer === false ? (
+                        <div className="flex" key={key}>
+                          <div className="body_semibold_14">{x.label}</div>
+                          <div
+                            className="body_regular_14 pl-2"
+                            dangerouslySetInnerHTML={{ __html: x.text }}
+                          />
+                          <div className="min-w-5" />
                         </div>
-                        <div
-                          className="body_regular_14 pl-2 text-green-500 pr-2"
-                          dangerouslySetInnerHTML={{ __html: x.text }}
-                        />
-                        <Tick className="min-w-5" />
-                      </div>
-                    ),
-                  )}
+                      ) : (
+                        <div className="flex" key={key}>
+                          <div className="body_semibold_14 text-green-500">
+                            {x.label}
+                          </div>
+                          <div
+                            className="body_regular_14 pl-2 text-green-500 pr-2"
+                            dangerouslySetInnerHTML={{ __html: x.text }}
+                          />
+                          <Tick className="min-w-5" />
+                        </div>
+                      )
+                    )}
                 </div>
               </div>
             </div>
