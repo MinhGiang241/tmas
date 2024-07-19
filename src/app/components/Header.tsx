@@ -410,33 +410,33 @@ function Header({ path }: { path?: string }) {
             trigger={["click"]}
             content={
               <div className="w-full flex flex-col body_regular_14 p-2 items-start">
-                <button
-                  onClick={() => {
-                    setOpenPop(false);
-                    router.push("/account?tab=0");
-                  }}
-                  className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
-                >
-                  {t("account_management")}
-                </button>
-                <button
-                  onClick={() => {
-                    setOpenPop(false);
-                    router.push("/account?tab=2");
-                  }}
-                  className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
-                >
-                  {t("personal_information")}
-                </button>
-                <button
-                  onClick={() => {
-                    setOpenPop(false);
-                    router.push("/account?tab=3");
-                  }}
-                  className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start"
-                >
-                  {t("business_information")}
-                </button>
+                {/* <button */}
+                {/*   onClick={() => { */}
+                {/*     setOpenPop(false); */}
+                {/*     router.push("/account?tab=0"); */}
+                {/*   }} */}
+                {/*   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start" */}
+                {/* > */}
+                {/*   {t("account_management")} */}
+                {/* </button> */}
+                {/* <button */}
+                {/*   onClick={() => { */}
+                {/*     setOpenPop(false); */}
+                {/*     router.push("/account?tab=2"); */}
+                {/*   }} */}
+                {/*   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start" */}
+                {/* > */}
+                {/*   {t("personal_information")} */}
+                {/* </button> */}
+                {/* <button */}
+                {/*   onClick={() => { */}
+                {/*     setOpenPop(false); */}
+                {/*     router.push("/account?tab=3"); */}
+                {/*   }} */}
+                {/*   className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start" */}
+                {/* > */}
+                {/*   {t("business_information")} */}
+                {/* </button> */}
                 <button className="px-1 rounded py-1 hover:bg-m_neutral_100 w-full flex justify-start">
                   {common.t("support")}
                 </button>

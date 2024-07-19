@@ -132,18 +132,18 @@ function TrueFalseQuestion({
 
   const validate = async (values: TrueFalseQuestionValue) => {
     const errors: FormikErrors<TrueFalseQuestionValue> = {};
-    const $ = cheerio.load(values.question ?? "");
+    const $ = cheerio.load(values.question?.trim() ?? "");
 
     console.log("a", values.a);
     console.log("b", values.b);
 
-    if (!values.question || !$.text()) {
+    if (!values.question?.trim() || !$.text()) {
       errors.question = "common_not_empty";
     }
-    if (!values.a) {
+    if (!values.a?.trim()) {
       errors.a = "common_not_empty";
     }
-    if (!values.b) {
+    if (!values.b?.trim()) {
       errors.b = "common_not_empty";
     }
 
@@ -189,20 +189,20 @@ function TrueFalseQuestion({
           (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
           undefined,
         idGroupQuestion: values?.question_group,
-        question: values?.question,
+        question: values?.question?.trim(),
         questionType: "YesNoQuestion",
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         content: {
-          explainAnswer: values.explain,
+          explainAnswer: values.explain?.trim(),
           isChangePosition,
           answers: [
             {
-              text: values.a,
+              text: values.a?.trim(),
               label: "A",
               isCorrectAnswer: correctAnswer === "0" ? true : false,
             },
             {
-              text: values.b,
+              text: values.b?.trim(),
               label: "B",
               isCorrectAnswer: correctAnswer === "1" ? true : false,
             },

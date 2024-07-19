@@ -201,7 +201,7 @@ function ConnectQuestion({
         idExam: question?.idExam ?? idExam,
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
-        question: values?.question,
+        question: values?.question?.trim(),
         questionType: "Pairing",
         idExamQuestionPart:
           question?.idExamQuestionPart ??
@@ -209,7 +209,7 @@ function ConnectQuestion({
           undefined,
         content: {
           pairingScroringMethod,
-          explainAnswer: values.explain,
+          explainAnswer: values.explain?.trim(),
           questions: questionList.map((s, i: number) => ({
             ...s,
             label: `${++i}`,
@@ -343,7 +343,7 @@ function ConnectQuestion({
                           dispatch(
                             updateTextConnectQuestion({
                               index: i,
-                              value: val,
+                              value: val?.trim(),
                             }),
                           );
                           formik.validateForm();
@@ -396,9 +396,15 @@ function ConnectQuestion({
                         error={formik.errors[`ans-${s?.id}`] as any}
                         setValue={async (name: any, val: any) => {
                           dispatch(
-                            updateTextConnectAnswer({ index: i, value: val }),
+                            updateTextConnectAnswer({
+                              index: i,
+                              value: val?.trim(),
+                            }),
                           );
-                          await formik.setFieldValue(`result-${s?.id}`, val);
+                          await formik.setFieldValue(
+                            `result-${s?.id}`,
+                            val?.trim(),
+                          );
                           formik.validateForm();
                         }}
                         value={s.content}

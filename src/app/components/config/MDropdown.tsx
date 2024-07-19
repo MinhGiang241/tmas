@@ -113,12 +113,16 @@ function MDropdown({
   const common = useTranslation();
   useEffect(() => {}, [formik, options]);
   type TagRender = SelectProps["tagRender"];
+  //@ts-ignore
   const tagRender: TagRender = (props) => {
     const { label, value, closable, onClose } = props;
     const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
       event.preventDefault();
       event.stopPropagation();
     };
+    if (!value?.trim()) {
+      return undefined;
+    }
 
     return (
       <Tag

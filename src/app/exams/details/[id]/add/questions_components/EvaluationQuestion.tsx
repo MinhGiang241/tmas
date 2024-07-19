@@ -74,7 +74,7 @@ const EditorHook = dynamic(
   () => import("@/app/exams/components/react_quill/EditorWithUseQuill"),
   {
     ssr: false,
-  }
+  },
 );
 
 function EvaluationQuestion({
@@ -114,7 +114,7 @@ function EvaluationQuestion({
             point: 0,
             idIcon: "",
           },
-        ]
+        ],
   );
 
   const addField = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -151,9 +151,9 @@ function EvaluationQuestion({
 
   const validate = async (values: QuestionEvaluation) => {
     const errors: FormikErrors<QuestionEvaluation> = {};
-    const $ = cheerio.load(values.question ?? "");
+    const $ = cheerio.load(values.question?.trim() ?? "");
 
-    if (!values.question || !$.text()) {
+    if (!values.question?.trim() || !$.text()) {
       errors.question = "common_not_empty";
     }
     if (!values.question_group) {
@@ -201,7 +201,7 @@ function EvaluationQuestion({
         idExam: question?.idExam ?? idExam,
         numberPoint: fields.reduce(
           (sum: any, field: any) => sum + field.point,
-          0
+          0,
         ),
         idGroupQuestion: values.question_group,
         questionType: "Evaluation",
@@ -345,8 +345,8 @@ function EvaluationQuestion({
                       fields.map((f: any) =>
                         f.id === field.id
                           ? { ...f, label: e.target.textContent }
-                          : f
-                      )
+                          : f,
+                      ),
                     )
                   }
                 >
@@ -360,16 +360,16 @@ function EvaluationQuestion({
                     const newValue = e.target.value;
                     setFields(
                       fields.map((f: any) =>
-                        f.id === field.id ? { ...f, text: newValue } : f
-                      )
+                        f.id === field.id ? { ...f, text: newValue } : f,
+                      ),
                     );
                   }}
                   onBlur={(e) => {
                     const trimmedValue = e.target.value.trim();
                     setFields(
                       fields.map((f: any) =>
-                        f.id === field.id ? { ...f, text: trimmedValue } : f
-                      )
+                        f.id === field.id ? { ...f, text: trimmedValue } : f,
+                      ),
                     );
                   }}
                 />
@@ -384,8 +384,8 @@ function EvaluationQuestion({
                       fields.map((f: any) =>
                         f.id === field.id
                           ? { ...f, point: parseFloat(e.target.value) || 0 }
-                          : f
-                      )
+                          : f,
+                      ),
                     )
                   }
                 />

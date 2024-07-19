@@ -122,7 +122,7 @@ function ManyResultsQuestion({
 
   const validate = async (values: MultiAnswerQuestionValue) => {
     const errors: FormikErrors<MultiAnswerQuestionValue> = {};
-    const $ = cheerio.load(values.question ?? "");
+    const $ = cheerio.load(values.question?.trim() ?? "");
 
     if (answers?.length != 0) {
       answers.map(async (o) => {
@@ -132,7 +132,7 @@ function ManyResultsQuestion({
       });
     }
 
-    if (!values.question || !$.text()) {
+    if (!values.question?.trim() || !$.text()) {
       errors.question = "common_not_empty";
     }
 
@@ -176,11 +176,11 @@ function ManyResultsQuestion({
           (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
           undefined,
         idGroupQuestion: values?.question_group,
-        question: values?.question,
+        question: values?.question?.trim(),
         questionType: "MutilAnswer",
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         content: {
-          explainAnswer: values.explain,
+          explainAnswer: values.explain?.trim(),
           isChangePosition,
           answers: answers.map((l: MultiAnswer, i: number) => ({
             text: l.text,

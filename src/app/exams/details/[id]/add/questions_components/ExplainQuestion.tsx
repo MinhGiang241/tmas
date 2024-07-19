@@ -97,9 +97,9 @@ function ExplainQuestion({
 
   const validate = async (values: EssayQuestionValue) => {
     const errors: FormikErrors<EssayQuestionValue> = {};
-    const $ = cheerio.load(values.question ?? "");
+    const $ = cheerio.load(values.question?.trim() ?? "");
 
-    if (!values.question || !$.text()) {
+    if (!values.question?.trim() || !$.text()) {
       errors.question = "common_not_empty";
     }
     if (!values.question_group) {

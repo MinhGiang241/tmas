@@ -287,7 +287,7 @@ function CodingQuestion({
   };
   const validate = async (values: CodingQuestionValue) => {
     const errors: FormikErrors<CodingQuestionValue> = {};
-    const $ = cheerio.load(values.question ?? "");
+    const $ = cheerio.load(values.question?.trim() ?? "");
 
     console.log("validating", parameterList);
     if (parameterList.length != 0) {
@@ -306,18 +306,18 @@ function CodingQuestion({
     if (!code) {
       errors.code = common.t("not_empty");
     }
-    if (!values.question || !$.text()) {
+    if (!values.question?.trim() || !$.text()) {
       errors.question = "common_not_empty";
     }
-    if (!values.explain) {
+    if (!values.explain?.trim()) {
       errors.explain = "common_not_empty";
     }
     if (!values.question_group) {
       errors.question_group = "common_not_empty";
     }
-    if (!values.function_name) {
+    if (!values.function_name?.trim()) {
       errors.function_name = "common_not_empty";
-    } else if (values.function_name?.length < 3) {
+    } else if (values.function_name?.trim()?.length < 3) {
       errors.function_name = "func_name_not_less_than_3";
     } else if (values.function_name.match(/[^a-zA-Z0-9-_]/g)) {
       errors.function_name = "func_name_invalid";
@@ -349,7 +349,7 @@ function CodingQuestion({
         id: question?.id,
         isQuestionBank: idExam ? false : true,
         idExam: question?.idExam ?? idExam,
-        question: values.question,
+        question: values.question?.trim(),
         idExamQuestionPart:
           question?.idExamQuestionPart ??
           (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
@@ -362,17 +362,17 @@ function CodingQuestion({
             ...checkedLang.map((la: any) => mapLanguage(la)),
           ] as any,
           testcases: testcases.map((q) => ({
-            name: q.name,
-            inputData: q.inputData,
-            outputData: q.outputData,
+            name: q.name?.trim(),
+            inputData: q.inputData?.trim(),
+            outputData: q.outputData?.trim(),
           })),
           codingScroringMethod,
           codingTemplate: {
-            nameFunction: values.function_name,
+            nameFunction: values.function_name?.trim(),
             returnType: values.return_type as CodingDataType,
-            explainAnswer: values.explain,
+            explainAnswer: values.explain?.trim(),
             parameterInputs: parameterList?.map((l) => ({
-              nameParameter: l.nameParameter,
+              nameParameter: l.nameParameter?.trim(),
               returnType: l.returnType,
             })),
             template: code,

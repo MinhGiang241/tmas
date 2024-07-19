@@ -88,7 +88,7 @@ function StudioInfo() {
     user.studio?.studio_name ?? user?.studio?.full_name ?? "",
   );
   const validate = () => {
-    if (!value) {
+    if (!value?.trim()) {
       setError("common_not_empty");
       return false;
     } else {

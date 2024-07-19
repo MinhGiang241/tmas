@@ -120,7 +120,7 @@ function FillBlankQuestion({
 
   const validate = async (values: FillBlankQuestionValue) => {
     const errors: FormikErrors<FillBlankQuestionValue> = {};
-    const $ = cheerio.load(values.question ?? "");
+    const $ = cheerio.load(values.question?.trim() ?? "");
 
     if (isSave && results?.length != 0) {
       results.map((a: any, i: number) => {
@@ -130,7 +130,7 @@ function FillBlankQuestion({
       });
     }
 
-    if (!values.question || !$.text()) {
+    if (!values.question?.trim() || !$.text()) {
       errors.question = "common_not_empty";
     }
     if (!values.question_group) {
@@ -192,7 +192,7 @@ function FillBlankQuestion({
       const submitData: FillBlankQuestionFormData = {
         id: question?.id,
         idExam: question?.idExam ?? idExam,
-        question: values?.question,
+        question: values?.question?.trim(),
         isQuestionBank: idExam ? false : true,
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
@@ -203,10 +203,10 @@ function FillBlankQuestion({
         questionType: "FillBlank",
         content: {
           fillBlankScoringMethod: check,
-          explainAnswer: values.explain,
+          explainAnswer: values.explain?.trim(),
           anwserItems: results.map((e: any) => ({
-            label: e?.label,
-            anwsers: e?.text?.split(";") ?? [],
+            label: e?.label?.trim(),
+            anwsers: e?.text?.trim()?.split(";") ?? [],
           })),
 
           formatBlank: value,

@@ -91,7 +91,7 @@ function SqlQuestion({
 
   const validate = async (values: SqlQuestionValue) => {
     const errors: FormikErrors<SqlQuestionValue> = {};
-    const $ = cheerio.load(values.question ?? "");
+    const $ = cheerio.load(values.question?.trim() ?? "");
 
     if (!schemaSql) {
       errors.schema_sql = common.t("not_empty");
@@ -129,7 +129,7 @@ function SqlQuestion({
         id: question?.id ?? undefined,
         isQuestionBank: idExam ? false : true,
         idExam: question?.idExam ?? idExam,
-        question: values?.question,
+        question: values?.question?.trim(),
         numberPoint: values.point ? parseFloat(values.point) : undefined,
         idGroupQuestion: values.question_group,
         questionType: "SQL",
@@ -138,9 +138,9 @@ function SqlQuestion({
           (!!idExamQuestionPart ? idExamQuestionPart : undefined) ??
           undefined,
         content: {
-          schemaSql: schemaSql?.replace(/  +/g, " "),
-          expectedOutput: expectedOutput?.replace(/  +/g, " "),
-          explainAnswer: values.explain,
+          schemaSql: schemaSql?.trim()?.replace(/  +/g, " "),
+          expectedOutput: expectedOutput?.trim()?.replace(/  +/g, " "),
+          explainAnswer: values.explain?.trim(),
         },
       };
 
