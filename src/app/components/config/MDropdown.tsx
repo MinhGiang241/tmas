@@ -185,6 +185,14 @@ function MDropdown({
           id={id}
           onKeyDown={onKeyDown}
           onChange={(e) => {
+            if (mode == "tags") {
+              var newE = e?.filter((k: any) => k?.trim());
+              if (setValue) {
+                setValue!(name, newE);
+              }
+
+              return;
+            }
             if (setValue) {
               setValue!(name, e);
             }
