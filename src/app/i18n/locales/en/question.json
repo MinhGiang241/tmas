@@ -73,5 +73,8 @@
   "SQL_quest": "SQL question",
   "FillBlank_quest": "Fill in the blank question",
   "Pairing_quest": "Pairing question",
-  "Random_quest": "Random question"
+  "Random_quest": "Random question",
+  "Evaluation": "Evaluation",
+  "full_name": "Full name",
+  "exam": "Exam"
 }

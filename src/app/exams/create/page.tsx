@@ -220,10 +220,7 @@ function CreatePage({ exam, isEdit }: any) {
         (inputFields?.length ?? 0) > 0 &&
         inputFields?.some((x: any) => x?.label.trim() === "");
       if (validateFields) {
-        errorToast(
-          undefined,
-          "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả.",
-        );
+        errorToast(undefined, t("rank_require"));
         return;
       }
       const emptyToScore =
@@ -235,10 +232,7 @@ function CreatePage({ exam, isEdit }: any) {
             field.toScore === "",
         );
       if (emptyToScore) {
-        errorToast(
-          undefined,
-          "Đơn vị điểm đến không được để trống, vui lòng nhập lại.",
-        );
+        errorToast(undefined, t("point_unit_not_empty"));
         return;
       }
       // console.log("return");
@@ -247,10 +241,7 @@ function CreatePage({ exam, isEdit }: any) {
         (inputFields?.length ?? 0) > 0 &&
         inputFields?.some((field: any) => field.toScore <= field.fromScore);
       if (invalidScoreRange) {
-        errorToast(
-          undefined,
-          "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại.",
-        );
+        errorToast(undefined, t("to_point_greater_from_point"));
         return;
       }
 

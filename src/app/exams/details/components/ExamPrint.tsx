@@ -178,11 +178,15 @@ const ExamSection = ({ section }: { section: any }) => {
 
 const ExamPrint = React.forwardRef<HTMLDivElement, any>(
   ({ exam, name }: Props, ref) => {
+    const { t } = useTranslation("exam");
     return (
       <div className="page text-black" ref={ref}>
-        <h1 className="text-3xl font-bold">Đề thi: {name}</h1>
+        <h1 className="text-3xl font-bold">
+          {t("exam")}: {name}
+        </h1>
         <h1 className="text-2xl">
-          Họ và tên: ...........................................................
+          {t("full_name")}:
+          ...........................................................
         </h1>
         <br />
         <br />

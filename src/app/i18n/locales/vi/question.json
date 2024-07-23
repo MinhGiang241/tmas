@@ -76,5 +76,7 @@
   "FillBlank_quest": "Câu hỏi điền vào chỗ trống",
   "Pairing_quest": "Câu hỏi ghép nối",
   "Random_quest": "Câu hỏi ngẫu nhiên",
-  "Evaluation": "Khảo sát"
+  "Evaluation": "Khảo sát",
+  "full_name": "Họ và tên",
+  "exam": "Đề thi"
 }

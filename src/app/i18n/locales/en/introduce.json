@@ -1,3 +1,18 @@
 {
-    "hi":"Chào"
+  "hi": "Hello",
+  "hi2": "Hello",
+  "introduce": "I'm TmasAI 😊, I will support you in the process of using Tmas. First, choose the field you are interested in...",
+  "introduce2": "Wonderful🎉",
+  "introduce3": "Based on the fields you have chosen, Tmas suggests exam questions that are already available on the exam bank. Please choose the first exam for your recruitment...",
+  "introduce4": "Almost done 💪🏻",
+  "introduce5": "The test has been created for you, now create the first test and get it ready to send to candidates right away...🥰",
+  "introduce6": "Hurray!",
+  "introduce7": "You have completed creating the first round of entrance exams from the test {{name}} on Tmas. Please check the information and send it to candidates immediately.",
+  "skip": "Skip",
+  "select_field": "Select field",
+  "field1": "(Please select at least 3 fields of interest)",
+  "exam_configuration": "Exam configuration",
+  "select_exam": "(Please select at most 1 exam)",
+  "configure_session": "Configure exam session with exam questions"
 }
+

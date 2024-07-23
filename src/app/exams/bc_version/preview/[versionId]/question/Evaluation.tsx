@@ -69,7 +69,7 @@ export default function Evaluation({
   useEffect(() => {
     setIsOverflowing(
       ((contentRef as any).current?.scrollHeight ?? 0) + 1 >
-        ((containerRef as any).current?.clientHeight ?? 0) && !expanded
+        ((containerRef as any).current?.clientHeight ?? 0) && !expanded,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -96,7 +96,7 @@ export default function Evaluation({
           router.push(
             `/${isBank ? "exam_bank" : "exams/details"}/${
               examId ?? "u"
-            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`
+            }/edit?questId=${res?.data}&isBank=${isBank ? "true" : "false"}`,
           );
           await getData();
         }}
@@ -236,7 +236,11 @@ export default function Evaluation({
                   {t("quest_type")}:
                 </div>
                 <span>
-                  {t(question?.QuestionType === "Evaluation" ? "Đánh giá" : "")}
+                  {t(
+                    question?.QuestionType === "Evaluation"
+                      ? examTrans.t("evaluation")
+                      : "",
+                  )}
                 </span>
               </div>
               <div className="flex">

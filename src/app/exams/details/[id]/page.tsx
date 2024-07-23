@@ -102,16 +102,16 @@ function ExamDetails({ params }: any) {
   };
 
   const handleExpectedPointChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setExpectedPoint(Number(event.target.value));
   };
   const user: UserData | undefined = useAppSelector(
-    (state: RootState) => state?.user?.user
+    (state: RootState) => state?.user?.user,
   );
   const dispatchGroup = useAppDispatch();
   const questionGroups: QuestionGroupData[] | undefined = useAppSelector(
-    (state: RootState) => state?.examGroup?.questions
+    (state: RootState) => state?.examGroup?.questions,
   );
   const loadQuestionGroupList = async (init?: boolean) => {
     if (init) {
@@ -120,7 +120,7 @@ function ExamDetails({ params }: any) {
 
     var dataResults: APIResults = await getQuestionGroups(
       "",
-      user?.studio?._id
+      user?.studio?._id,
     );
 
     if (dataResults.code != 0) {
@@ -134,7 +134,7 @@ function ExamDetails({ params }: any) {
   useEffect(() => {
     if (user?.studio?._id) {
       dispatchGroup(
-        fetchDataQuestionGroup(async () => loadQuestionGroupList(true))
+        fetchDataQuestionGroup(async () => loadQuestionGroupList(true)),
       );
     }
 
@@ -216,7 +216,7 @@ function ExamDetails({ params }: any) {
   );
 
   const handleNameChangeValid = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { value } = event.target;
     setName(value);
@@ -225,7 +225,7 @@ function ExamDetails({ params }: any) {
   const handleAddPart = async () => {
     setAddLoading(true);
     if (!name) {
-      setNameError("Vui lòng nhập tên phần thi.");
+      setNameError(examTrans.t("enter_name_part"));
       setAddLoading(false);
       return;
     }
@@ -296,7 +296,7 @@ function ExamDetails({ params }: any) {
 
   const totalPart = () => {
     const part = data?.records.find(
-      (part: any) => part.id === activeDelete?.id
+      (part: any) => part.id === activeDelete?.id,
     );
     if (!part) return 0;
 
@@ -309,7 +309,7 @@ function ExamDetails({ params }: any) {
 
   const expectedPointTotal = () => {
     const part = data?.records.find(
-      (part: any) => part.id === activeDelete?.id
+      (part: any) => part.id === activeDelete?.id,
     );
     if (!part) return 0;
 
@@ -394,7 +394,7 @@ function ExamDetails({ params }: any) {
             </div>
             <div className="w-2" />
             <div className="flex w-[50%] justify-center items-center h-12 bg-slate-300 rounded-md">
-              <div className="md:text-base text-xs">Trọng số theo chủ đề</div>
+              <div className="md:text-base text-xs">{t("topic_num")}</div>
               <div className="w-3" />
               <div className="md:text-xl text-base text-red-500 font-semibold">
                 <FormattedNumber
@@ -592,7 +592,7 @@ function ExamDetails({ params }: any) {
                   (to: any, quest: any) => {
                     return to + (quest?.numberPoint ?? 0);
                   },
-                  0
+                  0,
                 );
                 return total + point;
               }, 0)}
@@ -740,7 +740,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/add?partId=${x?.id}`
+                                    `/exams/details/${params.id}/add?partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1"
@@ -751,7 +751,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/import?partId=${x?.id}`
+                                    `/exams/details/${params.id}/import?partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1"
@@ -763,7 +763,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/my_bank?tab=0&partId=${x?.id}`
+                                    `/exams/details/${params.id}/my_bank?tab=0&partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1 "
@@ -774,7 +774,7 @@ function ExamDetails({ params }: any) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   router.push(
-                                    `/exams/details/${params.id}/my_bank?tab=1&partId=${x?.id}`
+                                    `/exams/details/${params.id}/my_bank?tab=1&partId=${x?.id}`,
                                   );
                                 }}
                                 className="text-left mb-2 pb-1 "
@@ -844,12 +844,12 @@ function ExamDetails({ params }: any) {
                       a.createdTime < b.createdTime
                         ? -1
                         : a.createdTime > b.createdTime
-                        ? 1
-                        : 0
+                          ? 1
+                          : 0,
                     )
                     .map((e: any, key: any) => {
                       var questionGroup = questionGroups?.find(
-                        (v: any) => v.id === e.idGroupQuestion
+                        (v: any) => v.id === e.idGroupQuestion,
                       );
                       if (e.questionType == "Coding") {
                         return (

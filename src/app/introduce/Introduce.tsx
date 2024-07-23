@@ -73,7 +73,7 @@ export default function Introduce() {
   const getDataTopicChild = async () => {
     try {
       const res = await getTopicChild(
-        selectedItems.map((x: onBoardingTopic) => x?._id)
+        selectedItems.map((x: onBoardingTopic) => x?._id),
       );
       console.log("getTopicChild response", res);
       if (res?.code === 0) {
@@ -94,7 +94,7 @@ export default function Introduce() {
         const listExamChildResponse = await getListExamChild(transformedData);
         const arr = listExamChildResponse?.data?.reduce(
           (a: any, b: any) => [...a, ...b?.children],
-          []
+          [],
         );
 
         setDataNewChildren(arr);
@@ -126,7 +126,7 @@ export default function Introduce() {
   function onlyUnique(value: any, index: any, array: any) {
     return (
       array.findIndex(
-        (t: any) => t?.version?.examId == value?.version?.examId
+        (t: any) => t?.version?.examId == value?.version?.examId,
       ) === index
     );
   }
@@ -214,11 +214,11 @@ export default function Introduce() {
 
           return baseQuestion;
         }),
-      })
+      }),
     );
 
     var indexIdGroup = dataNewChildren?.findIndex(
-      (e) => e?.oldId === active?._id
+      (e) => e?.oldId === active?._id,
     );
     console.log("indexIdGroup", indexIdGroup, active, dataNewChildren);
 
@@ -237,8 +237,8 @@ export default function Introduce() {
         dataNewChildren?.length === 0
           ? undefined
           : indexIdGroup === -1
-          ? dataNewChildren[0]?.id
-          : groupId,
+            ? dataNewChildren[0]?.id
+            : groupId,
       idSession: active?.version?.examData?.IdSession,
       studioId: active?.version?.examData?.StudioId,
       name: active?.version?.name,
@@ -263,7 +263,7 @@ export default function Introduce() {
           exam: examObj,
           jsonExamQuestions: (partObj ?? []).reduce(
             (a: any, b: any) => [...a, ...(b?.jsonExamQuestions ?? [])],
-            []
+            [],
           ),
           parts: partObj,
         },

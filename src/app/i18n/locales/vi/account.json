@@ -114,5 +114,16 @@
   "account?tab=2": "Thông tin cá nhân",
   "account?tab=3": "Thông tin studio",
   "account?tab=4": "Lịch sử nâng cấp",
-  "account?tab=5": "Quản lý thông báo"
+  "account?tab=5": "Quản lý thông báo",
+  "upgrade_package_ser": "Nâng cấp gói dịch vụ",
+  "in_use": "Đang sử dụng",
+  "unlimited": "Vô thời hạn",
+  "year": "Năm",
+  "month": "Tháng",
+  "day": "Ngày",
+  "intro": " Bộ phận CSKH TMAS sẽ liên hệ lại bạn qua số điện thoại của bạn trong vòng 24 tiếng kể từ thời điểm tiếp nhận yêu cầu nhận báo giá.",
+  "hotline": "Tổng đài chăm CSKH TMAS:",
+  "infor": "Nhận báo giá",
+  "free": "Miễn phí",
+  "register_now": " Đăng ký ngay"
 }

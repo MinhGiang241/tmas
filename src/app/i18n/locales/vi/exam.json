@@ -521,5 +521,10 @@
   "row": "Hàng",
   "Paid": "Mới",
   "has_exel_valid": "Có {{v}} câu hợp lệ",
-  "import_exel_success": "Đã import thành công {{v}} câu hỏi"
+  "import_exel_success": "Đã import thành công {{v}} câu hỏi",
+  "rank_require": "Tên hạng là trường bắt buộc, hãy nhập để phân hạng kết quả.",
+  "point_unit_not_empty": "Đơn vị điểm đến không được để trống, vui lòng nhập lại.",
+  "to_point_greater_from_point": "Đơn vị điểm đến phải lớn hơn từ điểm, vui lòng nhập lại.",
+  "enter_name_part": "Vui lòng nhập tên phần thi.",
+  "topic_num": "Trọng số theo chủ đề"
 }

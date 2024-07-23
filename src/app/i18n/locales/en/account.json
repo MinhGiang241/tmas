@@ -113,5 +113,16 @@
   "account?tab=2": "Personal information",
   "account?tab=3": "Studio information",
   "account?tab=4": "Upgrade history",
-  "account?tab=5": "Notification management"
+  "account?tab=5": "Notification management",
+  "upgrade_package_ser": "Upgrade service pack",
+  "in_use": "In use",
+  "unlimited": "Indefinitely",
+  "year": "Year",
+  "month": "Month",
+  "day": "Day",
+  "intro": "TMAS Customer Service Department will contact you via your phone number within 24 hours from the time of receiving the quote request.",
+  "hotline": "TMAS customer care switchboard:",
+  "infor": "Get a quote",
+  "free": "Free",
+  "register_now": "Register now"
 }
